@@ -1,0 +1,9 @@
+Candidate set exist in coverage?:
+
+True
+
+ Answer is:
+
+1) Importance Score: 5
+2) Don't Remove
+3) This code snippet is used to compare two strings character by character. Removing it may affect the functionality of the program as it is used to determine if the two strings are equal.

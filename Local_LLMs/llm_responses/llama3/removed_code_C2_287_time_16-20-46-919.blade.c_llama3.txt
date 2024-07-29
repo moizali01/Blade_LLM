@@ -1,0 +1,5 @@
+Response from llama3:
+1) Importance Score : 8
+2) Don't Remove
+3) This code is crucial for the program's functionality, as it initializes and sets up the FTSENT structure, which is used throughout the program. Removing this code could lead to errors or crashes in the program.
+

@@ -1,0 +1,3 @@
+
+
+tmp = gettext("stat failed");

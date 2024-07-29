@@ -1,0 +1,3 @@
+
+
+fp = fdopen(fd, "r");

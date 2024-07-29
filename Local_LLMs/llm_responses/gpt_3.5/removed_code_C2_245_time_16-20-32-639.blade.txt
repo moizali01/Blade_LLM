@@ -1,0 +1,13 @@
+Candidate set exist in coverage?:
+
+True
+
+ Candidate set determined based on line:
+
+int tmp___2;
+
+ Answer is:
+
+1) Importance Score: 5
+2) Don't Remove
+3) This code snippet is used to compare two strings character by character. Removing it may affect the functionality of the program as it is responsible for determining the equality of the two strings.

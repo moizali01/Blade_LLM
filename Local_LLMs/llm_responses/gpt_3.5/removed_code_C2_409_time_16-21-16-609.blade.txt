@@ -1,0 +1,13 @@
+Candidate set exist in coverage?:
+
+True
+
+ Candidate set determined based on line:
+
+p->fts_instr = (unsigned short)3;
+
+ Answer is:
+
+1) Importance Score: 5
+2) Don't Remove
+3) This code snippet sets the value of p->fts_instr to 3. Removing it may affect the functionality of the program as it is used to determine the instruction for the fts_set function.

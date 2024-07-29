@@ -1,0 +1,3 @@
+
+
+ofd = fileno(stdout);

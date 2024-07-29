@@ -1,0 +1,5 @@
+Response from llama3:
+1) Importance Score : 8
+2) Don't Remove
+3) This code snippet is part of the quoting function, which handles the formatting of quoted strings. Removing it could potentially break the functionality of the program when dealing with specific quoting styles and options.
+

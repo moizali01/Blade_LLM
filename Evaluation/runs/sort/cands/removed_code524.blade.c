@@ -1,0 +1,3 @@
+
+
+tmpb = (unsigned char)*b;

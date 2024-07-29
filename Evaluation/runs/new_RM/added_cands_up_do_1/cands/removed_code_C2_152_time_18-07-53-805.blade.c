@@ -1,0 +1,3 @@
+
+
+len = sizeof(FTSENT) + namelen;

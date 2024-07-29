@@ -1,0 +1,9 @@
+Candidate set exist in coverage?:
+
+True
+
+ Answer is:
+
+1) Importance Score: 5
+2) Remove
+3) This code snippet checks if the fts_info of the FTSENT structure is equal to 2. If it is, it jumps to the case_2 label. Removing this code snippet will not affect the overall generality and performance of the program as it is not directly related to the functionality or security of the program.

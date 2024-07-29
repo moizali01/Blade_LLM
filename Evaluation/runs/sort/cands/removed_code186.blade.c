@@ -1,0 +1,3 @@
+
+
+allocated = (void *)0;

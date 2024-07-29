@@ -1,0 +1,220 @@
+file1 not deleted from the command bins/rm-rf file1
+dir not deleted from the command bins/rm-rf dir
+dir1 not deleted from the command bins/rm-rf dir1
+dir2 not deleted from the command bins/rm-rf dir2
+file1 not deleted from the command bins/rm-r file1
+dir not deleted from the command bins/rm-r dir
+dir1 not deleted from the command bins/rm-r dir1
+dir2 not deleted from the command bins/rm-r dir2
+file1 not deleted from the command bins/rm-f file1
+dir/1 not deleted from the command bins/rm-f dir/1
+dir/dir/2 not deleted from the command bins/rm-f dir/dir/2
+dir/dir/dir/3 not deleted from the command bins/rm-f dir/dir/dir/3
+file1 deleted from the command bins/rm-i file1 when it should not have
+file1 not deleted from the command bins/rm-i file1
+dir/1 deleted from the command bins/rm-i dir/1 when it should not have
+dir/1 not deleted from the command bins/rm-i dir/1
+dir/dir/2 deleted from the command bins/rm-i dir/dir/2 when it should not have
+dir/dir/2 not deleted from the command bins/rm-i dir/dir/2
+dir/dir/dir/3 deleted from the command bins/rm-i dir/dir/dir/3 when it should not have
+dir/dir/dir/3 not deleted from the command bins/rm-i dir/dir/dir/3
+file1 not deleted from the command bins/rm-rf file1
+dir not deleted from the command bins/rm-rf dir
+dir1 not deleted from the command bins/rm-rf dir1
+dir2 not deleted from the command bins/rm-rf dir2
+file1 not deleted from the command bins/rm-r file1
+dir not deleted from the command bins/rm-r dir
+dir1 not deleted from the command bins/rm-r dir1
+dir2 not deleted from the command bins/rm-r dir2
+file1 not deleted from the command bins/rm-f file1
+dir/1 not deleted from the command bins/rm-f dir/1
+dir/dir/2 not deleted from the command bins/rm-f dir/dir/2
+dir/dir/dir/3 not deleted from the command bins/rm-f dir/dir/dir/3
+file1 deleted from the command bins/rm-i file1 when it should not have
+file1 not deleted from the command bins/rm-i file1
+dir/1 deleted from the command bins/rm-i dir/1 when it should not have
+dir/1 not deleted from the command bins/rm-i dir/1
+dir/dir/2 deleted from the command bins/rm-i dir/dir/2 when it should not have
+dir/dir/2 not deleted from the command bins/rm-i dir/dir/2
+dir/dir/dir/3 deleted from the command bins/rm-i dir/dir/dir/3 when it should not have
+dir/dir/dir/3 not deleted from the command bins/rm-i dir/dir/dir/3
+file1 not deleted from the command bins/rm-rf file1
+dir not deleted from the command bins/rm-rf dir
+dir1 not deleted from the command bins/rm-rf dir1
+dir2 not deleted from the command bins/rm-rf dir2
+file1 not deleted from the command bins/rm-r file1
+dir not deleted from the command bins/rm-r dir
+dir1 not deleted from the command bins/rm-r dir1
+dir2 not deleted from the command bins/rm-r dir2
+file1 not deleted from the command bins/rm-f file1
+dir/1 not deleted from the command bins/rm-f dir/1
+dir/dir/2 not deleted from the command bins/rm-f dir/dir/2
+dir/dir/dir/3 not deleted from the command bins/rm-f dir/dir/dir/3
+file1 deleted from the command bins/rm-i file1 when it should not have
+file1 not deleted from the command bins/rm-i file1
+dir/1 deleted from the command bins/rm-i dir/1 when it should not have
+dir/1 not deleted from the command bins/rm-i dir/1
+dir/dir/2 deleted from the command bins/rm-i dir/dir/2 when it should not have
+dir/dir/2 not deleted from the command bins/rm-i dir/dir/2
+dir/dir/dir/3 deleted from the command bins/rm-i dir/dir/dir/3 when it should not have
+dir/dir/dir/3 not deleted from the command bins/rm-i dir/dir/dir/3
+file1 not deleted from the command bins/rm-rf file1
+dir not deleted from the command bins/rm-rf dir
+dir1 not deleted from the command bins/rm-rf dir1
+dir2 not deleted from the command bins/rm-rf dir2
+file1 not deleted from the command bins/rm-r file1
+dir not deleted from the command bins/rm-r dir
+dir1 not deleted from the command bins/rm-r dir1
+dir2 not deleted from the command bins/rm-r dir2
+file1 not deleted from the command bins/rm-f file1
+dir/1 not deleted from the command bins/rm-f dir/1
+dir/dir/2 not deleted from the command bins/rm-f dir/dir/2
+dir/dir/dir/3 not deleted from the command bins/rm-f dir/dir/dir/3
+file1 deleted from the command bins/rm-i file1 when it should not have
+file1 not deleted from the command bins/rm-i file1
+dir/1 deleted from the command bins/rm-i dir/1 when it should not have
+dir/1 not deleted from the command bins/rm-i dir/1
+dir/dir/2 deleted from the command bins/rm-i dir/dir/2 when it should not have
+dir/dir/2 not deleted from the command bins/rm-i dir/dir/2
+dir/dir/dir/3 deleted from the command bins/rm-i dir/dir/dir/3 when it should not have
+dir/dir/dir/3 not deleted from the command bins/rm-i dir/dir/dir/3
+file1 not deleted from the command bins/rm-rf file1
+dir not deleted from the command bins/rm-rf dir
+dir1 not deleted from the command bins/rm-rf dir1
+dir2 not deleted from the command bins/rm-rf dir2
+file1 not deleted from the command bins/rm-r file1
+dir not deleted from the command bins/rm-r dir
+dir1 not deleted from the command bins/rm-r dir1
+dir2 not deleted from the command bins/rm-r dir2
+file1 not deleted from the command bins/rm-f file1
+dir/1 not deleted from the command bins/rm-f dir/1
+dir/dir/2 not deleted from the command bins/rm-f dir/dir/2
+dir/dir/dir/3 not deleted from the command bins/rm-f dir/dir/dir/3
+file1 deleted from the command bins/rm-i file1 when it should not have
+file1 not deleted from the command bins/rm-i file1
+dir/1 deleted from the command bins/rm-i dir/1 when it should not have
+dir/1 not deleted from the command bins/rm-i dir/1
+dir/dir/2 deleted from the command bins/rm-i dir/dir/2 when it should not have
+dir/dir/2 not deleted from the command bins/rm-i dir/dir/2
+dir/dir/dir/3 deleted from the command bins/rm-i dir/dir/dir/3 when it should not have
+dir/dir/dir/3 not deleted from the command bins/rm-i dir/dir/dir/3
+file1 not deleted from the command bins/rm-rf file1
+dir not deleted from the command bins/rm-rf dir
+dir1 not deleted from the command bins/rm-rf dir1
+dir2 not deleted from the command bins/rm-rf dir2
+file1 not deleted from the command bins/rm-r file1
+dir not deleted from the command bins/rm-r dir
+dir1 not deleted from the command bins/rm-r dir1
+dir2 not deleted from the command bins/rm-r dir2
+file1 not deleted from the command bins/rm-f file1
+dir/1 not deleted from the command bins/rm-f dir/1
+dir/dir/2 not deleted from the command bins/rm-f dir/dir/2
+dir/dir/dir/3 not deleted from the command bins/rm-f dir/dir/dir/3
+file1 deleted from the command bins/rm-i file1 when it should not have
+file1 not deleted from the command bins/rm-i file1
+dir/1 deleted from the command bins/rm-i dir/1 when it should not have
+dir/1 not deleted from the command bins/rm-i dir/1
+dir/dir/2 deleted from the command bins/rm-i dir/dir/2 when it should not have
+dir/dir/2 not deleted from the command bins/rm-i dir/dir/2
+dir/dir/dir/3 deleted from the command bins/rm-i dir/dir/dir/3 when it should not have
+dir/dir/dir/3 not deleted from the command bins/rm-i dir/dir/dir/3
+file1 deleted from the command bins/rm-rf file1
+dir not deleted from the command bins/rm-rf dir
+dir1 not deleted from the command bins/rm-rf dir1
+dir2 not deleted from the command bins/rm-rf dir2
+file1 not deleted from the command bins/rm-r file1
+dir not deleted from the command bins/rm-r dir
+dir1 not deleted from the command bins/rm-r dir1
+dir2 not deleted from the command bins/rm-r dir2
+file1 not deleted from the command bins/rm-f file1
+dir/1 not deleted from the command bins/rm-f dir/1
+dir/dir/2 not deleted from the command bins/rm-f dir/dir/2
+dir/dir/dir/3 not deleted from the command bins/rm-f dir/dir/dir/3
+file1 deleted from the command bins/rm-i file1 when it should not have
+file1 not deleted from the command bins/rm-i file1
+dir/1 deleted from the command bins/rm-i dir/1 when it should not have
+dir/1 not deleted from the command bins/rm-i dir/1
+dir/dir/2 deleted from the command bins/rm-i dir/dir/2 when it should not have
+dir/dir/2 not deleted from the command bins/rm-i dir/dir/2
+dir/dir/dir/3 deleted from the command bins/rm-i dir/dir/dir/3 when it should not have
+dir/dir/dir/3 not deleted from the command bins/rm-i dir/dir/dir/3
+file1 deleted from the command bins/rm-rf file1
+dir not deleted from the command bins/rm-rf dir
+dir1 not deleted from the command bins/rm-rf dir1
+dir2 not deleted from the command bins/rm-rf dir2
+file1 not deleted from the command bins/rm-r file1
+dir not deleted from the command bins/rm-r dir
+dir1 not deleted from the command bins/rm-r dir1
+dir2 not deleted from the command bins/rm-r dir2
+file1 not deleted from the command bins/rm-f file1
+dir/1 not deleted from the command bins/rm-f dir/1
+dir/dir/2 not deleted from the command bins/rm-f dir/dir/2
+dir/dir/dir/3 not deleted from the command bins/rm-f dir/dir/dir/3
+file1 deleted from the command bins/rm-i file1 when it should not have
+file1 not deleted from the command bins/rm-i file1
+dir/1 deleted from the command bins/rm-i dir/1 when it should not have
+dir/1 not deleted from the command bins/rm-i dir/1
+dir/dir/2 deleted from the command bins/rm-i dir/dir/2 when it should not have
+dir/dir/2 not deleted from the command bins/rm-i dir/dir/2
+dir/dir/dir/3 deleted from the command bins/rm-i dir/dir/dir/3 when it should not have
+dir/dir/dir/3 not deleted from the command bins/rm-i dir/dir/dir/3
+file1 deleted from the command bins/rm-rf file1
+dir not deleted from the command bins/rm-rf dir
+dir1 not deleted from the command bins/rm-rf dir1
+dir2 not deleted from the command bins/rm-rf dir2
+file1 not deleted from the command bins/rm-r file1
+dir not deleted from the command bins/rm-r dir
+dir1 not deleted from the command bins/rm-r dir1
+dir2 not deleted from the command bins/rm-r dir2
+file1 not deleted from the command bins/rm-f file1
+dir/1 not deleted from the command bins/rm-f dir/1
+dir/dir/2 not deleted from the command bins/rm-f dir/dir/2
+dir/dir/dir/3 not deleted from the command bins/rm-f dir/dir/dir/3
+file1 deleted from the command bins/rm-i file1 when it should not have
+file1 not deleted from the command bins/rm-i file1
+dir/1 deleted from the command bins/rm-i dir/1 when it should not have
+dir/1 not deleted from the command bins/rm-i dir/1
+dir/dir/2 deleted from the command bins/rm-i dir/dir/2 when it should not have
+dir/dir/2 not deleted from the command bins/rm-i dir/dir/2
+dir/dir/dir/3 deleted from the command bins/rm-i dir/dir/dir/3 when it should not have
+dir/dir/dir/3 not deleted from the command bins/rm-i dir/dir/dir/3
+file1 deleted from the command bins/rm-rf file1
+dir not deleted from the command bins/rm-rf dir
+dir1 not deleted from the command bins/rm-rf dir1
+dir2 not deleted from the command bins/rm-rf dir2
+file1 not deleted from the command bins/rm-r file1
+dir not deleted from the command bins/rm-r dir
+dir1 not deleted from the command bins/rm-r dir1
+dir2 not deleted from the command bins/rm-r dir2
+file1 not deleted from the command bins/rm-f file1
+dir/1 not deleted from the command bins/rm-f dir/1
+dir/dir/2 not deleted from the command bins/rm-f dir/dir/2
+dir/dir/dir/3 not deleted from the command bins/rm-f dir/dir/dir/3
+file1 deleted from the command bins/rm-i file1 when it should not have
+file1 not deleted from the command bins/rm-i file1
+dir/1 deleted from the command bins/rm-i dir/1 when it should not have
+dir/1 not deleted from the command bins/rm-i dir/1
+dir/dir/2 deleted from the command bins/rm-i dir/dir/2 when it should not have
+dir/dir/2 not deleted from the command bins/rm-i dir/dir/2
+dir/dir/dir/3 deleted from the command bins/rm-i dir/dir/dir/3 when it should not have
+dir/dir/dir/3 not deleted from the command bins/rm-i dir/dir/dir/3
+file1 deleted from the command bins/rm-rf file1
+dir not deleted from the command bins/rm-rf dir
+dir1 not deleted from the command bins/rm-rf dir1
+dir2 not deleted from the command bins/rm-rf dir2
+file1 not deleted from the command bins/rm-r file1
+dir not deleted from the command bins/rm-r dir
+dir1 not deleted from the command bins/rm-r dir1
+dir2 not deleted from the command bins/rm-r dir2
+file1 not deleted from the command bins/rm-f file1
+dir/1 not deleted from the command bins/rm-f dir/1
+dir/dir/2 not deleted from the command bins/rm-f dir/dir/2
+dir/dir/dir/3 not deleted from the command bins/rm-f dir/dir/dir/3
+file1 deleted from the command bins/rm-i file1 when it should not have
+file1 not deleted from the command bins/rm-i file1
+dir/1 deleted from the command bins/rm-i dir/1 when it should not have
+dir/1 not deleted from the command bins/rm-i dir/1
+dir/dir/2 deleted from the command bins/rm-i dir/dir/2 when it should not have
+dir/dir/2 not deleted from the command bins/rm-i dir/dir/2
+dir/dir/dir/3 deleted from the command bins/rm-i dir/dir/dir/3 when it should not have
+dir/dir/dir/3 not deleted from the command bins/rm-i dir/dir/dir/3

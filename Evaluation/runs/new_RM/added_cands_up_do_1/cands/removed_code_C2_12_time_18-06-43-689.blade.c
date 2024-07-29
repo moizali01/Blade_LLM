@@ -1,0 +1,3 @@
+
+
+atexit(&close_stdin);

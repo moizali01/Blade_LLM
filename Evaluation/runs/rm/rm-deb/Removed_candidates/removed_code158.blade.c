@@ -1,0 +1,3 @@
+
+
+can_write = can;

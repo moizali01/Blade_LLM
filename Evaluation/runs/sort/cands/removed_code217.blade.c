@@ -1,0 +1,3 @@
+
+
+ugkey = (struct keyfield) * gkey;

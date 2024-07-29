@@ -1,0 +1,3 @@
+
+
+p = (FTSENT *)malloc(len);

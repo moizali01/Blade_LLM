@@ -1,0 +1,4 @@
+
+
+tail = p;
+head = tail;

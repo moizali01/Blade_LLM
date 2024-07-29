@@ -1,0 +1,3 @@
+
+
+ta = (char *)allocated;

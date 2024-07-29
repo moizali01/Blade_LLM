@@ -1,0 +1,3 @@
+
+
+eolchar = (char)0;

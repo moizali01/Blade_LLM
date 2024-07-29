@@ -1,0 +1,3 @@
+
+
+long fts_number;

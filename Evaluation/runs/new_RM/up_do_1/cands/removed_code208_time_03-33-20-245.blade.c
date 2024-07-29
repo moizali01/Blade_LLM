@@ -1,0 +1,3 @@
+
+
+register struct dirent *dp;

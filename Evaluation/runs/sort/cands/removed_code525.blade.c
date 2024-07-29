@@ -1,0 +1,3 @@
+
+
+tmpa = (unsigned char)*a;
