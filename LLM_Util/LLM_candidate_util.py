@@ -47,7 +47,6 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context):
 
     string_to_keep = "double custom_log(double num) {"
 
-    return 0
     qa = QAClass() 
     try:
         # time.sleep(10)
@@ -86,7 +85,7 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context):
         score = extract_imp_score_new_prompt(llm_response)
         # print("Candidate set: ", candidate, "\nScore: ", score)
         if score == None:
-            return 0
+            return 9
         return score
     except Exception as e:
         print(str(e))

@@ -48,9 +48,9 @@ class QAClass:
             new_splits = [split for split in splits if len(split) > 10]
             documents = [Document(page_content=split) for split in new_splits]
             # os.environ["VOYAGE_API_KEY"] = "pa--BOSQZqPkJiCF1-o9yaoFgh00DW_W0PQUh37N9vY6DU"
-            os.environ["VOYAGE_API_KEY"] = os.environ.get("VOYAGE_API_KEY")
-            # os.environ['GOOGLE_API_KEY'] = os.environ.get("GOOGLE_API_KEY")
+            # os.environ["VOYAGE_API_KEY"] = os.environ.get("VOYAGE_API_KEY")
             # cls._embeddings = VoyageAIEmbeddings(model="voyage-code-2")
+            os.environ['GOOGLE_API_KEY'] = os.environ.get("GOOGLE_API_KEY")
             cls._embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
             cls._db = Chroma.from_documents(documents=documents, embedding=cls._embeddings)
 

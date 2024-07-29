@@ -39,6 +39,7 @@ cd ..
 chmod +x clear_cands.sh
 ./clear_cands.sh
 cd $DIR
+cp sec_list.txt ../../LLM_Util/sec_list.txt
 clear
 
 # run the program
