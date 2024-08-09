@@ -74,8 +74,8 @@ run_test() {
   echo -e "$input_data" > "$INPUT_FILE"
   
   # Run and capture output from both debloated and original
-  $DEBLOATED_UNIQ "$INPUT_FILE" > "$OUTPUT_DEBLOATED" 2>&1
-  $ORIGINAL_UNIQ "$INPUT_FILE" > "$OUTPUT_ORIGINAL" 2>&1
+  timeout 1s $DEBLOATED_UNIQ "$INPUT_FILE" > "$OUTPUT_DEBLOATED" 2>&1
+  timeout 1s $ORIGINAL_UNIQ "$INPUT_FILE" > "$OUTPUT_ORIGINAL" 2>&1
 
   # Compare outputs
   if cmp -s "$OUTPUT_DEBLOATED" "$OUTPUT_ORIGINAL"; then
