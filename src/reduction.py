@@ -64,26 +64,20 @@ class Reduction:
         write(to_write, f"processing/{idx}/{self.file_name}")
         if run_test_case(f"./{self.oracle_cmd}", f"processing/{idx}/") == 0:
             if not bounds_check:
-                print("Normally the addr is:", addr)
                 try:
                     result = self.llm_helper(addr)
-                    print("THE RESULT IS: ", result)
                     if result > THRESHOLD:
-                        print("This candidate set has FAILED the LLM check..")
                         return False
                 except Exception as e:
                     print("The error is: ", e)
-                    print("The addr is: ", addr)
             else:
                 for add in addr:
                     try:
                         result = self.llm_helper(add)
                         if result > THRESHOLD:
-                            print("This candidate set has FAILED the LLM check in bounds check..")
                             return False
                     except Exception as e:
                         print("The error is: ", e)
-                        print("The addr is: ", add)
             return True
         else:
             return False

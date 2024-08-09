@@ -14,7 +14,6 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context):
         if cand[0] == " }" or cand[0] == " {" or cand[0] == "}" or cand[0] == "{":
             return 0
         if "if (" in cand[0] or "else " in cand[0]:
-            # write(cand, conditionals_file)
             return 10
     
 
@@ -45,8 +44,6 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context):
 
     # write llm response to file 
     llm_file = "../LLM_Util/cands/llm_response/llm" + "_time_"+ str(formatted_time)+ ".blade.c.txt"
-
-    string_to_keep = "double custom_log(double num) {"
 
     qa = QAClass() 
     try:
@@ -84,7 +81,6 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context):
                 file.write("LLM failed to generate response")
 
         score = extract_imp_score_new_prompt(llm_response)
-        # print("Candidate set: ", candidate, "\nScore: ", score)
         if score == None:
             return 9
         return score

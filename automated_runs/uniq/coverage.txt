@@ -1290,22 +1290,22 @@
  1290|       |static char const *file_name;
  1291|       |static _Bool ignore_EPIPE;
  1292|       |void close_stdout(void)
- 1293|      4|{
- 1294|      4|    char const *write_error;
- 1295|      4|    char const *tmp;
- 1296|      4|    char *tmp___0;
- 1297|      4|    int *tmp___1;
- 1298|      4|    int *tmp___2;
- 1299|      4|    int tmp___3;
- 1300|      4|    int *tmp___4;
- 1301|      4|    int tmp___5;
- 1302|      4|    char *__cil_tmp10;
+ 1293|      2|{
+ 1294|      2|    char const *write_error;
+ 1295|      2|    char const *tmp;
+ 1296|      2|    char *tmp___0;
+ 1297|      2|    int *tmp___1;
+ 1298|      2|    int *tmp___2;
+ 1299|      2|    int tmp___3;
+ 1300|      2|    int *tmp___4;
+ 1301|      2|    int tmp___5;
+ 1302|      2|    char *__cil_tmp10;
  1303|       |
- 1304|      4|    {
- 1305|      4|        {
- 1306|      4|            tmp___3 = close_stream(stdout);
- 1307|      4|        }
- 1308|      4|        if (tmp___3 != 0) {
+ 1304|      2|    {
+ 1305|      2|        {
+ 1306|      2|            tmp___3 = close_stream(stdout);
+ 1307|      2|        }
+ 1308|      2|        if (tmp___3 != 0) {
  1309|      0|            if (ignore_EPIPE) {
  1310|      0|                {
  1311|      0|                    tmp___4 = __errno_location();
@@ -1337,17 +1337,17 @@
  1337|      0|                }
  1338|      0|            }
  1339|      0|        }
- 1340|      4|        {
- 1341|      4|            tmp___5 = close_stream(stderr);
- 1342|      4|        }
- 1343|      4|        if (tmp___5 != 0) {
+ 1340|      2|        {
+ 1341|      2|            tmp___5 = close_stream(stderr);
+ 1342|      2|        }
+ 1343|      2|        if (tmp___5 != 0) {
  1344|      0|            {
  1345|      0|                _exit((int)exit_failure);
  1346|      0|            }
  1347|      0|        }
- 1348|      4|        return;
- 1349|      4|    }
- 1350|      4|}
+ 1348|      2|        return;
+ 1349|      2|    }
+ 1350|      2|}
  1351|       |extern struct _IO_FILE *stdin;
  1352|       |int rpl_fflush(FILE *stream);
  1353|       |int(__attribute__((__nonnull__(1))) rpl_fseeko)(FILE *fp, off_t offset,
@@ -1359,30 +1359,30 @@
  1359|       |extern __attribute__((__nothrow__))
  1360|       |size_t(__attribute__((__leaf__)) __fpending)(FILE *__fp);
  1361|       |int close_stream(FILE *stream)
- 1362|      8|{
- 1363|      8|    _Bool some_pending;
- 1364|      8|    size_t tmp;
- 1365|      8|    _Bool prev_fail;
- 1366|      8|    int tmp___0;
- 1367|      8|    _Bool fclose_fail;
- 1368|      8|    int tmp___1;
- 1369|      8|    int *tmp___2;
- 1370|      8|    int *tmp___3;
+ 1362|      4|{
+ 1363|      4|    _Bool some_pending;
+ 1364|      4|    size_t tmp;
+ 1365|      4|    _Bool prev_fail;
+ 1366|      4|    int tmp___0;
+ 1367|      4|    _Bool fclose_fail;
+ 1368|      4|    int tmp___1;
+ 1369|      4|    int *tmp___2;
+ 1370|      4|    int *tmp___3;
  1371|       |
- 1372|      8|    {
- 1373|      8|        {
- 1374|      8|            tmp = __fpending(stream);
- 1375|      8|            some_pending = (_Bool)(tmp != 0UL);
- 1376|      8|            tmp___0 = ferror_unlocked(stream);
- 1377|      8|            prev_fail = (_Bool)(tmp___0 != 0);
- 1378|      8|            tmp___1 = rpl_fclose(stream);
- 1379|      8|            fclose_fail = (_Bool)(tmp___1 != 0);
- 1380|      8|        }
- 1381|      8|        if (prev_fail) {
+ 1372|      4|    {
+ 1373|      4|        {
+ 1374|      4|            tmp = __fpending(stream);
+ 1375|      4|            some_pending = (_Bool)(tmp != 0UL);
+ 1376|      4|            tmp___0 = ferror_unlocked(stream);
+ 1377|      4|            prev_fail = (_Bool)(tmp___0 != 0);
+ 1378|      4|            tmp___1 = rpl_fclose(stream);
+ 1379|      4|            fclose_fail = (_Bool)(tmp___1 != 0);
+ 1380|      4|        }
+ 1381|      4|        if (prev_fail) {
  1382|      0|            goto _L___0;
  1383|      0|        }
- 1384|      8|        else {
- 1385|      8|            if (fclose_fail) {
+ 1384|      4|        else {
+ 1385|      4|            if (fclose_fail) {
  1386|      0|                if (some_pending) {
  1387|      0|                    goto _L___0;
  1388|      0|                }
@@ -1402,10 +1402,10 @@
  1402|      0|                    }
  1403|      0|                }
  1404|      0|            }
- 1405|      8|        }
- 1406|      8|        return (0);
- 1407|      8|    }
- 1408|      8|}
+ 1405|      4|        }
+ 1406|      4|        return (0);
+ 1407|      4|    }
+ 1408|      4|}
  1409|       |extern __attribute__((__nothrow__)) int(
  1410|       |    __attribute__((__nonnull__(1), __leaf__)) chdir)(char const *__path);
  1411|       |extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fchdir)(
@@ -2352,57 +2352,57 @@
  2352|      0|    }
  2353|      0|}
  2354|       |int xmemcoll(char *s1, size_t s1len, char *s2, size_t s2len)
- 2355|  14.7k|{
- 2356|  14.7k|    int diff;
- 2357|  14.7k|    int tmp;
- 2358|  14.7k|    int collation_errno;
- 2359|  14.7k|    int *tmp___0;
+ 2355|  8.69k|{
+ 2356|  8.69k|    int diff;
+ 2357|  8.69k|    int tmp;
+ 2358|  8.69k|    int collation_errno;
+ 2359|  8.69k|    int *tmp___0;
  2360|       |
- 2361|  14.7k|    {
- 2362|  14.7k|        {
- 2363|  14.7k|            tmp = memcoll(s1, s1len, s2, s2len);
- 2364|  14.7k|            diff = tmp;
- 2365|  14.7k|            tmp___0 = __errno_location();
- 2366|  14.7k|            collation_errno = *tmp___0;
- 2367|  14.7k|        }
- 2368|  14.7k|        if (collation_errno) {
+ 2361|  8.69k|    {
+ 2362|  8.69k|        {
+ 2363|  8.69k|            tmp = memcoll(s1, s1len, s2, s2len);
+ 2364|  8.69k|            diff = tmp;
+ 2365|  8.69k|            tmp___0 = __errno_location();
+ 2366|  8.69k|            collation_errno = *tmp___0;
+ 2367|  8.69k|        }
+ 2368|  8.69k|        if (collation_errno) {
  2369|      0|            {
  2370|      0|                collate_error(collation_errno, (char const *)s1, s1len,
  2371|      0|                              (char const *)s2, s2len);
  2372|      0|            }
  2373|      0|        }
- 2374|  14.7k|        return (diff);
- 2375|  14.7k|    }
- 2376|  14.7k|}
+ 2374|  8.69k|        return (diff);
+ 2375|  8.69k|    }
+ 2376|  8.69k|}
  2377|       |void *x2realloc(void *p, size_t *pn);
  2378|       |__inline static void *x2nrealloc(void *p, size_t *pn, size_t s)
- 2379|     20|{
- 2380|     20|    size_t n;
- 2381|     20|    void *tmp;
+ 2379|      4|{
+ 2380|      4|    size_t n;
+ 2381|      4|    void *tmp;
  2382|       |
- 2383|     20|    {
- 2384|     20|        n = *pn;
- 2385|     20|        if (!p) {
- 2386|      8|            if (!n) {
- 2387|      8|                n = 128UL / s;
- 2388|      8|                n += (size_t)(!n);
- 2389|      8|            }
- 2390|      8|        }
- 2391|     12|        else {
- 2392|     12|            if (0xaaaaaaaaaaaaaaaaUL / s <= n) {
+ 2383|      4|    {
+ 2384|      4|        n = *pn;
+ 2385|      4|        if (!p) {
+ 2386|      4|            if (!n) {
+ 2387|      4|                n = 128UL / s;
+ 2388|      4|                n += (size_t)(!n);
+ 2389|      4|            }
+ 2390|      4|        }
+ 2391|      0|        else {
+ 2392|      0|            if (0xaaaaaaaaaaaaaaaaUL / s <= n) {
  2393|      0|                {
  2394|      0|                    xalloc_die();
  2395|      0|                }
  2396|      0|            }
- 2397|     12|            n += (n + 1UL) / 2UL;
- 2398|     12|        }
- 2399|     20|        {
- 2400|     20|            *pn = n;
- 2401|     20|            tmp = xrealloc(p, n * s);
- 2402|     20|        }
- 2403|     20|        return (tmp);
- 2404|     20|    }
- 2405|     20|}
+ 2397|      0|            n += (n + 1UL) / 2UL;
+ 2398|      0|        }
+ 2399|      4|        {
+ 2400|      4|            *pn = n;
+ 2401|      4|            tmp = xrealloc(p, n * s);
+ 2402|      4|        }
+ 2403|      4|        return (tmp);
+ 2404|      4|    }
+ 2405|      4|}
  2406|       |extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) calloc)(
  2407|       |    size_t __nmemb, size_t __size) __attribute__((__malloc__));
  2408|       |extern __attribute__((__nothrow__)) void *(__attribute__((
@@ -2430,10 +2430,10 @@
  2430|      0|}
  2431|       |void *xrealloc(void *p, size_t n) __attribute__((__alloc_size__(2)));
  2432|       |void *xrealloc(void *p, size_t n)
- 2433|     20|{
+ 2433|      4|{
  2434|       |
- 2435|     20|    {
- 2436|     20|        if (!n) {
+ 2435|      4|    {
+ 2436|      4|        if (!n) {
  2437|      0|            if (p) {
  2438|      0|                {
  2439|      0|                    free(p);
@@ -2441,30 +2441,30 @@
  2441|      0|                return ((void *)0);
  2442|      0|            }
  2443|      0|        }
- 2444|     20|        {
- 2445|     20|            p = realloc(p, n);
- 2446|     20|        }
- 2447|     20|        if (!p) {
+ 2444|      4|        {
+ 2445|      4|            p = realloc(p, n);
+ 2446|      4|        }
+ 2447|      4|        if (!p) {
  2448|      0|            if (n) {
  2449|      0|                {
  2450|      0|                    xalloc_die();
  2451|      0|                }
  2452|      0|            }
  2453|      0|        }
- 2454|     20|        return (p);
- 2455|     20|    }
- 2456|     20|}
+ 2454|      4|        return (p);
+ 2455|      4|    }
+ 2456|      4|}
  2457|       |void *x2realloc(void *p, size_t *pn)
- 2458|     20|{
- 2459|     20|    void *tmp;
+ 2458|      4|{
+ 2459|      4|    void *tmp;
  2460|       |
- 2461|     20|    {
- 2462|     20|        {
- 2463|     20|            tmp = x2nrealloc(p, pn, (size_t)1);
- 2464|     20|        }
- 2465|     20|        return (tmp);
- 2466|     20|    }
- 2467|     20|}
+ 2461|      4|    {
+ 2462|      4|        {
+ 2463|      4|            tmp = x2nrealloc(p, pn, (size_t)1);
+ 2464|      4|        }
+ 2465|      4|        return (tmp);
+ 2466|      4|    }
+ 2467|      4|}
  2468|       |extern __attribute__((__nothrow__)) int(__attribute__((
  2469|       |        __nonnull__(1), __leaf__)) gethostname)(char *__name, size_t __len);
  2470|       |extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) getcwd)(
@@ -5865,14 +5865,14 @@
  5865|       |__attribute__((__pure__));
  5866|       |char const *program_name = (char const *)((void *)0);
  5867|       |void set_program_name(char const *argv0)
- 5868|      4|{
- 5869|      4|    char const *slash;
- 5870|      4|    char const *base;
- 5871|      4|    int tmp;
- 5872|      4|    int tmp___0;
+ 5868|      2|{
+ 5869|      2|    char const *slash;
+ 5870|      2|    char const *base;
+ 5871|      2|    int tmp;
+ 5872|      2|    int tmp___0;
  5873|       |
- 5874|      4|    {
- 5875|      4|        if ((unsigned long)argv0 == (unsigned long)((void *)0)) {
+ 5874|      2|    {
+ 5875|      2|        if ((unsigned long)argv0 == (unsigned long)((void *)0)) {
  5876|      0|            {
  5877|      0|                fputs((char const * /* __restrict  */) "A NULL argv[0] was passed "
  5878|      0|                      "through an exec system call.\n",
@@ -5880,20 +5880,20 @@
  5880|      0|                abort();
  5881|      0|            }
  5882|      0|        }
- 5883|      4|        {
- 5884|      4|            slash = (char const *)strrchr(argv0, '/');
- 5885|      4|        }
- 5886|      4|        if ((unsigned long)slash != (unsigned long)((void *)0)) {
- 5887|      4|            base = slash + 1;
- 5888|      4|        }
+ 5883|      2|        {
+ 5884|      2|            slash = (char const *)strrchr(argv0, '/');
+ 5885|      2|        }
+ 5886|      2|        if ((unsigned long)slash != (unsigned long)((void *)0)) {
+ 5887|      2|            base = slash + 1;
+ 5888|      2|        }
  5889|      0|        else {
  5890|      0|            base = argv0;
  5891|      0|        }
- 5892|      4|        if (base - argv0 >= 7L) {
- 5893|      4|            {
- 5894|      4|                tmp___0 = strncmp(base - 7, "/.libs/", (size_t)7);
- 5895|      4|            }
- 5896|      4|            if (tmp___0 == 0) {
+ 5892|      2|        if (base - argv0 >= 7L) {
+ 5893|      2|            {
+ 5894|      2|                tmp___0 = strncmp(base - 7, "/.libs/", (size_t)7);
+ 5895|      2|            }
+ 5896|      2|            if (tmp___0 == 0) {
  5897|      0|                {
  5898|      0|                    argv0 = base;
  5899|      0|                    tmp = strncmp(base, "lt-", (size_t)3);
@@ -5903,12 +5903,12 @@
  5903|      0|                    program_invocation_short_name = (char *)argv0;
  5904|      0|                }
  5905|      0|            }
- 5906|      4|        }
- 5907|      4|        program_name = argv0;
- 5908|      4|        program_invocation_name = (char *)argv0;
- 5909|      4|        return;
- 5910|      4|    }
- 5911|      4|}
+ 5906|      2|        }
+ 5907|      2|        program_name = argv0;
+ 5908|      2|        program_invocation_name = (char *)argv0;
+ 5909|      2|        return;
+ 5910|      2|    }
+ 5911|      2|}
  5912|       |extern __attribute__((__nothrow__)) long double(
  5913|       |    __attribute__((__leaf__)) frexpl)(long double __x, int *__exponent);
  5914|       |extern __attribute__((__nothrow__)) long double(
@@ -6511,29 +6511,29 @@
  6511|       |__attribute__((__pure__));
  6512|       |__inline static int strcoll_loop(char const *s1, size_t s1size, char const *s2,
  6513|       |                                 size_t s2size)
- 6514|  13.7k|{
- 6515|  13.7k|    int diff;
- 6516|  13.7k|    size_t size1;
- 6517|  13.7k|    size_t tmp;
- 6518|  13.7k|    size_t size2;
- 6519|  13.7k|    size_t tmp___0;
- 6520|  13.7k|    int *tmp___1;
- 6521|  13.7k|    int *tmp___2;
- 6522|  13.7k|    int tmp___3;
+ 6514|  7.78k|{
+ 6515|  7.78k|    int diff;
+ 6516|  7.78k|    size_t size1;
+ 6517|  7.78k|    size_t tmp;
+ 6518|  7.78k|    size_t size2;
+ 6519|  7.78k|    size_t tmp___0;
+ 6520|  7.78k|    int *tmp___1;
+ 6521|  7.78k|    int *tmp___2;
+ 6522|  7.78k|    int tmp___3;
  6523|       |
- 6524|  13.7k|    {
- 6525|  13.7k|        {
- 6526|  13.7k|            while (1) {
- 6527|  13.7k|while_continue: /* CIL Label */
- 6528|  13.7k|                ;
- 6529|  13.7k|                {
- 6530|  13.7k|                    tmp___1 = __errno_location();
- 6531|  13.7k|                    *tmp___1 = 0;
- 6532|  13.7k|                    diff = strcoll(s1, s2);
- 6533|  13.7k|                }
- 6534|  13.7k|                if (diff) {
- 6535|  13.7k|                    tmp___3 = 1;
- 6536|  13.7k|                }
+ 6524|  7.78k|    {
+ 6525|  7.78k|        {
+ 6526|  7.78k|            while (1) {
+ 6527|  7.78k|while_continue: /* CIL Label */
+ 6528|  7.78k|                ;
+ 6529|  7.78k|                {
+ 6530|  7.78k|                    tmp___1 = __errno_location();
+ 6531|  7.78k|                    *tmp___1 = 0;
+ 6532|  7.78k|                    diff = strcoll(s1, s2);
+ 6533|  7.78k|                }
+ 6534|  7.78k|                if (diff) {
+ 6535|  7.78k|                    tmp___3 = 1;
+ 6536|  7.78k|                }
  6537|      0|                else {
  6538|      0|                    {
  6539|      0|                        tmp___2 = __errno_location();
@@ -6545,9 +6545,9 @@
  6545|      0|                        tmp___3 = 0;
  6546|      0|                    }
  6547|      0|                }
- 6548|  13.7k|                if (tmp___3) {
- 6549|  13.7k|                    goto while_break;
- 6550|  13.7k|                }
+ 6548|  7.78k|                if (tmp___3) {
+ 6549|  7.78k|                    goto while_break;
+ 6550|  7.78k|                }
  6551|      0|                {
  6552|      0|                    tmp = strlen(s1);
  6553|      0|                    size1 = tmp + 1UL;
@@ -6565,51 +6565,51 @@
  6565|      0|                    return (1);
  6566|      0|                }
  6567|      0|            }
- 6568|  13.7k|while_break: /* CIL Label */
- 6569|  13.7k|            ;
- 6570|  13.7k|        }
+ 6568|  7.78k|while_break: /* CIL Label */
+ 6569|  7.78k|            ;
+ 6570|  7.78k|        }
  6571|      0|        return (diff);
- 6572|  13.7k|    }
- 6573|  13.7k|}
+ 6572|  7.78k|    }
+ 6573|  7.78k|}
  6574|       |int memcoll(char *s1, size_t s1len, char *s2, size_t s2len)
- 6575|  14.7k|{
- 6576|  14.7k|    int diff;
- 6577|  14.7k|    int *tmp;
- 6578|  14.7k|    char n1;
- 6579|  14.7k|    char n2;
- 6580|  14.7k|    int tmp___0;
+ 6575|  8.69k|{
+ 6576|  8.69k|    int diff;
+ 6577|  8.69k|    int *tmp;
+ 6578|  8.69k|    char n1;
+ 6579|  8.69k|    char n2;
+ 6580|  8.69k|    int tmp___0;
  6581|       |
- 6582|  14.7k|    {
- 6583|  14.7k|        if (s1len == s2len) {
- 6584|  2.55k|            {
- 6585|  2.55k|                tmp___0 = memcmp((void const *)s1, (void const *)s2, s1len);
- 6586|  2.55k|            }
- 6587|  2.55k|            if (tmp___0 == 0) {
- 6588|    972|                {
- 6589|    972|                    tmp = __errno_location();
- 6590|    972|                    *tmp = 0;
- 6591|    972|                    diff = 0;
- 6592|    972|                }
- 6593|    972|            }
- 6594|  1.57k|            else {
- 6595|  1.57k|                goto _L;
- 6596|  1.57k|            }
- 6597|  2.55k|        }
- 6598|  12.2k|        else {
- 6599|  13.7k|_L: {
- 6600|  13.7k|                n1 = *(s1 + s1len);
- 6601|  13.7k|                n2 = *(s2 + s2len);
- 6602|  13.7k|                *(s1 + s1len) = (char)'\000';
- 6603|  13.7k|                *(s2 + s2len) = (char)'\000';
- 6604|  13.7k|                diff = strcoll_loop((char const *)s1, s1len + 1UL, (char const *)s2,
- 6605|  13.7k|                                    s2len + 1UL);
- 6606|  13.7k|                *(s1 + s1len) = n1;
- 6607|  13.7k|                *(s2 + s2len) = n2;
- 6608|  13.7k|            }
- 6609|  13.7k|        }
- 6610|  14.7k|        return (diff);
- 6611|  14.7k|    }
- 6612|  14.7k|}
+ 6582|  8.69k|    {
+ 6583|  8.69k|        if (s1len == s2len) {
+ 6584|  1.97k|            {
+ 6585|  1.97k|                tmp___0 = memcmp((void const *)s1, (void const *)s2, s1len);
+ 6586|  1.97k|            }
+ 6587|  1.97k|            if (tmp___0 == 0) {
+ 6588|    908|                {
+ 6589|    908|                    tmp = __errno_location();
+ 6590|    908|                    *tmp = 0;
+ 6591|    908|                    diff = 0;
+ 6592|    908|                }
+ 6593|    908|            }
+ 6594|  1.06k|            else {
+ 6595|  1.06k|                goto _L;
+ 6596|  1.06k|            }
+ 6597|  1.97k|        }
+ 6598|  6.72k|        else {
+ 6599|  7.78k|_L: {
+ 6600|  7.78k|                n1 = *(s1 + s1len);
+ 6601|  7.78k|                n2 = *(s2 + s2len);
+ 6602|  7.78k|                *(s1 + s1len) = (char)'\000';
+ 6603|  7.78k|                *(s2 + s2len) = (char)'\000';
+ 6604|  7.78k|                diff = strcoll_loop((char const *)s1, s1len + 1UL, (char const *)s2,
+ 6605|  7.78k|                                    s2len + 1UL);
+ 6606|  7.78k|                *(s1 + s1len) = n1;
+ 6607|  7.78k|                *(s2 + s2len) = n2;
+ 6608|  7.78k|            }
+ 6609|  7.78k|        }
+ 6610|  8.69k|        return (diff);
+ 6611|  8.69k|    }
+ 6612|  8.69k|}
  6613|       |int memcasecmp(void const *vs1, void const *vs2, size_t n)
  6614|       |__attribute__((__pure__));
  6615|       |int memcasecmp(void const *vs1, void const *vs2, size_t n)
@@ -7034,48 +7034,48 @@
  7034|       |struct linebuffer *readlinebuffer_delim(struct linebuffer *linebuffer,
  7035|       |                                        FILE *stream, char delimiter);
  7036|       |void initbuffer(struct linebuffer *linebuffer)
- 7037|      8|{
+ 7037|      4|{
  7038|       |
- 7039|      8|    {
- 7040|      8|        {
- 7041|      8|            memset((void *)linebuffer, 0, sizeof(*linebuffer));
- 7042|      8|        }
- 7043|      8|        return;
- 7044|      8|    }
- 7045|      8|}
+ 7039|      4|    {
+ 7040|      4|        {
+ 7041|      4|            memset((void *)linebuffer, 0, sizeof(*linebuffer));
+ 7042|      4|        }
+ 7043|      4|        return;
+ 7044|      4|    }
+ 7045|      4|}
  7046|       |struct linebuffer *readlinebuffer_delim(struct linebuffer *linebuffer,
  7047|       |                                        FILE *stream, char delimiter)
- 7048|  14.7k|{
- 7049|  14.7k|    int c;
- 7050|  14.7k|    char *buffer;
- 7051|  14.7k|    char *p;
- 7052|  14.7k|    char *end;
- 7053|  14.7k|    int tmp;
- 7054|  14.7k|    int tmp___0;
- 7055|  14.7k|    size_t oldsize;
- 7056|  14.7k|    char *tmp___1;
+ 7048|  8.70k|{
+ 7049|  8.70k|    int c;
+ 7050|  8.70k|    char *buffer;
+ 7051|  8.70k|    char *p;
+ 7052|  8.70k|    char *end;
+ 7053|  8.70k|    int tmp;
+ 7054|  8.70k|    int tmp___0;
+ 7055|  8.70k|    size_t oldsize;
+ 7056|  8.70k|    char *tmp___1;
  7057|       |
- 7058|  14.7k|    {
- 7059|  14.7k|        {
- 7060|  14.7k|            buffer = linebuffer->buffer;
- 7061|  14.7k|            p = linebuffer->buffer;
- 7062|  14.7k|            end = buffer + linebuffer->size;
- 7063|  14.7k|            tmp = feof_unlocked(stream);
- 7064|  14.7k|        }
- 7065|  14.7k|        if (tmp) {
+ 7058|  8.70k|    {
+ 7059|  8.70k|        {
+ 7060|  8.70k|            buffer = linebuffer->buffer;
+ 7061|  8.70k|            p = linebuffer->buffer;
+ 7062|  8.70k|            end = buffer + linebuffer->size;
+ 7063|  8.70k|            tmp = feof_unlocked(stream);
+ 7064|  8.70k|        }
+ 7065|  8.70k|        if (tmp) {
  7066|      0|            return ((struct linebuffer *)((void *)0));
  7067|      0|        }
- 7068|  14.7k|        {
- 7069|   606k|            while (1) {
- 7070|   606k|while_continue: /* CIL Label */
- 7071|   606k|                ;
- 7072|   606k|                {
- 7073|   606k|                    c = getc_unlocked(stream);
- 7074|   606k|                }
- 7075|   606k|                if (c == -1) {
- 7076|      4|                    if ((unsigned long)p == (unsigned long)buffer) {
- 7077|      4|                        return ((struct linebuffer *)((void *)0));
- 7078|      4|                    }
+ 7068|  8.70k|        {
+ 7069|   338k|            while (1) {
+ 7070|   338k|while_continue: /* CIL Label */
+ 7071|   338k|                ;
+ 7072|   338k|                {
+ 7073|   338k|                    c = getc_unlocked(stream);
+ 7074|   338k|                }
+ 7075|   338k|                if (c == -1) {
+ 7076|      2|                    if ((unsigned long)p == (unsigned long)buffer) {
+ 7077|      2|                        return ((struct linebuffer *)((void *)0));
+ 7078|      2|                    }
  7079|      0|                    else {
  7080|      0|                        {
  7081|      0|                            tmp___0 = ferror_unlocked(stream);
@@ -7089,29 +7089,29 @@
  7089|      0|                    }
  7090|      0|                    c = (int)delimiter;
  7091|      0|                }
- 7092|   606k|                if ((unsigned long)p == (unsigned long)end) {
- 7093|     20|                    {
- 7094|     20|                        oldsize = linebuffer->size;
- 7095|     20|                        buffer = (char *)x2realloc((void *)buffer, &linebuffer->size);
- 7096|     20|                        p = buffer + oldsize;
- 7097|     20|                        linebuffer->buffer = buffer;
- 7098|     20|                        end = buffer + linebuffer->size;
- 7099|     20|                    }
- 7100|     20|                }
- 7101|   606k|                tmp___1 = p;
- 7102|   606k|                p++;
- 7103|   606k|                *tmp___1 = (char)c;
- 7104|   606k|                if (!(c != (int)delimiter)) {
- 7105|  14.7k|                    goto while_break;
- 7106|  14.7k|                }
- 7107|   606k|            }
- 7108|  14.7k|while_break: /* CIL Label */
- 7109|  14.7k|            ;
- 7110|  14.7k|        }
+ 7092|   338k|                if ((unsigned long)p == (unsigned long)end) {
+ 7093|      4|                    {
+ 7094|      4|                        oldsize = linebuffer->size;
+ 7095|      4|                        buffer = (char *)x2realloc((void *)buffer, &linebuffer->size);
+ 7096|      4|                        p = buffer + oldsize;
+ 7097|      4|                        linebuffer->buffer = buffer;
+ 7098|      4|                        end = buffer + linebuffer->size;
+ 7099|      4|                    }
+ 7100|      4|                }
+ 7101|   338k|                tmp___1 = p;
+ 7102|   338k|                p++;
+ 7103|   338k|                *tmp___1 = (char)c;
+ 7104|   338k|                if (!(c != (int)delimiter)) {
+ 7105|  8.69k|                    goto while_break;
+ 7106|  8.69k|                }
+ 7107|   338k|            }
+ 7108|  8.69k|while_break: /* CIL Label */
+ 7109|  8.69k|            ;
+ 7110|  8.69k|        }
  7111|      0|        linebuffer->length = (size_t)(p - buffer);
- 7112|  14.7k|        return (linebuffer);
- 7113|  14.7k|    }
- 7114|  14.7k|}
+ 7112|  8.69k|        return (linebuffer);
+ 7113|  8.70k|    }
+ 7114|  8.70k|}
  7115|       |extern __attribute__((__nothrow__)) long double(__attribute__((
  7116|       |            __nonnull__(1), __leaf__)) strtold)(char const *__restrict __nptr,
  7117|       |                    char **__restrict __endptr);
@@ -7141,40 +7141,40 @@
  7141|       |extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) setlocale)(
  7142|       |    int __category, char const *__locale);
  7143|       |_Bool hard_locale(int category)
- 7144|      4|{
- 7145|      4|    _Bool hard;
- 7146|      4|    char const *p;
- 7147|      4|    char const *tmp;
- 7148|      4|    int tmp___0;
- 7149|      4|    int tmp___1;
- 7150|      4|    char *locale;
- 7151|      4|    char *tmp___2;
- 7152|      4|    int tmp___3;
- 7153|      4|    int tmp___4;
+ 7144|      2|{
+ 7145|      2|    _Bool hard;
+ 7146|      2|    char const *p;
+ 7147|      2|    char const *tmp;
+ 7148|      2|    int tmp___0;
+ 7149|      2|    int tmp___1;
+ 7150|      2|    char *locale;
+ 7151|      2|    char *tmp___2;
+ 7152|      2|    int tmp___3;
+ 7153|      2|    int tmp___4;
  7154|       |
- 7155|      4|    {
- 7156|      4|        {
- 7157|      4|            hard = (_Bool)1;
- 7158|      4|            tmp = (char const *)setlocale(category, (char const *)((void *)0));
- 7159|      4|            p = tmp;
- 7160|      4|        }
- 7161|      4|        if (p) {
- 7162|      4|            if (1) {
- 7163|      4|                {
- 7164|      4|                    tmp___0 = strcmp(p, "C");
- 7165|      4|                }
- 7166|      4|                if (tmp___0 == 0) {
+ 7155|      2|    {
+ 7156|      2|        {
+ 7157|      2|            hard = (_Bool)1;
+ 7158|      2|            tmp = (char const *)setlocale(category, (char const *)((void *)0));
+ 7159|      2|            p = tmp;
+ 7160|      2|        }
+ 7161|      2|        if (p) {
+ 7162|      2|            if (1) {
+ 7163|      2|                {
+ 7164|      2|                    tmp___0 = strcmp(p, "C");
+ 7165|      2|                }
+ 7166|      2|                if (tmp___0 == 0) {
  7167|      0|                    hard = (_Bool)0;
  7168|      0|                }
- 7169|      4|                else {
- 7170|      4|                    {
- 7171|      4|                        tmp___1 = strcmp(p, "POSIX");
- 7172|      4|                    }
- 7173|      4|                    if (tmp___1 == 0) {
+ 7169|      2|                else {
+ 7170|      2|                    {
+ 7171|      2|                        tmp___1 = strcmp(p, "POSIX");
+ 7172|      2|                    }
+ 7173|      2|                    if (tmp___1 == 0) {
  7174|      0|                        hard = (_Bool)0;
  7175|      0|                    }
- 7176|      4|                }
- 7177|      4|            }
+ 7176|      2|                }
+ 7177|      2|            }
  7178|      0|            else {
  7179|      0|                {
  7180|      0|                    tmp___2 = strdup(p);
@@ -7214,10 +7214,10 @@
  7214|      0|                    }
  7215|      0|                }
  7216|      0|            }
- 7217|      4|        }
- 7218|      4|        return (hard);
- 7219|      4|    }
- 7220|      4|}
+ 7217|      2|        }
+ 7218|      2|        return (hard);
+ 7219|      2|    }
+ 7220|      2|}
  7221|       |extern void setgrent(void);
  7222|       |extern struct group *getgrent(void);
  7223|       |extern
@@ -7310,38 +7310,38 @@
  7310|      0|    }
  7311|      0|}
  7312|       |FILE *freopen_safer(char const *name, char const *mode, FILE *f)
- 7313|      4|{
- 7314|      4|    _Bool protect_in;
- 7315|      4|    _Bool protect_out;
- 7316|      4|    _Bool protect_err;
- 7317|      4|    int saved_errno;
- 7318|      4|    int tmp;
- 7319|      4|    int tmp___0;
- 7320|      4|    int tmp___1;
- 7321|      4|    int tmp___2;
- 7322|      4|    _Bool tmp___3;
- 7323|      4|    _Bool tmp___4;
- 7324|      4|    _Bool tmp___5;
- 7325|      4|    int *tmp___6;
- 7326|      4|    int *tmp___7;
+ 7313|      2|{
+ 7314|      2|    _Bool protect_in;
+ 7315|      2|    _Bool protect_out;
+ 7316|      2|    _Bool protect_err;
+ 7317|      2|    int saved_errno;
+ 7318|      2|    int tmp;
+ 7319|      2|    int tmp___0;
+ 7320|      2|    int tmp___1;
+ 7321|      2|    int tmp___2;
+ 7322|      2|    _Bool tmp___3;
+ 7323|      2|    _Bool tmp___4;
+ 7324|      2|    _Bool tmp___5;
+ 7325|      2|    int *tmp___6;
+ 7326|      2|    int *tmp___7;
  7327|       |
- 7328|      4|    {
- 7329|      4|        {
- 7330|      4|            protect_in = (_Bool)0;
- 7331|      4|            protect_out = (_Bool)0;
- 7332|      4|            protect_err = (_Bool)0;
- 7333|      4|            tmp = fileno(f);
- 7334|      4|        }
- 7335|      4|        {
- 7336|      4|            if (tmp == 2) {
+ 7328|      2|    {
+ 7329|      2|        {
+ 7330|      2|            protect_in = (_Bool)0;
+ 7331|      2|            protect_out = (_Bool)0;
+ 7332|      2|            protect_err = (_Bool)0;
+ 7333|      2|            tmp = fileno(f);
+ 7334|      2|        }
+ 7335|      2|        {
+ 7336|      2|            if (tmp == 2) {
  7337|      0|                goto case_2;
  7338|      0|            }
- 7339|      4|            if (tmp == 1) {
+ 7339|      2|            if (tmp == 1) {
  7340|      0|                goto case_1;
  7341|      0|            }
- 7342|      4|            if (tmp == 0) {
- 7343|      4|                goto case_0;
- 7344|      4|            }
+ 7342|      2|            if (tmp == 0) {
+ 7343|      2|                goto case_0;
+ 7344|      2|            }
  7345|      0|            goto switch_default;
  7346|      0|switch_default: { /* CIL Label */
  7347|      0|                tmp___0 = dup2(2, 2);
@@ -7361,12 +7361,12 @@
  7361|      0|            if (tmp___2 != 0) {
  7362|      0|                protect_in = (_Bool)1;
  7363|      0|            }
- 7364|      4|case_0: /* CIL Label */
- 7365|      4|            goto switch_break;
- 7366|      4|switch_break: /* CIL Label */
- 7367|      4|            ;
- 7368|      4|        }
- 7369|      4|        if (protect_in) {
+ 7364|      2|case_0: /* CIL Label */
+ 7365|      2|            goto switch_break;
+ 7366|      2|switch_break: /* CIL Label */
+ 7367|      2|            ;
+ 7368|      2|        }
+ 7369|      2|        if (protect_in) {
  7370|      0|            {
  7371|      0|                tmp___5 = protect_fd(0);
  7372|      0|            }
@@ -7377,9 +7377,9 @@
  7377|      0|                f = (FILE *)((void *)0);
  7378|      0|            }
  7379|      0|        }
- 7380|      4|        else {
- 7381|      4|_L___0:
- 7382|      4|            if (protect_out) {
+ 7380|      2|        else {
+ 7381|      2|_L___0:
+ 7382|      2|            if (protect_out) {
  7383|      0|                {
  7384|      0|                    tmp___4 = protect_fd(1);
  7385|      0|                }
@@ -7390,9 +7390,9 @@
  7390|      0|                    f = (FILE *)((void *)0);
  7391|      0|                }
  7392|      0|            }
- 7393|      4|            else {
- 7394|      4|_L:
- 7395|      4|                if (protect_err) {
+ 7393|      2|            else {
+ 7394|      2|_L:
+ 7395|      2|                if (protect_err) {
  7396|      0|                    {
  7397|      0|                        tmp___3 = protect_fd(2);
  7398|      0|                    }
@@ -7407,43 +7407,43 @@
  7407|      0|                        f = (FILE *)((void *)0);
  7408|      0|                    }
  7409|      0|                }
- 7410|      4|                else {
- 7411|      4|                    {
- 7412|      4|                        f = freopen((char const * /* __restrict  */)name,
- 7413|      4|                                    (char const * /* __restrict  */)mode,
- 7414|      4|                                    (FILE * /* __restrict  */)f);
- 7415|      4|                    }
- 7416|      4|                }
- 7417|      4|            }
- 7418|      4|        }
- 7419|      4|        {
- 7420|      4|            tmp___6 = __errno_location();
- 7421|      4|            saved_errno = *tmp___6;
- 7422|      4|        }
- 7423|      4|        if (protect_err) {
+ 7410|      2|                else {
+ 7411|      2|                    {
+ 7412|      2|                        f = freopen((char const * /* __restrict  */)name,
+ 7413|      2|                                    (char const * /* __restrict  */)mode,
+ 7414|      2|                                    (FILE * /* __restrict  */)f);
+ 7415|      2|                    }
+ 7416|      2|                }
+ 7417|      2|            }
+ 7418|      2|        }
+ 7419|      2|        {
+ 7420|      2|            tmp___6 = __errno_location();
+ 7421|      2|            saved_errno = *tmp___6;
+ 7422|      2|        }
+ 7423|      2|        if (protect_err) {
  7424|      0|            {
  7425|      0|                close(2);
  7426|      0|            }
  7427|      0|        }
- 7428|      4|        if (protect_out) {
+ 7428|      2|        if (protect_out) {
  7429|      0|            {
  7430|      0|                close(1);
  7431|      0|            }
  7432|      0|        }
- 7433|      4|        if (protect_in) {
+ 7433|      2|        if (protect_in) {
  7434|      0|            {
  7435|      0|                close(0);
  7436|      0|            }
  7437|      0|        }
- 7438|      4|        if (!f) {
+ 7438|      2|        if (!f) {
  7439|      0|            {
  7440|      0|                tmp___7 = __errno_location();
  7441|      0|                *tmp___7 = saved_errno;
  7442|      0|            }
  7443|      0|        }
- 7444|      4|        return (f);
- 7445|      4|    }
- 7446|      4|}
+ 7444|      2|        return (f);
+ 7445|      2|    }
+ 7446|      2|}
  7447|       |extern __attribute__((__nothrow__)) void(__attribute__((__leaf__)) __fpurge)(
  7448|       |    FILE *__fp);
  7449|       |extern int fputc(int __c, FILE *__stream);
@@ -7452,112 +7452,112 @@
  7452|       |extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) __freading)(
  7453|       |    FILE *__fp);
  7454|       |__inline static void clear_ungetc_buffer_preserving_position(FILE *fp)
- 7455|      4|{
+ 7455|      2|{
  7456|       |
- 7457|      4|    {
- 7458|      4|        if (fp->_flags & 256) {
+ 7457|      2|    {
+ 7458|      2|        if (fp->_flags & 256) {
  7459|      0|            {
  7460|      0|                rpl_fseeko(fp, (off_t)0, 1);
  7461|      0|            }
  7462|      0|        }
- 7463|      4|        return;
- 7464|      4|    }
- 7465|      4|}
+ 7463|      2|        return;
+ 7464|      2|    }
+ 7465|      2|}
  7466|       |int rpl_fflush(FILE *stream)
- 7467|     12|{
- 7468|     12|    int tmp;
- 7469|     12|    int tmp___0;
- 7470|     12|    int tmp___1;
+ 7467|      6|{
+ 7468|      6|    int tmp;
+ 7469|      6|    int tmp___0;
+ 7470|      6|    int tmp___1;
  7471|       |
- 7472|     12|    {
- 7473|     12|        if ((unsigned long)stream == (unsigned long)((void *)0)) {
+ 7472|      6|    {
+ 7473|      6|        if ((unsigned long)stream == (unsigned long)((void *)0)) {
  7474|      0|            {
  7475|      0|                tmp = fflush(stream);
  7476|      0|            }
  7477|      0|            return (tmp);
  7478|      0|        }
- 7479|     12|        else {
- 7480|     12|            {
- 7481|     12|                tmp___0 = __freading(stream);
- 7482|     12|            }
- 7483|     12|            if (!(tmp___0 != 0)) {
- 7484|      8|                {
- 7485|      8|                    tmp = fflush(stream);
- 7486|      8|                }
- 7487|      8|                return (tmp);
- 7488|      8|            }
- 7489|     12|        }
- 7490|      4|        {
- 7491|      4|            clear_ungetc_buffer_preserving_position(stream);
- 7492|      4|            tmp___1 = fflush(stream);
- 7493|      4|        }
- 7494|      4|        return (tmp___1);
- 7495|     12|    }
- 7496|     12|}
+ 7479|      6|        else {
+ 7480|      6|            {
+ 7481|      6|                tmp___0 = __freading(stream);
+ 7482|      6|            }
+ 7483|      6|            if (!(tmp___0 != 0)) {
+ 7484|      4|                {
+ 7485|      4|                    tmp = fflush(stream);
+ 7486|      4|                }
+ 7487|      4|                return (tmp);
+ 7488|      4|            }
+ 7489|      6|        }
+ 7490|      2|        {
+ 7491|      2|            clear_ungetc_buffer_preserving_position(stream);
+ 7492|      2|            tmp___1 = fflush(stream);
+ 7493|      2|        }
+ 7494|      2|        return (tmp___1);
+ 7495|      6|    }
+ 7496|      6|}
  7497|       |extern int fcntl(int __fd, int __cmd, ...);
  7498|       |static int have_dupfd_cloexec = 0;
  7499|       |extern int fclose(FILE *__stream);
  7500|       |int(__attribute__((__nonnull__(1))) rpl_fclose)(FILE *fp)
- 7501|     12|{
- 7502|     12|    int saved_errno;
- 7503|     12|    int fd;
- 7504|     12|    int result;
- 7505|     12|    int tmp;
- 7506|     12|    int *tmp___0;
- 7507|     12|    int tmp___1;
- 7508|     12|    int tmp___2;
- 7509|     12|    __off_t tmp___3;
- 7510|     12|    int tmp___4;
- 7511|     12|    int *tmp___5;
+ 7501|      6|{
+ 7502|      6|    int saved_errno;
+ 7503|      6|    int fd;
+ 7504|      6|    int result;
+ 7505|      6|    int tmp;
+ 7506|      6|    int *tmp___0;
+ 7507|      6|    int tmp___1;
+ 7508|      6|    int tmp___2;
+ 7509|      6|    __off_t tmp___3;
+ 7510|      6|    int tmp___4;
+ 7511|      6|    int *tmp___5;
  7512|       |
- 7513|     12|    {
- 7514|     12|        {
- 7515|     12|            saved_errno = 0;
- 7516|     12|            result = 0;
- 7517|     12|            fd = fileno(fp);
- 7518|     12|        }
- 7519|     12|        if (fd < 0) {
+ 7513|      6|    {
+ 7514|      6|        {
+ 7515|      6|            saved_errno = 0;
+ 7516|      6|            result = 0;
+ 7517|      6|            fd = fileno(fp);
+ 7518|      6|        }
+ 7519|      6|        if (fd < 0) {
  7520|      0|            {
  7521|      0|                tmp = fclose(fp);
  7522|      0|            }
  7523|      0|            return (tmp);
  7524|      0|        }
- 7525|     12|        {
- 7526|     12|            tmp___1 = __freading(fp);
- 7527|     12|        }
- 7528|     12|        if (tmp___1 != 0) {
- 7529|      4|            {
- 7530|      4|                tmp___2 = fileno(fp);
- 7531|      4|                tmp___3 = lseek(tmp___2, (__off_t)0, 1);
- 7532|      4|            }
- 7533|      4|            if (tmp___3 != -1L) {
- 7534|     12|_L: {
- 7535|     12|                    tmp___4 = rpl_fflush(fp);
- 7536|     12|                }
- 7537|     12|                if (tmp___4) {
+ 7525|      6|        {
+ 7526|      6|            tmp___1 = __freading(fp);
+ 7527|      6|        }
+ 7528|      6|        if (tmp___1 != 0) {
+ 7529|      2|            {
+ 7530|      2|                tmp___2 = fileno(fp);
+ 7531|      2|                tmp___3 = lseek(tmp___2, (__off_t)0, 1);
+ 7532|      2|            }
+ 7533|      2|            if (tmp___3 != -1L) {
+ 7534|      6|_L: {
+ 7535|      6|                    tmp___4 = rpl_fflush(fp);
+ 7536|      6|                }
+ 7537|      6|                if (tmp___4) {
  7538|      0|                    {
  7539|      0|                        tmp___0 = __errno_location();
  7540|      0|                        saved_errno = *tmp___0;
  7541|      0|                    }
  7542|      0|                }
- 7543|     12|            }
- 7544|      4|        }
- 7545|      8|        else {
- 7546|      8|            goto _L;
- 7547|      8|        }
- 7548|     12|        {
- 7549|     12|            result = fclose(fp);
- 7550|     12|        }
- 7551|     12|        if (saved_errno != 0) {
+ 7543|      6|            }
+ 7544|      2|        }
+ 7545|      4|        else {
+ 7546|      4|            goto _L;
+ 7547|      4|        }
+ 7548|      6|        {
+ 7549|      6|            result = fclose(fp);
+ 7550|      6|        }
+ 7551|      6|        if (saved_errno != 0) {
  7552|      0|            {
  7553|      0|                tmp___5 = __errno_location();
  7554|      0|                *tmp___5 = saved_errno;
  7555|      0|                result = -1;
  7556|      0|            }
  7557|      0|        }
- 7558|     12|        return (result);
- 7559|     12|    }
- 7560|     12|}
+ 7558|      6|        return (result);
+ 7559|      6|    }
+ 7560|      6|}
  7561|       |extern __attribute__((__nothrow__)) int(
  7562|       |    __attribute__((__nonnull__(1), __leaf__)) sigemptyset)(sigset_t *__set);
  7563|       |extern __attribute__((__nothrow__)) int(__attribute__((
@@ -7583,32 +7583,32 @@
  7583|       |void fdadvise(int fd, off_t offset, off_t len, fadvice_t advice);
  7584|       |void fadvise(FILE *fp, fadvice_t advice);
  7585|       |void fdadvise(int fd, off_t offset, off_t len, fadvice_t advice)
- 7586|      4|{
- 7587|      4|    int __x;
- 7588|      4|    int tmp;
+ 7586|      2|{
+ 7587|      2|    int __x;
+ 7588|      2|    int tmp;
  7589|       |
- 7590|      4|    {
- 7591|      4|        {
- 7592|      4|            tmp = posix_fadvise(fd, offset, len, (int)advice);
- 7593|      4|            __x = tmp;
- 7594|      4|        }
- 7595|      4|        return;
- 7596|      4|    }
- 7597|      4|}
+ 7590|      2|    {
+ 7591|      2|        {
+ 7592|      2|            tmp = posix_fadvise(fd, offset, len, (int)advice);
+ 7593|      2|            __x = tmp;
+ 7594|      2|        }
+ 7595|      2|        return;
+ 7596|      2|    }
+ 7597|      2|}
  7598|       |void fadvise(FILE *fp, fadvice_t advice)
- 7599|      4|{
- 7600|      4|    int tmp;
+ 7599|      2|{
+ 7600|      2|    int tmp;
  7601|       |
- 7602|      4|    {
- 7603|      4|        if (fp) {
- 7604|      4|            {
- 7605|      4|                tmp = fileno(fp);
- 7606|      4|                fdadvise(tmp, (off_t)0, (off_t)0, advice);
- 7607|      4|            }
- 7608|      4|        }
- 7609|      4|        return;
- 7610|      4|    }
- 7611|      4|}
+ 7602|      2|    {
+ 7603|      2|        if (fp) {
+ 7604|      2|            {
+ 7605|      2|                tmp = fileno(fp);
+ 7606|      2|                fdadvise(tmp, (off_t)0, (off_t)0, advice);
+ 7607|      2|            }
+ 7608|      2|        }
+ 7609|      2|        return;
+ 7610|      2|    }
+ 7611|      2|}
  7612|       |int volatile exit_failure = (int volatile)1;
  7613|       |extern __attribute__((__nothrow__))
  7614|       |size_t(__attribute__((__nonnull__(1, 2),
@@ -7895,34 +7895,34 @@
  7895|      0|}
  7896|       |static char *__attribute__((__pure__))
  7897|       |find_field(struct linebuffer const *line)
- 7898|  14.7k|{
- 7899|  14.7k|    size_t count;
- 7900|  14.7k|    char const *lp;
- 7901|  14.7k|    size_t size;
- 7902|  14.7k|    size_t i;
- 7903|  14.7k|    unsigned short const **tmp;
- 7904|  14.7k|    unsigned char tmp___0;
- 7905|  14.7k|    unsigned short const **tmp___1;
- 7906|  14.7k|    unsigned char tmp___2;
- 7907|  14.7k|    size_t tmp___3;
+ 7898|  8.69k|{
+ 7899|  8.69k|    size_t count;
+ 7900|  8.69k|    char const *lp;
+ 7901|  8.69k|    size_t size;
+ 7902|  8.69k|    size_t i;
+ 7903|  8.69k|    unsigned short const **tmp;
+ 7904|  8.69k|    unsigned char tmp___0;
+ 7905|  8.69k|    unsigned short const **tmp___1;
+ 7906|  8.69k|    unsigned char tmp___2;
+ 7907|  8.69k|    size_t tmp___3;
  7908|       |
- 7909|  14.7k|    {
- 7910|  14.7k|        lp = (char const *)line->buffer;
- 7911|  14.7k|        size = (size_t)(line->length - 1UL);
- 7912|  14.7k|        i = (size_t)0;
- 7913|  14.7k|        count = (size_t)0;
- 7914|  14.7k|        {
- 7915|  14.7k|            while (1) {
- 7916|  14.7k|while_continue: /* CIL Label */
- 7917|  14.7k|                ;
- 7918|  14.7k|                if (count < skip_fields) {
+ 7909|  8.69k|    {
+ 7910|  8.69k|        lp = (char const *)line->buffer;
+ 7911|  8.69k|        size = (size_t)(line->length - 1UL);
+ 7912|  8.69k|        i = (size_t)0;
+ 7913|  8.69k|        count = (size_t)0;
+ 7914|  8.69k|        {
+ 7915|  8.69k|            while (1) {
+ 7916|  8.69k|while_continue: /* CIL Label */
+ 7917|  8.69k|                ;
+ 7918|  8.69k|                if (count < skip_fields) {
  7919|      0|                    if (!(i < size)) {
  7920|      0|                        goto while_break;
  7921|      0|                    }
  7922|      0|                }
- 7923|  14.7k|                else {
- 7924|  14.7k|                    goto while_break;
- 7925|  14.7k|                }
+ 7923|  8.69k|                else {
+ 7924|  8.69k|                    goto while_break;
+ 7925|  8.69k|                }
  7926|      0|                {
  7927|      0|                    while (1) {
  7928|      0|while_continue___0: /* CIL Label */
@@ -7967,35 +7967,35 @@
  7967|      0|                }
  7968|      0|                count++;
  7969|      0|            }
- 7970|  14.7k|while_break: /* CIL Label */
- 7971|  14.7k|            ;
- 7972|  14.7k|        }
- 7973|  14.7k|        if (skip_chars < size - i) {
- 7974|  14.6k|            tmp___3 = skip_chars;
- 7975|  14.6k|        }
- 7976|    130|        else {
- 7977|    130|            tmp___3 = size - i;
- 7978|    130|        }
- 7979|  14.7k|        i += tmp___3;
- 7980|  14.7k|        return ((char * /* __attribute__((__pure__)) */)(line->buffer + i));
- 7981|  14.7k|    }
- 7982|  14.7k|}
+ 7970|  8.69k|while_break: /* CIL Label */
+ 7971|  8.69k|            ;
+ 7972|  8.69k|        }
+ 7973|  8.69k|        if (skip_chars < size - i) {
+ 7974|  8.63k|            tmp___3 = skip_chars;
+ 7975|  8.63k|        }
+ 7976|     65|        else {
+ 7977|     65|            tmp___3 = size - i;
+ 7978|     65|        }
+ 7979|  8.69k|        i += tmp___3;
+ 7980|  8.69k|        return ((char * /* __attribute__((__pure__)) */)(line->buffer + i));
+ 7981|  8.69k|    }
+ 7982|  8.69k|}
  7983|       |static _Bool different(char *old, char *new, size_t oldlen, size_t newlen)
- 7984|  14.7k|{
- 7985|  14.7k|    int tmp;
- 7986|  14.7k|    int tmp___0;
- 7987|  14.7k|    int tmp___1;
- 7988|  14.7k|    int tmp___2;
- 7989|  14.7k|    int tmp___3;
+ 7984|  8.69k|{
+ 7985|  8.69k|    int tmp;
+ 7986|  8.69k|    int tmp___0;
+ 7987|  8.69k|    int tmp___1;
+ 7988|  8.69k|    int tmp___2;
+ 7989|  8.69k|    int tmp___3;
  7990|       |
- 7991|  14.7k|    {
- 7992|  14.7k|        if (check_chars < oldlen) {
+ 7991|  8.69k|    {
+ 7992|  8.69k|        if (check_chars < oldlen) {
  7993|      0|            oldlen = check_chars;
  7994|      0|        }
- 7995|  14.7k|        if (check_chars < newlen) {
+ 7995|  8.69k|        if (check_chars < newlen) {
  7996|      0|            newlen = check_chars;
  7997|      0|        }
- 7998|  14.7k|        if (ignore_case) {
+ 7998|  8.69k|        if (ignore_case) {
  7999|      0|            if (oldlen != newlen) {
  8000|      0|                tmp___0 = 1;
  8001|      0|            }
@@ -8012,13 +8012,13 @@
  8012|      0|            }
  8013|      0|            return ((_Bool)tmp___0);
  8014|      0|        }
- 8015|  14.7k|        else {
- 8016|  14.7k|            if (hard_LC_COLLATE) {
- 8017|  14.7k|                {
- 8018|  14.7k|                    tmp___1 = xmemcoll(old, oldlen, new, newlen);
- 8019|  14.7k|                }
- 8020|  14.7k|                return ((_Bool)(tmp___1 != 0));
- 8021|  14.7k|            }
+ 8015|  8.69k|        else {
+ 8016|  8.69k|            if (hard_LC_COLLATE) {
+ 8017|  8.69k|                {
+ 8018|  8.69k|                    tmp___1 = xmemcoll(old, oldlen, new, newlen);
+ 8019|  8.69k|                }
+ 8020|  8.69k|                return ((_Bool)(tmp___1 != 0));
+ 8021|  8.69k|            }
  8022|      0|            else {
  8023|      0|                if (oldlen != newlen) {
  8024|      0|                    tmp___3 = 1;
@@ -8036,106 +8036,106 @@
  8036|      0|                }
  8037|      0|                return ((_Bool)tmp___3);
  8038|      0|            }
- 8039|  14.7k|        }
- 8040|  14.7k|    }
- 8041|  14.7k|}
+ 8039|  8.69k|        }
+ 8040|  8.69k|    }
+ 8041|  8.69k|}
  8042|       |static void writeline(struct linebuffer const *line, _Bool match,
  8043|       |                      uintmax_t linecount)
- 8044|  13.7k|{
- 8045|  13.7k|    int tmp;
- 8046|  13.7k|    int tmp___0;
+ 8044|      0|{
+ 8045|      0|    int tmp;
+ 8046|      0|    int tmp___0;
  8047|       |
- 8048|  13.7k|    {
- 8049|  13.7k|        if (linecount == 0UL) {
- 8050|  13.6k|            tmp___0 = (int)output_unique;
- 8051|  13.6k|        }
- 8052|    192|        else {
- 8053|    192|            if (!match) {
- 8054|    192|                tmp = (int)output_first_repeated;
- 8055|    192|            }
+ 8048|      0|    {
+ 8049|      0|        if (linecount == 0UL) {
+ 8050|      0|            tmp___0 = (int)output_unique;
+ 8051|      0|        }
+ 8052|      0|        else {
+ 8053|      0|            if (!match) {
+ 8054|      0|                tmp = (int)output_first_repeated;
+ 8055|      0|            }
  8056|      0|            else {
  8057|      0|                tmp = (int)output_later_repeated;
  8058|      0|            }
- 8059|    192|            tmp___0 = tmp;
- 8060|    192|        }
- 8061|  13.7k|        if (!tmp___0) {
+ 8059|      0|            tmp___0 = tmp;
+ 8060|      0|        }
+ 8061|      0|        if (!tmp___0) {
  8062|      0|            return;
  8063|      0|        }
- 8064|  13.7k|        if ((unsigned int)countmode == 0U) {
- 8065|  13.7k|            {
- 8066|  13.7k|                printf((char const * /* __restrict  */) "%7lu ", linecount + 1UL);
- 8067|  13.7k|            }
- 8068|  13.7k|        }
- 8069|  13.7k|        {
- 8070|  13.7k|            fwrite_unlocked((void const * /* __restrict  */)line->buffer,
- 8071|  13.7k|                            sizeof(char), (size_t)line->length,
- 8072|  13.7k|                            (FILE * /* __restrict  */)stdout);
- 8073|  13.7k|        }
- 8074|  13.7k|        return;
- 8075|  13.7k|    }
- 8076|  13.7k|}
+ 8064|      0|        if ((unsigned int)countmode == 0U) {
+ 8065|      0|            {
+ 8066|      0|                printf((char const * /* __restrict  */) "%7lu ", linecount + 1UL);
+ 8067|      0|            }
+ 8068|      0|        }
+ 8069|      0|        {
+ 8070|      0|            fwrite_unlocked((void const * /* __restrict  */)line->buffer,
+ 8071|      0|                            sizeof(char), (size_t)line->length,
+ 8072|      0|                            (FILE * /* __restrict  */)stdout);
+ 8073|      0|        }
+ 8074|      0|        return;
+ 8075|      0|    }
+ 8076|      0|}
  8077|       |static void check_file(char const *infile, char const *outfile,
  8078|       |                       char delimiter)
- 8079|      4|{
- 8080|      4|    struct linebuffer lb1;
- 8081|      4|    struct linebuffer lb2;
- 8082|      4|    struct linebuffer *thisline;
- 8083|      4|    struct linebuffer *prevline;
- 8084|      4|    int *tmp;
- 8085|      4|    int tmp___0;
- 8086|      4|    FILE *tmp___1;
- 8087|      4|    int *tmp___2;
- 8088|      4|    int tmp___3;
- 8089|      4|    FILE *tmp___4;
- 8090|      4|    char *prevfield;
- 8091|      4|    size_t prevlen;
- 8092|      4|    char *thisfield;
- 8093|      4|    size_t thislen;
- 8094|      4|    struct linebuffer *tmp___5;
- 8095|      4|    struct linebuffer *_tmp;
- 8096|      4|    _Bool tmp___6;
- 8097|      4|    int tmp___7;
- 8098|      4|    char *prevfield___0;
- 8099|      4|    size_t prevlen___0;
- 8100|      4|    uintmax_t match_count;
- 8101|      4|    _Bool first_delimiter;
- 8102|      4|    struct linebuffer *tmp___8;
- 8103|      4|    _Bool match;
- 8104|      4|    char *thisfield___0;
- 8105|      4|    size_t thislen___0;
- 8106|      4|    int tmp___9;
- 8107|      4|    struct linebuffer *tmp___10;
- 8108|      4|    _Bool tmp___11;
- 8109|      4|    int tmp___12;
- 8110|      4|    struct linebuffer *_tmp___0;
- 8111|      4|    int tmp___14;
- 8112|      4|    char *tmp___15;
- 8113|      4|    int tmp___16;
- 8114|      4|    int tmp___17;
- 8115|      4|    char *__cil_tmp42;
- 8116|      4|    char *__cil_tmp43;
- 8117|      4|    char *__cil_tmp44;
- 8118|      4|    char *__cil_tmp45;
+ 8079|      2|{
+ 8080|      2|    struct linebuffer lb1;
+ 8081|      2|    struct linebuffer lb2;
+ 8082|      2|    struct linebuffer *thisline;
+ 8083|      2|    struct linebuffer *prevline;
+ 8084|      2|    int *tmp;
+ 8085|      2|    int tmp___0;
+ 8086|      2|    FILE *tmp___1;
+ 8087|      2|    int *tmp___2;
+ 8088|      2|    int tmp___3;
+ 8089|      2|    FILE *tmp___4;
+ 8090|      2|    char *prevfield;
+ 8091|      2|    size_t prevlen;
+ 8092|      2|    char *thisfield;
+ 8093|      2|    size_t thislen;
+ 8094|      2|    struct linebuffer *tmp___5;
+ 8095|      2|    struct linebuffer *_tmp;
+ 8096|      2|    _Bool tmp___6;
+ 8097|      2|    int tmp___7;
+ 8098|      2|    char *prevfield___0;
+ 8099|      2|    size_t prevlen___0;
+ 8100|      2|    uintmax_t match_count;
+ 8101|      2|    _Bool first_delimiter;
+ 8102|      2|    struct linebuffer *tmp___8;
+ 8103|      2|    _Bool match;
+ 8104|      2|    char *thisfield___0;
+ 8105|      2|    size_t thislen___0;
+ 8106|      2|    int tmp___9;
+ 8107|      2|    struct linebuffer *tmp___10;
+ 8108|      2|    _Bool tmp___11;
+ 8109|      2|    int tmp___12;
+ 8110|      2|    struct linebuffer *_tmp___0;
+ 8111|      2|    int tmp___14;
+ 8112|      2|    char *tmp___15;
+ 8113|      2|    int tmp___16;
+ 8114|      2|    int tmp___17;
+ 8115|      2|    char *__cil_tmp42;
+ 8116|      2|    char *__cil_tmp43;
+ 8117|      2|    char *__cil_tmp44;
+ 8118|      2|    char *__cil_tmp45;
  8119|       |
- 8120|      4|    {
- 8121|      4|        {
- 8122|      4|            tmp___0 = strcmp(infile, "-");
- 8123|      4|        }
- 8124|      4|        if (!(tmp___0 == 0)) {
- 8125|      4|            {
- 8126|      4|                tmp___1 = freopen_safer(infile, "r", stdin);
- 8127|      4|            }
- 8128|      4|            if (!tmp___1) {
+ 8120|      2|    {
+ 8121|      2|        {
+ 8122|      2|            tmp___0 = strcmp(infile, "-");
+ 8123|      2|        }
+ 8124|      2|        if (!(tmp___0 == 0)) {
+ 8125|      2|            {
+ 8126|      2|                tmp___1 = freopen_safer(infile, "r", stdin);
+ 8127|      2|            }
+ 8128|      2|            if (!tmp___1) {
  8129|      0|                {
  8130|      0|                    tmp = __errno_location();
  8131|      0|                    error(1, *tmp, "%s", infile);
  8132|      0|                }
  8133|      0|            }
- 8134|      4|        }
- 8135|      4|        {
- 8136|      4|            tmp___3 = strcmp(outfile, "-");
- 8137|      4|        }
- 8138|      4|        if (!(tmp___3 == 0)) {
+ 8134|      2|        }
+ 8135|      2|        {
+ 8136|      2|            tmp___3 = strcmp(outfile, "-");
+ 8137|      2|        }
+ 8138|      2|        if (!(tmp___3 == 0)) {
  8139|      0|            {
  8140|      0|                tmp___4 = freopen_safer(outfile, "w", stdout);
  8141|      0|            }
@@ -8146,139 +8146,139 @@
  8146|      0|                }
  8147|      0|            }
  8148|      0|        }
- 8149|      4|        {
- 8150|      4|            fadvise(stdin, (fadvice_t)2);
- 8151|      4|            thisline = &lb1;
- 8152|      4|            prevline = &lb2;
- 8153|      4|            initbuffer(thisline);
- 8154|      4|            initbuffer(prevline);
- 8155|      4|        }
- 8156|      4|        if (output_unique) {
- 8157|      4|            if (output_first_repeated) {
- 8158|      4|                if ((unsigned int)countmode == 1U) {
- 8159|      0|                    {
- 8160|      0|                        while (1) {
- 8161|      0|while_continue: /* CIL Label */
- 8162|      0|                            ;
- 8163|      0|                            {
- 8164|      0|                                tmp___7 = feof_unlocked(stdin);
- 8165|      0|                            }
- 8166|      0|                            if (tmp___7) {
+ 8149|      2|        {
+ 8150|      2|            fadvise(stdin, (fadvice_t)2);
+ 8151|      2|            thisline = &lb1;
+ 8152|      2|            prevline = &lb2;
+ 8153|      2|            initbuffer(thisline);
+ 8154|      2|            initbuffer(prevline);
+ 8155|      2|        }
+ 8156|      2|        if (output_unique) {
+ 8157|      2|            if (output_first_repeated) {
+ 8158|      2|                if ((unsigned int)countmode == 1U) {
+ 8159|      2|                    {
+ 8160|  8.70k|                        while (1) {
+ 8161|  8.70k|while_continue: /* CIL Label */
+ 8162|  8.70k|                            ;
+ 8163|  8.70k|                            {
+ 8164|  8.70k|                                tmp___7 = feof_unlocked(stdin);
+ 8165|  8.70k|                            }
+ 8166|  8.70k|                            if (tmp___7) {
  8167|      0|                                goto while_break;
  8168|      0|                            }
- 8169|      0|                            {
- 8170|      0|                                tmp___5 = readlinebuffer_delim(thisline, stdin, delimiter);
- 8171|      0|                            }
- 8172|      0|                            if ((unsigned long)tmp___5 ==
- 8173|      0|                                    (unsigned long)((struct linebuffer *)0)) {
- 8174|      0|                                goto while_break;
- 8175|      0|                            }
- 8176|      0|                            {
- 8177|      0|                                thisfield =
- 8178|      0|                                    (char *)find_field((struct linebuffer const *)thisline);
- 8179|      0|                                thislen = (thisline->length - 1UL) -
- 8180|      0|                                          (size_t)(thisfield - thisline->buffer);
- 8181|      0|                            }
- 8182|      0|                            if (prevline->length == 0UL) {
- 8183|      0|                                goto _L;
- 8184|      0|                            }
- 8185|      0|                            else {
- 8186|      0|                                {
- 8187|      0|                                    tmp___6 = different(thisfield, prevfield, thislen, prevlen);
- 8188|      0|                                }
- 8189|      0|                                if (tmp___6) {
- 8190|      0|_L: {
- 8191|      0|                                        fwrite_unlocked(
- 8192|      0|                                            (void const * /* __restrict  */)thisline->buffer,
- 8193|      0|                                            sizeof(char), thisline->length,
- 8194|      0|                                            (FILE * /* __restrict  */)stdout);
- 8195|      0|                                    }
- 8196|      0|                                    {
- 8197|      0|                                        while (1) {
- 8198|      0|while_continue___0: /* CIL Label */
- 8199|      0|                                            ;
- 8200|      0|                                            _tmp = prevline;
- 8201|      0|                                            prevline = thisline;
- 8202|      0|                                            thisline = _tmp;
- 8203|      0|                                            goto while_break___0;
- 8204|      0|                                        }
- 8205|      0|while_break___0: /* CIL Label */
- 8206|      0|                                        ;
- 8207|      0|                                    }
+ 8169|  8.70k|                            {
+ 8170|  8.70k|                                tmp___5 = readlinebuffer_delim(thisline, stdin, delimiter);
+ 8171|  8.70k|                            }
+ 8172|  8.70k|                            if ((unsigned long)tmp___5 ==
+ 8173|  8.70k|                                    (unsigned long)((struct linebuffer *)0)) {
+ 8174|      2|                                goto while_break;
+ 8175|      2|                            }
+ 8176|  8.69k|                            {
+ 8177|  8.69k|                                thisfield =
+ 8178|  8.69k|                                    (char *)find_field((struct linebuffer const *)thisline);
+ 8179|  8.69k|                                thislen = (thisline->length - 1UL) -
+ 8180|  8.69k|                                          (size_t)(thisfield - thisline->buffer);
+ 8181|  8.69k|                            }
+ 8182|  8.69k|                            if (prevline->length == 0UL) {
+ 8183|      2|                                goto _L;
+ 8184|      2|                            }
+ 8185|  8.69k|                            else {
+ 8186|  8.69k|                                {
+ 8187|  8.69k|                                    tmp___6 = different(thisfield, prevfield, thislen, prevlen);
+ 8188|  8.69k|                                }
+ 8189|  8.69k|                                if (tmp___6) {
+ 8190|  7.79k|_L: {
+ 8191|  7.79k|                                        fwrite_unlocked(
+ 8192|  7.79k|                                            (void const * /* __restrict  */)thisline->buffer,
+ 8193|  7.79k|                                            sizeof(char), thisline->length,
+ 8194|  7.79k|                                            (FILE * /* __restrict  */)stdout);
+ 8195|  7.79k|                                    }
+ 8196|  7.79k|                                    {
+ 8197|  7.79k|                                        while (1) {
+ 8198|  7.79k|while_continue___0: /* CIL Label */
+ 8199|  7.79k|                                            ;
+ 8200|  7.79k|                                            _tmp = prevline;
+ 8201|  7.79k|                                            prevline = thisline;
+ 8202|  7.79k|                                            thisline = _tmp;
+ 8203|  7.79k|                                            goto while_break___0;
+ 8204|  7.79k|                                        }
+ 8205|  7.79k|while_break___0: /* CIL Label */
+ 8206|  7.79k|                                        ;
+ 8207|  7.79k|                                    }
  8208|      0|                                    prevfield = thisfield;
- 8209|      0|                                    prevlen = thislen;
- 8210|      0|                                }
- 8211|      0|                            }
- 8212|      0|                        }
- 8213|      0|while_break: /* CIL Label */
- 8214|      0|                        ;
- 8215|      0|                    }
- 8216|      0|                }
- 8217|      4|                else {
- 8218|      4|                    goto _L___2;
- 8219|      4|                }
- 8220|      4|            }
+ 8209|  7.79k|                                    prevlen = thislen;
+ 8210|  7.79k|                                }
+ 8211|  8.69k|                            }
+ 8212|  8.69k|                        }
+ 8213|      2|while_break: /* CIL Label */
+ 8214|      2|                        ;
+ 8215|      2|                    }
+ 8216|      2|                }
+ 8217|      0|                else {
+ 8218|      0|                    goto _L___2;
+ 8219|      0|                }
+ 8220|      2|            }
  8221|      0|            else {
  8222|      0|                goto _L___2;
  8223|      0|            }
- 8224|      4|        }
+ 8224|      2|        }
  8225|      0|        else {
- 8226|      4|_L___2: {
- 8227|      4|                match_count = (uintmax_t)0;
- 8228|      4|                first_delimiter = (_Bool)1;
- 8229|      4|                tmp___8 = readlinebuffer_delim(prevline, stdin, delimiter);
- 8230|      4|            }
- 8231|      4|            if ((unsigned long)tmp___8 == (unsigned long)((struct linebuffer *)0)) {
+ 8226|      0|_L___2: {
+ 8227|      0|                match_count = (uintmax_t)0;
+ 8228|      0|                first_delimiter = (_Bool)1;
+ 8229|      0|                tmp___8 = readlinebuffer_delim(prevline, stdin, delimiter);
+ 8230|      0|            }
+ 8231|      0|            if ((unsigned long)tmp___8 == (unsigned long)((struct linebuffer *)0)) {
  8232|      0|                goto closefiles;
  8233|      0|            }
- 8234|      4|            {
- 8235|      4|                prevfield___0 = (char *)find_field((struct linebuffer const *)prevline);
- 8236|      4|                prevlen___0 = (prevline->length - 1UL) -
- 8237|      4|                              (size_t)(prevfield___0 - prevline->buffer);
- 8238|      4|            }
- 8239|      4|            {
- 8240|  14.7k|                while (1) {
- 8241|  14.7k|while_continue___1: /* CIL Label */
- 8242|  14.7k|                    ;
- 8243|  14.7k|                    {
- 8244|  14.7k|                        tmp___14 = feof_unlocked(stdin);
- 8245|  14.7k|                    }
- 8246|  14.7k|                    if (tmp___14) {
+ 8234|      0|            {
+ 8235|      0|                prevfield___0 = (char *)find_field((struct linebuffer const *)prevline);
+ 8236|      0|                prevlen___0 = (prevline->length - 1UL) -
+ 8237|      0|                              (size_t)(prevfield___0 - prevline->buffer);
+ 8238|      0|            }
+ 8239|      0|            {
+ 8240|      0|                while (1) {
+ 8241|      0|while_continue___1: /* CIL Label */
+ 8242|      0|                    ;
+ 8243|      0|                    {
+ 8244|      0|                        tmp___14 = feof_unlocked(stdin);
+ 8245|      0|                    }
+ 8246|      0|                    if (tmp___14) {
  8247|      0|                        goto while_break___1;
  8248|      0|                    }
- 8249|  14.7k|                    {
- 8250|  14.7k|                        tmp___10 = readlinebuffer_delim(thisline, stdin, delimiter);
- 8251|  14.7k|                    }
- 8252|  14.7k|                    if ((unsigned long)tmp___10 ==
- 8253|  14.7k|                            (unsigned long)((struct linebuffer *)0)) {
- 8254|      4|                        {
- 8255|      4|                            tmp___9 = ferror_unlocked(stdin);
- 8256|      4|                        }
- 8257|      4|                        if (tmp___9) {
+ 8249|      0|                    {
+ 8250|      0|                        tmp___10 = readlinebuffer_delim(thisline, stdin, delimiter);
+ 8251|      0|                    }
+ 8252|      0|                    if ((unsigned long)tmp___10 ==
+ 8253|      0|                            (unsigned long)((struct linebuffer *)0)) {
+ 8254|      0|                        {
+ 8255|      0|                            tmp___9 = ferror_unlocked(stdin);
+ 8256|      0|                        }
+ 8257|      0|                        if (tmp___9) {
  8258|      0|                            goto closefiles;
  8259|      0|                        }
- 8260|      4|                        goto while_break___1;
- 8261|      4|                    }
- 8262|  14.7k|                    {
- 8263|  14.7k|                        thisfield___0 =
- 8264|  14.7k|                            (char *)find_field((struct linebuffer const *)thisline);
- 8265|  14.7k|                        thislen___0 = (thisline->length - 1UL) -
- 8266|  14.7k|                                      (size_t)(thisfield___0 - thisline->buffer);
- 8267|  14.7k|                        tmp___11 = different(thisfield___0, prevfield___0, thislen___0,
- 8268|  14.7k|                                             prevlen___0);
- 8269|  14.7k|                    }
- 8270|  14.7k|                    if (tmp___11) {
- 8271|  13.7k|                        tmp___12 = 0;
- 8272|  13.7k|                    }
- 8273|    972|                    else {
- 8274|    972|                        tmp___12 = 1;
- 8275|    972|                    }
- 8276|  14.7k|                    match = (_Bool)tmp___12;
- 8277|  14.7k|                    match_count += (uintmax_t)match;
- 8278|  14.7k|                    if (match_count == 0xffffffffffffffffUL) {
+ 8260|      0|                        goto while_break___1;
+ 8261|      0|                    }
+ 8262|      0|                    {
+ 8263|      0|                        thisfield___0 =
+ 8264|      0|                            (char *)find_field((struct linebuffer const *)thisline);
+ 8265|      0|                        thislen___0 = (thisline->length - 1UL) -
+ 8266|      0|                                      (size_t)(thisfield___0 - thisline->buffer);
+ 8267|      0|                        tmp___11 = different(thisfield___0, prevfield___0, thislen___0,
+ 8268|      0|                                             prevlen___0);
+ 8269|      0|                    }
+ 8270|      0|                    if (tmp___11) {
+ 8271|      0|                        tmp___12 = 0;
+ 8272|      0|                    }
+ 8273|      0|                    else {
+ 8274|      0|                        tmp___12 = 1;
+ 8275|      0|                    }
+ 8276|      0|                    match = (_Bool)tmp___12;
+ 8277|      0|                    match_count += (uintmax_t)match;
+ 8278|      0|                    if (match_count == 0xffffffffffffffffUL) {
  8279|      0|                        match_count--;
  8280|      0|                    }
- 8281|  14.7k|                    if ((unsigned int)delimit_groups != 0U) {
+ 8281|      0|                    if ((unsigned int)delimit_groups != 0U) {
  8282|      0|                        if (!match) {
  8283|      0|                            if (match_count) {
  8284|      0|                                first_delimiter = (_Bool)0;
@@ -8303,141 +8303,141 @@
  8303|      0|                            }
  8304|      0|                        }
  8305|      0|                    }
- 8306|  14.7k|                    if (!match) {
- 8307|  13.7k|                        goto _L___0;
- 8308|  13.7k|                    }
- 8309|    972|                    else {
- 8310|    972|                        if (output_later_repeated) {
- 8311|  13.7k|_L___0: {
- 8312|  13.7k|                                writeline((struct linebuffer const *)prevline, match,
- 8313|  13.7k|                                          match_count);
- 8314|  13.7k|                            }
- 8315|  13.7k|                            {
- 8316|  13.7k|                                while (1) {
- 8317|  13.7k|while_continue___2: /* CIL Label */
- 8318|  13.7k|                                    ;
- 8319|  13.7k|                                    _tmp___0 = prevline;
- 8320|  13.7k|                                    prevline = thisline;
- 8321|  13.7k|                                    thisline = _tmp___0;
- 8322|  13.7k|                                    goto while_break___2;
- 8323|  13.7k|                                }
- 8324|  13.7k|while_break___2: /* CIL Label */
- 8325|  13.7k|                                ;
- 8326|  13.7k|                            }
+ 8306|      0|                    if (!match) {
+ 8307|      0|                        goto _L___0;
+ 8308|      0|                    }
+ 8309|      0|                    else {
+ 8310|      0|                        if (output_later_repeated) {
+ 8311|      0|_L___0: {
+ 8312|      0|                                writeline((struct linebuffer const *)prevline, match,
+ 8313|      0|                                          match_count);
+ 8314|      0|                            }
+ 8315|      0|                            {
+ 8316|      0|                                while (1) {
+ 8317|      0|while_continue___2: /* CIL Label */
+ 8318|      0|                                    ;
+ 8319|      0|                                    _tmp___0 = prevline;
+ 8320|      0|                                    prevline = thisline;
+ 8321|      0|                                    thisline = _tmp___0;
+ 8322|      0|                                    goto while_break___2;
+ 8323|      0|                                }
+ 8324|      0|while_break___2: /* CIL Label */
+ 8325|      0|                                ;
+ 8326|      0|                            }
  8327|      0|                            prevfield___0 = thisfield___0;
- 8328|  13.7k|                            prevlen___0 = thislen___0;
- 8329|  13.7k|                            if (!match) {
- 8330|  13.7k|                                match_count = (uintmax_t)0;
- 8331|  13.7k|                            }
- 8332|  13.7k|                        }
- 8333|    972|                    }
- 8334|  14.7k|                }
- 8335|      4|while_break___1: /* CIL Label */
- 8336|      4|                ;
- 8337|      4|            }
+ 8328|      0|                            prevlen___0 = thislen___0;
+ 8329|      0|                            if (!match) {
+ 8330|      0|                                match_count = (uintmax_t)0;
+ 8331|      0|                            }
+ 8332|      0|                        }
+ 8333|      0|                    }
+ 8334|      0|                }
+ 8335|      0|while_break___1: /* CIL Label */
+ 8336|      0|                ;
+ 8337|      0|            }
  8338|      0|            {
- 8339|      4|                writeline((struct linebuffer const *)prevline, (_Bool)0, match_count);
- 8340|      4|            }
- 8341|      4|        }
- 8342|      4|closefiles: {
- 8343|      4|            tmp___16 = ferror_unlocked(stdin);
- 8344|      4|        }
- 8345|      4|        if (tmp___16) {
+ 8339|      0|                writeline((struct linebuffer const *)prevline, (_Bool)0, match_count);
+ 8340|      0|            }
+ 8341|      0|        }
+ 8342|      2|closefiles: {
+ 8343|      2|            tmp___16 = ferror_unlocked(stdin);
+ 8344|      2|        }
+ 8345|      2|        if (tmp___16) {
  8346|      0|            {
  8347|      0|                tmp___15 = gettext("error reading %s");
  8348|      0|                error(1, 0, (char const *)tmp___15, infile);
  8349|      0|            }
  8350|      0|        }
- 8351|      4|        else {
- 8352|      4|            {
- 8353|      4|                tmp___17 = rpl_fclose(stdin);
- 8354|      4|            }
- 8355|      4|            if (tmp___17 != 0) {
+ 8351|      2|        else {
+ 8352|      2|            {
+ 8353|      2|                tmp___17 = rpl_fclose(stdin);
+ 8354|      2|            }
+ 8355|      2|            if (tmp___17 != 0) {
  8356|      0|                {
  8357|      0|                    tmp___15 = gettext("error reading %s");
  8358|      0|                    error(1, 0, (char const *)tmp___15, infile);
  8359|      0|                }
  8360|      0|            }
- 8361|      4|        }
- 8362|      4|        {
- 8363|      4|            free((void *)lb1.buffer);
- 8364|      4|            free((void *)lb2.buffer);
- 8365|      4|        }
- 8366|      4|        return;
- 8367|      4|    }
- 8368|      4|}
+ 8361|      2|        }
+ 8362|      2|        {
+ 8363|      2|            free((void *)lb1.buffer);
+ 8364|      2|            free((void *)lb2.buffer);
+ 8365|      2|        }
+ 8366|      2|        return;
+ 8367|      2|    }
+ 8368|      2|}
  8369|       |int main(int argc, char **argv)
- 8370|      4|{
- 8371|      4|    int optc;
- 8372|      4|    _Bool posixly_correct;
- 8373|      4|    char *tmp;
- 8374|      4|    enum Skip_field_option_type skip_field_option_type;
- 8375|      4|    int nfiles;
- 8376|      4|    char const *file[2];
- 8377|      4|    char delimiter;
- 8378|      4|    char const *tmp___0;
- 8379|      4|    char *tmp___1;
- 8380|      4|    int tmp___2;
- 8381|      4|    int tmp___3;
- 8382|      4|    unsigned long size;
- 8383|      4|    char const *tmp___4;
- 8384|      4|    char *tmp___5;
- 8385|      4|    int tmp___6;
- 8386|      4|    int tmp___7;
- 8387|      4|    strtol_error tmp___8;
- 8388|      4|    ptrdiff_t tmp___9;
- 8389|      4|    char *tmp___10;
- 8390|      4|    void *__cil_tmp22;
- 8391|      4|    char *__cil_tmp23;
- 8392|      4|    char *__cil_tmp24;
- 8393|      4|    char *__cil_tmp25;
- 8394|      4|    char *__cil_tmp26;
- 8395|      4|    char *__cil_tmp27;
- 8396|      4|    char *__cil_tmp28;
- 8397|      4|    char *__cil_tmp29;
- 8398|      4|    char *__cil_tmp30;
- 8399|      4|    char *__cil_tmp31;
- 8400|      4|    char *__cil_tmp32;
- 8401|      4|    char *__cil_tmp33;
- 8402|      4|    char *__cil_tmp34;
- 8403|      4|    char *__cil_tmp35;
- 8404|      4|    char *__cil_tmp36;
+ 8370|      2|{
+ 8371|      2|    int optc;
+ 8372|      2|    _Bool posixly_correct;
+ 8373|      2|    char *tmp;
+ 8374|      2|    enum Skip_field_option_type skip_field_option_type;
+ 8375|      2|    int nfiles;
+ 8376|      2|    char const *file[2];
+ 8377|      2|    char delimiter;
+ 8378|      2|    char const *tmp___0;
+ 8379|      2|    char *tmp___1;
+ 8380|      2|    int tmp___2;
+ 8381|      2|    int tmp___3;
+ 8382|      2|    unsigned long size;
+ 8383|      2|    char const *tmp___4;
+ 8384|      2|    char *tmp___5;
+ 8385|      2|    int tmp___6;
+ 8386|      2|    int tmp___7;
+ 8387|      2|    strtol_error tmp___8;
+ 8388|      2|    ptrdiff_t tmp___9;
+ 8389|      2|    char *tmp___10;
+ 8390|      2|    void *__cil_tmp22;
+ 8391|      2|    char *__cil_tmp23;
+ 8392|      2|    char *__cil_tmp24;
+ 8393|      2|    char *__cil_tmp25;
+ 8394|      2|    char *__cil_tmp26;
+ 8395|      2|    char *__cil_tmp27;
+ 8396|      2|    char *__cil_tmp28;
+ 8397|      2|    char *__cil_tmp29;
+ 8398|      2|    char *__cil_tmp30;
+ 8399|      2|    char *__cil_tmp31;
+ 8400|      2|    char *__cil_tmp32;
+ 8401|      2|    char *__cil_tmp33;
+ 8402|      2|    char *__cil_tmp34;
+ 8403|      2|    char *__cil_tmp35;
+ 8404|      2|    char *__cil_tmp36;
  8405|       |
- 8406|      4|    {
- 8407|      4|        {
- 8408|      4|            optc = 0;
- 8409|      4|            tmp = getenv("POSIXLY_CORRECT");
- 8410|      4|            posixly_correct =
- 8411|      4|                (_Bool)((unsigned long)tmp != (unsigned long)((void *)0));
- 8412|      4|            skip_field_option_type = (enum Skip_field_option_type)0;
- 8413|      4|            nfiles = 0;
- 8414|      4|            delimiter = (char)'\n';
- 8415|      4|            file[1] = "-";
- 8416|      4|            file[0] = file[1];
- 8417|      4|            set_program_name((char const *)*(argv + 0));
- 8418|      4|            setlocale(6, "");
- 8419|      4|            bindtextdomain("coreutils", "/usr/local/share/locale");
- 8420|      4|            textdomain("coreutils");
- 8421|      4|            hard_LC_COLLATE = hard_locale(3);
- 8422|      4|            atexit(&close_stdout);
- 8423|      4|            skip_chars = (size_t)0;
- 8424|      4|            skip_fields = (size_t)0;
- 8425|      4|            check_chars = 0xffffffffffffffffUL;
- 8426|      4|            output_first_repeated = (_Bool)1;
- 8427|      4|            output_unique = output_first_repeated;
- 8428|      4|            output_later_repeated = (_Bool)0;
- 8429|      4|            countmode = (enum countmode)1;
- 8430|      4|            delimit_groups = (enum delimit_method)0;
- 8431|      4|        }
- 8432|      4|        {
- 8433|     12|            while (1) {
- 8434|     12|while_continue: /* CIL Label */
- 8435|     12|                ;
- 8436|     12|                if (optc == -1) {
+ 8406|      2|    {
+ 8407|      2|        {
+ 8408|      2|            optc = 0;
+ 8409|      2|            tmp = getenv("POSIXLY_CORRECT");
+ 8410|      2|            posixly_correct =
+ 8411|      2|                (_Bool)((unsigned long)tmp != (unsigned long)((void *)0));
+ 8412|      2|            skip_field_option_type = (enum Skip_field_option_type)0;
+ 8413|      2|            nfiles = 0;
+ 8414|      2|            delimiter = (char)'\n';
+ 8415|      2|            file[1] = "-";
+ 8416|      2|            file[0] = file[1];
+ 8417|      2|            set_program_name((char const *)*(argv + 0));
+ 8418|      2|            setlocale(6, "");
+ 8419|      2|            bindtextdomain("coreutils", "/usr/local/share/locale");
+ 8420|      2|            textdomain("coreutils");
+ 8421|      2|            hard_LC_COLLATE = hard_locale(3);
+ 8422|      2|            atexit(&close_stdout);
+ 8423|      2|            skip_chars = (size_t)0;
+ 8424|      2|            skip_fields = (size_t)0;
+ 8425|      2|            check_chars = 0xffffffffffffffffUL;
+ 8426|      2|            output_first_repeated = (_Bool)1;
+ 8427|      2|            output_unique = output_first_repeated;
+ 8428|      2|            output_later_repeated = (_Bool)0;
+ 8429|      2|            countmode = (enum countmode)1;
+ 8430|      2|            delimit_groups = (enum delimit_method)0;
+ 8431|      2|        }
+ 8432|      2|        {
+ 8433|      4|            while (1) {
+ 8434|      4|while_continue: /* CIL Label */
+ 8435|      4|                ;
+ 8436|      4|                if (optc == -1) {
  8437|      0|                    goto _L___2;
  8438|      0|                }
- 8439|     12|                else {
- 8440|     12|                    if (posixly_correct) {
+ 8439|      4|                else {
+ 8440|      4|                    if (posixly_correct) {
  8441|      0|                        if (nfiles != 0) {
  8442|      0|                            goto _L___2;
  8443|      0|                        }
@@ -8445,17 +8445,17 @@
  8445|      0|                            goto _L___3;
  8446|      0|                        }
  8447|      0|                    }
- 8448|     12|                    else {
- 8449|     12|_L___3: {
- 8450|     12|                            optc = getopt_long(argc, (char *const *)argv,
- 8451|     12|                                               "-0123456789Dcdf:is:uw:z", longopts,
- 8452|     12|                                               (int *)((void *)0));
- 8453|     12|                        }
- 8454|     12|                        if (optc == -1) {
- 8455|      4|_L___2:
- 8456|      4|                            if (argc <= optind) {
- 8457|      4|                                goto while_break;
- 8458|      4|                            }
+ 8448|      4|                    else {
+ 8449|      4|_L___3: {
+ 8450|      4|                            optc = getopt_long(argc, (char *const *)argv,
+ 8451|      4|                                               "-0123456789Dcdf:is:uw:z", longopts,
+ 8452|      4|                                               (int *)((void *)0));
+ 8453|      4|                        }
+ 8454|      4|                        if (optc == -1) {
+ 8455|      2|_L___2:
+ 8456|      2|                            if (argc <= optind) {
+ 8457|      2|                                goto while_break;
+ 8458|      2|                            }
  8459|      0|                            if (nfiles == 2) {
  8460|      0|                                {
  8461|      0|                                    tmp___0 = quote((char const *)*(argv + optind));
@@ -8470,44 +8470,44 @@
  8470|      0|                            optind++;
  8471|      0|                            file[tmp___2] = (char const *)*(argv + tmp___3);
  8472|      0|                        }
- 8473|      8|                        else {
- 8474|      8|                            {
- 8475|      8|                                if (optc == 1) {
- 8476|      4|                                    goto case_1;
- 8477|      4|                                }
- 8478|      4|                                if (optc == 48) {
+ 8473|      2|                        else {
+ 8474|      2|                            {
+ 8475|      2|                                if (optc == 1) {
+ 8476|      2|                                    goto case_1;
+ 8477|      2|                                }
+ 8478|      0|                                if (optc == 48) {
  8479|      0|                                    goto case_48;
  8480|      0|                                }
- 8481|      4|                                if (optc == 49) {
+ 8481|      0|                                if (optc == 49) {
  8482|      0|                                    goto case_48;
  8483|      0|                                }
- 8484|      4|                                if (optc == 50) {
+ 8484|      0|                                if (optc == 50) {
  8485|      0|                                    goto case_48;
  8486|      0|                                }
- 8487|      4|                                if (optc == 51) {
+ 8487|      0|                                if (optc == 51) {
  8488|      0|                                    goto case_48;
  8489|      0|                                }
- 8490|      4|                                if (optc == 52) {
+ 8490|      0|                                if (optc == 52) {
  8491|      0|                                    goto case_48;
  8492|      0|                                }
- 8493|      4|                                if (optc == 53) {
+ 8493|      0|                                if (optc == 53) {
  8494|      0|                                    goto case_48;
  8495|      0|                                }
- 8496|      4|                                if (optc == 54) {
+ 8496|      0|                                if (optc == 54) {
  8497|      0|                                    goto case_48;
  8498|      0|                                }
- 8499|      4|                                if (optc == 55) {
+ 8499|      0|                                if (optc == 55) {
  8500|      0|                                    goto case_48;
  8501|      0|                                }
- 8502|      4|                                if (optc == 56) {
+ 8502|      0|                                if (optc == 56) {
  8503|      0|                                    goto case_48;
  8504|      0|                                }
- 8505|      4|                                if (optc == 57) {
+ 8505|      0|                                if (optc == 57) {
  8506|      0|                                    goto case_48;
  8507|      0|                                }
- 8508|      4|                                if (optc == 99) {
- 8509|      4|                                    goto case_99;
- 8510|      4|                                }
+ 8508|      0|                                if (optc == 99) {
+ 8509|      0|                                    goto case_99;
+ 8510|      0|                                }
  8511|      0|                                if (optc == 100) {
  8512|      0|                                    goto case_100;
  8513|      0|                                }
@@ -8539,8 +8539,8 @@
  8539|      0|                                    goto case_neg_131;
  8540|      0|                                }
  8541|      0|                                goto switch_default;
- 8542|      4|case_1: /* CIL Label */
- 8543|      4|                                if ((int)*(optarg + 0) == 43) {
+ 8542|      2|case_1: /* CIL Label */
+ 8543|      2|                                if ((int)*(optarg + 0) == 43) {
  8544|      0|                                    {
  8545|      0|                                        tmp___7 = posix2_version();
  8546|      0|                                    }
@@ -8565,9 +8565,9 @@
  8565|      0|                                        goto _L___1;
  8566|      0|                                    }
  8567|      0|                                }
- 8568|      4|                                else {
- 8569|      4|_L___1:
- 8570|      4|                                    if (nfiles == 2) {
+ 8568|      2|                                else {
+ 8569|      2|_L___1:
+ 8570|      2|                                    if (nfiles == 2) {
  8571|      0|                                        {
  8572|      0|                                            tmp___4 = quote((char const *)optarg);
  8573|      0|                                            tmp___5 = gettext("extra operand %s");
@@ -8575,14 +8575,14 @@
  8575|      0|                                            usage(1);
  8576|      0|                                        }
  8577|      0|                                    }
- 8578|      4|                                    else {
- 8579|      4|                                        tmp___6 = nfiles;
- 8580|      4|                                        nfiles++;
- 8581|      4|                                        file[tmp___6] = (char const *)optarg;
- 8582|      4|                                    }
- 8583|      4|                                }
- 8584|      4|                                goto switch_break;
- 8585|      4|case_48: /* CIL Label */
+ 8578|      2|                                    else {
+ 8579|      2|                                        tmp___6 = nfiles;
+ 8580|      2|                                        nfiles++;
+ 8581|      2|                                        file[tmp___6] = (char const *)optarg;
+ 8582|      2|                                    }
+ 8583|      2|                                }
+ 8584|      2|                                goto switch_break;
+ 8585|      2|case_48: /* CIL Label */
  8586|      0|case_49: /* CIL Label */
  8587|      0|case_50: /* CIL Label */
  8588|      0|case_51: /* CIL Label */
@@ -8597,9 +8597,9 @@
  8597|      0|                                }
  8598|      0|                                skip_field_option_type = (enum Skip_field_option_type)1;
  8599|      0|                                goto switch_break;
- 8600|      4|case_99: /* CIL Label */
- 8601|      4|                                countmode = (enum countmode)0;
- 8602|      4|                                goto switch_break;
+ 8600|      0|case_99: /* CIL Label */
+ 8601|      0|                                countmode = (enum countmode)0;
+ 8602|      0|                                goto switch_break;
  8603|      0|case_100: /* CIL Label */
  8604|      0|                                output_unique = (_Bool)0;
  8605|      0|                                goto switch_break;
@@ -8660,18 +8660,18 @@
  8660|      0|switch_default: { /* CIL Label */
  8661|      0|                                    usage(1);
  8662|      0|                                }
- 8663|      8|switch_break: /* CIL Label */
- 8664|      8|                                ;
- 8665|      8|                            }
- 8666|      8|                        }
- 8667|     12|                    }
- 8668|     12|                }
- 8669|     12|            }
- 8670|      4|while_break: /* CIL Label */
- 8671|      4|            ;
- 8672|      4|        }
- 8673|      4|        if ((unsigned int)countmode == 0U) {
- 8674|      4|            if (output_later_repeated) {
+ 8663|      2|switch_break: /* CIL Label */
+ 8664|      2|                                ;
+ 8665|      2|                            }
+ 8666|      2|                        }
+ 8667|      4|                    }
+ 8668|      4|                }
+ 8669|      4|            }
+ 8670|      2|while_break: /* CIL Label */
+ 8671|      2|            ;
+ 8672|      2|        }
+ 8673|      2|        if ((unsigned int)countmode == 0U) {
+ 8674|      0|            if (output_later_repeated) {
  8675|      0|                {
  8676|      0|                    tmp___10 = gettext(
  8677|      0|                                   "printing all duplicated lines and repeat counts is meaningless");
@@ -8679,12 +8679,11 @@
  8679|      0|                    usage(1);
  8680|      0|                }
  8681|      0|            }
- 8682|      4|        }
- 8683|      4|        {
- 8684|      4|            check_file(file[0], file[1], delimiter);
- 8685|      4|            exit(0);
- 8686|      4|        }
- 8687|      4|    }
- 8688|      4|}
- 8689|       |
+ 8682|      0|        }
+ 8683|      2|        {
+ 8684|      2|            check_file(file[0], file[1], delimiter);
+ 8685|      2|            exit(0);
+ 8686|      2|        }
+ 8687|      2|    }
+ 8688|      2|}
 
