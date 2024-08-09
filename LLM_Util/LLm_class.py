@@ -1,3 +1,8 @@
+import sys
+import pysqlite3
+
+sys.modules['sqlite3'] = pysqlite3
+
 import os
 import time
 import warnings
@@ -29,6 +34,20 @@ class Document:
         self.page_content = page_content
         self.metadata = metadata
 
+def doc_merger(splits):
+    current = 0
+    while True:
+        doc_lines = len(splits[current].splitlines())
+        if doc_lines < 5:
+            # merge with next doc
+            splits[current] += splits[current + 1]
+            splits.pop(current + 1)
+        else:
+            current += 1
+        
+        if current == len(splits) - 1:
+            return splits
+
 class QAClass:
     # Class-level attributes
     _embeddings = None
@@ -43,10 +62,11 @@ class QAClass:
             with open(file_path, "r") as f:
                 docs = f.read()
 
-            code_splitter=CodeSplitter(language="c", parser=get_parser("c"))
+            code_splitter=CodeSplitter(language="c", parser=get_parser("c"), max_chars=1500)
             splits = code_splitter.split_text(docs)
-            new_splits = [split for split in splits if len(split) > 10]
-            documents = [Document(page_content=split) for split in new_splits]
+            new_splits = [split for split in splits if len(split) > 4]
+            new_splits2 = doc_merger(new_splits)
+            documents = [Document(page_content=split) for split in new_splits2]
             # os.environ["VOYAGE_API_KEY"] = "pa--BOSQZqPkJiCF1-o9yaoFgh00DW_W0PQUh37N9vY6DU"
             # os.environ["VOYAGE_API_KEY"] = os.environ.get("VOYAGE_API_KEY")
             # cls._embeddings = VoyageAIEmbeddings(model="voyage-code-2")
@@ -67,7 +87,7 @@ class QAClass:
 
 
     def combine_docs(self, docs):
-        return "\n\n".join(doc.page_content for doc in docs)
+        return "\n\n".join(f"Snippet.{i+1}:\n\n{doc.page_content}" for i, doc in enumerate(docs))
 
     # os.environ["GROQ_API_KEY"] = "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"
     os.environ["GROQ_API_KEY"] = os.environ.get("GROQ_API_KEY")

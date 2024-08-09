@@ -1,3 +1,0 @@
-
-
-int saved_errno;

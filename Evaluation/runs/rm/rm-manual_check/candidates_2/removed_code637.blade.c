@@ -1,3 +1,0 @@
-
-
-void *fts_pointer;

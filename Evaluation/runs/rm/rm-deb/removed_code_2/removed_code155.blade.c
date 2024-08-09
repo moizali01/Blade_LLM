@@ -1,3 +1,0 @@
-
-
-goto c_escape;

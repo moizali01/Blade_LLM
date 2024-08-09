@@ -1,3 +1,0 @@
-
-
-tmp = mkstemp(templ);

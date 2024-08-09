@@ -1,3 +1,0 @@
-
-
-ptrdiff_t tmp;

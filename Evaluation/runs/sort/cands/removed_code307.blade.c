@@ -1,3 +1,0 @@
-
-
-*pfp = fdopen(tempfd, "w");

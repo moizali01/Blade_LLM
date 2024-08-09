@@ -1,3 +1,0 @@
-
-
-int first_diff;

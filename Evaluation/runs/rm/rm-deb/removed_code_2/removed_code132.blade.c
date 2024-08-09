@@ -1,3 +1,0 @@
-
-
-return ((void *)0);

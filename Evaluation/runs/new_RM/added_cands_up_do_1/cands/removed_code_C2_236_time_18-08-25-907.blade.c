@@ -1,3 +1,0 @@
-
-
-int dir_fd;

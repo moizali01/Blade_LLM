@@ -1,3 +1,0 @@
-
-
-tmp = gettext("memory exhausted");

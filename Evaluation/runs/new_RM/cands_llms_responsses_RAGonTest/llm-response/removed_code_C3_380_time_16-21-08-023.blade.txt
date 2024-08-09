@@ -1,9 +1,0 @@
-Candidate set exist in coverage?:
-
-True
-
- Answer is:
-
-1) Importance Score: 6
-2) Don't Remove
-3) This code snippet is responsible for returning the maximum value in the program plus 1. Removing this code would affect the functionality of the program as it would no longer return the correct maximum value.

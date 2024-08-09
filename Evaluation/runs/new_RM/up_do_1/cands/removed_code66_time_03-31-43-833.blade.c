@@ -1,3 +1,0 @@
-
-
-dirp = fdopendir(fd);

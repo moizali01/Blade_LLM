@@ -1,3 +1,0 @@
-
-
-tmp = __fpending(stream);

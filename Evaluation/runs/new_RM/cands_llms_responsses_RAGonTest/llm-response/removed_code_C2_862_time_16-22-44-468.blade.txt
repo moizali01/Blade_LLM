@@ -1,9 +1,0 @@
-Candidate set exist in coverage?:
-
-True
-
- Answer is:
-
-1) Importance Score: 5
-2) Don't Remove
-3) This code snippet is used to check if the file pointer is in reading mode. Removing this code may affect the functionality of the program as it won't be able to determine if the file is being read.

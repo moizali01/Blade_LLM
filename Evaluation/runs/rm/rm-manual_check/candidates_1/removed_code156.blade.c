@@ -1,3 +1,0 @@
-
-
-int wp_errno;

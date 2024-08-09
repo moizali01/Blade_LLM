@@ -1,0 +1,20 @@
+- **Race conditions:**  Testing for race conditions when multiple processes try to create the same directory concurrently.
+- **Symbolic links:**  Ensure the program handles symbolic links correctly, especially when creating directories that point to existing files or directories.
+- **File system limits:**  Test the program's behavior when encountering file system limits like maximum file name length, maximum number of files in a directory, or maximum directory depth.
+- **Permissions:**  Verify that the program correctly handles different permission scenarios, including cases where the user lacks sufficient permissions to create directories.
+- **Special characters:**  Test the program's ability to handle directory names containing special characters like spaces, newlines, and control characters.
+- **Directory traversal:**  Ensure the program prevents directory traversal attacks by validating user input and ensuring that it does not create directories outside of the intended location.
+- **Resource exhaustion:**  Test the program's behavior when encountering resource exhaustion, such as running out of disk space or memory.
+- **Error handling:**  Verify that the program handles errors gracefully and provides informative error messages to the user.
+- **Input validation:**  Ensure the program validates user input to prevent malicious input from causing unexpected behavior or security vulnerabilities.
+- **Buffer overflows:**  Test for buffer overflows in the program's input handling and string manipulation functions.
+- **Integer overflows:**  Verify that the program handles integer overflows correctly to prevent potential security vulnerabilities.
+- **Time of check to time of use (TOCTOU) vulnerabilities:**  Test for TOCTOU vulnerabilities where the program's state changes between checking a condition and using the result.
+- **Privilege escalation:**  Ensure the program does not allow unauthorized users to gain elevated privileges.
+- **Denial of service:**  Test for denial of service vulnerabilities where malicious input could cause the program to crash or become unresponsive.
+- **Cross-site scripting (XSS):**  While unlikely in a core utility, ensure the program does not allow XSS vulnerabilities if it interacts with web interfaces.
+- **Code injection:**  Test for code injection vulnerabilities where malicious input could be executed by the program.
+- **Memory leaks:**  Verify that the program does not leak memory during its execution.
+- **File system corruption:**  Ensure the program does not corrupt the file system during its operation.
+- **Security hardening:**  Test the program's security hardening measures, such as using secure coding practices and avoiding known vulnerabilities.
+- **Fuzzing:**  Use fuzzing techniques to test the program's robustness against unexpected or malicious input. 

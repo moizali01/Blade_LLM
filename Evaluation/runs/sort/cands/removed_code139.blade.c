@@ -1,3 +1,0 @@
-
-
-struct line const *savedline;

@@ -1,9 +1,0 @@
-Candidate set exist in coverage?:
-
-True
-
- Answer is:
-
-1) Importance Score: 5
-2) Don't Remove
-3) This code snippet is responsible for setting the instruction for the FTS structure. Removing it may affect the functionality of the program as it won't be able to perform the intended instructions.

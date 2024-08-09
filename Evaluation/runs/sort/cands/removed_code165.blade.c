@@ -1,3 +1,0 @@
-
-
-struct keyfield const *key;

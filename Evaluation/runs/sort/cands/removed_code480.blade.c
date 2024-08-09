@@ -1,3 +1,0 @@
-
-
-o.style = style;

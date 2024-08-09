@@ -1,3 +1,0 @@
-
-
-fts_lfree(root);

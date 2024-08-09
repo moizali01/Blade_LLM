@@ -1,3 +1,0 @@
-
-
-int has_arg;

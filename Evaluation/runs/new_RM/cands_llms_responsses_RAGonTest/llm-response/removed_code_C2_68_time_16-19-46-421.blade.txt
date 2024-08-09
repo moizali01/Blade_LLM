@@ -1,9 +1,0 @@
-Candidate set exist in coverage?:
-
-True
-
- Answer is:
-
-1) Importance Score: 5
-2) Don't Remove
-3) This code snippet is used to store the return value of the function prompt(). Removing it may affect the overall functionality of the program as the value of s is used later in the code.

@@ -1,3 +1,0 @@
-
-
-node = (struct tempnode *)temphead;

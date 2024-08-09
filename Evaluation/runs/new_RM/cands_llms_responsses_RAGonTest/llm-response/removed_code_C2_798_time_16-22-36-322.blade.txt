@@ -1,9 +1,0 @@
-Candidate set exist in coverage?:
-
-True
-
- Answer is:
-
-1) Importance Score: 5
-2) Don't Remove
-3) This code snippet is used to determine the file type based on the file's mode and size. Removing it would result in losing the ability to identify whether a file is a regular empty file or a regular file.

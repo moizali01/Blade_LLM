@@ -1,3 +1,0 @@
-
-
-insertkey(key);

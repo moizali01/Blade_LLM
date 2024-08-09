@@ -1,9 +1,0 @@
-Candidate set exist in coverage?:
-
-True
-
- Answer is:
-
-1) Importance Score: 8
-2) Don't Remove
-3) The "usage" function is important for providing information about how to use the program. It is called when the program needs to display usage information, and removing it would make it difficult for users to understand how to use the program effectively.

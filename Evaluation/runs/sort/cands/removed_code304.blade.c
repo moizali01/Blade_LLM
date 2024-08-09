@@ -1,3 +1,0 @@
-
-
-close(pipefds[0]);

@@ -1,3 +1,0 @@
-
-
-return (rm_status);

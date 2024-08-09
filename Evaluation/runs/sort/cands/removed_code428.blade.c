@@ -1,3 +1,0 @@
-
-
-seconds -= limit;

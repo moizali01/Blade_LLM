@@ -1,3 +1,0 @@
-
-
-_Bool yesno(void);

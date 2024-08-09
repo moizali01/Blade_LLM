@@ -1,9 +1,0 @@
-Candidate set exist in coverage?:
-
-True
-
- Answer is:
-
-1) Importance Score: 7
-2) Don't Remove
-3) This code snippet is used in multiple functions to store temporary values. Removing it would result in compilation errors and affect the functionality of the program.

@@ -1,3 +1,0 @@
-
-
-newtab = *(optarg + 0);

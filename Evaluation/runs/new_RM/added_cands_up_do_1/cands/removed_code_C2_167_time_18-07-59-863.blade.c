@@ -1,3 +1,0 @@
-
-
-FTSENT *dummy = 0;

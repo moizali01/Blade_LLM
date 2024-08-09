@@ -1,3 +1,0 @@
-
-
-register FTSENT *freep;

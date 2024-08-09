@@ -1,3 +1,0 @@
-
-
-FTS *fts_fts;

@@ -1,3 +1,0 @@
-
-
-char *positive_sign;

@@ -1,3 +1,0 @@
-
-
-nlink_t nlinks;

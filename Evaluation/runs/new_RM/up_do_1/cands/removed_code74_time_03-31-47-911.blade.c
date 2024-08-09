@@ -1,3 +1,0 @@
-
-
-struct dirent const *dp;

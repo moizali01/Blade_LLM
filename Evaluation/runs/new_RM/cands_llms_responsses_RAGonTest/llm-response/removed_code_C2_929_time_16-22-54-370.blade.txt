@@ -1,9 +1,0 @@
-Candidate set exist in coverage?:
-
-True
-
- Answer is:
-
-1) Importance Score: 5
-2) Don't Remove
-3) The code snippet defines the variable "fts_options" which is used to store the options for the FTS (File Tree Search) algorithm. Removing this code snippet may affect the functionality of the program as it may remove the ability to specify different options for the FTS algorithm.

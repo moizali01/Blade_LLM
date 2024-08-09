@@ -1,4 +1,0 @@
-
-
-FTS *fts;
-FTS *tmp;

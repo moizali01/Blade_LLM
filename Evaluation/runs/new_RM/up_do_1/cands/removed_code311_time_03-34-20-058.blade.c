@@ -1,3 +1,0 @@
-
-
-static _Bool initialized;

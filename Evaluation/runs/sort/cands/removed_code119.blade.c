@@ -1,3 +1,0 @@
-
-
-nopened = tmp;

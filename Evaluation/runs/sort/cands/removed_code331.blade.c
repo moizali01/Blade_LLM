@@ -1,3 +1,0 @@
-
-
-tmp = gettext("standard output");

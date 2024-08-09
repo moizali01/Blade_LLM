@@ -1,4 +1,0 @@
-
-
-FTSENT *p;
-char *addr;

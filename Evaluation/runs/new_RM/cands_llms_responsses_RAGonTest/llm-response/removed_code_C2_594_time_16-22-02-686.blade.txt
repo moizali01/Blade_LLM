@@ -1,9 +1,0 @@
-Candidate set exist in coverage?:
-
-True
-
- Answer is:
-
-1) Importance Score: 6
-2) Don't Remove
-3) The code snippet defines the default tuning parameters for the hash table. Removing it would remove the ability to use custom tuning parameters and could potentially affect the performance and efficiency of the hash table.

@@ -1,10 +1,8 @@
 from datetime import datetime
-from LLM_Util.LLm import extract_score
 from LLM_Util.LLm_class import QAClass
 from writer import write
 import os
 from LLM_Util.exist_coverage import exist
-from LLM_Util.LLm import extract_imp_score,extract_imp_score_new_prompt
 import glob
 import time
 
@@ -15,6 +13,9 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context):
     if len(cand) == 1:
         if cand[0] == " }" or cand[0] == " {" or cand[0] == "}" or cand[0] == "{":
             return 0
+        if "if (" in cand[0] or "else " in cand[0]:
+            # write(cand, conditionals_file)
+            return 10
     
 
     # Ensure directories exist
@@ -98,7 +99,10 @@ def check_previous_responses(query_file_name):
     # print("directory:",os.getcwd())
     try:
         # print("Query file name: ", query_file_name)
-        all_files = glob.glob('../LLM_Util/cands/context_*.c')
+        all_files = glob.glob('../LLM_Util/cands/context/context_*.c')
+        # sort files
+        all_files.sort(key=os.path.getmtime, reverse=True)
+
         # print("Files read,",len(all_files))
         with open(query_file_name, 'r') as file:
             query_file_data = file.read()
@@ -123,4 +127,69 @@ def check_previous_responses(query_file_name):
         return None
     
     return llm_response
-                    
+        
+
+
+def extract_imp_score(text):    
+    # Convert the text to lowercase
+    lower_text = text.lower()
+    target = "importance score"
+
+    # Find the position of "importance score"
+    start_index = lower_text.find(target)
+    if start_index == -1:
+        return None  # "Importance Score" not found
+
+    # Move the start index to the end of "importance score"
+    start_index += len(target)
+
+    # Find the next newline character after "importance score"
+    end_index = text.find('\n', start_index)
+    if end_index == -1:
+        end_index = len(text)  # if no newline, go to the end of the text
+
+    # Extract the substring between "importance score" and the newline
+    substring = text[start_index:end_index]
+
+    # Find the number in the substring
+    import re
+    match = re.search(r'\b([0-9]|[1-9][0-9]|100)\b', substring)
+    if match:
+        return int(match.group(0))
+    else:
+        return None  # No number found
+
+def extract_imp_score_new_prompt(text): 
+
+    # Convert the text to lowercase
+    lower_text = text.lower()
+    target = "final verdict"
+
+    # Find the position of "importance score"
+    start_index = lower_text.find(target)
+    if start_index == -1:
+        return None  # "Importance Score" not found
+
+    # Move the start index to the end of "importance score"
+    start_index += len(target)
+
+    # Find the next newline character after "importance score"
+    end_index = text.find('\n', start_index)
+    if end_index == -1:
+        end_index = len(text)  # if no newline, go to the end of the text
+
+    # Extract the substring between "importance score" and the newline
+    substring = text[start_index:end_index]
+
+    # Find the number in the substring
+    import re
+    match = re.search(r'\b([0-9]|[1-9][0-9]|100)\b', substring)
+    if match:
+        assigned_class = int(match.group(0))
+        # removal class
+        if assigned_class == 1 or assigned_class == 2 or assigned_class == 5:
+            return 1
+        if assigned_class == 3 or assigned_class == 4 :
+            return 9
+    else:
+        return None  # No number found

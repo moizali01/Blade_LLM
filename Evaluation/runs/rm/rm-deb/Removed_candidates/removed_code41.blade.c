@@ -1,3 +1,0 @@
-
-
-tmp = &fts_compar;

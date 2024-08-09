@@ -1,5 +1,0 @@
-Response from llama3:
-1) Importance Score : 7
-2) Don't Remove
-3) This code snippet appears to be defining a struct, which is likely used elsewhere in the program. Removing it could potentially break functionality or introduce errors in other parts of the code.
-

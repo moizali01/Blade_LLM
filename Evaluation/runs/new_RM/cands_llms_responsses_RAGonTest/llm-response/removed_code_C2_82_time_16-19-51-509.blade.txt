@@ -1,9 +1,0 @@
-Candidate set exist in coverage?:
-
-True
-
- Answer is:
-
-1) Importance Score: 5
-2) Don't Remove
-3) This code snippet returns a specific status value (4) of the enum type RM_status. Removing this code may affect the overall functionality of the program as it is used to determine the status of a particular operation.

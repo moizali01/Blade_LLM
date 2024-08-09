@@ -1,9 +1,0 @@
-Candidate set exist in coverage?:
-
-True
-
- Answer is:
-
-1) Importance Score: 7
-2) Do not Remove
-3) The code snippet declares a variable "a" of type FTSENT**. This variable is used later in the program to store the sorted array of FTSENT pointers. Removing this code would result in a compilation error and would affect the functionality of the program.

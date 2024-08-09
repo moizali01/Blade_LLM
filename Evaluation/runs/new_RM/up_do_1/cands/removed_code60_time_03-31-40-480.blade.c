@@ -1,3 +1,0 @@
-
-
-closedir(dirp);

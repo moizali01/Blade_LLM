@@ -4,8 +4,8 @@ DIR=$(pwd)
 
 # Install Required libraries
 cd ../../
-chmod +x install_requirements.sh
-./install_requirements.sh
+# chmod +x install_requirements.sh
+# ./install_requirements.sh
 
 # clear
 
@@ -13,7 +13,7 @@ chmod +x install_requirements.sh
 cd $DIR
 cp mkdir-debloated.c ../../src/target-program/mkdir-debloated.c
 cp mkdir-5.2.1.c.origin.c ../../src/target-program/mkdir-5.2.1.c.origin.c
-cp run_mkdir.sh ../../src/target-program/run_mkdir.sh
+cp mkdir.sh ../../src/target-program/mkdir.sh
 cp original.txt ../../src/original.txt
 cp coverage.txt ../../LLM_Util/coverage.txt
 clear
@@ -42,7 +42,7 @@ clear
 
 # run the program
 cd ../../src
-python3 blade.py -p target-program/mkdir-debloated.c -t target-program/run_mkdir.sh -u 1 -d 1
+python3 blade.py -p target-program/mkdir-debloated.c -t target-program/mkdir.sh -u 1 -d 1
 cp mkdir-debloated.c ../automated_runs/rm/mkdir-debloated.c.blade.c
 # clear
 
@@ -51,10 +51,10 @@ cd $DIR
 chmod +x mkdir_gen.sh
 
 
-./mkdir_gen.sh > generality_results.txt
+# ./mkdir_gen.sh > generality_results.txt
 # clear
 
-echo "Results saved in generality_results.txt"
+# echo "Results saved in generality_results.txt"
 
 exit 0
 

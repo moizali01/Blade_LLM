@@ -1,3 +1,0 @@
-
-
-char *fts_path;
