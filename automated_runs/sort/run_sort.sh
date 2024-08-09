@@ -2,18 +2,11 @@
 
 DIR=$(pwd)
 
-# Install Required libraries
-cd ../../
-chmod +x install_requirements.sh
-./install_requirements.sh
-
-# clear
-
 # Copy all files need for run to relevant locations
 cd $DIR
-cp sort-original.c ../../src/target-program/sort-original.c
-cp sort-8.16.c.origin.c ../../src/target-program/sort-8.16.c.origin.c
-cp sort.sh ../../src/target-program/sort.sh
+cp sort-org.c ../../src/target-program/
+cp sort-util.c ../../src/target-program/
+cp sort.sh ../../src/target-program/
 cp original.txt ../../src/original.txt
 cp coverage.txt ../../LLM_Util/coverage.txt
 # clear
@@ -42,16 +35,16 @@ cd $DIR
 
 # run the program
 cd ../../src
-python3 blade.py -p target-program/sort-8.16.c.origin.c -t target-program/sort.sh -u 1 -d 1
-cp sort-8.16.c.origin.c.blade.c ../automated_runs/sort/sort-8.16.c.origin.c.blade.c
+python3 blade.py -p target-program/sort-util.c -t target-program/sort.sh -u 1 -d 1
+cp sort-util.c.blade.c ../automated_runs/sort/gen/sort-util.c.blade.c
 # clear
 
 # run generality cases
-# cd $DIR
-# chmod +x sort_generality.sh
-# ./sort_generality.sh > generality_results.txt
+cd $DIR/gen
+chmod +x sort_generality.sh
+./sort_generality.sh > generality_results.txt
 # clear
 
-# echo "Results saved in generality_results.txt"
+echo "Results saved in generality_results.txt"
 
 exit 0

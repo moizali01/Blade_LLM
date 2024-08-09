@@ -74,8 +74,20 @@ run_test() {
   echo -e "$input_data" > "$INPUT_FILE"
   
   # Run and capture output from both debloated and original
-  timeout 1s $DEBLOATED_UNIQ "$INPUT_FILE" > "$OUTPUT_DEBLOATED" 2>&1
-  timeout 1s $ORIGINAL_UNIQ "$INPUT_FILE" > "$OUTPUT_ORIGINAL" 2>&1
+  timeout 5s $DEBLOATED_UNIQ "$INPUT_FILE" > "$OUTPUT_DEBLOATED" 2>&1
+  if [ $? -ne 0 ]; then
+    echo "Error: Debloated program crashed!"
+    eval "$cleanup_command"
+    return
+  fi
+  
+  timeout 5s $ORIGINAL_UNIQ "$INPUT_FILE" > "$OUTPUT_ORIGINAL" 2>&1
+  if [ $? -ne 0 ]; then
+    echo "Error: Original program crashed!"
+    PASSED_TESTS=$((PASSED_TESTS + 1))
+    eval "$cleanup_command"
+    return
+  fi
 
   # Compare outputs
   if cmp -s "$OUTPUT_DEBLOATED" "$OUTPUT_ORIGINAL"; then

@@ -5252,7 +5252,7 @@ char *quotearg_colon(char const *arg)
     }
 }
 struct quoting_options quote_quoting_options = {(enum quoting_style)6,
-           0,
+    0,
     {0U},
     (char const *)((void *)0),
     (char const *)((void *)0)
@@ -10240,7 +10240,7 @@ static void specify_nmerge(int oi, char c, char const *s)
     char const *tmp___5;
     char *tmp___6;
     char max_nmerge_buf[((sizeof(max_nmerge) * 8UL) * 146UL + 484UL) / 485UL +
-                                             1UL];
+                        1UL];
     char const *tmp___7;
     char *tmp___8;
     char *tmp___9;
@@ -12878,7 +12878,7 @@ static _Bool check(char const *file_name___3, char checkonly)
     uintmax_t disorder_line_number;
     struct line *tmp___2;
     char hr_buf[((sizeof(disorder_line_number) * 8UL) * 146UL + 484UL) / 485UL +
-                                               1UL];
+                1UL];
     char *tmp___3;
     char *tmp___4;
     char *tmp___5;

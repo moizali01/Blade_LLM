@@ -24,7 +24,7 @@ Explanation: Based on the reasoning above, explain why the code is assigned to t
 
 Required Functionality:
 
-The given code belongs to the Uniq core utility and is used without any flag to remove duplicate lines from sorted files. For this task we will take input by reading lines from a file and output the results to standard out. This code snippet lies in the code execution path. We are not interested in keeping ANY other functionality. We are not interested in keeping the functionality of counting the number of unique occurances or verbose mode. This code snippet lies in the code execution path.
+The given code belongs to the Sort core utility and is used without any flag to sort lines lexicographically from files. For this task we will take input by reading lines from a file and output the results to standard out. This code snippet lies in the code execution path. We are not interested in keeping ANY other functionality. We are not interested in keeping the functionality of merging sorted files or verbose mode. This code snippet lies in the code execution path.
 
 
 To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing:
@@ -59,6 +59,6 @@ Query:
 #########
 
 
-Make sure to evaluate only on the basis of the functionality and the possibility of security vulnerabilities mentioned above about taking input safely from a file and outputting the result to standard out. We are not concerned with any other functionalities such as keeping a count for the unique occurances or verbose mode. 
+Make sure to evaluate only on the basis of the functionality and the possibility of security vulnerabilities mentioned above about taking input safely from a file and outputting the result to standard out. We are not concerned with any other functionalities such as merging sorted files or verbose mode. 
 
 Make sure you do not add any information on your own. If you do not know the answer, simply state that you do not know. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.
