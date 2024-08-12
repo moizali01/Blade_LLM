@@ -188,16 +188,33 @@ class Reduction:
             batch_prev = self.batch_maker(queue_prev)
             batch_processing = batch_prev + batch
             working_indx = -1
-            pool = Pool(processes=len(batch_processing))
-            pool_inputs_prev = [
+            # pool = Pool(processes=len(batch_processing))
+            # pool_inputs_prev = [
+            #     (addr, f"_{idx+1}", False) for idx, addr in enumerate(batch_prev)
+            # ]
+            # pool_inputs_next = [
+            #     (addr, idx + 1, False) for idx, addr in enumerate(batch)
+            # ]
+            # pool_inputs = pool_inputs_prev + pool_inputs_next
+            # reduce_results = pool.map(self.reduce, pool_inputs)
+            # pool.close()
+            
+            #####
+
+            # instead of using pool, we will use the following code
+            reduce_results = []
+            inputs_prev = [
                 (addr, f"_{idx+1}", False) for idx, addr in enumerate(batch_prev)
             ]
-            pool_inputs_next = [
+            inputs_next = [
                 (addr, idx + 1, False) for idx, addr in enumerate(batch)
             ]
-            pool_inputs = pool_inputs_prev + pool_inputs_next
-            reduce_results = pool.map(self.reduce, pool_inputs)
-            pool.close()
+            inputs = inputs_prev + inputs_next
+            for inp in inputs:
+                reduce_results.append(self.reduce(inp))
+            
+            #####
+            
             results_next = reduce_results[len(batch_prev) :]
             results_prev = reduce_results[: len(batch_prev)]
             indx_results = np.where(results_next)[0]

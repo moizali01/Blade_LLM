@@ -27,9 +27,9 @@ mkdir -p pretext_code
 mkdir -p removed_code
 mkdir -p llm_response
 
-cd ..
-chmod +x clear_cands.sh
-./clear_cands.sh
+# cd ..
+# chmod +x clear_cands.sh
+# ./clear_cands.sh
 cd $DIR
 # clear
 

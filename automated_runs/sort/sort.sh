@@ -63,12 +63,13 @@ function compile() {
 sanitizers=("")
 
 function main() {
-  cd $DIR
-  clean_env
-  compile || exit 1
-  run || exit 1
-  clean_env
-
+  for i in {1..3}; do
+    cd $DIR
+    clean_env
+    compile || exit 1
+    run || exit 1
+    clean_env
+  done
 }
 # sanitizers=("-fsanitize=cfi -flto -fvisibility=hidden" "-fsanitize=address"
 #   "-fsanitize=memory -fsanitize-memory-use-after-dtor"

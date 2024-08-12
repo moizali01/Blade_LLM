@@ -9,7 +9,6 @@ import time
 THRESHOLD = 7
 
 def LLM_candidate(candidate, candidate_set_with_line_number, context):
-    return 0
     cand = [c for c in candidate if c != ""]
     if len(cand) == 1:
         if cand[0] == " }" or cand[0] == " {" or cand[0] == "}" or cand[0] == "{":

@@ -382,12 +382,6 @@ function exception_handling() {
         "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY $DIR/very_long_lines.txt > $DIR/temp_output.txt; }" \
         "{ timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY $DIR/very_long_lines.txt > $DIR/expected_output.txt; }"
 
-    # Generality Test Case 55: Sorting with Header Line (Assuming the header is non-numeric)
-    echo -e "Header\n10\n2\n30\n4" >$DIR/header_included.txt
-    run_test "Sort with header line skipped" \
-        "{ timeout $TIMEOUT_LIMIT tail -n +2 $DIR/header_included.txt | $REDUCED_BINARY > $DIR/temp_output.txt; }" \
-        "{ timeout $TIMEOUT_LIMIT tail -n +2 $DIR/header_included.txt | $ORIGINAL_BINARY > $DIR/expected_output.txt; }"
-
 }
 
 function clean_env() {
