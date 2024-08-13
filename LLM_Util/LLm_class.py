@@ -7,6 +7,7 @@ import os
 import time
 import warnings
 import ollama
+from datetime import datetime
 from functools import cached_property
 from langchain_community.llms import AzureOpenAI
 from langchain_community.document_loaders import PyPDFLoader,TextLoader
@@ -80,10 +81,10 @@ class QAClass:
     # LOCAL LLM FUNCTIONS ADDED HERE
 
     def call_ollama(self, prompt):
-        # response = requests.post('http://10.103.73.29:6970', json={'message': prompt})
-        response = ollama.chat(model='llama3:8b-instruct-fp16', messages=[{'role': 'user', 'content': prompt}],options={"temperature":0.1})
-        return response['message']['content']
-        # return response.json()['response']
+        response = requests.post('http://10.103.73.29:6970', json={'message': prompt})
+        # response = ollama.chat(model='llama3:8b-instruct-fp16', messages=[{'role': 'user', 'content': prompt}],options={"temperature":0.1})
+        # return response['message']['content']
+        return response.json()['response']
 
 
     def combine_docs(self, docs):
@@ -134,7 +135,6 @@ class QAClass:
 
         # 2. ***** Gemini *****
 
-        # genai.configure(api_key="AIzaSyAvdpJPkOyXwEVP7YL8tos_0WMGQETTLYs")
         safe = [
             {
                 "category": "HARM_CATEGORY_HARASSMENT",
@@ -187,7 +187,7 @@ class QAClass:
             def __init__(self, outer_instance):
                 self.outer_instance = outer_instance
 
-            def run(self, query, context_query, coverage):
+            def run(self, query, context_query, coverage, fifty_clean):
 
                 # compressor = VoyageAIRerank(
                 #     model="rerank-1", voyageai_api_key=os.environ["VOYAGE_API_KEY"], top_k=10
@@ -203,8 +203,13 @@ class QAClass:
                 retrieved_docs = retriever.invoke(context_query)
 
                 formatted_context = self.outer_instance.combine_docs(retrieved_docs)
+
+                if len(query.splitlines() > 10):
+                    formatted_context_2 = formatted_context
+                else:
+                    formatted_context_2 = "Snippet.0: \n\n" + fifty_clean + "\n\n" + formatted_context
                 
-                return self.outer_instance.call_llm(query, formatted_context, coverage, llm)
+                return self.outer_instance.call_llm(query, formatted_context_2, coverage, llm)
 
 
         return CustomQAChain(self)
@@ -235,15 +240,15 @@ class QAClass:
 
         # 1. GEMINI
         # if it fails try 3 times
-        try_count = 0
-        while try_count < 3:
-            try:
-                response = llm.send_message(prompt_to_send).text
-                break
-            except:
-                time.sleep(5)
-                try_count += 1
-                print("Retrying No. ", try_count)
+        # try_count = 0
+        # while try_count < 3:
+        #     try:
+        #         response = llm.send_message(prompt_to_send).text
+        #         break
+        #     except:
+        #         time.sleep(5)
+        #         try_count += 1
+        #         print("Retrying No. ", try_count)
 
 
         # 2. GPT (via Azure AI Search)
@@ -252,17 +257,39 @@ class QAClass:
         # 3. Local LLM (via Ollama)
         # response = llm(prompt_to_send)
         
-        return response
 
-    def invoke(self, query, prompt_type, context_query):
+        ### Two-pass approach ####
+
+        # gemini
+        response = llm.send_message(prompt_to_send).text
+
+        # response = llm(prompt_to_send)
+        with open('../LLM_Util/prompt_second.txt', 'r') as file:
+            prompt_template = file.read()
+
+        # save response1 to a file
+        now = datetime.now()
+        formatted_time = now.strftime("%H-%M-%S-%f")[:-3]
+        with open(f'../LLM_Util/cands/response_firstpass/response_time_{str(formatted_time)}.txt', 'w') as file:
+            file.write(response)
+        
+        prompt = prompt_template.format(response1=response, formatted_context=formatted_context, query=query)
+
+        # response2 = llm(prompt)
+        response2 = llm.send_message(prompt).text
+        return response2
+
+        # return response
+
+    def invoke(self, query, prompt_type, context_query, fifty_clean):
         # Retrieve documents based on context query
         print("Querying: ", query)
         # print("Context Retrived from DB: ", formatted_context)
 
         if prompt_type == 'generality':
-            return self.llm_chain.run(query, context_query, False)
+            return self.llm_chain.run(query, context_query, False, fifty_clean)
         elif prompt_type == 'security':
-            return self.llm_chain.run(query, context_query, True)
+            return self.llm_chain.run(query, context_query, True, fifty_clean)
         
 
     def get_security_checks(self):

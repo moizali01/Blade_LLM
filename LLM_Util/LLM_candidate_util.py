@@ -8,7 +8,7 @@ import time
 
 THRESHOLD = 7
 
-def LLM_candidate(candidate, candidate_set_with_line_number, context):
+def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_context):
     cand = [c for c in candidate if c != ""]
     if len(cand) == 1:
         if cand[0] == " }" or cand[0] == " {" or cand[0] == "}" or cand[0] == "{":
@@ -21,7 +21,9 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context):
     os.makedirs("../LLM_Util/cands/removed_code", exist_ok=True)
     os.makedirs("../LLM_Util/cands/context", exist_ok=True)
     os.makedirs("../LLM_Util/cands/pretext_code", exist_ok=True)
+    os.makedirs("../LLM_Util/cands/fifty_context", exist_ok=True)
     os.makedirs("../LLM_Util/cands/llm_response", exist_ok=True)
+    
 
     now = datetime.now()
     formatted_time = now.strftime("%H-%M-%S-%f")[:-3]
@@ -42,9 +44,15 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context):
     context_file = "../LLM_Util/cands/pretext_code/context" + "_time_"+ str(formatted_time)+ ".blade.c"
     write(context_clean, context_file)
 
+
+    # write fifty context to file 
+    fifty_clean = [c for c in fifty_context if c != ""]
+    fifty_file = "../LLM_Util/cands/fifty_text/fifty_context" + "_time_"+ str(formatted_time)+ ".blade.c"
+    write(fifty_clean, fifty_file)
+
     # write llm response to file 
     llm_file = "../LLM_Util/cands/llm_response/llm" + "_time_"+ str(formatted_time)+ ".blade.c.txt"
-
+    
     qa = QAClass() 
     try:
         # time.sleep(10)
@@ -56,6 +64,9 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context):
         with open(context_file, 'r') as file:
             context_clean = file.read()
 
+        with open(fifty_file, 'r') as file:
+            fifty_clean = file.read()
+
         exist_in_coverage = exist(outfile)
 
         # get llm response from cache if cand set is repeating
@@ -64,9 +75,9 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context):
         # query llm only if cache is empty
         if llm_cache == None:
             if (exist_in_coverage):
-                llm_response = qa.invoke(query, 'security', context_clean)
+                llm_response = qa.invoke(query, 'security', context_clean, fifty_clean)
             else:
-                llm_response = qa.invoke(query, 'generality', context_clean)
+                llm_response = qa.invoke(query, 'generality', context_clean, fifty_clean)
         else:
             print("Using Cached LLM Response")
             llm_response = llm_cache

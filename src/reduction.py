@@ -98,7 +98,8 @@ class Reduction:
         candidate_set= restore_lines( ['' for _ in range(self.len)], self.original_File,  array_of_int)
         context = restore_lines(['' for _ in range(self.len)], self.original_File, [max(array_of_int[0]-10, 0), 1, min(array_of_int[2]+10, self.len), 0])
         candidate_with_line_number = restore_lines(['' for _ in range(self.len)], self.original_File, [array_of_int[0], 1, min(array_of_int[2]+1, self.len), 0])
-        return LLM_candidate(candidate_set, candidate_with_line_number, context)
+        fifty_context = restore_lines(['' for _ in range(self.len)], self.original_File, [array_of_int[0], 1, min(array_of_int[2]+50, self.len), 0])
+        return LLM_candidate(candidate_set, candidate_with_line_number, context, fifty_context)
     
     def reduction(self, maps):
         red_whole = self.reduce((maps["addr"], 1, False))

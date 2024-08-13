@@ -18,9 +18,7 @@ Class 2: <reasoning for why the code might be somewhat unnecessary or not>
 Class 3: <reasoning for why the code might be necessary or not>
 Class 4: <reasoning for why the code might be critical or not>
 
-Final Verdict: <assigned class> (1-4)
 Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
-
 
 Required Functionality:
 
