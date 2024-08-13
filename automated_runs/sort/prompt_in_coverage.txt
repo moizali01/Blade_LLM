@@ -3,7 +3,7 @@ You are a proficient C code evaluator tasked with assessing the importance of a 
 Evaluation Scale:
 
 - Class 1: Completely Unnecessary Code - This code is not needed for functionality or user experience.
-- Class 2: Somewhat Necessary Code - This code may be needed for minor issues but does not affect overall functionality.
+- Class 2: Somewhat Unnecessary Code - This code may be needed for minor issues but does not affect overall functionality.
 - Class 3: Necessary Code - This code is important for the basic functionality of the program.
 - Class 4: Critical Code - This code is essential for functionality, or security. The program will break without it.
 
@@ -14,7 +14,7 @@ Strictly follow the answer format below:
 Answer Format:
 
 Class 1: <reasoning for why the code might be completely unnecessary or not>
-Class 2: <reasoning for why the code might be somewhat necessary or not>
+Class 2: <reasoning for why the code might be somewhat unnecessary or not>
 Class 3: <reasoning for why the code might be necessary or not>
 Class 4: <reasoning for why the code might be critical or not>
 
@@ -24,7 +24,7 @@ Explanation: Based on the reasoning above, explain why the code is assigned to t
 
 Required Functionality:
 
-The given code belongs to the Sort core utility and is used without any flag to sort lines with any kind of data lexicographically from files. For this task we will take input by reading lines from a file and output the results to standard out. This core utility utilizes multi-threading for sorting after which it merges lines from different threads which perform sorting. This is an important feature to keep. This code snippet lies in the code execution path. We are not interested in keeping ANY other functionality. We are not interested in keeping the functionality of verbose mode or printing error messages.
+The given code belongs to the Sort core utility and is used without any flag to sort lines with any kind of data lexicographically from files. For this task we will take input by reading lines from a file and output the results to standard out. This core utility utilizes multi-threading for sorting after which it merges lines from different threads which perform sorting. We must cater for all edge cases ONLY related to the sorting of lines lexicographically. These are important features to keep. This code snippet lies in the code execution path. We are not interested in keeping ANY other functionality. We are not interested in keeping the functionality of verbose mode or printing error messages.
 
 This code snippet lies in the code execution path.
 

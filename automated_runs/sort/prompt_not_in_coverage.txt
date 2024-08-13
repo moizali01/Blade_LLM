@@ -3,7 +3,7 @@ You are a proficient C code evaluator tasked with assessing the importance of a 
 Evaluation Scale:
 
 - Class 1: Completely Unnecessary Code - This code is not needed for security and generality of the program.
-- Class 2: Somewhat Necessary Code - This code may be needed for minor issues but does not affect overall security and generality of the program..
+- Class 2: Somewhat Unnecessary Code - This code may be needed for minor issues but does not affect overall security and generality of the program..
 - Class 3: Necessary Code - This code is important for the basic security and generality of the program. of the program.
 - Class 4: Critical Code - This code is essential for security or functionality. The program will break without it.
 
@@ -15,7 +15,7 @@ Strictly follow the answer format below:
 Answer Format:
 
 Class 1: <reasoning for why the code might be completely unnecessary>
-Class 2: <reasoning for why the code might be somewhat necessary>
+Class 2: <reasoning for why the code might be somewhat unnecessary>
 Class 3: <reasoning for why the code might be necessary>
 Class 4: <reasoning for why the code might be critical>
 
@@ -25,7 +25,7 @@ Explanation: Based on the reasoning above, explain why the code is assigned to t
 
 Required Functionality:
 
-The given code belongs to the Sort core utility and is used without any flag to sort lines with any kind of data lexicographically from files. For this task we will take input by reading lines from a file and output the results to standard out. This core utility utilizes multi-threading for sorting after which it merges lines from different threads which perform sorting. This is an important feature to keep. This code snippet lies in the code execution path. We are not interested in keeping ANY other functionality. We are not interested in keeping the functionality of verbose mode or printing error messages.
+The given code belongs to the Sort core utility and is used without any flag to sort lines with any kind of data lexicographically from files. For this task we will take input by reading lines from a file and output the results to standard out. This core utility utilizes multi-threading for sorting after which it merges lines from different threads which perform sorting. We must cater for all edge cases ONLY related to the sorting of lines lexicographically. These are important features to keep. This code snippet lies in the code execution path. We are not interested in keeping ANY other functionality. We are not interested in keeping the functionality of verbose mode or printing error messages.
 
 This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for the functionality mentioned or security of the program. 
 
@@ -61,6 +61,6 @@ Query:
 #########
 
 
-Make sure to evaluate only on the basis of the functionality and the possibility of security vulnerabilities mentioned above about taking input safely from a file and outputting the result to standard out in a multithreaded program. We are NOT concerned with any other functionalities such as merging sorted files or verbose mode or printing error messages. 
+Make sure to evaluate only on the basis of the functionality and the possibility of security vulnerabilities mentioned above about taking input safely from a file and outputting the result to standard out in a multithreaded program. We are NOT concerned with any other functionalities such as verbose mode or printing error messages. 
 
 Make sure you do not add any information on your own. If you do not know the answer, simply state that you do not know. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate the generality and security of the overall program.

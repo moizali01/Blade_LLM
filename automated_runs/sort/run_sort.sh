@@ -43,7 +43,8 @@ cp sort-util.c.blade.c ../automated_runs/sort/gen/sort-util.c.blade.c
 # run generality cases
 cd $DIR/gen
 chmod +x sort_generality.sh
-./sort_generality.sh > generality_results.txt
+mkdir -p results
+./sort_generality.sh > results/generality_results.txt
 # clear
 
 echo "Results saved in generality_results.txt"
