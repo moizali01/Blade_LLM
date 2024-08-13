@@ -240,15 +240,15 @@ class QAClass:
 
         # 1. GEMINI
         # if it fails try 3 times
-        # try_count = 0
-        # while try_count < 3:
-        #     try:
-        #         response = llm.send_message(prompt_to_send).text
-        #         break
-        #     except:
-        #         time.sleep(5)
-        #         try_count += 1
-        #         print("Retrying No. ", try_count)
+        try_count = 0
+        while try_count < 3:
+            try:
+                response = llm.send_message(prompt_to_send).text
+                break
+            except:
+                time.sleep(5)
+                try_count += 1
+                print("Retrying No. ", try_count)
 
 
         # 2. GPT (via Azure AI Search)
@@ -261,25 +261,25 @@ class QAClass:
         ### Two-pass approach ####
 
         # gemini
-        response = llm.send_message(prompt_to_send).text
+        # response = llm.send_message(prompt_to_send).text
 
-        # response = llm(prompt_to_send)
-        with open('../LLM_Util/prompt_second.txt', 'r') as file:
-            prompt_template = file.read()
+        # # response = llm(prompt_to_send)
+        # with open('../LLM_Util/prompt_second.txt', 'r') as file:
+        #     prompt_template = file.read()
 
-        # save response1 to a file
-        now = datetime.now()
-        formatted_time = now.strftime("%H-%M-%S-%f")[:-3]
-        with open(f'../LLM_Util/cands/response_firstpass/response_time_{str(formatted_time)}.txt', 'w') as file:
-            file.write(response)
+        # # save response1 to a file
+        # now = datetime.now()
+        # formatted_time = now.strftime("%H-%M-%S-%f")[:-3]
+        # with open(f'../LLM_Util/cands/response_firstpass/response_time_{str(formatted_time)}.txt', 'w') as file:
+        #     file.write(response)
         
-        prompt = prompt_template.format(response1=response, formatted_context=formatted_context, query=query)
+        # prompt = prompt_template.format(response1=response, formatted_context=formatted_context, query=query)
 
         # response2 = llm(prompt)
-        response2 = llm.send_message(prompt).text
-        return response2
+        # response2 = llm.send_message(prompt).text
+        # return response2
 
-        # return response
+        return response
 
     def invoke(self, query, prompt_type, context_query, fifty_clean):
         # Retrieve documents based on context query
