@@ -28,10 +28,12 @@ Thumbs.db
 
 __pycache__/
 
-LLM_Util/cands/
+LLM_Util/cands*/
 src/processing/
 src/target-program/
 src/*.blade.c
 
 # jaroori
 .env
+
+testing/

@@ -28,7 +28,7 @@
    28|       |  struct _IO_FILE *_chain;
    29|       |  int _fileno;
    30|       |  int _flags2;
-   31|       |  __off_t _old_offset;
+   31|       |  __off_t _old_offset;<<<<<<<
    32|       |  unsigned short _cur_column;
    33|       |  signed char _vtable_offset;
    34|       |  char _shortbuf[1];
@@ -7242,4 +7242,3 @@
  7242|      3|    exit(tmp___15);
  7243|      3|  }
  7244|      3|}
-

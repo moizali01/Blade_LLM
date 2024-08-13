@@ -1116,12 +1116,12 @@
  1116|      0|    }
  1117|      0|}
  1118|       |__inline static unsigned char to_uchar(char ch)
- 1119|  12.2M|{
+ 1119|    452|{
  1120|       |
- 1121|  12.2M|    {
- 1122|  12.2M|        return ((unsigned char)ch);
- 1123|  12.2M|    }
- 1124|  12.2M|}
+ 1121|    452|    {
+ 1122|    452|        return ((unsigned char)ch);
+ 1123|    452|    }
+ 1124|    452|}
  1125|       |char const *simple_backup_suffix;
  1126|       |void (*argmatch_die)(void);
  1127|       |ptrdiff_t __xargmatch_internal(char const *context, char const *arg,
@@ -2006,23 +2006,23 @@
  2006|      0|    }
  2007|      0|}
  2008|       |int xmemcoll0(char const *s1, size_t s1size, char const *s2, size_t s2size)
- 2009|   215k|{
- 2010|   215k|    int diff;
- 2011|   215k|    int tmp;
- 2012|   215k|    int collation_errno;
- 2013|   215k|    int *tmp___0;
+ 2009|   190k|{
+ 2010|   190k|    int diff;
+ 2011|   190k|    int tmp;
+ 2012|   190k|    int collation_errno;
+ 2013|   190k|    int *tmp___0;
  2014|       |
- 2015|   215k|    {
- 2016|   215k|        tmp = memcoll0(s1, s1size, s2, s2size);
- 2017|   215k|        diff = tmp;
- 2018|   215k|        tmp___0 = __errno_location();
- 2019|   215k|        collation_errno = *tmp___0;
- 2020|   215k|        if (collation_errno) {
+ 2015|   190k|    {
+ 2016|   190k|        tmp = memcoll0(s1, s1size, s2, s2size);
+ 2017|   190k|        diff = tmp;
+ 2018|   190k|        tmp___0 = __errno_location();
+ 2019|   190k|        collation_errno = *tmp___0;
+ 2020|   190k|        if (collation_errno) {
  2021|      0|            collate_error(collation_errno, s1, s1size - 1UL, s2, s2size - 1UL);
  2022|      0|        }
- 2023|   215k|        return (diff);
- 2024|   215k|    }
- 2025|   215k|}
+ 2023|   190k|        return (diff);
+ 2024|   190k|    }
+ 2025|   190k|}
  2026|       |void *xcalloc(size_t n, size_t s)
  2027|       |__attribute__((__malloc__, __alloc_size__(1, 2)));
  2028|       |void *xmemdup(void const *p, size_t s)
@@ -2057,21 +2057,21 @@
  2057|       |            __nonnull__(1), __leaf__)) memset)(void *__s, int __c, size_t __n);
  2058|       |void *xmalloc(size_t n) __attribute__((__malloc__, __alloc_size__(1)));
  2059|       |void *xmalloc(size_t n)
- 2060|     34|{
- 2061|     34|    void *p;
- 2062|     34|    void *tmp;
+ 2060|     32|{
+ 2061|     32|    void *p;
+ 2062|     32|    void *tmp;
  2063|       |
- 2064|     34|    {
- 2065|     34|        tmp = malloc(n);
- 2066|     34|        p = tmp;
- 2067|     34|        if (!p) {
+ 2064|     32|    {
+ 2065|     32|        tmp = malloc(n);
+ 2066|     32|        p = tmp;
+ 2067|     32|        if (!p) {
  2068|      0|            if (n != 0UL) {
  2069|      0|                xalloc_die();
  2070|      0|            }
  2071|      0|        }
- 2072|     34|        return (p);
- 2073|     34|    }
- 2074|     34|}
+ 2072|     32|        return (p);
+ 2073|     32|    }
+ 2074|     32|}
  2075|       |void *xrealloc(void *p, size_t n) __attribute__((__alloc_size__(2)));
  2076|       |void *xrealloc(void *p, size_t n)
  2077|      2|{
@@ -2109,16 +2109,16 @@
  2109|       |void *xmemdup(void const *p, size_t s)
  2110|       |__attribute__((__malloc__, __alloc_size__(2)));
  2111|       |void *xmemdup(void const *p, size_t s)
- 2112|      2|{
- 2113|      2|    void *tmp;
- 2114|      2|    void *tmp___0;
+ 2112|      0|{
+ 2113|      0|    void *tmp;
+ 2114|      0|    void *tmp___0;
  2115|       |
- 2116|      2|    {
- 2117|      2|        tmp = xmalloc(s);
- 2118|      2|        tmp___0 = memcpy(tmp, p, s);
- 2119|      2|        return (tmp___0);
- 2120|      2|    }
- 2121|      2|}
+ 2116|      0|    {
+ 2117|      0|        tmp = xmalloc(s);
+ 2118|      0|        tmp___0 = memcpy(tmp, p, s);
+ 2119|      0|        return (tmp___0);
+ 2120|      0|    }
+ 2121|      0|}
  2122|       |__attribute__((__noreturn__)) void xalloc_die(void);
  2123|       |void xalloc_die(void)
  2124|      0|{
@@ -2515,34 +2515,34 @@
  2515|       |__inline static int __attribute__((__pure__))
  2516|       |numcompare(char const *a, char const *b, int decimal_point___0,
  2517|       |           int thousands_sep___0)
- 2518|    231|{
- 2519|    231|    unsigned char tmpa;
- 2520|    231|    unsigned char tmpb;
- 2521|    231|    int tmp;
- 2522|    231|    size_t log_a;
- 2523|    231|    size_t log_b;
- 2524|    231|    int __attribute__((__pure__)) tmp___0;
- 2525|    231|    int tmp___1;
- 2526|    231|    int __attribute__((__pure__)) tmp___2;
- 2527|    231|    int tmp___3;
+ 2518|      0|{
+ 2519|      0|    unsigned char tmpa;
+ 2520|      0|    unsigned char tmpb;
+ 2521|      0|    int tmp;
+ 2522|      0|    size_t log_a;
+ 2523|      0|    size_t log_b;
+ 2524|      0|    int __attribute__((__pure__)) tmp___0;
+ 2525|      0|    int tmp___1;
+ 2526|      0|    int __attribute__((__pure__)) tmp___2;
+ 2527|      0|    int tmp___3;
  2528|       |
- 2529|    231|    {
- 2530|    231|        tmpa = (unsigned char)*a;
- 2531|    231|        tmpb = (unsigned char)*b;
- 2532|    231|        if ((int)tmpa == 45) {
- 2533|     73|            while (1) {
- 2534|     73|                a++;
- 2535|     73|                tmpa = (unsigned char)*a;
- 2536|     73|                if (!((int)tmpa == 48)) {
- 2537|     73|                    if (!((int)tmpa == thousands_sep___0)) {
- 2538|     73|                        goto while_break;
- 2539|     73|                    }
- 2540|     73|                }
- 2541|     73|            }
- 2542|     73|while_break:
- 2543|     73|            ;
- 2544|     73|            if ((int)tmpb != 45) {
- 2545|     16|                if ((int)tmpa == decimal_point___0) {
+ 2529|      0|    {
+ 2530|      0|        tmpa = (unsigned char)*a;
+ 2531|      0|        tmpb = (unsigned char)*b;
+ 2532|      0|        if ((int)tmpa == 45) {
+ 2533|      0|            while (1) {
+ 2534|      0|                a++;
+ 2535|      0|                tmpa = (unsigned char)*a;
+ 2536|      0|                if (!((int)tmpa == 48)) {
+ 2537|      0|                    if (!((int)tmpa == thousands_sep___0)) {
+ 2538|      0|                        goto while_break;
+ 2539|      0|                    }
+ 2540|      0|                }
+ 2541|      0|            }
+ 2542|      0|while_break:
+ 2543|      0|            ;
+ 2544|      0|            if ((int)tmpb != 45) {
+ 2545|      0|                if ((int)tmpa == decimal_point___0) {
  2546|      0|                    while (1) {
  2547|      0|                        a++;
  2548|      0|                        tmpa = (unsigned char)*a;
@@ -2553,9 +2553,9 @@
  2553|      0|while_break___0:
  2554|      0|                    ;
  2555|      0|                }
- 2556|     16|                if ((unsigned int)tmpa - 48U <= 9U) {
- 2557|     16|                    return ((int __attribute__((__pure__))) - 1);
- 2558|     16|                }
+ 2556|      0|                if ((unsigned int)tmpa - 48U <= 9U) {
+ 2557|      0|                    return ((int __attribute__((__pure__))) - 1);
+ 2558|      0|                }
  2559|      0|                while (1) {
  2560|       |
  2561|      0|                    if (!((int)tmpb == 48)) {
@@ -2582,49 +2582,49 @@
  2582|      0|                return (
  2583|      0|                           (int __attribute__((__pure__)))(-((unsigned int)tmpb - 48U <= 9U)));
  2584|      0|            }
- 2585|     57|            while (1) {
- 2586|     57|                b++;
- 2587|     57|                tmpb = (unsigned char)*b;
- 2588|     57|                if (!((int)tmpb == 48)) {
- 2589|     57|                    if (!((int)tmpb == thousands_sep___0)) {
- 2590|     57|                        goto while_break___3;
- 2591|     57|                    }
- 2592|     57|                }
- 2593|     57|            }
- 2594|     57|while_break___3:
- 2595|     57|            ;
- 2596|     82|            while (1) {
+ 2585|      0|            while (1) {
+ 2586|      0|                b++;
+ 2587|      0|                tmpb = (unsigned char)*b;
+ 2588|      0|                if (!((int)tmpb == 48)) {
+ 2589|      0|                    if (!((int)tmpb == thousands_sep___0)) {
+ 2590|      0|                        goto while_break___3;
+ 2591|      0|                    }
+ 2592|      0|                }
+ 2593|      0|            }
+ 2594|      0|while_break___3:
+ 2595|      0|            ;
+ 2596|      0|            while (1) {
  2597|       |
- 2598|     82|                if ((int)tmpa == (int)tmpb) {
- 2599|     25|                    if (!((unsigned int)tmpa - 48U <= 9U)) {
+ 2598|      0|                if ((int)tmpa == (int)tmpb) {
+ 2599|      0|                    if (!((unsigned int)tmpa - 48U <= 9U)) {
  2600|      0|                        goto while_break___4;
  2601|      0|                    }
- 2602|     25|                }
- 2603|     57|                else {
- 2604|     57|                    goto while_break___4;
- 2605|     57|                }
- 2606|     25|                while (1) {
- 2607|     25|                    a++;
- 2608|     25|                    tmpa = (unsigned char)*a;
- 2609|     25|                    if (!((int)tmpa == thousands_sep___0)) {
- 2610|     25|                        goto while_break___5;
- 2611|     25|                    }
- 2612|     25|                }
- 2613|     25|while_break___5:
- 2614|     25|                ;
- 2615|     25|                while (1) {
- 2616|     25|                    b++;
- 2617|     25|                    tmpb = (unsigned char)*b;
- 2618|     25|                    if (!((int)tmpb == thousands_sep___0)) {
- 2619|     25|                        goto while_break___6;
- 2620|     25|                    }
- 2621|     25|                }
- 2622|     25|while_break___6:
- 2623|     25|                ;
- 2624|     25|            }
- 2625|     57|while_break___4:
- 2626|     57|            ;
- 2627|     57|            if ((int)tmpa == decimal_point___0) {
+ 2602|      0|                }
+ 2603|      0|                else {
+ 2604|      0|                    goto while_break___4;
+ 2605|      0|                }
+ 2606|      0|                while (1) {
+ 2607|      0|                    a++;
+ 2608|      0|                    tmpa = (unsigned char)*a;
+ 2609|      0|                    if (!((int)tmpa == thousands_sep___0)) {
+ 2610|      0|                        goto while_break___5;
+ 2611|      0|                    }
+ 2612|      0|                }
+ 2613|      0|while_break___5:
+ 2614|      0|                ;
+ 2615|      0|                while (1) {
+ 2616|      0|                    b++;
+ 2617|      0|                    tmpb = (unsigned char)*b;
+ 2618|      0|                    if (!((int)tmpb == thousands_sep___0)) {
+ 2619|      0|                        goto while_break___6;
+ 2620|      0|                    }
+ 2621|      0|                }
+ 2622|      0|while_break___6:
+ 2623|      0|                ;
+ 2624|      0|            }
+ 2625|      0|while_break___4:
+ 2626|      0|            ;
+ 2627|      0|            if ((int)tmpa == decimal_point___0) {
  2628|      0|                if (!((unsigned int)tmpb - 48U <= 9U)) {
  2629|      0|                    tmp___0 = fraccompare(b, a, (char)decimal_point___0);
  2630|      0|                    return (tmp___0);
@@ -2633,79 +2633,79 @@
  2633|      0|                    goto _L;
  2634|      0|                }
  2635|      0|            }
- 2636|     57|            else {
- 2637|     57|_L:
- 2638|     57|                if ((int)tmpb == decimal_point___0) {
+ 2636|      0|            else {
+ 2637|      0|_L:
+ 2638|      0|                if ((int)tmpb == decimal_point___0) {
  2639|      0|                    if (!((unsigned int)tmpa - 48U <= 9U)) {
  2640|      0|                        tmp___0 = fraccompare(b, a, (char)decimal_point___0);
  2641|      0|                        return (tmp___0);
  2642|      0|                    }
  2643|      0|                }
- 2644|     57|            }
- 2645|     57|            tmp = (int)tmpb - (int)tmpa;
- 2646|     57|            log_a = (size_t)0;
- 2647|    312|            while (1) {
+ 2644|      0|            }
+ 2645|      0|            tmp = (int)tmpb - (int)tmpa;
+ 2646|      0|            log_a = (size_t)0;
+ 2647|      0|            while (1) {
  2648|       |
- 2649|    312|                if (!((unsigned int)tmpa - 48U <= 9U)) {
- 2650|     57|                    goto while_break___7;
- 2651|     57|                }
- 2652|    255|                while (1) {
- 2653|    255|                    a++;
- 2654|    255|                    tmpa = (unsigned char)*a;
- 2655|    255|                    if (!((int)tmpa == thousands_sep___0)) {
- 2656|    255|                        goto while_break___8;
- 2657|    255|                    }
- 2658|    255|                }
- 2659|    255|while_break___8:
- 2660|    255|                log_a++;
- 2661|    255|            }
- 2662|     57|while_break___7:
- 2663|     57|            log_b = (size_t)0;
- 2664|    304|            while (1) {
+ 2649|      0|                if (!((unsigned int)tmpa - 48U <= 9U)) {
+ 2650|      0|                    goto while_break___7;
+ 2651|      0|                }
+ 2652|      0|                while (1) {
+ 2653|      0|                    a++;
+ 2654|      0|                    tmpa = (unsigned char)*a;
+ 2655|      0|                    if (!((int)tmpa == thousands_sep___0)) {
+ 2656|      0|                        goto while_break___8;
+ 2657|      0|                    }
+ 2658|      0|                }
+ 2659|      0|while_break___8:
+ 2660|      0|                log_a++;
+ 2661|      0|            }
+ 2662|      0|while_break___7:
+ 2663|      0|            log_b = (size_t)0;
+ 2664|      0|            while (1) {
  2665|       |
- 2666|    304|                if (!((unsigned int)tmpb - 48U <= 9U)) {
- 2667|     57|                    goto while_break___9;
- 2668|     57|                }
- 2669|    247|                while (1) {
- 2670|    247|                    b++;
- 2671|    247|                    tmpb = (unsigned char)*b;
- 2672|    247|                    if (!((int)tmpb == thousands_sep___0)) {
- 2673|    247|                        goto while_break___10;
- 2674|    247|                    }
- 2675|    247|                }
- 2676|    247|while_break___10:
- 2677|    247|                log_b++;
- 2678|    247|            }
- 2679|     57|while_break___9:
- 2680|     57|            ;
- 2681|     57|            if (log_a != log_b) {
- 2682|      8|                if (log_a < log_b) {
+ 2666|      0|                if (!((unsigned int)tmpb - 48U <= 9U)) {
+ 2667|      0|                    goto while_break___9;
+ 2668|      0|                }
+ 2669|      0|                while (1) {
+ 2670|      0|                    b++;
+ 2671|      0|                    tmpb = (unsigned char)*b;
+ 2672|      0|                    if (!((int)tmpb == thousands_sep___0)) {
+ 2673|      0|                        goto while_break___10;
+ 2674|      0|                    }
+ 2675|      0|                }
+ 2676|      0|while_break___10:
+ 2677|      0|                log_b++;
+ 2678|      0|            }
+ 2679|      0|while_break___9:
+ 2680|      0|            ;
+ 2681|      0|            if (log_a != log_b) {
+ 2682|      0|                if (log_a < log_b) {
  2683|      0|                    tmp___1 = 1;
  2684|      0|                }
- 2685|      8|                else {
- 2686|      8|                    tmp___1 = -1;
- 2687|      8|                }
- 2688|      8|                return ((int __attribute__((__pure__)))tmp___1);
- 2689|      8|            }
- 2690|     49|            if (!log_a) {
+ 2685|      0|                else {
+ 2686|      0|                    tmp___1 = -1;
+ 2687|      0|                }
+ 2688|      0|                return ((int __attribute__((__pure__)))tmp___1);
+ 2689|      0|            }
+ 2690|      0|            if (!log_a) {
  2691|      0|                return ((int __attribute__((__pure__)))0);
  2692|      0|            }
- 2693|     49|            return ((int __attribute__((__pure__)))tmp);
- 2694|     49|        }
- 2695|    158|        else {
- 2696|    158|            if ((int)tmpb == 45) {
- 2697|     19|                while (1) {
- 2698|     19|                    b++;
- 2699|     19|                    tmpb = (unsigned char)*b;
- 2700|     19|                    if (!((int)tmpb == 48)) {
- 2701|     19|                        if (!((int)tmpb == thousands_sep___0)) {
- 2702|     19|                            goto while_break___11;
- 2703|     19|                        }
- 2704|     19|                    }
- 2705|     19|                }
- 2706|     19|while_break___11:
- 2707|     19|                ;
- 2708|     19|                if ((int)tmpb == decimal_point___0) {
+ 2693|      0|            return ((int __attribute__((__pure__)))tmp);
+ 2694|      0|        }
+ 2695|      0|        else {
+ 2696|      0|            if ((int)tmpb == 45) {
+ 2697|      0|                while (1) {
+ 2698|      0|                    b++;
+ 2699|      0|                    tmpb = (unsigned char)*b;
+ 2700|      0|                    if (!((int)tmpb == 48)) {
+ 2701|      0|                        if (!((int)tmpb == thousands_sep___0)) {
+ 2702|      0|                            goto while_break___11;
+ 2703|      0|                        }
+ 2704|      0|                    }
+ 2705|      0|                }
+ 2706|      0|while_break___11:
+ 2707|      0|                ;
+ 2708|      0|                if ((int)tmpb == decimal_point___0) {
  2709|      0|                    while (1) {
  2710|      0|                        b++;
  2711|      0|                        tmpb = (unsigned char)*b;
@@ -2716,9 +2716,9 @@
  2716|      0|while_break___12:
  2717|      0|                    ;
  2718|      0|                }
- 2719|     19|                if ((unsigned int)tmpb - 48U <= 9U) {
- 2720|     19|                    return ((int __attribute__((__pure__)))1);
- 2721|     19|                }
+ 2719|      0|                if ((unsigned int)tmpb - 48U <= 9U) {
+ 2720|      0|                    return ((int __attribute__((__pure__)))1);
+ 2721|      0|                }
  2722|      0|                while (1) {
  2723|       |
  2724|      0|                    if (!((int)tmpa == 48)) {
@@ -2745,63 +2745,63 @@
  2745|      0|                return (
  2746|      0|                           (int __attribute__((__pure__)))((unsigned int)tmpa - 48U <= 9U));
  2747|      0|            }
- 2748|    139|            else {
- 2749|    139|                while (1) {
+ 2748|      0|            else {
+ 2749|      0|                while (1) {
  2750|       |
- 2751|    139|                    if (!((int)tmpa == 48)) {
- 2752|    139|                        if (!((int)tmpa == thousands_sep___0)) {
- 2753|    139|                            goto while_break___15;
- 2754|    139|                        }
- 2755|    139|                    }
+ 2751|      0|                    if (!((int)tmpa == 48)) {
+ 2752|      0|                        if (!((int)tmpa == thousands_sep___0)) {
+ 2753|      0|                            goto while_break___15;
+ 2754|      0|                        }
+ 2755|      0|                    }
  2756|      0|                    a++;
  2757|      0|                    tmpa = (unsigned char)*a;
  2758|      0|                }
- 2759|    139|while_break___15:
- 2760|    139|                ;
- 2761|    139|                while (1) {
+ 2759|      0|while_break___15:
+ 2760|      0|                ;
+ 2761|      0|                while (1) {
  2762|       |
- 2763|    139|                    if (!((int)tmpb == 48)) {
- 2764|    139|                        if (!((int)tmpb == thousands_sep___0)) {
- 2765|    139|                            goto while_break___16;
- 2766|    139|                        }
- 2767|    139|                    }
+ 2763|      0|                    if (!((int)tmpb == 48)) {
+ 2764|      0|                        if (!((int)tmpb == thousands_sep___0)) {
+ 2765|      0|                            goto while_break___16;
+ 2766|      0|                        }
+ 2767|      0|                    }
  2768|      0|                    b++;
  2769|      0|                    tmpb = (unsigned char)*b;
  2770|      0|                }
- 2771|    139|while_break___16:
- 2772|    139|                ;
- 2773|    165|                while (1) {
+ 2771|      0|while_break___16:
+ 2772|      0|                ;
+ 2773|      0|                while (1) {
  2774|       |
- 2775|    165|                    if ((int)tmpa == (int)tmpb) {
- 2776|     26|                        if (!((unsigned int)tmpa - 48U <= 9U)) {
+ 2775|      0|                    if ((int)tmpa == (int)tmpb) {
+ 2776|      0|                        if (!((unsigned int)tmpa - 48U <= 9U)) {
  2777|      0|                            goto while_break___17;
  2778|      0|                        }
- 2779|     26|                    }
- 2780|    139|                    else {
- 2781|    139|                        goto while_break___17;
- 2782|    139|                    }
- 2783|     26|                    while (1) {
- 2784|     26|                        a++;
- 2785|     26|                        tmpa = (unsigned char)*a;
- 2786|     26|                        if (!((int)tmpa == thousands_sep___0)) {
- 2787|     26|                            goto while_break___18;
- 2788|     26|                        }
- 2789|     26|                    }
- 2790|     26|while_break___18:
- 2791|     26|                    ;
- 2792|     26|                    while (1) {
- 2793|     26|                        b++;
- 2794|     26|                        tmpb = (unsigned char)*b;
- 2795|     26|                        if (!((int)tmpb == thousands_sep___0)) {
- 2796|     26|                            goto while_break___19;
- 2797|     26|                        }
- 2798|     26|                    }
- 2799|     26|while_break___19:
- 2800|     26|                    ;
- 2801|     26|                }
- 2802|    139|while_break___17:
- 2803|    139|                ;
- 2804|    139|                if ((int)tmpa == decimal_point___0) {
+ 2779|      0|                    }
+ 2780|      0|                    else {
+ 2781|      0|                        goto while_break___17;
+ 2782|      0|                    }
+ 2783|      0|                    while (1) {
+ 2784|      0|                        a++;
+ 2785|      0|                        tmpa = (unsigned char)*a;
+ 2786|      0|                        if (!((int)tmpa == thousands_sep___0)) {
+ 2787|      0|                            goto while_break___18;
+ 2788|      0|                        }
+ 2789|      0|                    }
+ 2790|      0|while_break___18:
+ 2791|      0|                    ;
+ 2792|      0|                    while (1) {
+ 2793|      0|                        b++;
+ 2794|      0|                        tmpb = (unsigned char)*b;
+ 2795|      0|                        if (!((int)tmpb == thousands_sep___0)) {
+ 2796|      0|                            goto while_break___19;
+ 2797|      0|                        }
+ 2798|      0|                    }
+ 2799|      0|while_break___19:
+ 2800|      0|                    ;
+ 2801|      0|                }
+ 2802|      0|while_break___17:
+ 2803|      0|                ;
+ 2804|      0|                if ((int)tmpa == decimal_point___0) {
  2805|      0|                    if (!((unsigned int)tmpb - 48U <= 9U)) {
  2806|      0|                        tmp___2 = fraccompare(a, b, (char)decimal_point___0);
  2807|      0|                        return (tmp___2);
@@ -2810,79 +2810,79 @@
  2810|      0|                        goto _L___0;
  2811|      0|                    }
  2812|      0|                }
- 2813|    139|                else {
- 2814|    139|_L___0:
- 2815|    139|                    if ((int)tmpb == decimal_point___0) {
+ 2813|      0|                else {
+ 2814|      0|_L___0:
+ 2815|      0|                    if ((int)tmpb == decimal_point___0) {
  2816|      0|                        if (!((unsigned int)tmpa - 48U <= 9U)) {
  2817|      0|                            tmp___2 = fraccompare(a, b, (char)decimal_point___0);
  2818|      0|                            return (tmp___2);
  2819|      0|                        }
  2820|      0|                    }
- 2821|    139|                }
- 2822|    139|                tmp = (int)tmpa - (int)tmpb;
- 2823|    139|                log_a = (size_t)0;
- 2824|    446|                while (1) {
+ 2821|      0|                }
+ 2822|      0|                tmp = (int)tmpa - (int)tmpb;
+ 2823|      0|                log_a = (size_t)0;
+ 2824|      0|                while (1) {
  2825|       |
- 2826|    446|                    if (!((unsigned int)tmpa - 48U <= 9U)) {
- 2827|    139|                        goto while_break___20;
- 2828|    139|                    }
- 2829|    307|                    while (1) {
- 2830|    307|                        a++;
- 2831|    307|                        tmpa = (unsigned char)*a;
- 2832|    307|                        if (!((int)tmpa == thousands_sep___0)) {
- 2833|    307|                            goto while_break___21;
- 2834|    307|                        }
- 2835|    307|                    }
- 2836|    307|while_break___21:
- 2837|    307|                    log_a++;
- 2838|    307|                }
- 2839|    139|while_break___20:
- 2840|    139|                log_b = (size_t)0;
- 2841|    361|                while (1) {
+ 2826|      0|                    if (!((unsigned int)tmpa - 48U <= 9U)) {
+ 2827|      0|                        goto while_break___20;
+ 2828|      0|                    }
+ 2829|      0|                    while (1) {
+ 2830|      0|                        a++;
+ 2831|      0|                        tmpa = (unsigned char)*a;
+ 2832|      0|                        if (!((int)tmpa == thousands_sep___0)) {
+ 2833|      0|                            goto while_break___21;
+ 2834|      0|                        }
+ 2835|      0|                    }
+ 2836|      0|while_break___21:
+ 2837|      0|                    log_a++;
+ 2838|      0|                }
+ 2839|      0|while_break___20:
+ 2840|      0|                log_b = (size_t)0;
+ 2841|      0|                while (1) {
  2842|       |
- 2843|    361|                    if (!((unsigned int)tmpb - 48U <= 9U)) {
- 2844|    139|                        goto while_break___22;
- 2845|    139|                    }
- 2846|    222|                    while (1) {
- 2847|    222|                        b++;
- 2848|    222|                        tmpb = (unsigned char)*b;
- 2849|    222|                        if (!((int)tmpb == thousands_sep___0)) {
- 2850|    222|                            goto while_break___23;
- 2851|    222|                        }
- 2852|    222|                    }
- 2853|    222|while_break___23:
- 2854|    222|                    log_b++;
- 2855|    222|                }
- 2856|    139|while_break___22:
- 2857|    139|                ;
- 2858|    139|                if (log_a != log_b) {
- 2859|     25|                    if (log_a < log_b) {
+ 2843|      0|                    if (!((unsigned int)tmpb - 48U <= 9U)) {
+ 2844|      0|                        goto while_break___22;
+ 2845|      0|                    }
+ 2846|      0|                    while (1) {
+ 2847|      0|                        b++;
+ 2848|      0|                        tmpb = (unsigned char)*b;
+ 2849|      0|                        if (!((int)tmpb == thousands_sep___0)) {
+ 2850|      0|                            goto while_break___23;
+ 2851|      0|                        }
+ 2852|      0|                    }
+ 2853|      0|while_break___23:
+ 2854|      0|                    log_b++;
+ 2855|      0|                }
+ 2856|      0|while_break___22:
+ 2857|      0|                ;
+ 2858|      0|                if (log_a != log_b) {
+ 2859|      0|                    if (log_a < log_b) {
  2860|      0|                        tmp___3 = -1;
  2861|      0|                    }
- 2862|     25|                    else {
- 2863|     25|                        tmp___3 = 1;
- 2864|     25|                    }
- 2865|     25|                    return ((int __attribute__((__pure__)))tmp___3);
- 2866|     25|                }
- 2867|    114|                if (!log_a) {
- 2868|     67|                    return ((int __attribute__((__pure__)))0);
- 2869|     67|                }
- 2870|     47|                return ((int __attribute__((__pure__)))tmp);
- 2871|    114|            }
- 2872|    158|        }
- 2873|    231|    }
- 2874|    231|}
+ 2862|      0|                    else {
+ 2863|      0|                        tmp___3 = 1;
+ 2864|      0|                    }
+ 2865|      0|                    return ((int __attribute__((__pure__)))tmp___3);
+ 2866|      0|                }
+ 2867|      0|                if (!log_a) {
+ 2868|      0|                    return ((int __attribute__((__pure__)))0);
+ 2869|      0|                }
+ 2870|      0|                return ((int __attribute__((__pure__)))tmp);
+ 2871|      0|            }
+ 2872|      0|        }
+ 2873|      0|    }
+ 2874|      0|}
  2875|       |int __attribute__((__pure__)) strnumcmp(char const *a, char const *b,
  2876|       |                                        int decimal_point___0,
  2877|       |                                        int thousands_sep___0)
- 2878|    231|{
- 2879|    231|    int __attribute__((__pure__)) tmp;
+ 2878|      0|{
+ 2879|      0|    int __attribute__((__pure__)) tmp;
  2880|       |
- 2881|    231|    {
- 2882|    231|        tmp = numcompare(a, b, decimal_point___0, thousands_sep___0);
- 2883|    231|        return (tmp);
- 2884|    231|    }
- 2885|    231|}
+ 2881|      0|    {
+ 2882|      0|        tmp = numcompare(a, b, decimal_point___0, thousands_sep___0);
+ 2883|      0|        return (tmp);
+ 2884|      0|    }
+ 2885|      0|}
  2886|       |size_t strnlen1(char const *string, size_t maxlen) __attribute__((__pure__));
  2887|       |size_t strnlen1(char const *string, size_t maxlen) __attribute__((__pure__));
  2888|       |size_t strnlen1(char const *string, size_t maxlen)
@@ -5252,7 +5252,7 @@
  5252|      0|    }
  5253|      0|}
  5254|       |struct quoting_options quote_quoting_options = {(enum quoting_style)6,
- 5255|       |           0,
+ 5255|       |    0,
  5256|       |    {0U},
  5257|       |    (char const *)((void *)0),
  5258|       |    (char const *)((void *)0)
@@ -5735,30 +5735,30 @@
  5735|   166k|    }
  5736|   166k|}
  5737|       |int memcoll0(char const *s1, size_t s1size, char const *s2, size_t s2size)
- 5738|   215k|{
- 5739|   215k|    int *tmp;
- 5740|   215k|    int tmp___0;
- 5741|   215k|    int tmp___1;
+ 5738|   190k|{
+ 5739|   190k|    int *tmp;
+ 5740|   190k|    int tmp___0;
+ 5741|   190k|    int tmp___1;
  5742|       |
- 5743|   215k|    {
- 5744|   215k|        if (s1size == s2size) {
- 5745|  60.9k|            tmp___1 = memcmp((void const *)s1, (void const *)s2, s1size);
- 5746|  60.9k|            if (tmp___1 == 0) {
- 5747|  48.9k|                tmp = __errno_location();
- 5748|  48.9k|                *tmp = 0;
- 5749|  48.9k|                return (0);
- 5750|  48.9k|            }
+ 5743|   190k|    {
+ 5744|   190k|        if (s1size == s2size) {
+ 5745|  36.5k|            tmp___1 = memcmp((void const *)s1, (void const *)s2, s1size);
+ 5746|  36.5k|            if (tmp___1 == 0) {
+ 5747|  24.4k|                tmp = __errno_location();
+ 5748|  24.4k|                *tmp = 0;
+ 5749|  24.4k|                return (0);
+ 5750|  24.4k|            }
  5751|  12.0k|            else {
  5752|  12.0k|                tmp___0 = strcoll_loop(s1, s1size, s2, s2size);
  5753|  12.0k|                return (tmp___0);
  5754|  12.0k|            }
- 5755|  60.9k|        }
+ 5755|  36.5k|        }
  5756|   154k|        else {
  5757|   154k|            tmp___0 = strcoll_loop(s1, s1size, s2, s2size);
  5758|   154k|            return (tmp___0);
  5759|   154k|        }
- 5760|   215k|    }
- 5761|   215k|}
+ 5760|   190k|    }
+ 5761|   190k|}
  5762|       |__attribute__((__nothrow__)) void(__attribute__((__leaf__)) md5_init_ctx)(
  5763|       |    struct md5_ctx *ctx);
  5764|       |__attribute__((__nothrow__)) void(__attribute__((__leaf__)) md5_process_block)(
@@ -7504,53 +7504,53 @@
  7504|      2|    }
  7505|      2|}
  7506|       |int heap_insert(struct heap *heap, void *item)
- 7507|     35|{
+ 7507|     34|{
  7508|       |
- 7509|     35|    {
- 7510|     35|        if (heap->capacity - 1UL <= heap->count) {
+ 7509|     34|    {
+ 7510|     34|        if (heap->capacity - 1UL <= heap->count) {
  7511|      0|            heap->array = (void **)x2nrealloc((void *)heap->array, &heap->capacity,
  7512|      0|                                              sizeof(*(heap->array)));
  7513|      0|        }
- 7514|     35|        (heap->count)++;
- 7515|     35|        *(heap->array + heap->count) = item;
- 7516|     35|        heapify_up(heap->array, heap->count, heap->compare);
- 7517|     35|        return (0);
- 7518|     35|    }
- 7519|     35|}
+ 7514|     34|        (heap->count)++;
+ 7515|     34|        *(heap->array + heap->count) = item;
+ 7516|     34|        heapify_up(heap->array, heap->count, heap->compare);
+ 7517|     34|        return (0);
+ 7518|     34|    }
+ 7519|     34|}
  7520|       |void *heap_remove_top(struct heap *heap)
- 7521|     33|{
- 7522|     33|    void *top;
- 7523|     33|    size_t tmp;
+ 7521|     32|{
+ 7522|     32|    void *top;
+ 7523|     32|    size_t tmp;
  7524|       |
- 7525|     33|    {
- 7526|     33|        if (heap->count == 0UL) {
+ 7525|     32|    {
+ 7526|     32|        if (heap->count == 0UL) {
  7527|      0|            return ((void *)0);
  7528|      0|        }
- 7529|     33|        top = *(heap->array + 1);
- 7530|     33|        tmp = heap->count;
- 7531|     33|        (heap->count)--;
- 7532|     33|        *(heap->array + 1) = *(heap->array + tmp);
- 7533|     33|        heapify_down(heap->array, heap->count, (size_t)1, heap->compare);
- 7534|     33|        return (top);
- 7535|     33|    }
- 7536|     33|}
+ 7529|     32|        top = *(heap->array + 1);
+ 7530|     32|        tmp = heap->count;
+ 7531|     32|        (heap->count)--;
+ 7532|     32|        *(heap->array + 1) = *(heap->array + tmp);
+ 7533|     32|        heapify_down(heap->array, heap->count, (size_t)1, heap->compare);
+ 7534|     32|        return (top);
+ 7535|     32|    }
+ 7536|     32|}
  7537|       |static size_t heapify_down(void **array, size_t count, size_t initial,
  7538|       |                           int (*compare___0)(void const *, void const *))
- 7539|     33|{
- 7540|     33|    void *element;
- 7541|     33|    size_t parent;
- 7542|     33|    size_t child;
- 7543|     33|    int tmp;
- 7544|     33|    int tmp___0;
+ 7539|     32|{
+ 7540|     32|    void *element;
+ 7541|     32|    size_t parent;
+ 7542|     32|    size_t child;
+ 7543|     32|    int tmp;
+ 7544|     32|    int tmp___0;
  7545|       |
- 7546|     33|    {
- 7547|     33|        element = *(array + initial);
- 7548|     33|        parent = initial;
- 7549|     33|        while (1) {
+ 7546|     32|    {
+ 7547|     32|        element = *(array + initial);
+ 7548|     32|        parent = initial;
+ 7549|     32|        while (1) {
  7550|       |
- 7551|     33|            if (!(parent <= count / 2UL)) {
- 7552|     33|                goto while_break;
- 7553|     33|            }
+ 7551|     32|            if (!(parent <= count / 2UL)) {
+ 7552|     32|                goto while_break;
+ 7553|     32|            }
  7554|      0|            child = 2UL * parent;
  7555|      0|            if (child < count) {
  7556|      0|                tmp = (*compare___0)((void const *)*(array + child),
@@ -7567,41 +7567,41 @@
  7567|      0|            *(array + parent) = *(array + child);
  7568|      0|            parent = child;
  7569|      0|        }
- 7570|     33|while_break:
- 7571|     33|        *(array + parent) = element;
- 7572|     33|        return (parent);
- 7573|     33|    }
- 7574|     33|}
+ 7570|     32|while_break:
+ 7571|     32|        *(array + parent) = element;
+ 7572|     32|        return (parent);
+ 7573|     32|    }
+ 7574|     32|}
  7575|       |static void heapify_up(void **array, size_t count,
  7576|       |                       int (*compare___0)(void const *, void const *))
- 7577|     35|{
- 7578|     35|    size_t k;
- 7579|     35|    void *new_element;
- 7580|     35|    int tmp;
+ 7577|     34|{
+ 7578|     34|    size_t k;
+ 7579|     34|    void *new_element;
+ 7580|     34|    int tmp;
  7581|       |
- 7582|     35|    {
- 7583|     35|        k = count;
- 7584|     35|        new_element = *(array + k);
- 7585|     35|        while (1) {
+ 7582|     34|    {
+ 7583|     34|        k = count;
+ 7584|     34|        new_element = *(array + k);
+ 7585|     34|        while (1) {
  7586|       |
- 7587|     35|            if (k != 1UL) {
+ 7587|     34|            if (k != 1UL) {
  7588|      0|                tmp = (*compare___0)((void const *)*(array + k / 2UL),
  7589|      0|                                     (void const *)new_element);
  7590|      0|                if (!(tmp <= 0)) {
  7591|      0|                    goto while_break;
  7592|      0|                }
  7593|      0|            }
- 7594|     35|            else {
- 7595|     35|                goto while_break;
- 7596|     35|            }
+ 7594|     34|            else {
+ 7595|     34|                goto while_break;
+ 7596|     34|            }
  7597|      0|            *(array + k) = *(array + k / 2UL);
  7598|      0|            k /= 2UL;
  7599|      0|        }
- 7600|     35|while_break:
- 7601|     35|        *(array + k) = new_element;
- 7602|     35|        return;
- 7603|     35|    }
- 7604|     35|}
+ 7600|     34|while_break:
+ 7601|     34|        *(array + k) = new_element;
+ 7602|     34|        return;
+ 7603|     34|    }
+ 7604|     34|}
  7605|       |size_t hash_string(char const *string, size_t n_buckets)
  7606|       |__attribute__((__pure__));
  7607|       |_Bool(__attribute__((__warn_unused_result__)) hash_rehash)(
@@ -8407,29 +8407,29 @@
  8407|       |__attribute__((__nothrow__)) int(__attribute__((__leaf__)) dup2)(int __fd,
  8408|       |        int __fd2);
  8409|       |FILE *fopen_safer(char const *file, char const *mode)
- 8410|      4|{
- 8411|      4|    FILE *fp;
- 8412|      4|    FILE *tmp;
- 8413|      4|    int fd;
- 8414|      4|    int tmp___0;
- 8415|      4|    int f;
- 8416|      4|    int tmp___1;
- 8417|      4|    int e;
- 8418|      4|    int *tmp___2;
- 8419|      4|    int *tmp___3;
- 8420|      4|    int e___0;
- 8421|      4|    int *tmp___4;
- 8422|      4|    int *tmp___5;
- 8423|      4|    int tmp___6;
+ 8410|      2|{
+ 8411|      2|    FILE *fp;
+ 8412|      2|    FILE *tmp;
+ 8413|      2|    int fd;
+ 8414|      2|    int tmp___0;
+ 8415|      2|    int f;
+ 8416|      2|    int tmp___1;
+ 8417|      2|    int e;
+ 8418|      2|    int *tmp___2;
+ 8419|      2|    int *tmp___3;
+ 8420|      2|    int e___0;
+ 8421|      2|    int *tmp___4;
+ 8422|      2|    int *tmp___5;
+ 8423|      2|    int tmp___6;
  8424|       |
- 8425|      4|    {
- 8426|      4|        tmp = fopen(file, mode);
- 8427|      4|        fp = tmp;
- 8428|      4|        if (fp) {
- 8429|      4|            tmp___0 = fileno(fp);
- 8430|      4|            fd = tmp___0;
- 8431|      4|            if (0 <= fd) {
- 8432|      4|                if (fd <= 2) {
+ 8425|      2|    {
+ 8426|      2|        tmp = fopen(file, mode);
+ 8427|      2|        fp = tmp;
+ 8428|      2|        if (fp) {
+ 8429|      2|            tmp___0 = fileno(fp);
+ 8430|      2|            fd = tmp___0;
+ 8431|      2|            if (0 <= fd) {
+ 8432|      2|                if (fd <= 2) {
  8433|      0|                    tmp___1 = dup_safer(fd);
  8434|      0|                    f = tmp___1;
  8435|      0|                    if (f < 0) {
@@ -8457,11 +8457,11 @@
  8457|      0|                        }
  8458|      0|                    }
  8459|      0|                }
- 8460|      4|            }
- 8461|      4|        }
- 8462|      4|        return (fp);
- 8463|      4|    }
- 8464|      4|}
+ 8460|      2|            }
+ 8461|      2|        }
+ 8462|      2|        return (fp);
+ 8463|      2|    }
+ 8464|      2|}
  8465|       |int filevercmp(char const *s1, char const *s2);
  8466|       |static char const *match_suffix(char const **str)
  8467|      0|{
@@ -8776,38 +8776,38 @@
  8776|       |extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) __freading)(
  8777|       |    FILE *__fp);
  8778|       |__inline static void clear_ungetc_buffer_preserving_position(FILE *fp)
- 8779|      4|{
+ 8779|      2|{
  8780|       |
- 8781|      4|    {
- 8782|      4|        if (fp->_flags & 256) {
+ 8781|      2|    {
+ 8782|      2|        if (fp->_flags & 256) {
  8783|      0|            rpl_fseeko(fp, (off_t)0, 1);
  8784|      0|        }
- 8785|      4|        return;
- 8786|      4|    }
- 8787|      4|}
+ 8785|      2|        return;
+ 8786|      2|    }
+ 8787|      2|}
  8788|       |int rpl_fflush(FILE *stream)
- 8789|      8|{
- 8790|      8|    int tmp;
- 8791|      8|    int tmp___0;
- 8792|      8|    int tmp___1;
+ 8789|      6|{
+ 8790|      6|    int tmp;
+ 8791|      6|    int tmp___0;
+ 8792|      6|    int tmp___1;
  8793|       |
- 8794|      8|    {
- 8795|      8|        if ((unsigned long)stream == (unsigned long)((void *)0)) {
+ 8794|      6|    {
+ 8795|      6|        if ((unsigned long)stream == (unsigned long)((void *)0)) {
  8796|      0|            tmp = fflush(stream);
  8797|      0|            return (tmp);
  8798|      0|        }
- 8799|      8|        else {
- 8800|      8|            tmp___0 = __freading(stream);
- 8801|      8|            if (!(tmp___0 != 0)) {
+ 8799|      6|        else {
+ 8800|      6|            tmp___0 = __freading(stream);
+ 8801|      6|            if (!(tmp___0 != 0)) {
  8802|      4|                tmp = fflush(stream);
  8803|      4|                return (tmp);
  8804|      4|            }
- 8805|      8|        }
- 8806|      4|        clear_ungetc_buffer_preserving_position(stream);
- 8807|      4|        tmp___1 = fflush(stream);
- 8808|      4|        return (tmp___1);
- 8809|      8|    }
- 8810|      8|}
+ 8805|      6|        }
+ 8806|      2|        clear_ungetc_buffer_preserving_position(stream);
+ 8807|      2|        tmp___1 = fflush(stream);
+ 8808|      2|        return (tmp___1);
+ 8809|      6|    }
+ 8810|      6|}
  8811|       |int fd_safer(int fd)
  8812|      0|{
  8813|      0|    int f;
@@ -8916,51 +8916,51 @@
  8916|      0|}
  8917|       |extern int fclose(FILE *__stream);
  8918|       |int(__attribute__((__nonnull__(1))) rpl_fclose)(FILE *fp)
- 8919|      8|{
- 8920|      8|    int saved_errno;
- 8921|      8|    int fd;
- 8922|      8|    int result;
- 8923|      8|    int tmp;
- 8924|      8|    int *tmp___0;
- 8925|      8|    int tmp___1;
- 8926|      8|    int tmp___2;
- 8927|      8|    __off_t tmp___3;
- 8928|      8|    int tmp___4;
- 8929|      8|    int *tmp___5;
+ 8919|      6|{
+ 8920|      6|    int saved_errno;
+ 8921|      6|    int fd;
+ 8922|      6|    int result;
+ 8923|      6|    int tmp;
+ 8924|      6|    int *tmp___0;
+ 8925|      6|    int tmp___1;
+ 8926|      6|    int tmp___2;
+ 8927|      6|    __off_t tmp___3;
+ 8928|      6|    int tmp___4;
+ 8929|      6|    int *tmp___5;
  8930|       |
- 8931|      8|    {
- 8932|      8|        saved_errno = 0;
- 8933|      8|        result = 0;
- 8934|      8|        fd = fileno(fp);
- 8935|      8|        if (fd < 0) {
+ 8931|      6|    {
+ 8932|      6|        saved_errno = 0;
+ 8933|      6|        result = 0;
+ 8934|      6|        fd = fileno(fp);
+ 8935|      6|        if (fd < 0) {
  8936|      0|            tmp = fclose(fp);
  8937|      0|            return (tmp);
  8938|      0|        }
- 8939|      8|        tmp___1 = __freading(fp);
- 8940|      8|        if (tmp___1 != 0) {
- 8941|      4|            tmp___2 = fileno(fp);
- 8942|      4|            tmp___3 = lseek(tmp___2, (__off_t)0, 1);
- 8943|      4|            if (tmp___3 != -1L) {
- 8944|      8|_L:
- 8945|      8|                tmp___4 = rpl_fflush(fp);
- 8946|      8|                if (tmp___4) {
+ 8939|      6|        tmp___1 = __freading(fp);
+ 8940|      6|        if (tmp___1 != 0) {
+ 8941|      2|            tmp___2 = fileno(fp);
+ 8942|      2|            tmp___3 = lseek(tmp___2, (__off_t)0, 1);
+ 8943|      2|            if (tmp___3 != -1L) {
+ 8944|      6|_L:
+ 8945|      6|                tmp___4 = rpl_fflush(fp);
+ 8946|      6|                if (tmp___4) {
  8947|      0|                    tmp___0 = __errno_location();
  8948|      0|                    saved_errno = *tmp___0;
  8949|      0|                }
- 8950|      8|            }
- 8951|      4|        }
+ 8950|      6|            }
+ 8951|      2|        }
  8952|      4|        else {
  8953|      4|            goto _L;
  8954|      4|        }
- 8955|      8|        result = fclose(fp);
- 8956|      8|        if (saved_errno != 0) {
+ 8955|      6|        result = fclose(fp);
+ 8956|      6|        if (saved_errno != 0) {
  8957|      0|            tmp___5 = __errno_location();
  8958|      0|            *tmp___5 = saved_errno;
  8959|      0|            result = -1;
  8960|      0|        }
- 8961|      8|        return (result);
- 8962|      8|    }
- 8963|      8|}
+ 8961|      6|        return (result);
+ 8962|      6|    }
+ 8963|      6|}
  8964|       |extern __attribute__((__nothrow__)) int(
  8965|       |    __attribute__((__nonnull__(1), __leaf__)) sigemptyset)(sigset_t *__set);
  8966|       |extern __attribute__((__nothrow__)) int(__attribute__((
@@ -8974,28 +8974,28 @@
  8974|       |void fdadvise(int fd, off_t offset, off_t len, fadvice_t advice);
  8975|       |void fadvise(FILE *fp, fadvice_t advice);
  8976|       |void fdadvise(int fd, off_t offset, off_t len, fadvice_t advice)
- 8977|      4|{
- 8978|      4|    int __x;
- 8979|      4|    int tmp;
+ 8977|      2|{
+ 8978|      2|    int __x;
+ 8979|      2|    int tmp;
  8980|       |
- 8981|      4|    {
- 8982|      4|        tmp = posix_fadvise(fd, offset, len, (int)advice);
- 8983|      4|        __x = tmp;
- 8984|      4|        return;
- 8985|      4|    }
- 8986|      4|}
+ 8981|      2|    {
+ 8982|      2|        tmp = posix_fadvise(fd, offset, len, (int)advice);
+ 8983|      2|        __x = tmp;
+ 8984|      2|        return;
+ 8985|      2|    }
+ 8986|      2|}
  8987|       |void fadvise(FILE *fp, fadvice_t advice)
- 8988|      4|{
- 8989|      4|    int tmp;
+ 8988|      2|{
+ 8989|      2|    int tmp;
  8990|       |
- 8991|      4|    {
- 8992|      4|        if (fp) {
- 8993|      4|            tmp = fileno(fp);
- 8994|      4|            fdadvise(tmp, (off_t)0, (off_t)0, advice);
- 8995|      4|        }
- 8996|      4|        return;
- 8997|      4|    }
- 8998|      4|}
+ 8991|      2|    {
+ 8992|      2|        if (fp) {
+ 8993|      2|            tmp = fileno(fp);
+ 8994|      2|            fdadvise(tmp, (off_t)0, (off_t)0, advice);
+ 8995|      2|        }
+ 8996|      2|        return;
+ 8997|      2|    }
+ 8998|      2|}
  8999|       |int volatile exit_failure = (int volatile)1;
  9000|       |int dup_safer(int fd)
  9001|      0|{
@@ -9735,66 +9735,66 @@
  9735|      0|    }
  9736|      0|}
  9737|       |static FILE *stream_open(char const *file, char const *how)
- 9738|      6|{
- 9739|      6|    FILE *fp;
- 9740|      6|    int tmp;
- 9741|      6|    FILE *tmp___0;
+ 9738|      4|{
+ 9739|      4|    FILE *fp;
+ 9740|      4|    int tmp;
+ 9741|      4|    FILE *tmp___0;
  9742|       |
- 9743|      6|    {
- 9744|      6|        if (!file) {
+ 9743|      4|    {
+ 9744|      4|        if (!file) {
  9745|      2|            return (stdout);
  9746|      2|        }
- 9747|      4|        if ((int const) * how == 114) {
- 9748|      4|            tmp = strcmp(file, "-");
- 9749|      4|            if (tmp == 0) {
+ 9747|      2|        if ((int const) * how == 114) {
+ 9748|      2|            tmp = strcmp(file, "-");
+ 9749|      2|            if (tmp == 0) {
  9750|      0|                have_read_stdin = (_Bool)1;
  9751|      0|                fp = stdin;
  9752|      0|            }
- 9753|      4|            else {
- 9754|      4|                fp = fopen_safer(file, how);
- 9755|      4|            }
- 9756|      4|            fadvise(fp, (fadvice_t)2);
- 9757|      4|            return (fp);
- 9758|      4|        }
+ 9753|      2|            else {
+ 9754|      2|                fp = fopen_safer(file, how);
+ 9755|      2|            }
+ 9756|      2|            fadvise(fp, (fadvice_t)2);
+ 9757|      2|            return (fp);
+ 9758|      2|        }
  9759|      0|        tmp___0 = fopen_safer(file, how);
  9760|      0|        return (tmp___0);
- 9761|      4|    }
- 9762|      4|}
+ 9761|      2|    }
+ 9762|      2|}
  9763|       |static FILE *xfopen(char const *file, char const *how)
- 9764|      6|{
- 9765|      6|    FILE *fp;
- 9766|      6|    FILE *tmp;
- 9767|      6|    char *tmp___0;
+ 9764|      4|{
+ 9765|      4|    FILE *fp;
+ 9766|      4|    FILE *tmp;
+ 9767|      4|    char *tmp___0;
  9768|       |
- 9769|      6|    {
- 9770|      6|        tmp = stream_open(file, how);
- 9771|      6|        fp = tmp;
- 9772|      6|        if (!fp) {
+ 9769|      4|    {
+ 9770|      4|        tmp = stream_open(file, how);
+ 9771|      4|        fp = tmp;
+ 9772|      4|        if (!fp) {
  9773|      0|            tmp___0 = gettext("open failed");
  9774|      0|            die((char const *)tmp___0, file);
  9775|      0|        }
- 9776|      6|        return (fp);
- 9777|      6|    }
- 9778|      6|}
+ 9776|      4|        return (fp);
+ 9777|      4|    }
+ 9778|      4|}
  9779|       |static void xfclose(FILE *fp, char const *file)
- 9780|      6|{
- 9781|      6|    int tmp;
- 9782|      6|    int tmp___0;
- 9783|      6|    char *tmp___1;
- 9784|      6|    int tmp___2;
- 9785|      6|    char *tmp___3;
- 9786|      6|    int tmp___4;
+ 9780|      4|{
+ 9781|      4|    int tmp;
+ 9782|      4|    int tmp___0;
+ 9783|      4|    char *tmp___1;
+ 9784|      4|    int tmp___2;
+ 9785|      4|    char *tmp___3;
+ 9786|      4|    int tmp___4;
  9787|       |
- 9788|      6|    {
- 9789|      6|        tmp = fileno(fp);
- 9790|      6|        if (tmp == 0) {
+ 9788|      4|    {
+ 9789|      4|        tmp = fileno(fp);
+ 9790|      4|        if (tmp == 0) {
  9791|      0|            goto case_0;
  9792|      0|        }
- 9793|      6|        if (tmp == 1) {
+ 9793|      4|        if (tmp == 1) {
  9794|      2|            goto case_1;
  9795|      2|        }
- 9796|      4|        goto switch_default;
- 9797|      4|case_0:
+ 9796|      2|        goto switch_default;
+ 9797|      2|case_0:
  9798|      0|        tmp___0 = feof_unlocked(fp);
  9799|      0|        if (tmp___0) {
  9800|      0|            clearerr_unlocked(fp);
@@ -9807,18 +9807,18 @@
  9807|      0|            die((char const *)tmp___1, file);
  9808|      0|        }
  9809|      2|        goto switch_break;
- 9810|      4|switch_default:
- 9811|      4|        tmp___4 = rpl_fclose(fp);
- 9812|      4|        if (tmp___4 != 0) {
+ 9810|      2|switch_default:
+ 9811|      2|        tmp___4 = rpl_fclose(fp);
+ 9812|      2|        if (tmp___4 != 0) {
  9813|      0|            tmp___3 = gettext("close failed");
  9814|      0|            die((char const *)tmp___3, file);
  9815|      0|        }
- 9816|      4|        goto switch_break;
- 9817|      6|switch_break:
- 9818|      6|        ;
- 9819|      6|        return;
- 9820|      4|    }
- 9821|      4|}
+ 9816|      2|        goto switch_break;
+ 9817|      4|switch_break:
+ 9818|      4|        ;
+ 9819|      4|        return;
+ 9820|      2|    }
+ 9821|      2|}
  9822|       |static void dup2_or_die(int oldfd, int newfd)
  9823|      0|{
  9824|      0|    char *tmp;
@@ -10200,21 +10200,21 @@
 10200|     24|                monthtab[i].val = (int)(i + 1UL);
 10201|     24|                k = (size_t)0;
 10202|     24|                j = k;
-10203|     96|                while (1) {
+10203|    248|                while (1) {
 10204|       |
-10205|     96|                    if (!(j < s_len)) {
+10205|    248|                    if (!(j < s_len)) {
 10206|     24|                        goto while_break___1;
 10207|     24|                    }
-10208|     72|                    tmp___8 = __ctype_b_loc();
-10209|     72|                    tmp___9 = to_uchar((char)*(s + j));
-10210|     72|                    if (!((int const) * (*tmp___8 + (int)tmp___9) & 1)) {
-10211|     72|                        tmp___6 = k;
-10212|     72|                        k++;
-10213|     72|                        tmp___7 = to_uchar((char)*(s + j));
-10214|     72|                        *(name + tmp___6) = fold_toupper[tmp___7];
-10215|     72|                    }
-10216|     72|                    j++;
-10217|     72|                }
+10208|    224|                    tmp___8 = __ctype_b_loc();
+10209|    224|                    tmp___9 = to_uchar((char)*(s + j));
+10210|    224|                    if (!((int const) * (*tmp___8 + (int)tmp___9) & 1)) {
+10211|    224|                        tmp___6 = k;
+10212|    224|                        k++;
+10213|    224|                        tmp___7 = to_uchar((char)*(s + j));
+10214|    224|                        *(name + tmp___6) = fold_toupper[tmp___7];
+10215|    224|                    }
+10216|    224|                    j++;
+10217|    224|                }
 10218|     24|while_break___1:
 10219|     24|                *(name + k) = (char)'\000';
 10220|     24|                i++;
@@ -10240,7 +10240,7 @@
 10240|      0|    char const *tmp___5;
 10241|      0|    char *tmp___6;
 10242|      0|    char max_nmerge_buf[((sizeof(max_nmerge) * 8UL) * 146UL + 484UL) / 485UL +
-10243|      0|                                             1UL];
+10243|      0|                        1UL];
 10244|      0|    char const *tmp___7;
 10245|      0|    char *tmp___8;
 10246|      0|    char *tmp___9;
@@ -10415,11 +10415,11 @@
 10415|      2|        tmp___0 = physmem_total();
 10416|      2|        total = tmp___0;
 10417|      2|        if (avail > total / (double)8) {
-10418|      2|            tmp___1 = avail;
-10419|      2|        }
-10420|      0|        else {
-10421|      0|            tmp___1 = total / (double)8;
-10422|      0|        }
+10418|      0|            tmp___1 = avail;
+10419|      0|        }
+10420|      2|        else {
+10421|      2|            tmp___1 = total / (double)8;
+10422|      2|        }
 10423|      2|        mem = tmp___1;
 10424|      2|        size = 0xffffffffffffffffUL;
 10425|      2|        tmp___2 = getrlimit((__rlimit_resource_t)2, &rlimit);
@@ -10477,59 +10477,59 @@
 10477|      2|        worst_case_per_input_byte = line_bytes + 1UL;
 10478|      2|        size = worst_case_per_input_byte + 1UL;
 10479|      2|        i = (size_t)0;
-10480|      6|        while (1) {
+10480|      4|        while (1) {
 10481|       |
-10482|      6|            if (!(i < nfiles)) {
+10482|      4|            if (!(i < nfiles)) {
 10483|      2|                goto while_break;
 10484|      2|            }
-10485|      4|            if (i < nfps) {
+10485|      2|            if (i < nfps) {
 10486|      2|                tmp___0 = fileno((FILE *)*(fps + i));
 10487|      2|                tmp___1 = fstat(tmp___0, &st);
 10488|      2|                tmp___7 = tmp___1;
 10489|      2|            }
-10490|      2|            else {
-10491|      2|                tmp___6 = strcmp((char const *)*(files + i), "-");
-10492|      2|                if (tmp___6 == 0) {
+10490|      0|            else {
+10491|      0|                tmp___6 = strcmp((char const *)*(files + i), "-");
+10492|      0|                if (tmp___6 == 0) {
 10493|      0|                    tmp___3 = fstat(0, &st);
 10494|      0|                    tmp___5 = tmp___3;
 10495|      0|                }
-10496|      2|                else {
-10497|      2|                    tmp___4 = stat((char const *)*(files + i), &st);
-10498|      2|                    tmp___5 = tmp___4;
-10499|      2|                }
-10500|      2|                tmp___7 = tmp___5;
-10501|      2|            }
-10502|      4|            if (tmp___7 != 0) {
+10496|      0|                else {
+10497|      0|                    tmp___4 = stat((char const *)*(files + i), &st);
+10498|      0|                    tmp___5 = tmp___4;
+10499|      0|                }
+10500|      0|                tmp___7 = tmp___5;
+10501|      0|            }
+10502|      2|            if (tmp___7 != 0) {
 10503|      0|                tmp = gettext("stat failed");
 10504|      0|                die((char const *)tmp, (char const *)*(files + i));
 10505|      0|            }
-10506|      4|            if ((st.st_mode & 61440U) == 32768U) {
-10507|      4|                file_size = st.st_size;
-10508|      4|            }
+10506|      2|            if ((st.st_mode & 61440U) == 32768U) {
+10507|      2|                file_size = st.st_size;
+10508|      2|            }
 10509|      0|            else {
 10510|      0|                if (sort_size) {
 10511|      0|                    return (sort_size);
 10512|      0|                }
 10513|      0|                file_size = (off_t)131072;
 10514|      0|            }
-10515|      4|            if (!size_bound) {
+10515|      2|            if (!size_bound) {
 10516|      2|                size_bound = sort_size;
 10517|      2|                if (!size_bound) {
 10518|      2|                    size_bound = default_sort_size();
 10519|      2|                }
 10520|      2|            }
-10521|      4|            worst_case = (size_t)file_size * worst_case_per_input_byte + 1UL;
-10522|      4|            if ((size_t)file_size != worst_case / worst_case_per_input_byte) {
+10521|      2|            worst_case = (size_t)file_size * worst_case_per_input_byte + 1UL;
+10522|      2|            if ((size_t)file_size != worst_case / worst_case_per_input_byte) {
 10523|      0|                return (size_bound);
 10524|      0|            }
-10525|      4|            else {
-10526|      4|                if (size_bound - size <= worst_case) {
+10525|      2|            else {
+10526|      2|                if (size_bound - size <= worst_case) {
 10527|      0|                    return (size_bound);
 10528|      0|                }
-10529|      4|            }
-10530|      4|            size += worst_case;
-10531|      4|            i++;
-10532|      4|        }
+10529|      2|            }
+10530|      2|            size += worst_case;
+10531|      2|            i++;
+10532|      2|        }
 10533|      2|while_break:
 10534|      2|        ;
 10535|      2|        return (size);
@@ -10565,12 +10565,12 @@
 10565|      2|    }
 10566|      2|}
 10567|       |__inline static struct line *buffer_linelim(struct buffer const *buf___1)
-10568|     10|{
+10568|      6|{
 10569|       |
-10570|     10|    {
-10571|     10|        return ((struct line *)(buf___1->buf + buf___1->alloc));
-10572|     10|    }
-10573|     10|}
+10570|      6|    {
+10571|      6|        return ((struct line *)(buf___1->buf + buf___1->alloc));
+10572|      6|    }
+10573|      6|}
 10574|       |static char *begfield(struct line const *line, struct keyfield const *key)
 10575|      0|{
 10576|      0|    char *ptr;
@@ -10832,97 +10832,97 @@
 10832|      0|    }
 10833|      0|}
 10834|       |static _Bool fillbuf___7(struct buffer *buf___1, FILE *fp, char const *file)
-10835|      4|{
-10836|      4|    struct keyfield const *key;
-10837|      4|    char eol;
-10838|      4|    size_t line_bytes;
-10839|      4|    size_t mergesize;
-10840|      4|    char *ptr;
-10841|      4|    struct line *linelim;
-10842|      4|    struct line *tmp;
-10843|      4|    struct line *line;
-10844|      4|    size_t avail;
-10845|      4|    char *line_start;
-10846|      4|    char *tmp___0;
-10847|      4|    size_t readsize;
-10848|      4|    size_t bytes_read;
-10849|      4|    size_t tmp___1;
-10850|      4|    char *ptrlim;
-10851|      4|    char *p;
-10852|      4|    char *tmp___2;
-10853|      4|    int tmp___3;
-10854|      4|    char *tmp___4;
-10855|      4|    int tmp___5;
-10856|      4|    char *tmp___6;
-10857|      4|    unsigned char tmp___7;
-10858|      4|    struct line *tmp___8;
-10859|      4|    size_t line_alloc;
+10835|      2|{
+10836|      2|    struct keyfield const *key;
+10837|      2|    char eol;
+10838|      2|    size_t line_bytes;
+10839|      2|    size_t mergesize;
+10840|      2|    char *ptr;
+10841|      2|    struct line *linelim;
+10842|      2|    struct line *tmp;
+10843|      2|    struct line *line;
+10844|      2|    size_t avail;
+10845|      2|    char *line_start;
+10846|      2|    char *tmp___0;
+10847|      2|    size_t readsize;
+10848|      2|    size_t bytes_read;
+10849|      2|    size_t tmp___1;
+10850|      2|    char *ptrlim;
+10851|      2|    char *p;
+10852|      2|    char *tmp___2;
+10853|      2|    int tmp___3;
+10854|      2|    char *tmp___4;
+10855|      2|    int tmp___5;
+10856|      2|    char *tmp___6;
+10857|      2|    unsigned char tmp___7;
+10858|      2|    struct line *tmp___8;
+10859|      2|    size_t line_alloc;
 10860|       |
-10861|      4|    {
-10862|      4|        key = (struct keyfield const *)keylist;
-10863|      4|        eol = eolchar;
-10864|      4|        line_bytes = buf___1->line_bytes;
-10865|      4|        mergesize = merge_buffer_size - (2UL + sizeof(struct line));
-10866|      4|        if (buf___1->eof) {
+10861|      2|    {
+10862|      2|        key = (struct keyfield const *)keylist;
+10863|      2|        eol = eolchar;
+10864|      2|        line_bytes = buf___1->line_bytes;
+10865|      2|        mergesize = merge_buffer_size - (2UL + sizeof(struct line));
+10866|      2|        if (buf___1->eof) {
 10867|      0|            return ((_Bool)0);
 10868|      0|        }
-10869|      4|        if (buf___1->used != buf___1->left) {
+10869|      2|        if (buf___1->used != buf___1->left) {
 10870|      0|            memmove((void *)buf___1->buf,
 10871|      0|                    (void const *)((buf___1->buf + buf___1->used) - buf___1->left),
 10872|      0|                    buf___1->left);
 10873|      0|            buf___1->used = buf___1->left;
 10874|      0|            buf___1->nlines = (size_t)0;
 10875|      0|        }
-10876|      4|        while (1) {
-10877|      4|            ptr = buf___1->buf + buf___1->used;
-10878|      4|            tmp = buffer_linelim((struct buffer const *)buf___1);
-10879|      4|            linelim = tmp;
-10880|      4|            line = linelim - buf___1->nlines;
-10881|      4|            avail = (size_t)(((char *)linelim - buf___1->nlines * line_bytes) - ptr);
-10882|      4|            if (buf___1->nlines) {
-10883|      2|                tmp___0 = line->text + line->length;
-10884|      2|            }
+10876|      2|        while (1) {
+10877|      2|            ptr = buf___1->buf + buf___1->used;
+10878|      2|            tmp = buffer_linelim((struct buffer const *)buf___1);
+10879|      2|            linelim = tmp;
+10880|      2|            line = linelim - buf___1->nlines;
+10881|      2|            avail = (size_t)(((char *)linelim - buf___1->nlines * line_bytes) - ptr);
+10882|      2|            if (buf___1->nlines) {
+10883|      0|                tmp___0 = line->text + line->length;
+10884|      0|            }
 10885|      2|            else {
 10886|      2|                tmp___0 = buf___1->buf;
 10887|      2|            }
-10888|      4|            line_start = tmp___0;
-10889|      4|            while (1) {
+10888|      2|            line_start = tmp___0;
+10889|      2|            while (1) {
 10890|       |
-10891|      4|                if (!(line_bytes + 1UL < avail)) {
+10891|      2|                if (!(line_bytes + 1UL < avail)) {
 10892|      0|                    goto while_break___0;
 10893|      0|                }
-10894|      4|                readsize = (avail - 1UL) / (line_bytes + 1UL);
-10895|      4|                tmp___1 = fread_unlocked((void *)ptr, (size_t)1, readsize, fp);
-10896|      4|                bytes_read = tmp___1;
-10897|      4|                ptrlim = ptr + bytes_read;
-10898|      4|                avail -= bytes_read;
-10899|      4|                if (bytes_read != readsize) {
-10900|      4|                    tmp___3 = ferror_unlocked(fp);
-10901|      4|                    if (tmp___3) {
+10894|      2|                readsize = (avail - 1UL) / (line_bytes + 1UL);
+10895|      2|                tmp___1 = fread_unlocked((void *)ptr, (size_t)1, readsize, fp);
+10896|      2|                bytes_read = tmp___1;
+10897|      2|                ptrlim = ptr + bytes_read;
+10898|      2|                avail -= bytes_read;
+10899|      2|                if (bytes_read != readsize) {
+10900|      2|                    tmp___3 = ferror_unlocked(fp);
+10901|      2|                    if (tmp___3) {
 10902|      0|                        tmp___2 = gettext("read failed");
 10903|      0|                        die((char const *)tmp___2, file);
 10904|      0|                    }
-10905|      4|                    tmp___5 = feof_unlocked(fp);
-10906|      4|                    if (tmp___5) {
-10907|      4|                        buf___1->eof = (_Bool)1;
-10908|      4|                        if ((unsigned long)buf___1->buf == (unsigned long)ptrlim) {
+10905|      2|                    tmp___5 = feof_unlocked(fp);
+10906|      2|                    if (tmp___5) {
+10907|      2|                        buf___1->eof = (_Bool)1;
+10908|      2|                        if ((unsigned long)buf___1->buf == (unsigned long)ptrlim) {
 10909|      0|                            return ((_Bool)0);
 10910|      0|                        }
-10911|      4|                        if ((unsigned long)line_start != (unsigned long)ptrlim) {
-10912|      4|                            if ((int)*(ptrlim + -1) != (int)eol) {
+10911|      2|                        if ((unsigned long)line_start != (unsigned long)ptrlim) {
+10912|      2|                            if ((int)*(ptrlim + -1) != (int)eol) {
 10913|      0|                                tmp___4 = ptrlim;
 10914|      0|                                ptrlim++;
 10915|      0|                                *tmp___4 = eol;
 10916|      0|                            }
-10917|      4|                        }
-10918|      4|                    }
-10919|      4|                }
+10917|      2|                        }
+10918|      2|                    }
+10919|      2|                }
 10920|  15.6k|                while (1) {
 10921|  15.6k|                    p = (char *)memchr((void const *)ptr, (int)eol,
 10922|  15.6k|                                       (size_t)(ptrlim - ptr));
 10923|  15.6k|                    if (!p) {
-10924|      4|                        goto while_break___1;
-10925|      4|                    }
+10924|      2|                        goto while_break___1;
+10925|      2|                    }
 10926|  15.6k|                    *p = (char)'\000';
 10927|  15.6k|                    ptr = p + 1;
 10928|  15.6k|                    line--;
@@ -10936,18 +10936,18 @@
 10936|      0|                    }
 10937|  15.6k|                    avail -= line_bytes;
 10938|  15.6k|                    if (key) {
-10939|  15.6k|                        if (key->eword == 0xffffffffffffffffUL) {
-10940|  15.6k|                            line->keylim = p;
-10941|  15.6k|                        }
+10939|      0|                        if (key->eword == 0xffffffffffffffffUL) {
+10940|      0|                            line->keylim = p;
+10941|      0|                        }
 10942|      0|                        else {
 10943|      0|                            tmp___6 = limfield((struct line const *)line, key);
 10944|      0|                            line->keylim = tmp___6;
 10945|      0|                        }
-10946|  15.6k|                        if (key->sword != 0xffffffffffffffffUL) {
+10946|      0|                        if (key->sword != 0xffffffffffffffffUL) {
 10947|      0|                            line->keybeg = begfield((struct line const *)line, key);
 10948|      0|                        }
-10949|  15.6k|                        else {
-10950|  15.6k|                            if (key->skipsblanks) {
+10949|      0|                        else {
+10950|      0|                            if (key->skipsblanks) {
 10951|      0|                                while (1) {
 10952|      0|                                    tmp___7 = to_uchar(*line_start);
 10953|      0|                                    if (!blanks[tmp___7]) {
@@ -10958,26 +10958,26 @@
 10958|      0|while_break___2:
 10959|      0|                                ;
 10960|      0|                            }
-10961|  15.6k|                            line->keybeg = line_start;
-10962|  15.6k|                        }
-10963|  15.6k|                    }
+10961|      0|                            line->keybeg = line_start;
+10962|      0|                        }
+10963|      0|                    }
 10964|  15.6k|                    line_start = ptr;
 10965|  15.6k|                }
-10966|      4|while_break___1:
-10967|      4|                ptr = ptrlim;
-10968|      4|                if (buf___1->eof) {
-10969|      4|                    goto while_break___0;
-10970|      4|                }
-10971|      4|            }
-10972|      4|while_break___0:
-10973|      4|            buf___1->used = (size_t)(ptr - buf___1->buf);
-10974|      4|            tmp___8 = buffer_linelim((struct buffer const *)buf___1);
-10975|      4|            buf___1->nlines = (size_t)(tmp___8 - line);
-10976|      4|            if (buf___1->nlines != 0UL) {
-10977|      4|                buf___1->left = (size_t)(ptr - line_start);
-10978|      4|                merge_buffer_size = mergesize + (2UL + sizeof(struct line));
-10979|      4|                return ((_Bool)1);
-10980|      4|            }
+10966|      2|while_break___1:
+10967|      2|                ptr = ptrlim;
+10968|      2|                if (buf___1->eof) {
+10969|      2|                    goto while_break___0;
+10970|      2|                }
+10971|      2|            }
+10972|      2|while_break___0:
+10973|      2|            buf___1->used = (size_t)(ptr - buf___1->buf);
+10974|      2|            tmp___8 = buffer_linelim((struct buffer const *)buf___1);
+10975|      2|            buf___1->nlines = (size_t)(tmp___8 - line);
+10976|      2|            if (buf___1->nlines != 0UL) {
+10977|      2|                buf___1->left = (size_t)(ptr - line_start);
+10978|      2|                merge_buffer_size = mergesize + (2UL + sizeof(struct line));
+10979|      2|                return ((_Bool)1);
+10980|      2|            }
 10981|      0|            line_alloc = buf___1->alloc / sizeof(struct line);
 10982|      0|            buf___1->buf = (char *)x2nrealloc((void *)buf___1->buf, &line_alloc,
 10983|      0|                                              sizeof(struct line));
@@ -10985,8 +10985,8 @@
 10985|      0|        }
 10986|       |
 10987|      0|        return ((_Bool)0);
-10988|      4|    }
-10989|      4|}
+10988|      2|    }
+10989|      2|}
 10990|       |static char const unit_order[256] = {
 10991|       |    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
 10992|       |    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
@@ -11145,33 +11145,33 @@
 11145|      0|    }
 11146|      0|}
 11147|       |static int numcompare___3(char const *a, char const *b)
-11148|    231|{
-11149|    231|    unsigned char tmp;
-11150|    231|    unsigned char tmp___0;
-11151|    231|    int tmp___1;
+11148|      0|{
+11149|      0|    unsigned char tmp;
+11150|      0|    unsigned char tmp___0;
+11151|      0|    int tmp___1;
 11152|       |
-11153|    231|    {
-11154|    231|        while (1) {
-11155|    231|            tmp = to_uchar((char)*a);
-11156|    231|            if (!blanks[tmp]) {
-11157|    231|                goto while_break;
-11158|    231|            }
+11153|      0|    {
+11154|      0|        while (1) {
+11155|      0|            tmp = to_uchar((char)*a);
+11156|      0|            if (!blanks[tmp]) {
+11157|      0|                goto while_break;
+11158|      0|            }
 11159|      0|            a++;
 11160|      0|        }
-11161|    231|while_break:
-11162|    231|        ;
-11163|    231|        while (1) {
-11164|    231|            tmp___0 = to_uchar((char)*b);
-11165|    231|            if (!blanks[tmp___0]) {
-11166|    231|                goto while_break___0;
-11167|    231|            }
+11161|      0|while_break:
+11162|      0|        ;
+11163|      0|        while (1) {
+11164|      0|            tmp___0 = to_uchar((char)*b);
+11165|      0|            if (!blanks[tmp___0]) {
+11166|      0|                goto while_break___0;
+11167|      0|            }
 11168|      0|            b++;
 11169|      0|        }
-11170|    231|while_break___0:
-11171|    231|        tmp___1 = (int)strnumcmp(a, b, decimal_point, thousands_sep);
-11172|    231|        return (tmp___1);
-11173|    231|    }
-11174|    231|}
+11170|      0|while_break___0:
+11171|      0|        tmp___1 = (int)strnumcmp(a, b, decimal_point, thousands_sep);
+11172|      0|        return (tmp___1);
+11173|      0|    }
+11174|      0|}
 11175|       |static int nan_compare(char const *sa, char const *sb)
 11176|      0|{
 11177|      0|    long double a;
@@ -11610,29 +11610,29 @@
 11610|      0|    }
 11611|      0|}
 11612|       |__inline static _Bool key_numeric(struct keyfield const *key)
-11613|      0|{
-11614|      0|    int tmp;
+11613|      2|{
+11614|      2|    int tmp;
 11615|       |
-11616|      0|    {
-11617|      0|        if (key->numeric) {
+11616|      2|    {
+11617|      2|        if (key->numeric) {
 11618|      0|            tmp = 1;
 11619|      0|        }
-11620|      0|        else {
-11621|      0|            if (key->general_numeric) {
+11620|      2|        else {
+11621|      2|            if (key->general_numeric) {
 11622|      0|                tmp = 1;
 11623|      0|            }
-11624|      0|            else {
-11625|      0|                if (key->human_numeric) {
+11624|      2|            else {
+11625|      2|                if (key->human_numeric) {
 11626|      0|                    tmp = 1;
 11627|      0|                }
-11628|      0|                else {
-11629|      0|                    tmp = 0;
-11630|      0|                }
-11631|      0|            }
-11632|      0|        }
-11633|      0|        return ((_Bool)tmp);
-11634|      0|    }
-11635|      0|}
+11628|      2|                else {
+11629|      2|                    tmp = 0;
+11630|      2|                }
+11631|      2|            }
+11632|      2|        }
+11633|      2|        return ((_Bool)tmp);
+11634|      2|    }
+11635|      2|}
 11636|       |static void debug_key(struct line const *line, struct keyfield const *key)
 11637|      0|{
 11638|      0|    char *text;
@@ -11830,42 +11830,42 @@
 11830|      0|        }
 11831|      2|        else {
 11832|      2|            if (key->translate) {
-11833|      2|                tmp___0 = 0;
-11834|      2|            }
-11835|      0|            else {
-11836|      0|                if (key->skipsblanks) {
+11833|      0|                tmp___0 = 0;
+11834|      0|            }
+11835|      2|            else {
+11836|      2|                if (key->skipsblanks) {
 11837|      0|                    tmp___0 = 0;
 11838|      0|                }
-11839|      0|                else {
-11840|      0|                    if (key->skipeblanks) {
+11839|      2|                else {
+11840|      2|                    if (key->skipeblanks) {
 11841|      0|                        tmp___0 = 0;
 11842|      0|                    }
-11843|      0|                    else {
-11844|      0|                        tmp = key_numeric(key);
-11845|      0|                        if (tmp) {
+11843|      2|                    else {
+11844|      2|                        tmp = key_numeric(key);
+11845|      2|                        if (tmp) {
 11846|      0|                            tmp___0 = 0;
 11847|      0|                        }
-11848|      0|                        else {
-11849|      0|                            if (key->month) {
+11848|      2|                        else {
+11849|      2|                            if (key->month) {
 11850|      0|                                tmp___0 = 0;
 11851|      0|                            }
-11852|      0|                            else {
-11853|      0|                                if (key->version) {
+11852|      2|                            else {
+11853|      2|                                if (key->version) {
 11854|      0|                                    tmp___0 = 0;
 11855|      0|                                }
-11856|      0|                                else {
-11857|      0|                                    if (key->random) {
+11856|      2|                                else {
+11857|      2|                                    if (key->random) {
 11858|      0|                                        tmp___0 = 0;
 11859|      0|                                    }
-11860|      0|                                    else {
-11861|      0|                                        tmp___0 = 1;
-11862|      0|                                    }
-11863|      0|                                }
-11864|      0|                            }
-11865|      0|                        }
-11866|      0|                    }
-11867|      0|                }
-11868|      0|            }
+11860|      2|                                    else {
+11861|      2|                                        tmp___0 = 1;
+11862|      2|                                    }
+11863|      2|                                }
+11864|      2|                            }
+11865|      2|                        }
+11866|      2|                    }
+11867|      2|                }
+11868|      2|            }
 11869|      2|        }
 11870|      2|        return ((_Bool)tmp___0);
 11871|      2|    }
@@ -12227,83 +12227,83 @@
 12227|      0|    }
 12228|      0|}
 12229|       |static int keycompare(struct line const *a, struct line const *b)
-12230|   196k|{
-12231|   196k|    struct keyfield *key;
-12232|   196k|    char *texta;
-12233|   196k|    char *textb;
-12234|   196k|    char *lima;
-12235|   196k|    char *limb;
-12236|   196k|    int diff;
-12237|   196k|    char const *translate;
-12238|   196k|    _Bool const *ignore;
-12239|   196k|    size_t lena;
-12240|   196k|    size_t lenb;
-12241|   196k|    char *ta;
-12242|   196k|    char *tb;
-12243|   196k|    size_t tlena;
-12244|   196k|    size_t tlenb;
-12245|   196k|    char enda;
-12246|   196k|    char endb;
-12247|   196k|    void *allocated;
-12248|   196k|    char stackbuf[4000];
-12249|   196k|    size_t i;
-12250|   196k|    size_t size;
-12251|   196k|    size_t tmp;
-12252|   196k|    unsigned char tmp___0;
-12253|   196k|    unsigned char tmp___1;
-12254|   196k|    size_t tmp___2;
-12255|   196k|    unsigned char tmp___3;
-12256|   196k|    unsigned char tmp___4;
-12257|   196k|    int tmp___5;
-12258|   196k|    int tmp___6;
-12259|   196k|    unsigned char tmp___7;
-12260|   196k|    unsigned char tmp___8;
-12261|   196k|    unsigned char tmp___9;
-12262|   196k|    unsigned char tmp___10;
-12263|   196k|    unsigned char tmp___11;
-12264|   196k|    unsigned char tmp___12;
-12265|   196k|    unsigned char tmp___13;
-12266|   196k|    unsigned char tmp___14;
-12267|   196k|    unsigned char tmp___15;
-12268|   196k|    unsigned char tmp___16;
-12269|   196k|    char *tmp___17;
-12270|   196k|    unsigned char tmp___18;
-12271|   196k|    unsigned char tmp___19;
-12272|   196k|    char *tmp___20;
-12273|   196k|    unsigned char tmp___21;
-12274|   196k|    unsigned char tmp___22;
-12275|   196k|    size_t tmp___23;
-12276|   196k|    _Bool tmp___24;
-12277|   196k|    unsigned char tmp___25;
-12278|   196k|    unsigned char tmp___26;
-12279|   196k|    int tmp___27;
+12230|      0|{
+12231|      0|    struct keyfield *key;
+12232|      0|    char *texta;
+12233|      0|    char *textb;
+12234|      0|    char *lima;
+12235|      0|    char *limb;
+12236|      0|    int diff;
+12237|      0|    char const *translate;
+12238|      0|    _Bool const *ignore;
+12239|      0|    size_t lena;
+12240|      0|    size_t lenb;
+12241|      0|    char *ta;
+12242|      0|    char *tb;
+12243|      0|    size_t tlena;
+12244|      0|    size_t tlenb;
+12245|      0|    char enda;
+12246|      0|    char endb;
+12247|      0|    void *allocated;
+12248|      0|    char stackbuf[4000];
+12249|      0|    size_t i;
+12250|      0|    size_t size;
+12251|      0|    size_t tmp;
+12252|      0|    unsigned char tmp___0;
+12253|      0|    unsigned char tmp___1;
+12254|      0|    size_t tmp___2;
+12255|      0|    unsigned char tmp___3;
+12256|      0|    unsigned char tmp___4;
+12257|      0|    int tmp___5;
+12258|      0|    int tmp___6;
+12259|      0|    unsigned char tmp___7;
+12260|      0|    unsigned char tmp___8;
+12261|      0|    unsigned char tmp___9;
+12262|      0|    unsigned char tmp___10;
+12263|      0|    unsigned char tmp___11;
+12264|      0|    unsigned char tmp___12;
+12265|      0|    unsigned char tmp___13;
+12266|      0|    unsigned char tmp___14;
+12267|      0|    unsigned char tmp___15;
+12268|      0|    unsigned char tmp___16;
+12269|      0|    char *tmp___17;
+12270|      0|    unsigned char tmp___18;
+12271|      0|    unsigned char tmp___19;
+12272|      0|    char *tmp___20;
+12273|      0|    unsigned char tmp___21;
+12274|      0|    unsigned char tmp___22;
+12275|      0|    size_t tmp___23;
+12276|      0|    _Bool tmp___24;
+12277|      0|    unsigned char tmp___25;
+12278|      0|    unsigned char tmp___26;
+12279|      0|    int tmp___27;
 12280|       |
-12281|   196k|    {
-12282|   196k|        key = keylist;
-12283|   196k|        texta = (char *)a->keybeg;
-12284|   196k|        textb = (char *)b->keybeg;
-12285|   196k|        lima = (char *)a->keylim;
-12286|   196k|        limb = (char *)b->keylim;
-12287|   196k|        while (1) {
-12288|   196k|            translate = key->translate;
-12289|   196k|            ignore = key->ignore;
-12290|   196k|            if ((unsigned long)texta > (unsigned long)lima) {
+12281|      0|    {
+12282|      0|        key = keylist;
+12283|      0|        texta = (char *)a->keybeg;
+12284|      0|        textb = (char *)b->keybeg;
+12285|      0|        lima = (char *)a->keylim;
+12286|      0|        limb = (char *)b->keylim;
+12287|      0|        while (1) {
+12288|      0|            translate = key->translate;
+12289|      0|            ignore = key->ignore;
+12290|      0|            if ((unsigned long)texta > (unsigned long)lima) {
 12291|      0|                lima = texta;
 12292|      0|            }
-12293|   196k|            else {
-12294|   196k|                lima = lima;
-12295|   196k|            }
-12296|   196k|            if ((unsigned long)textb > (unsigned long)limb) {
+12293|      0|            else {
+12294|      0|                lima = lima;
+12295|      0|            }
+12296|      0|            if ((unsigned long)textb > (unsigned long)limb) {
 12297|      0|                limb = textb;
 12298|      0|            }
-12299|   196k|            else {
-12300|   196k|                limb = limb;
-12301|   196k|            }
-12302|   196k|            lena = (size_t)(lima - texta);
-12303|   196k|            lenb = (size_t)(limb - textb);
-12304|   196k|            if (hard_LC_COLLATE) {
-12305|   196k|                goto _L___2;
-12306|   196k|            }
+12299|      0|            else {
+12300|      0|                limb = limb;
+12301|      0|            }
+12302|      0|            lena = (size_t)(lima - texta);
+12303|      0|            lenb = (size_t)(limb - textb);
+12304|      0|            if (hard_LC_COLLATE) {
+12305|      0|                goto _L___2;
+12306|      0|            }
 12307|      0|            else {
 12308|      0|                tmp___24 = key_numeric((struct keyfield const *)key);
 12309|      0|                if (tmp___24) {
@@ -12319,82 +12319,82 @@
 12319|      0|                        }
 12320|      0|                        else {
 12321|      0|                            if (key->version) {
-12322|   196k|_L___2:
-12323|   196k|                                if (ignore) {
+12322|      0|_L___2:
+12323|      0|                                if (ignore) {
 12324|      0|                                    goto _L___1;
 12325|      0|                                }
-12326|   196k|                                else {
-12327|   196k|                                    if (translate) {
-12328|   196k|_L___1:
-12329|   196k|                                        size = ((lena + 1UL) + lenb) + 1UL;
-12330|   196k|                                        if (size <= sizeof(stackbuf)) {
-12331|   196k|                                            ta = stackbuf;
-12332|   196k|                                            allocated = (void *)0;
-12333|   196k|                                        }
+12326|      0|                                else {
+12327|      0|                                    if (translate) {
+12328|      0|_L___1:
+12329|      0|                                        size = ((lena + 1UL) + lenb) + 1UL;
+12330|      0|                                        if (size <= sizeof(stackbuf)) {
+12331|      0|                                            ta = stackbuf;
+12332|      0|                                            allocated = (void *)0;
+12333|      0|                                        }
 12334|      0|                                        else {
 12335|      0|                                            allocated = xmalloc(size);
 12336|      0|                                            ta = (char *)allocated;
 12337|      0|                                        }
-12338|   196k|                                        tb = (ta + lena) + 1;
-12339|   196k|                                        i = (size_t)0;
-12340|   196k|                                        tlena = i;
-12341|  6.36M|                                        while (1) {
+12338|      0|                                        tb = (ta + lena) + 1;
+12339|      0|                                        i = (size_t)0;
+12340|      0|                                        tlena = i;
+12341|      0|                                        while (1) {
 12342|       |
-12343|  6.36M|                                            if (!(i < lena)) {
-12344|   196k|                                                goto while_break___0;
-12345|   196k|                                            }
-12346|  6.16M|                                            if (ignore) {
+12343|      0|                                            if (!(i < lena)) {
+12344|      0|                                                goto while_break___0;
+12345|      0|                                            }
+12346|      0|                                            if (ignore) {
 12347|      0|                                                tmp___1 = to_uchar(*(texta + i));
 12348|      0|                                                if (!*(ignore + (int)tmp___1)) {
 12349|      0|                                                    goto _L;
 12350|      0|                                                }
 12351|      0|                                            }
-12352|  6.16M|                                            else {
-12353|  6.16M|_L:
-12354|  6.16M|                                                tmp = tlena;
-12355|  6.16M|                                                tlena++;
-12356|  6.16M|                                                if (translate) {
-12357|  6.16M|                                                    tmp___0 = to_uchar(*(texta + i));
-12358|  6.16M|                                                    *(ta + tmp) = (char)*(translate + (int)tmp___0);
-12359|  6.16M|                                                }
+12352|      0|                                            else {
+12353|      0|_L:
+12354|      0|                                                tmp = tlena;
+12355|      0|                                                tlena++;
+12356|      0|                                                if (translate) {
+12357|      0|                                                    tmp___0 = to_uchar(*(texta + i));
+12358|      0|                                                    *(ta + tmp) = (char)*(translate + (int)tmp___0);
+12359|      0|                                                }
 12360|      0|                                                else {
 12361|      0|                                                    *(ta + tmp) = *(texta + i);
 12362|      0|                                                }
-12363|  6.16M|                                            }
-12364|  6.16M|                                            i++;
-12365|  6.16M|                                        }
-12366|   196k|while_break___0:
-12367|   196k|                                        *(ta + tlena) = (char)'\000';
-12368|   196k|                                        i = (size_t)0;
-12369|   196k|                                        tlenb = i;
-12370|  6.30M|                                        while (1) {
+12363|      0|                                            }
+12364|      0|                                            i++;
+12365|      0|                                        }
+12366|      0|while_break___0:
+12367|      0|                                        *(ta + tlena) = (char)'\000';
+12368|      0|                                        i = (size_t)0;
+12369|      0|                                        tlenb = i;
+12370|      0|                                        while (1) {
 12371|       |
-12372|  6.30M|                                            if (!(i < lenb)) {
-12373|   196k|                                                goto while_break___1;
-12374|   196k|                                            }
-12375|  6.11M|                                            if (ignore) {
+12372|      0|                                            if (!(i < lenb)) {
+12373|      0|                                                goto while_break___1;
+12374|      0|                                            }
+12375|      0|                                            if (ignore) {
 12376|      0|                                                tmp___4 = to_uchar(*(textb + i));
 12377|      0|                                                if (!*(ignore + (int)tmp___4)) {
 12378|      0|                                                    goto _L___0;
 12379|      0|                                                }
 12380|      0|                                            }
-12381|  6.11M|                                            else {
-12382|  6.11M|_L___0:
-12383|  6.11M|                                                tmp___2 = tlenb;
-12384|  6.11M|                                                tlenb++;
-12385|  6.11M|                                                if (translate) {
-12386|  6.11M|                                                    tmp___3 = to_uchar(*(textb + i));
-12387|  6.11M|                                                    *(tb + tmp___2) = (char)*(translate + (int)tmp___3);
-12388|  6.11M|                                                }
+12381|      0|                                            else {
+12382|      0|_L___0:
+12383|      0|                                                tmp___2 = tlenb;
+12384|      0|                                                tlenb++;
+12385|      0|                                                if (translate) {
+12386|      0|                                                    tmp___3 = to_uchar(*(textb + i));
+12387|      0|                                                    *(tb + tmp___2) = (char)*(translate + (int)tmp___3);
+12388|      0|                                                }
 12389|      0|                                                else {
 12390|      0|                                                    *(tb + tmp___2) = *(textb + i);
 12391|      0|                                                }
-12392|  6.11M|                                            }
-12393|  6.11M|                                            i++;
-12394|  6.11M|                                        }
-12395|   196k|while_break___1:
-12396|   196k|                                        *(tb + tlenb) = (char)'\000';
-12397|   196k|                                    }
+12392|      0|                                            }
+12393|      0|                                            i++;
+12394|      0|                                        }
+12395|      0|while_break___1:
+12396|      0|                                        *(tb + tlenb) = (char)'\000';
+12397|      0|                                    }
 12398|      0|                                    else {
 12399|      0|                                        ta = texta;
 12400|      0|                                        tlena = lena;
@@ -12405,69 +12405,69 @@
 12405|      0|                                        endb = *(tb + tlenb);
 12406|      0|                                        *(tb + tlenb) = (char)'\000';
 12407|      0|                                    }
-12408|   196k|                                }
-12409|   196k|                                if (key->numeric) {
-12410|    231|                                    diff = numcompare___3((char const *)ta, (char const *)tb);
-12411|    231|                                }
-12412|   196k|                                else {
-12413|   196k|                                    if (key->general_numeric) {
+12408|      0|                                }
+12409|      0|                                if (key->numeric) {
+12410|      0|                                    diff = numcompare___3((char const *)ta, (char const *)tb);
+12411|      0|                                }
+12412|      0|                                else {
+12413|      0|                                    if (key->general_numeric) {
 12414|      0|                                        diff =
 12415|      0|                                            general_numcompare((char const *)ta, (char const *)tb);
 12416|      0|                                    }
-12417|   196k|                                    else {
-12418|   196k|                                        if (key->human_numeric) {
+12417|      0|                                    else {
+12418|      0|                                        if (key->human_numeric) {
 12419|      0|                                            diff =
 12420|      0|                                                human_numcompare((char const *)ta, (char const *)tb);
 12421|      0|                                        }
-12422|   196k|                                        else {
-12423|   196k|                                            if (key->month) {
+12422|      0|                                        else {
+12423|      0|                                            if (key->month) {
 12424|      0|                                                tmp___5 =
 12425|      0|                                                    getmonth((char const *)ta, (char **)((void *)0));
 12426|      0|                                                tmp___6 =
 12427|      0|                                                    getmonth((char const *)tb, (char **)((void *)0));
 12428|      0|                                                diff = tmp___5 - tmp___6;
 12429|      0|                                            }
-12430|   196k|                                            else {
-12431|   196k|                                                if (key->random) {
+12430|      0|                                            else {
+12431|      0|                                                if (key->random) {
 12432|      0|                                                    diff = compare_random(ta, tlena, tb, tlenb);
 12433|      0|                                                }
-12434|   196k|                                                else {
-12435|   196k|                                                    if (key->version) {
+12434|      0|                                                else {
+12435|      0|                                                    if (key->version) {
 12436|      0|                                                        diff =
 12437|      0|                                                            filevercmp((char const *)ta, (char const *)tb);
 12438|      0|                                                    }
-12439|   196k|                                                    else {
-12440|   196k|                                                        if (tlena == 0UL) {
-12441|  2.57k|                                                            diff = -(tlenb != 0UL);
-12442|  2.57k|                                                        }
-12443|   193k|                                                        else {
-12444|   193k|                                                            if (tlenb == 0UL) {
-12445|  2.71k|                                                                diff = 1;
-12446|  2.71k|                                                            }
-12447|   190k|                                                            else {
-12448|   190k|                                                                diff = xmemcoll0((char const *)ta, tlena + 1UL,
-12449|   190k|                                                                                 (char const *)tb, tlenb + 1UL);
-12450|   190k|                                                            }
-12451|   193k|                                                        }
-12452|   196k|                                                    }
-12453|   196k|                                                }
-12454|   196k|                                            }
-12455|   196k|                                        }
-12456|   196k|                                    }
-12457|   196k|                                }
-12458|   196k|                                if (ignore) {
+12439|      0|                                                    else {
+12440|      0|                                                        if (tlena == 0UL) {
+12441|      0|                                                            diff = -(tlenb != 0UL);
+12442|      0|                                                        }
+12443|      0|                                                        else {
+12444|      0|                                                            if (tlenb == 0UL) {
+12445|      0|                                                                diff = 1;
+12446|      0|                                                            }
+12447|      0|                                                            else {
+12448|      0|                                                                diff = xmemcoll0((char const *)ta, tlena + 1UL,
+12449|      0|                                                                                 (char const *)tb, tlenb + 1UL);
+12450|      0|                                                            }
+12451|      0|                                                        }
+12452|      0|                                                    }
+12453|      0|                                                }
+12454|      0|                                            }
+12455|      0|                                        }
+12456|      0|                                    }
+12457|      0|                                }
+12458|      0|                                if (ignore) {
 12459|      0|                                    free(allocated);
 12460|      0|                                }
-12461|   196k|                                else {
-12462|   196k|                                    if (translate) {
-12463|   196k|                                        free(allocated);
-12464|   196k|                                    }
+12461|      0|                                else {
+12462|      0|                                    if (translate) {
+12463|      0|                                        free(allocated);
+12464|      0|                                    }
 12465|      0|                                    else {
 12466|      0|                                        *(ta + tlena) = enda;
 12467|      0|                                        *(tb + tlenb) = endb;
 12468|      0|                                    }
-12469|   196k|                                }
-12470|   196k|                            }
+12469|      0|                                }
+12470|      0|                            }
 12471|      0|                            else {
 12472|      0|                                if (ignore) {
 12473|      0|                                    if (translate) {
@@ -12658,13 +12658,13 @@
 12658|      0|                    }
 12659|      0|                }
 12660|      0|            }
-12661|   196k|            if (diff) {
-12662|   170k|                goto not_equal;
-12663|   170k|            }
-12664|  26.2k|            key = key->next;
-12665|  26.2k|            if (!key) {
-12666|  26.2k|                goto while_break;
-12667|  26.2k|            }
+12661|      0|            if (diff) {
+12662|      0|                goto not_equal;
+12663|      0|            }
+12664|      0|            key = key->next;
+12665|      0|            if (!key) {
+12666|      0|                goto while_break;
+12667|      0|            }
 12668|      0|            if (key->eword != 0xffffffffffffffffUL) {
 12669|      0|                lima = limfield(a, (struct keyfield const *)key);
 12670|      0|                limb = limfield(b, (struct keyfield const *)key);
@@ -12714,19 +12714,19 @@
 12714|      0|                }
 12715|      0|            }
 12716|      0|        }
-12717|  26.2k|while_break:
-12718|  26.2k|        ;
-12719|  26.2k|        return (0);
+12717|      0|while_break:
+12718|      0|        ;
+12719|      0|        return (0);
 12720|      0|greater:
 12721|      0|        diff = 1;
-12722|   170k|not_equal:
-12723|   170k|        if (key->reverse) {
+12722|      0|not_equal:
+12723|      0|        if (key->reverse) {
 12724|      0|            tmp___27 = -diff;
 12725|      0|        }
-12726|   170k|        else {
-12727|   170k|            tmp___27 = diff;
-12728|   170k|        }
-12729|   170k|        return (tmp___27);
+12726|      0|        else {
+12727|      0|            tmp___27 = diff;
+12728|      0|        }
+12729|      0|        return (tmp___27);
 12730|      0|    }
 12731|      0|}
 12732|       |static int compare(struct line const *a, struct line const *b)
@@ -12739,35 +12739,35 @@
 12739|       |
 12740|   196k|    {
 12741|   196k|        if (keylist) {
-12742|   196k|            diff = keycompare(a, b);
-12743|   196k|            if (diff) {
-12744|   170k|                return (diff);
-12745|   170k|            }
-12746|  26.2k|            else {
-12747|  26.2k|                if (unique) {
+12742|      0|            diff = keycompare(a, b);
+12743|      0|            if (diff) {
+12744|      0|                return (diff);
+12745|      0|            }
+12746|      0|            else {
+12747|      0|                if (unique) {
 12748|      0|                    return (diff);
 12749|      0|                }
-12750|  26.2k|                else {
-12751|  26.2k|                    if (stable) {
+12750|      0|                else {
+12751|      0|                    if (stable) {
 12752|      0|                        return (diff);
 12753|      0|                    }
-12754|  26.2k|                }
-12755|  26.2k|            }
-12756|   196k|        }
-12757|  26.2k|        alen = (size_t)(a->length - 1UL);
-12758|  26.2k|        blen = (size_t)(b->length - 1UL);
-12759|  26.2k|        if (alen == 0UL) {
-12760|  1.66k|            diff = -(blen != 0UL);
-12761|  1.66k|        }
-12762|  24.5k|        else {
-12763|  24.5k|            if (blen == 0UL) {
-12764|      0|                diff = 1;
-12765|      0|            }
-12766|  24.5k|            else {
-12767|  24.5k|                if (hard_LC_COLLATE) {
-12768|  24.5k|                    diff = xmemcoll0((char const *)a->text, alen + 1UL,
-12769|  24.5k|                                     (char const *)b->text, blen + 1UL);
-12770|  24.5k|                }
+12754|      0|                }
+12755|      0|            }
+12756|      0|        }
+12757|   196k|        alen = (size_t)(a->length - 1UL);
+12758|   196k|        blen = (size_t)(b->length - 1UL);
+12759|   196k|        if (alen == 0UL) {
+12760|  2.57k|            diff = -(blen != 0UL);
+12761|  2.57k|        }
+12762|   193k|        else {
+12763|   193k|            if (blen == 0UL) {
+12764|  2.71k|                diff = 1;
+12765|  2.71k|            }
+12766|   190k|            else {
+12767|   190k|                if (hard_LC_COLLATE) {
+12768|   190k|                    diff = xmemcoll0((char const *)a->text, alen + 1UL,
+12769|   190k|                                     (char const *)b->text, blen + 1UL);
+12770|   190k|                }
 12771|      0|                else {
 12772|      0|                    if (alen < blen) {
 12773|      0|                        tmp = alen;
@@ -12785,15 +12785,15 @@
 12785|      0|                        }
 12786|      0|                    }
 12787|      0|                }
-12788|  24.5k|            }
-12789|  24.5k|        }
-12790|  26.2k|        if (reverse) {
+12788|   190k|            }
+12789|   193k|        }
+12790|   196k|        if (reverse) {
 12791|      0|            tmp___0 = -diff;
 12792|      0|        }
-12793|  26.2k|        else {
-12794|  26.2k|            tmp___0 = diff;
-12795|  26.2k|        }
-12796|  26.2k|        return (tmp___0);
+12793|   196k|        else {
+12794|   196k|            tmp___0 = diff;
+12795|   196k|        }
+12796|   196k|        return (tmp___0);
 12797|   196k|    }
 12798|   196k|}
 12799|       |static void write_line(struct line const *line, FILE *fp,
@@ -12878,7 +12878,7 @@
 12878|      0|    uintmax_t disorder_line_number;
 12879|      0|    struct line *tmp___2;
 12880|      0|    char hr_buf[((sizeof(disorder_line_number) * 8UL) * 146UL + 484UL) / 485UL +
-12881|      0|                                               1UL];
+12881|      0|                1UL];
 12882|      0|    char *tmp___3;
 12883|      0|    char *tmp___4;
 12884|      0|    char *tmp___5;
@@ -13328,16 +13328,16 @@
 13328|      0|}
 13329|       |static void mergelines(struct line *__restrict t, size_t nlines,
 13330|       |                       struct line const *__restrict lo)
-13331|  8.22k|{
-13332|  8.22k|    size_t nlo;
-13333|  8.22k|    size_t nhi;
-13334|  8.22k|    struct line *hi;
-13335|  8.22k|    int tmp;
+13331|  8.21k|{
+13332|  8.21k|    size_t nlo;
+13333|  8.21k|    size_t nhi;
+13334|  8.21k|    struct line *hi;
+13335|  8.21k|    int tmp;
 13336|       |
-13337|  8.22k|    {
-13338|  8.22k|        nlo = nlines / 2UL;
-13339|  8.22k|        nhi = nlines - nlo;
-13340|  8.22k|        hi = (struct line *)(t - nlo);
+13337|  8.21k|    {
+13338|  8.21k|        nlo = nlines / 2UL;
+13339|  8.21k|        nhi = nlines - nlo;
+13340|  8.21k|        hi = (struct line *)(t - nlo);
 13341|   173k|        while (1) {
 13342|   173k|            tmp =
 13343|   173k|                compare((struct line const *)(lo - 1), (struct line const *)(hi - 1));
@@ -13356,25 +13356,25 @@
 13356|  86.7k|                *t = *hi;
 13357|  86.7k|                nhi--;
 13358|  86.7k|                if (!nhi) {
-13359|  5.75k|                    while (1) {
-13360|  5.75k|                        t--;
-13361|  5.75k|                        lo--;
-13362|  5.75k|                        *t = (struct line) * lo;
-13363|  5.75k|                        nlo--;
-13364|  5.75k|                        if (!nlo) {
-13365|  3.61k|                            goto while_break___0;
-13366|  3.61k|                        }
-13367|  5.75k|                    }
-13368|  3.61k|while_break___0:
-13369|  3.61k|                    ;
-13370|  3.61k|                    return;
-13371|  3.61k|                }
+13359|  5.72k|                    while (1) {
+13360|  5.72k|                        t--;
+13361|  5.72k|                        lo--;
+13362|  5.72k|                        *t = (struct line) * lo;
+13363|  5.72k|                        nlo--;
+13364|  5.72k|                        if (!nlo) {
+13365|  3.60k|                            goto while_break___0;
+13366|  3.60k|                        }
+13367|  5.72k|                    }
+13368|  3.60k|while_break___0:
+13369|  3.60k|                    ;
+13370|  3.60k|                    return;
+13371|  3.60k|                }
 13372|  86.7k|            }
 13373|   173k|        }
 13374|       |
 13375|      0|        return;
-13376|  8.22k|    }
-13377|  8.22k|}
+13376|  8.21k|    }
+13377|  8.21k|}
 13378|       |static void sequential_sort(struct line *__restrict lines, size_t nlines,
 13379|       |                            struct line *__restrict temp, _Bool to_temp)
 13380|  15.6k|{
@@ -13390,51 +13390,51 @@
 13390|       |
 13391|  15.6k|    {
 13392|  15.6k|        if (nlines == 2UL) {
-13393|  7.43k|            tmp = compare((struct line const *)(lines + -1),
-13394|  7.43k|                          (struct line const *)(lines + -2));
-13395|  7.43k|            swap___1 = 0 < tmp;
-13396|  7.43k|            if (to_temp) {
+13393|  7.41k|            tmp = compare((struct line const *)(lines + -1),
+13394|  7.41k|                          (struct line const *)(lines + -2));
+13395|  7.41k|            swap___1 = 0 < tmp;
+13396|  7.41k|            if (to_temp) {
 13397|  3.71k|                *(temp + -1) = *(lines + (-1 - swap___1));
 13398|  3.71k|                *(temp + -2) = *(lines + (-2 + swap___1));
 13399|  3.71k|            }
-13400|  3.71k|            else {
-13401|  3.71k|                if (swap___1) {
+13400|  3.70k|            else {
+13401|  3.70k|                if (swap___1) {
 13402|  1.68k|                    *(temp + -1) = *(lines + -1);
 13403|  1.68k|                    *(lines + -1) = *(lines + -2);
 13404|  1.68k|                    *(lines + -2) = *(temp + -1);
 13405|  1.68k|                }
-13406|  3.71k|            }
-13407|  7.43k|        }
-13408|  8.22k|        else {
-13409|  8.22k|            nlo = nlines / 2UL;
-13410|  8.22k|            nhi = nlines - nlo;
-13411|  8.22k|            lo = (struct line *)lines;
-13412|  8.22k|            hi = (struct line *)(lines - nlo);
-13413|  8.22k|            if (to_temp) {
+13406|  3.70k|            }
+13407|  7.41k|        }
+13408|  8.21k|        else {
+13409|  8.21k|            nlo = nlines / 2UL;
+13410|  8.21k|            nhi = nlines - nlo;
+13411|  8.21k|            lo = (struct line *)lines;
+13412|  8.21k|            hi = (struct line *)(lines - nlo);
+13413|  8.21k|            if (to_temp) {
 13414|  4.10k|                tmp___0 = nlo;
 13415|  4.10k|            }
-13416|  4.11k|            else {
-13417|  4.11k|                tmp___0 = (size_t)0;
-13418|  4.11k|            }
-13419|  8.22k|            sequential_sort(hi, nhi, temp - tmp___0, to_temp);
-13420|  8.22k|            if (1UL < nlo) {
-13421|  7.42k|                sequential_sort(lo, nlo, temp, (_Bool)(!to_temp));
-13422|  7.42k|            }
-13423|    793|            else {
-13424|    793|                if (!to_temp) {
-13425|    396|                    *(temp + -1) = *(lo + -1);
-13426|    396|                }
-13427|    793|            }
-13428|  8.22k|            if (to_temp) {
+13416|  4.10k|            else {
+13417|  4.10k|                tmp___0 = (size_t)0;
+13418|  4.10k|            }
+13419|  8.21k|            sequential_sort(hi, nhi, temp - tmp___0, to_temp);
+13420|  8.21k|            if (1UL < nlo) {
+13421|  7.41k|                sequential_sort(lo, nlo, temp, (_Bool)(!to_temp));
+13422|  7.41k|            }
+13423|    797|            else {
+13424|    797|                if (!to_temp) {
+13425|    398|                    *(temp + -1) = *(lo + -1);
+13426|    398|                }
+13427|    797|            }
+13428|  8.21k|            if (to_temp) {
 13429|  4.10k|                dest = (struct line *)temp;
 13430|  4.10k|                sorted_lo = (struct line const *)lines;
 13431|  4.10k|            }
-13432|  4.11k|            else {
-13433|  4.11k|                dest = (struct line *)lines;
-13434|  4.11k|                sorted_lo = (struct line const *)temp;
-13435|  4.11k|            }
-13436|  8.22k|            mergelines(dest, nlines, sorted_lo);
-13437|  8.22k|        }
+13432|  4.10k|            else {
+13433|  4.10k|                dest = (struct line *)lines;
+13434|  4.10k|                sorted_lo = (struct line const *)temp;
+13435|  4.10k|            }
+13436|  8.21k|            mergelines(dest, nlines, sorted_lo);
+13437|  8.21k|        }
 13438|  15.6k|        return;
 13439|  15.6k|    }
 13440|  15.6k|}
@@ -13488,78 +13488,78 @@
 13488|       |                                    struct merge_node *__restrict node_pool,
 13489|       |                                    struct line *dest, size_t nthreads,
 13490|       |                                    size_t total_lines, _Bool is_lo_child)
-13491|     30|{
-13492|     30|    size_t nlines;
-13493|     30|    size_t tmp;
-13494|     30|    size_t nlo;
-13495|     30|    size_t nhi;
-13496|     30|    struct line *lo;
-13497|     30|    struct line *hi;
-13498|     30|    struct line **parent_end;
-13499|     30|    struct line **tmp___0;
-13500|     30|    struct merge_node *node;
-13501|     30|    struct merge_node *__restrict tmp___1;
-13502|     30|    struct line *tmp___2;
-13503|     30|    struct line *tmp___3;
-13504|     30|    size_t lo_threads;
-13505|     30|    size_t hi_threads;
-13506|     30|    struct merge_node *tmp___4;
-13507|     30|    struct merge_node *tmp___5;
+13491|     14|{
+13492|     14|    size_t nlines;
+13493|     14|    size_t tmp;
+13494|     14|    size_t nlo;
+13495|     14|    size_t nhi;
+13496|     14|    struct line *lo;
+13497|     14|    struct line *hi;
+13498|     14|    struct line **parent_end;
+13499|     14|    struct line **tmp___0;
+13500|     14|    struct merge_node *node;
+13501|     14|    struct merge_node *__restrict tmp___1;
+13502|     14|    struct line *tmp___2;
+13503|     14|    struct line *tmp___3;
+13504|     14|    size_t lo_threads;
+13505|     14|    size_t hi_threads;
+13506|     14|    struct merge_node *tmp___4;
+13507|     14|    struct merge_node *tmp___5;
 13508|       |
-13509|     30|    {
-13510|     30|        if (is_lo_child) {
-13511|     14|            tmp = parent->nlo;
-13512|     14|        }
-13513|     16|        else {
-13514|     16|            tmp = parent->nhi;
-13515|     16|        }
-13516|     30|        nlines = tmp;
-13517|     30|        nlo = nlines / 2UL;
-13518|     30|        nhi = nlines - nlo;
-13519|     30|        lo = dest - total_lines;
-13520|     30|        hi = lo - nlo;
-13521|     30|        if (is_lo_child) {
-13522|     14|            tmp___0 = &parent->end_lo;
-13523|     14|        }
-13524|     16|        else {
-13525|     16|            tmp___0 = &parent->end_hi;
-13526|     16|        }
-13527|     30|        parent_end = tmp___0;
-13528|     30|        tmp___1 = node_pool;
-13529|     30|        node_pool++;
-13530|     30|        node = (struct merge_node *)tmp___1;
-13531|     30|        tmp___2 = lo;
-13532|     30|        node->end_lo = tmp___2;
-13533|     30|        node->lo = tmp___2;
-13534|     30|        tmp___3 = hi;
-13535|     30|        node->end_hi = tmp___3;
-13536|     30|        node->hi = tmp___3;
-13537|     30|        node->dest = parent_end;
-13538|     30|        node->nlo = nlo;
-13539|     30|        node->nhi = nhi;
-13540|     30|        node->parent = (struct merge_node *)parent;
-13541|     30|        node->level = parent->level + 1U;
-13542|     30|        node->queued = (_Bool)0;
-13543|     30|        pthread_mutex_init(&node->lock, (pthread_mutexattr_t const *)((void *)0));
-13544|     30|        if (nthreads > 1UL) {
-13545|     14|            lo_threads = nthreads / 2UL;
-13546|     14|            hi_threads = nthreads - lo_threads;
-13547|     14|            node->lo_child = (struct merge_node *)node_pool;
-13548|     14|            tmp___4 =
-13549|     14|                init_node(node, node_pool, lo, lo_threads, total_lines, (_Bool)1);
-13550|     14|            node_pool = tmp___4;
-13551|     14|            node->hi_child = (struct merge_node *)node_pool;
-13552|     14|            tmp___5 =
-13553|     14|                init_node(node, node_pool, hi, hi_threads, total_lines, (_Bool)0);
-13554|     14|            node_pool = tmp___5;
-13555|     14|        }
-13556|     16|        else {
-13557|     16|            node->lo_child = (struct merge_node *)((void *)0);
-13558|     16|            node->hi_child = (struct merge_node *)((void *)0);
-13559|     16|        }
-13560|     30|        return ((struct merge_node *)node_pool);
-13561|     30|    }
-13562|     30|}
+13509|     14|    {
+13510|     14|        if (is_lo_child) {
+13511|      6|            tmp = parent->nlo;
+13512|      6|        }
+13513|      8|        else {
+13514|      8|            tmp = parent->nhi;
+13515|      8|        }
+13516|     14|        nlines = tmp;
+13517|     14|        nlo = nlines / 2UL;
+13518|     14|        nhi = nlines - nlo;
+13519|     14|        lo = dest - total_lines;
+13520|     14|        hi = lo - nlo;
+13521|     14|        if (is_lo_child) {
+13522|      6|            tmp___0 = &parent->end_lo;
+13523|      6|        }
+13524|      8|        else {
+13525|      8|            tmp___0 = &parent->end_hi;
+13526|      8|        }
+13527|     14|        parent_end = tmp___0;
+13528|     14|        tmp___1 = node_pool;
+13529|     14|        node_pool++;
+13530|     14|        node = (struct merge_node *)tmp___1;
+13531|     14|        tmp___2 = lo;
+13532|     14|        node->end_lo = tmp___2;
+13533|     14|        node->lo = tmp___2;
+13534|     14|        tmp___3 = hi;
+13535|     14|        node->end_hi = tmp___3;
+13536|     14|        node->hi = tmp___3;
+13537|     14|        node->dest = parent_end;
+13538|     14|        node->nlo = nlo;
+13539|     14|        node->nhi = nhi;
+13540|     14|        node->parent = (struct merge_node *)parent;
+13541|     14|        node->level = parent->level + 1U;
+13542|     14|        node->queued = (_Bool)0;
+13543|     14|        pthread_mutex_init(&node->lock, (pthread_mutexattr_t const *)((void *)0));
+13544|     14|        if (nthreads > 1UL) {
+13545|      6|            lo_threads = nthreads / 2UL;
+13546|      6|            hi_threads = nthreads - lo_threads;
+13547|      6|            node->lo_child = (struct merge_node *)node_pool;
+13548|      6|            tmp___4 =
+13549|      6|                init_node(node, node_pool, lo, lo_threads, total_lines, (_Bool)1);
+13550|      6|            node_pool = tmp___4;
+13551|      6|            node->hi_child = (struct merge_node *)node_pool;
+13552|      6|            tmp___5 =
+13553|      6|                init_node(node, node_pool, hi, hi_threads, total_lines, (_Bool)0);
+13554|      6|            node_pool = tmp___5;
+13555|      6|        }
+13556|      8|        else {
+13557|      8|            node->lo_child = (struct merge_node *)((void *)0);
+13558|      8|            node->hi_child = (struct merge_node *)((void *)0);
+13559|      8|        }
+13560|     14|        return ((struct merge_node *)node_pool);
+13561|     14|    }
+13562|     14|}
 13563|       |static int compare_nodes(void const *a, void const *b)
 13564|      0|{
 13565|      0|    struct merge_node const *nodea;
@@ -13575,21 +13575,21 @@
 13575|      0|    }
 13576|      0|}
 13577|       |__inline static void lock_node(struct merge_node *node)
-13578|     33|{
+13578|     32|{
 13579|       |
-13580|     33|    {
-13581|     33|        pthread_mutex_lock(&node->lock);
-13582|     33|        return;
-13583|     33|    }
-13584|     33|}
+13580|     32|    {
+13581|     32|        pthread_mutex_lock(&node->lock);
+13582|     32|        return;
+13583|     32|    }
+13584|     32|}
 13585|       |__inline static void unlock_node(struct merge_node *node)
-13586|     33|{
+13586|     32|{
 13587|       |
-13588|     33|    {
-13589|     33|        pthread_mutex_unlock(&node->lock);
-13590|     33|        return;
-13591|     33|    }
-13592|     33|}
+13588|     32|    {
+13589|     32|        pthread_mutex_unlock(&node->lock);
+13590|     32|        return;
+13591|     32|    }
+13592|     32|}
 13593|       |static void queue_destroy(struct merge_node_queue *queue)
 13594|      2|{
 13595|       |
@@ -13612,37 +13612,37 @@
 13612|      2|}
 13613|       |static void queue_insert(struct merge_node_queue *queue,
 13614|       |                         struct merge_node *node)
-13615|     35|{
+13615|     34|{
 13616|       |
-13617|     35|    {
-13618|     35|        pthread_mutex_lock(&queue->mutex);
-13619|     35|        heap_insert(queue->priority_queue, (void *)node);
-13620|     35|        node->queued = (_Bool)1;
-13621|     35|        pthread_mutex_unlock(&queue->mutex);
-13622|     35|        pthread_cond_signal(&queue->cond);
-13623|     35|        return;
-13624|     35|    }
-13625|     35|}
+13617|     34|    {
+13618|     34|        pthread_mutex_lock(&queue->mutex);
+13619|     34|        heap_insert(queue->priority_queue, (void *)node);
+13620|     34|        node->queued = (_Bool)1;
+13621|     34|        pthread_mutex_unlock(&queue->mutex);
+13622|     34|        pthread_cond_signal(&queue->cond);
+13623|     34|        return;
+13624|     34|    }
+13625|     34|}
 13626|       |static struct merge_node *queue_pop(struct merge_node_queue *queue)
-13627|     33|{
-13628|     33|    struct merge_node *node;
+13627|     32|{
+13628|     32|    struct merge_node *node;
 13629|       |
-13630|     33|    {
-13631|     33|        pthread_mutex_lock(&queue->mutex);
-13632|     33|        while (1) {
-13633|     33|            node = (struct merge_node *)heap_remove_top(queue->priority_queue);
-13634|     33|            if (node) {
-13635|     33|                goto while_break;
-13636|     33|            }
+13630|     32|    {
+13631|     32|        pthread_mutex_lock(&queue->mutex);
+13632|     32|        while (1) {
+13633|     32|            node = (struct merge_node *)heap_remove_top(queue->priority_queue);
+13634|     32|            if (node) {
+13635|     32|                goto while_break;
+13636|     32|            }
 13637|      0|            pthread_cond_wait(&queue->cond, &queue->mutex);
 13638|      0|        }
-13639|     33|while_break:
-13640|     33|        pthread_mutex_unlock(&queue->mutex);
-13641|     33|        lock_node(node);
-13642|     33|        node->queued = (_Bool)0;
-13643|     33|        return (node);
-13644|     33|    }
-13645|     33|}
+13639|     32|while_break:
+13640|     32|        pthread_mutex_unlock(&queue->mutex);
+13641|     32|        lock_node(node);
+13642|     32|        node->queued = (_Bool)0;
+13643|     32|        return (node);
+13644|     32|    }
+13645|     32|}
 13646|       |static struct line saved;
 13647|       |static void write_unique(struct line const *line, FILE *tfp,
 13648|       |                         char const *temp_output)
@@ -13666,27 +13666,27 @@
 13666|       |static void mergelines_node(struct merge_node *__restrict node,
 13667|       |                            size_t total_lines, FILE *tfp,
 13668|       |                            char const *temp_output)
-13669|     31|{
-13670|     31|    struct line *lo_orig;
-13671|     31|    struct line *hi_orig;
-13672|     31|    size_t to_merge;
-13673|     31|    size_t merged_lo;
-13674|     31|    size_t merged_hi;
-13675|     31|    struct line *dest;
-13676|     31|    int tmp;
-13677|     31|    size_t tmp___0;
-13678|     31|    size_t tmp___1;
-13679|     31|    size_t tmp___2;
-13680|     31|    int tmp___3;
-13681|     31|    size_t tmp___4;
-13682|     31|    size_t tmp___5;
-13683|     31|    size_t tmp___6;
+13669|     30|{
+13670|     30|    struct line *lo_orig;
+13671|     30|    struct line *hi_orig;
+13672|     30|    size_t to_merge;
+13673|     30|    size_t merged_lo;
+13674|     30|    size_t merged_hi;
+13675|     30|    struct line *dest;
+13676|     30|    int tmp;
+13677|     30|    size_t tmp___0;
+13678|     30|    size_t tmp___1;
+13679|     30|    size_t tmp___2;
+13680|     30|    int tmp___3;
+13681|     30|    size_t tmp___4;
+13682|     30|    size_t tmp___5;
+13683|     30|    size_t tmp___6;
 13684|       |
-13685|     31|    {
-13686|     31|        lo_orig = node->lo;
-13687|     31|        hi_orig = node->hi;
-13688|     31|        to_merge = (total_lines >> 2U * (node->level + 1U)) + 1UL;
-13689|     31|        if (node->level > 1U) {
+13685|     30|    {
+13686|     30|        lo_orig = node->lo;
+13687|     30|        hi_orig = node->hi;
+13688|     30|        to_merge = (total_lines >> 2U * (node->level + 1U)) + 1UL;
+13689|     30|        if (node->level > 1U) {
 13690|      0|            dest = *(node->dest);
 13691|      0|            while (1) {
 13692|       |
@@ -13765,7 +13765,7 @@
 13765|      0|            }
 13766|      0|            *(node->dest) = dest;
 13767|      0|        }
-13768|     31|        else {
+13768|     30|        else {
 13769|  15.6k|            while (1) {
 13770|       |
 13771|  15.6k|                if ((unsigned long)node->lo != (unsigned long)node->end_lo) {
@@ -13773,144 +13773,144 @@
 13773|  15.6k|                        tmp___4 = to_merge;
 13774|  15.6k|                        to_merge--;
 13775|  15.6k|                        if (!tmp___4) {
-13776|     24|                            goto while_break___2;
-13777|     24|                        }
+13776|     21|                            goto while_break___2;
+13777|     21|                        }
 13778|  15.6k|                    }
-13779|      6|                    else {
-13780|      6|                        goto while_break___2;
-13781|      6|                    }
+13779|      0|                    else {
+13780|      0|                        goto while_break___2;
+13781|      0|                    }
 13782|  15.6k|                }
-13783|      1|                else {
-13784|      1|                    goto while_break___2;
-13785|      1|                }
+13783|      9|                else {
+13784|      9|                    goto while_break___2;
+13785|      9|                }
 13786|  15.6k|                tmp___3 = compare((struct line const *)(node->lo - 1),
 13787|  15.6k|                                  (struct line const *)(node->hi - 1));
 13788|  15.6k|                if (tmp___3 <= 0) {
-13789|  7.80k|                    (node->lo)--;
-13790|  7.80k|                    write_unique((struct line const *)node->lo, tfp, temp_output);
-13791|  7.80k|                }
-13792|  7.82k|                else {
-13793|  7.82k|                    (node->hi)--;
-13794|  7.82k|                    write_unique((struct line const *)node->hi, tfp, temp_output);
-13795|  7.82k|                }
+13789|  7.81k|                    (node->lo)--;
+13790|  7.81k|                    write_unique((struct line const *)node->lo, tfp, temp_output);
+13791|  7.81k|                }
+13792|  7.79k|                else {
+13793|  7.79k|                    (node->hi)--;
+13794|  7.79k|                    write_unique((struct line const *)node->hi, tfp, temp_output);
+13795|  7.79k|                }
 13796|  15.6k|            }
-13797|     31|while_break___2:
-13798|     31|            merged_lo = (size_t)(lo_orig - node->lo);
-13799|     31|            merged_hi = (size_t)(hi_orig - node->hi);
-13800|     31|            if (node->nhi == merged_hi) {
-13801|     26|                while (1) {
+13797|     30|while_break___2:
+13798|     30|            merged_lo = (size_t)(lo_orig - node->lo);
+13799|     30|            merged_hi = (size_t)(hi_orig - node->hi);
+13800|     30|            if (node->nhi == merged_hi) {
+13801|      0|                while (1) {
 13802|       |
-13803|     26|                    if ((unsigned long)node->lo != (unsigned long)node->end_lo) {
-13804|     25|                        tmp___5 = to_merge;
-13805|     25|                        to_merge--;
-13806|     25|                        if (!tmp___5) {
-13807|      5|                            goto while_break___3;
-13808|      5|                        }
-13809|     25|                    }
-13810|      1|                    else {
-13811|      1|                        goto while_break___3;
-13812|      1|                    }
-13813|     20|                    (node->lo)--;
-13814|     20|                    write_unique((struct line const *)node->lo, tfp, temp_output);
-13815|     20|                }
-13816|      6|while_break___3:
-13817|      6|                ;
-13818|      6|            }
-13819|     25|            else {
-13820|     25|                if (node->nlo == merged_lo) {
-13821|      6|                    while (1) {
+13803|      0|                    if ((unsigned long)node->lo != (unsigned long)node->end_lo) {
+13804|      0|                        tmp___5 = to_merge;
+13805|      0|                        to_merge--;
+13806|      0|                        if (!tmp___5) {
+13807|      0|                            goto while_break___3;
+13808|      0|                        }
+13809|      0|                    }
+13810|      0|                    else {
+13811|      0|                        goto while_break___3;
+13812|      0|                    }
+13813|      0|                    (node->lo)--;
+13814|      0|                    write_unique((struct line const *)node->lo, tfp, temp_output);
+13815|      0|                }
+13816|      0|while_break___3:
+13817|      0|                ;
+13818|      0|            }
+13819|     30|            else {
+13820|     30|                if (node->nlo == merged_lo) {
+13821|     34|                    while (1) {
 13822|       |
-13823|      6|                        if ((unsigned long)node->hi != (unsigned long)node->end_hi) {
-13824|      5|                            tmp___6 = to_merge;
-13825|      5|                            to_merge--;
-13826|      5|                            if (!tmp___6) {
-13827|      0|                                goto while_break___4;
-13828|      0|                            }
-13829|      5|                        }
-13830|      1|                        else {
-13831|      1|                            goto while_break___4;
-13832|      1|                        }
-13833|      5|                        (node->hi)--;
-13834|      5|                        write_unique((struct line const *)node->hi, tfp, temp_output);
-13835|      5|                    }
-13836|      1|while_break___4:
-13837|      1|                    ;
-13838|      1|                }
-13839|     25|            }
-13840|     31|        }
-13841|     31|        merged_lo = (size_t)(lo_orig - node->lo);
-13842|     31|        merged_hi = (size_t)(hi_orig - node->hi);
-13843|     31|        node->nlo -= merged_lo;
-13844|     31|        node->nhi -= merged_hi;
-13845|     31|        return;
-13846|     31|    }
-13847|     31|}
+13823|     34|                        if ((unsigned long)node->hi != (unsigned long)node->end_hi) {
+13824|     32|                            tmp___6 = to_merge;
+13825|     32|                            to_merge--;
+13826|     32|                            if (!tmp___6) {
+13827|      7|                                goto while_break___4;
+13828|      7|                            }
+13829|     32|                        }
+13830|      2|                        else {
+13831|      2|                            goto while_break___4;
+13832|      2|                        }
+13833|     25|                        (node->hi)--;
+13834|     25|                        write_unique((struct line const *)node->hi, tfp, temp_output);
+13835|     25|                    }
+13836|      9|while_break___4:
+13837|      9|                    ;
+13838|      9|                }
+13839|     30|            }
+13840|     30|        }
+13841|     30|        merged_lo = (size_t)(lo_orig - node->lo);
+13842|     30|        merged_hi = (size_t)(hi_orig - node->hi);
+13843|     30|        node->nlo -= merged_lo;
+13844|     30|        node->nhi -= merged_hi;
+13845|     30|        return;
+13846|     30|    }
+13847|     30|}
 13848|       |static void queue_check_insert(struct merge_node_queue *queue,
 13849|       |                               struct merge_node *node)
-13850|     31|{
-13851|     31|    _Bool lo_avail;
-13852|     31|    _Bool hi_avail;
-13853|     31|    int tmp;
-13854|     31|    int tmp___0;
-13855|     31|    int tmp___1;
+13850|     30|{
+13851|     30|    _Bool lo_avail;
+13852|     30|    _Bool hi_avail;
+13853|     30|    int tmp;
+13854|     30|    int tmp___0;
+13855|     30|    int tmp___1;
 13856|       |
-13857|     31|    {
-13858|     31|        if (!node->queued) {
-13859|     31|            lo_avail = (_Bool)(node->lo - node->end_lo != 0L);
-13860|     31|            hi_avail = (_Bool)(node->hi - node->end_hi != 0L);
-13861|     31|            if (lo_avail) {
-13862|     29|                if (hi_avail) {
-13863|     24|                    tmp = 1;
-13864|     24|                }
-13865|      5|                else {
-13866|      5|                    if (!node->nhi) {
-13867|      5|                        tmp = 1;
-13868|      5|                    }
+13857|     30|    {
+13858|     30|        if (!node->queued) {
+13859|     30|            lo_avail = (_Bool)(node->lo - node->end_lo != 0L);
+13860|     30|            hi_avail = (_Bool)(node->hi - node->end_hi != 0L);
+13861|     30|            if (lo_avail) {
+13862|     21|                if (hi_avail) {
+13863|     21|                    tmp = 1;
+13864|     21|                }
+13865|      0|                else {
+13866|      0|                    if (!node->nhi) {
+13867|      0|                        tmp = 1;
+13868|      0|                    }
 13869|      0|                    else {
 13870|      0|                        tmp = 0;
 13871|      0|                    }
-13872|      5|                }
-13873|     29|                tmp___1 = tmp;
-13874|     29|            }
-13875|      2|            else {
-13876|      2|                if (hi_avail) {
-13877|      0|                    if (!node->nlo) {
-13878|      0|                        tmp___0 = 1;
-13879|      0|                    }
+13872|      0|                }
+13873|     21|                tmp___1 = tmp;
+13874|     21|            }
+13875|      9|            else {
+13876|      9|                if (hi_avail) {
+13877|      7|                    if (!node->nlo) {
+13878|      7|                        tmp___0 = 1;
+13879|      7|                    }
 13880|      0|                    else {
 13881|      0|                        tmp___0 = 0;
 13882|      0|                    }
-13883|      0|                }
+13883|      7|                }
 13884|      2|                else {
 13885|      2|                    tmp___0 = 0;
 13886|      2|                }
-13887|      2|                tmp___1 = tmp___0;
-13888|      2|            }
-13889|     31|            if (tmp___1) {
-13890|     29|                queue_insert(queue, node);
-13891|     29|            }
-13892|     31|        }
-13893|     31|        return;
-13894|     31|    }
-13895|     31|}
+13887|      9|                tmp___1 = tmp___0;
+13888|      9|            }
+13889|     30|            if (tmp___1) {
+13890|     28|                queue_insert(queue, node);
+13891|     28|            }
+13892|     30|        }
+13893|     30|        return;
+13894|     30|    }
+13895|     30|}
 13896|       |static void queue_check_insert_parent(struct merge_node_queue *queue,
 13897|       |                                      struct merge_node *node)
-13898|     31|{
+13898|     30|{
 13899|       |
-13900|     31|    {
-13901|     31|        if (node->level > 1U) {
+13900|     30|    {
+13901|     30|        if (node->level > 1U) {
 13902|      0|            lock_node(node->parent);
 13903|      0|            queue_check_insert(queue, node->parent);
 13904|      0|            unlock_node(node->parent);
 13905|      0|        }
-13906|     31|        else {
-13907|     31|            if (node->nlo + node->nhi == 0UL) {
+13906|     30|        else {
+13907|     30|            if (node->nlo + node->nhi == 0UL) {
 13908|      2|                queue_insert(queue, node->parent);
 13909|      2|            }
-13910|     31|        }
-13911|     31|        return;
-13912|     31|    }
-13913|     31|}
+13910|     30|        }
+13911|     30|        return;
+13912|     30|    }
+13913|     30|}
 13914|       |static void merge_loop(struct merge_node_queue *queue, size_t total_lines,
 13915|       |                       FILE *tfp, char const *temp_output)
 13916|      2|{
@@ -13918,19 +13918,19 @@
 13918|      2|    struct merge_node *tmp;
 13919|       |
 13920|      2|    {
-13921|     33|        while (1) {
-13922|     33|            tmp = queue_pop(queue);
-13923|     33|            node = tmp;
-13924|     33|            if (node->level == 0U) {
+13921|     32|        while (1) {
+13922|     32|            tmp = queue_pop(queue);
+13923|     32|            node = tmp;
+13924|     32|            if (node->level == 0U) {
 13925|      2|                unlock_node(node);
 13926|      2|                queue_insert(queue, node);
 13927|      2|                goto while_break;
 13928|      2|            }
-13929|     31|            mergelines_node(node, total_lines, tfp, temp_output);
-13930|     31|            queue_check_insert(queue, node);
-13931|     31|            queue_check_insert_parent(queue, node);
-13932|     31|            unlock_node(node);
-13933|     31|        }
+13929|     30|            mergelines_node(node, total_lines, tfp, temp_output);
+13930|     30|            queue_check_insert(queue, node);
+13931|     30|            queue_check_insert_parent(queue, node);
+13932|     30|            unlock_node(node);
+13933|     30|        }
 13934|      2|while_break:
 13935|      2|        ;
 13936|      2|        return;
@@ -14326,53 +14326,53 @@
 14326|      2|        ntemps = (size_t)0;
 14327|      2|        output_file_created = (_Bool)0;
 14328|      2|        buf___1.alloc = (size_t)0;
-14329|      4|        while (1) {
+14329|      2|        while (1) {
 14330|       |
-14331|      4|            if (!nfiles) {
+14331|      2|            if (!nfiles) {
 14332|      0|                goto while_break;
 14333|      0|            }
-14334|      4|            file = (char const *)*files;
-14335|      4|            tmp = xfopen(file, "r");
-14336|      4|            fp = tmp;
-14337|      4|            if (nthreads > 1UL) {
-14338|      4|                tmp___0 = (size_t)1;
-14339|      4|                mult = (size_t)1;
-14340|     16|                while (1) {
+14334|      2|            file = (char const *)*files;
+14335|      2|            tmp = xfopen(file, "r");
+14336|      2|            fp = tmp;
+14337|      2|            if (nthreads > 1UL) {
+14338|      2|                tmp___0 = (size_t)1;
+14339|      2|                mult = (size_t)1;
+14340|      6|                while (1) {
 14341|       |
-14342|     16|                    if (!(tmp___0 < nthreads)) {
-14343|      4|                        goto while_break___0;
-14344|      4|                    }
-14345|     12|                    tmp___0 *= 2UL;
-14346|     12|                    mult++;
-14347|     12|                }
-14348|      4|while_break___0:
-14349|      4|                bytes_per_line = mult * sizeof(struct line);
-14350|      4|            }
+14342|      6|                    if (!(tmp___0 < nthreads)) {
+14343|      2|                        goto while_break___0;
+14344|      2|                    }
+14345|      4|                    tmp___0 *= 2UL;
+14346|      4|                    mult++;
+14347|      4|                }
+14348|      2|while_break___0:
+14349|      2|                bytes_per_line = mult * sizeof(struct line);
+14350|      2|            }
 14351|      0|            else {
 14352|      0|                bytes_per_line = (sizeof(struct line) * 3UL) / 2UL;
 14353|      0|            }
-14354|      4|            if (!buf___1.alloc) {
+14354|      2|            if (!buf___1.alloc) {
 14355|      2|                tmp___1 = sort_buffer_size((FILE *const *)(&fp), (size_t)1, files,
 14356|      2|                                           nfiles, bytes_per_line);
 14357|      2|                initbuf(&buf___1, bytes_per_line, tmp___1);
 14358|      2|            }
-14359|      4|            buf___1.eof = (_Bool)0;
-14360|      4|            files++;
-14361|      4|            nfiles--;
-14362|      4|            while (1) {
-14363|      4|                tmp___4 = fillbuf___7(&buf___1, fp, file);
-14364|      4|                if (!tmp___4) {
+14359|      2|            buf___1.eof = (_Bool)0;
+14360|      2|            files++;
+14361|      2|            nfiles--;
+14362|      2|            while (1) {
+14363|      2|                tmp___4 = fillbuf___7(&buf___1, fp, file);
+14364|      2|                if (!tmp___4) {
 14365|      0|                    goto while_break___1;
 14366|      0|                }
-14367|      4|                if (buf___1.eof) {
-14368|      4|                    if (nfiles) {
-14369|      2|                        if (bytes_per_line + 1UL < (buf___1.alloc - buf___1.used) -
-14370|      2|                                bytes_per_line * buf___1.nlines) {
-14371|      2|                            buf___1.left = buf___1.used;
-14372|      2|                            goto while_break___1;
-14373|      2|                        }
-14374|      2|                    }
-14375|      4|                }
+14367|      2|                if (buf___1.eof) {
+14368|      2|                    if (nfiles) {
+14369|      0|                        if (bytes_per_line + 1UL < (buf___1.alloc - buf___1.used) -
+14370|      0|                                bytes_per_line * buf___1.nlines) {
+14371|      0|                            buf___1.left = buf___1.used;
+14372|      0|                            goto while_break___1;
+14373|      0|                        }
+14374|      0|                    }
+14375|      2|                }
 14376|      2|                line = buffer_linelim((struct buffer const *)(&buf___1));
 14377|      2|                if (buf___1.eof) {
 14378|      2|                    if (!nfiles) {
@@ -14425,9 +14425,9 @@
 14425|      2|                    goto finish;
 14426|      2|                }
 14427|      2|            }
-14428|      2|while_break___1:
-14429|      2|            xfclose(fp, file);
-14430|      2|        }
+14428|      0|while_break___1:
+14429|      0|            xfclose(fp, file);
+14430|      0|        }
 14431|      0|while_break:
 14432|      0|        ;
 14433|      2|finish:
@@ -14456,30 +14456,30 @@
 14456|      2|    }
 14457|      2|}
 14458|       |static void insertkey(struct keyfield *key_arg)
-14459|      2|{
-14460|      2|    struct keyfield **p;
-14461|      2|    struct keyfield *key;
-14462|      2|    struct keyfield *tmp;
+14459|      0|{
+14460|      0|    struct keyfield **p;
+14461|      0|    struct keyfield *key;
+14462|      0|    struct keyfield *tmp;
 14463|       |
-14464|      2|    {
-14465|      2|        tmp = (struct keyfield *)xmemdup((void const *)key_arg, sizeof(*key));
-14466|      2|        key = tmp;
-14467|      2|        p = &keylist;
-14468|      2|        while (1) {
+14464|      0|    {
+14465|      0|        tmp = (struct keyfield *)xmemdup((void const *)key_arg, sizeof(*key));
+14466|      0|        key = tmp;
+14467|      0|        p = &keylist;
+14468|      0|        while (1) {
 14469|       |
-14470|      2|            if (!*p) {
-14471|      2|                goto while_break;
-14472|      2|            }
+14470|      0|            if (!*p) {
+14471|      0|                goto while_break;
+14472|      0|            }
 14473|      0|            goto __Cont;
 14474|      0|__Cont:
 14475|      0|            p = &(*p)->next;
 14476|      0|        }
-14477|      2|while_break:
-14478|      2|        *p = key;
-14479|      2|        key->next = (struct keyfield *)((void *)0);
-14480|      2|        return;
-14481|      2|    }
-14482|      2|}
+14477|      0|while_break:
+14478|      0|        *p = key;
+14479|      0|        key->next = (struct keyfield *)((void *)0);
+14480|      0|        return;
+14481|      0|    }
+14482|      0|}
 14483|       |static __attribute__((__noreturn__)) void badfieldspec(char const *spec,
 14484|       |        char const *msgid);
 14485|       |static __attribute__((__noreturn__)) void badfieldspec(char const *spec,
@@ -14521,15 +14521,15 @@
 14521|       |
 14522|      2|    {
 14523|      2|        key = keylist;
-14524|      4|        while (1) {
+14524|      2|        while (1) {
 14525|       |
-14526|      4|            if (!key) {
+14526|      2|            if (!key) {
 14527|      2|                goto while_break;
 14528|      2|            }
-14529|      2|            if (1 < ((((int)key->numeric + (int)key->general_numeric) +
-14530|      2|                      (int)key->human_numeric) +
-14531|      2|                     (int)key->month) +
-14532|      2|                    (((int)key->version | (int)key->random) | !(!key->ignore))) {
+14529|      0|            if (1 < ((((int)key->numeric + (int)key->general_numeric) +
+14530|      0|                      (int)key->human_numeric) +
+14531|      0|                     (int)key->month) +
+14532|      0|                    (((int)key->version | (int)key->random) | !(!key->ignore))) {
 14533|      0|                tmp___0 = (_Bool)0;
 14534|      0|                key->reverse = tmp___0;
 14535|      0|                tmp = tmp___0;
@@ -14538,8 +14538,8 @@
 14538|      0|                key_to_opts((struct keyfield const *)key, opts___1);
 14539|      0|                incompatible_options((char const *)(opts___1));
 14540|      0|            }
-14541|      2|            key = key->next;
-14542|      2|        }
+14541|      0|            key = key->next;
+14542|      0|        }
 14543|      2|while_break:
 14544|      2|        ;
 14545|      2|        return;
@@ -14596,38 +14596,38 @@
 14596|      0|}
 14597|       |static char *set_ordering(char const *s, struct keyfield *key,
 14598|       |                          enum blanktype blanktype)
-14599|      3|{
+14599|      0|{
 14600|       |
-14601|      3|    {
-14602|      6|        while (1) {
+14601|      0|    {
+14602|      0|        while (1) {
 14603|       |
-14604|      6|            if (!*s) {
-14605|      3|                goto while_break;
-14606|      3|            }
-14607|      3|            if ((int const) * s == 98) {
+14604|      0|            if (!*s) {
+14605|      0|                goto while_break;
+14606|      0|            }
+14607|      0|            if ((int const) * s == 98) {
 14608|      0|                goto case_98;
 14609|      0|            }
-14610|      3|            if ((int const) * s == 100) {
+14610|      0|            if ((int const) * s == 100) {
 14611|      0|                goto case_100;
 14612|      0|            }
-14613|      3|            if ((int const) * s == 102) {
-14614|      2|                goto case_102;
-14615|      2|            }
-14616|      1|            if ((int const) * s == 103) {
+14613|      0|            if ((int const) * s == 102) {
+14614|      0|                goto case_102;
+14615|      0|            }
+14616|      0|            if ((int const) * s == 103) {
 14617|      0|                goto case_103;
 14618|      0|            }
-14619|      1|            if ((int const) * s == 104) {
+14619|      0|            if ((int const) * s == 104) {
 14620|      0|                goto case_104;
 14621|      0|            }
-14622|      1|            if ((int const) * s == 105) {
+14622|      0|            if ((int const) * s == 105) {
 14623|      0|                goto case_105;
 14624|      0|            }
-14625|      1|            if ((int const) * s == 77) {
+14625|      0|            if ((int const) * s == 77) {
 14626|      0|                goto case_77;
 14627|      0|            }
-14628|      1|            if ((int const) * s == 110) {
-14629|      1|                goto case_110;
-14630|      1|            }
+14628|      0|            if ((int const) * s == 110) {
+14629|      0|                goto case_110;
+14630|      0|            }
 14631|      0|            if ((int const) * s == 82) {
 14632|      0|                goto case_82;
 14633|      0|            }
@@ -14659,9 +14659,9 @@
 14659|      0|case_100:
 14660|      0|            key->ignore = (_Bool const *)(nondictionary);
 14661|      0|            goto switch_break;
-14662|      2|case_102:
-14663|      2|            key->translate = (char const *)(fold_toupper);
-14664|      2|            goto switch_break;
+14662|      0|case_102:
+14663|      0|            key->translate = (char const *)(fold_toupper);
+14664|      0|            goto switch_break;
 14665|      0|case_103:
 14666|      0|            key->general_numeric = (_Bool)1;
 14667|      0|            goto switch_break;
@@ -14676,9 +14676,9 @@
 14676|      0|case_77:
 14677|      0|            key->month = (_Bool)1;
 14678|      0|            goto switch_break;
-14679|      1|case_110:
-14680|      1|            key->numeric = (_Bool)1;
-14681|      1|            goto switch_break;
+14679|      0|case_110:
+14680|      0|            key->numeric = (_Bool)1;
+14681|      0|            goto switch_break;
 14682|      0|case_82:
 14683|      0|            key->random = (_Bool)1;
 14684|      0|            goto switch_break;
@@ -14690,14 +14690,14 @@
 14690|      0|            goto switch_break;
 14691|      0|switch_default:
 14692|      0|            return ((char *)s);
-14693|      3|switch_break:
-14694|      3|            s++;
-14695|      3|        }
-14696|      3|while_break:
-14697|      3|        ;
-14698|      3|        return ((char *)s);
-14699|      3|    }
-14700|      3|}
+14693|      0|switch_break:
+14694|      0|            s++;
+14695|      0|        }
+14696|      0|while_break:
+14697|      0|        ;
+14698|      0|        return ((char *)s);
+14699|      0|    }
+14700|      0|}
 14701|       |static struct keyfield *key_init(struct keyfield *key)
 14702|      2|{
 14703|       |
@@ -14910,13 +14910,13 @@
 14910|      2|        key_init(&gkey);
 14911|      2|        gkey.sword = 0xffffffffffffffffUL;
 14912|      2|        files = (char **)xnmalloc((size_t)argc, sizeof(*files));
-14913|      9|        while (1) {
-14914|      9|            oi = -1;
-14915|      9|            if (c == -1) {
+14913|      4|        while (1) {
+14914|      4|            oi = -1;
+14915|      4|            if (c == -1) {
 14916|      0|                goto _L;
 14917|      0|            }
-14918|      9|            else {
-14919|      9|                if (posixly_correct) {
+14918|      4|            else {
+14919|      4|                if (posixly_correct) {
 14920|      0|                    if (nfiles != 0UL) {
 14921|      0|                        if (obsolete_usage) {
 14922|      0|                            if (!checkonly) {
@@ -14959,11 +14959,11 @@
 14959|      0|                        goto _L___1;
 14960|      0|                    }
 14961|      0|                }
-14962|      9|                else {
-14963|      9|_L___1:
-14964|      9|                    c = getopt_long(argc, (char *const *)argv, short_options,
-14965|      9|                                    long_options___1, &oi);
-14966|      9|                    if (c == -1) {
+14962|      4|                else {
+14963|      4|_L___1:
+14964|      4|                    c = getopt_long(argc, (char *const *)argv, short_options,
+14965|      4|                                    long_options___1, &oi);
+14966|      4|                    if (c == -1) {
 14967|      2|_L:
 14968|      2|                        if (argc <= optind) {
 14969|      2|                            goto while_break___1;
@@ -14974,37 +14974,37 @@
 14974|      0|                        optind++;
 14975|      0|                        *(files + tmp___3) = *(argv + tmp___4);
 14976|      0|                    }
-14977|      7|                    else {
-14978|      7|                        if (c == 1) {
-14979|      4|                            goto case_1;
-14980|      4|                        }
-14981|      3|                        if (c == 134) {
+14977|      2|                    else {
+14978|      2|                        if (c == 1) {
+14979|      2|                            goto case_1;
+14980|      2|                        }
+14981|      0|                        if (c == 134) {
 14982|      0|                            goto case_134;
 14983|      0|                        }
-14984|      3|                        if (c == 98) {
+14984|      0|                        if (c == 98) {
 14985|      0|                            goto case_98;
 14986|      0|                        }
-14987|      3|                        if (c == 100) {
+14987|      0|                        if (c == 100) {
 14988|      0|                            goto case_98;
 14989|      0|                        }
-14990|      3|                        if (c == 102) {
-14991|      2|                            goto case_98;
-14992|      2|                        }
-14993|      1|                        if (c == 103) {
+14990|      0|                        if (c == 102) {
+14991|      0|                            goto case_98;
+14992|      0|                        }
+14993|      0|                        if (c == 103) {
 14994|      0|                            goto case_98;
 14995|      0|                        }
-14996|      1|                        if (c == 104) {
+14996|      0|                        if (c == 104) {
 14997|      0|                            goto case_98;
 14998|      0|                        }
-14999|      1|                        if (c == 105) {
+14999|      0|                        if (c == 105) {
 15000|      0|                            goto case_98;
 15001|      0|                        }
-15002|      1|                        if (c == 77) {
+15002|      0|                        if (c == 77) {
 15003|      0|                            goto case_98;
 15004|      0|                        }
-15005|      1|                        if (c == 110) {
-15006|      1|                            goto case_98;
-15007|      1|                        }
+15005|      0|                        if (c == 110) {
+15006|      0|                            goto case_98;
+15007|      0|                        }
 15008|      0|                        if (c == 114) {
 15009|      0|                            goto case_98;
 15010|      0|                        }
@@ -15078,9 +15078,9 @@
 15078|      0|                            goto case_neg_131;
 15079|      0|                        }
 15080|      0|                        goto switch_default;
-15081|      4|case_1:
-15082|      4|                        key = (struct keyfield *)((void *)0);
-15083|      4|                        if ((int)*(optarg + 0) == 43) {
+15081|      2|case_1:
+15082|      2|                        key = (struct keyfield *)((void *)0);
+15083|      2|                        if ((int)*(optarg + 0) == 43) {
 15084|      0|                            if (optind != argc) {
 15085|      0|                                if ((int)*(*(argv + optind) + 0) == 45) {
 15086|      0|                                    if ((unsigned int)*(*(argv + optind) + 1) - 48U <= 9U) {
@@ -15160,22 +15160,22 @@
 15160|      0|                                }
 15161|      0|                            }
 15162|      0|                        }
-15163|      4|                        if (!key) {
-15164|      4|                            tmp___10 = nfiles;
-15165|      4|                            nfiles++;
-15166|      4|                            *(files + tmp___10) = optarg;
-15167|      4|                        }
-15168|      4|                        goto switch_break;
+15163|      2|                        if (!key) {
+15164|      2|                            tmp___10 = nfiles;
+15165|      2|                            nfiles++;
+15166|      2|                            *(files + tmp___10) = optarg;
+15167|      2|                        }
+15168|      2|                        goto switch_break;
 15169|      0|case_134:
 15170|      0|                        tmp___11 = __xargmatch_internal(
 15171|      0|                                       "--sort", (char const *)optarg, sort_args, sort_types,
 15172|      0|                                       sizeof(sort_types[0]), argmatch_die);
 15173|      0|                        c = (int)sort_types[tmp___11];
-15174|      3|case_98:
-15175|      3|                        str[0] = (char)c;
-15176|      3|                        str[1] = (char)'\000';
-15177|      3|                        set_ordering((char const *)(str), &gkey, (enum blanktype)2);
-15178|      3|                        goto switch_break;
+15174|      0|case_98:
+15175|      0|                        str[0] = (char)c;
+15176|      0|                        str[1] = (char)'\000';
+15177|      0|                        set_ordering((char const *)(str), &gkey, (enum blanktype)2);
+15178|      0|                        goto switch_break;
 15179|      0|case_128:
 15180|      0|                        if (optarg) {
 15181|      0|                            tmp___12 = __xargmatch_internal(
@@ -15355,12 +15355,12 @@
 15355|      0|                        goto switch_break;
 15356|      0|switch_default:
 15357|      0|                        usage(2);
-15358|      7|switch_break:
-15359|      7|                        ;
-15360|      7|                    }
-15361|      9|                }
-15362|      9|            }
-15363|      9|        }
+15358|      2|switch_break:
+15359|      2|                        ;
+15360|      2|                    }
+15361|      4|                }
+15362|      4|            }
+15363|      4|        }
 15364|      2|while_break___1:
 15365|      2|        ;
 15366|      2|        if (files_from) {
@@ -15467,10 +15467,10 @@
 15467|      2|        if (!keylist) {
 15468|      2|            tmp___46 = default_key_compare((struct keyfield const *)(&gkey));
 15469|      2|            if (!tmp___46) {
-15470|      2|                gkey_only = (_Bool)1;
-15471|      2|                insertkey(&gkey);
-15472|      2|                need_random = (_Bool)((int)need_random | (int)gkey.random);
-15473|      2|            }
+15470|      0|                gkey_only = (_Bool)1;
+15471|      0|                insertkey(&gkey);
+15472|      0|                need_random = (_Bool)((int)need_random | (int)gkey.random);
+15473|      0|            }
 15474|      2|        }
 15475|      2|        check_ordering_compatibility();
 15476|      2|        if (debug) {
@@ -15568,11 +15568,11 @@
 15568|      2|                tmp___59 = num_processors((enum nproc_query)2);
 15569|      2|                np = tmp___59;
 15570|      2|                if (np < 8UL) {
-15571|      0|                    nthreads = np;
-15572|      0|                }
-15573|      2|                else {
-15574|      2|                    nthreads = (size_t)8;
-15575|      2|                }
+15571|      2|                    nthreads = np;
+15572|      2|                }
+15573|      0|                else {
+15574|      0|                    nthreads = (size_t)8;
+15575|      0|                }
 15576|      2|            }
 15577|      2|            nthreads_max = 0xffffffffffffffffUL / (2UL * sizeof(struct merge_node));
 15578|      2|            if (nthreads < nthreads_max) {

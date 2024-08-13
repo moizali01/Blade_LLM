@@ -66,13 +66,13 @@ run(){
     echo -e "Line1\nLine1\nline1\nLine2\nline2\nLine3\nline3\nline3\nLine4\nline4\nline1" > $SMALL_FILE
 
     # Test case 1: Using uniq with on the large file
-    execute_uniq $LARGE_FILE "output_large.txt"
+    execute_uniq $LARGE_FILE "output_large.txt" || return 1
     if [ $? -eq 0 ]; then
         score=$((score + 1))
     fi
 
     # Test case 2: Using uniq with on the small test file
-    execute_uniq $SMALL_FILE "output_small.txt"
+    execute_uniq $SMALL_FILE "output_small.txt" || return 1
     if [ $? -eq 0 ]; then
         score=$((score + 1))
     fi

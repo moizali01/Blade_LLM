@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -rf sec_list.txt 
+# rm -rf sec_list.txt 
 cd cands
 rm -rf *.c 
 cd pretext_code
