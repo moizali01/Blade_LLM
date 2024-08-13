@@ -21,7 +21,7 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
     os.makedirs("../LLM_Util/cands/removed_code", exist_ok=True)
     os.makedirs("../LLM_Util/cands/context", exist_ok=True)
     os.makedirs("../LLM_Util/cands/pretext_code", exist_ok=True)
-    os.makedirs("../LLM_Util/cands/fifty_context", exist_ok=True)
+    os.makedirs("../LLM_Util/cands/fifty_text", exist_ok=True)
     os.makedirs("../LLM_Util/cands/llm_response", exist_ok=True)
     
 
@@ -52,7 +52,7 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
 
     # write llm response to file 
     llm_file = "../LLM_Util/cands/llm_response/llm" + "_time_"+ str(formatted_time)+ ".blade.c.txt"
-    
+
     qa = QAClass() 
     try:
         # time.sleep(10)

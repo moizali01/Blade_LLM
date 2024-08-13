@@ -204,7 +204,7 @@ class QAClass:
 
                 formatted_context = self.outer_instance.combine_docs(retrieved_docs)
 
-                if len(query.splitlines() > 10):
+                if len(query.splitlines()) > 10:
                     formatted_context_2 = formatted_context
                 else:
                     formatted_context_2 = "Snippet.0: \n\n" + fifty_clean + "\n\n" + formatted_context
