@@ -63,27 +63,11 @@ function compile() {
 sanitizers=("")
 
 function main() {
-  for i in {1..3}; do
     cd $DIR
     clean_env
     compile || exit 1
     run || exit 1
     clean_env
-  done
 }
-# sanitizers=("-fsanitize=cfi -flto -fvisibility=hidden" "-fsanitize=address"
-#   "-fsanitize=memory -fsanitize-memory-use-after-dtor"
-#   "-fno-sanitize-recover=undefined,nullability"
-#   "-fsanitize=leak")
-
-# function main() {
-#   cd $DIR
-#   for ((i = 0; i < ${#sanitizers[@]}; i++)); do
-#     clean_env
-#     compile "${sanitizers[$i]}" || exit 1
-#     run || exit 1
-#     clean_env
-#   done
-# }
 
 main

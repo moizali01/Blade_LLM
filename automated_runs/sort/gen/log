@@ -1,98 +1,182 @@
 starting generality run
 CASE: 1, Numeric sort with mixed positive and negative small and large numbers
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770016 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/mixed_small_large.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed: Numeric sort with mixed positive and negative small and large numbers
 CASE: 2, Numeric sort with negative decimals
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770027 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/negative_decimals.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed: Numeric sort with negative decimals
 CASE: 3, Numeric sort with mixed decimals
 CASE: 4, Numeric sort with positive and negative scientific notation
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770039 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/mixed_scientific.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed: Numeric sort with positive and negative scientific notation
 CASE: 5, Numeric sort with large positive and negative numbers
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770043 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/large_positive_negative.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed: Numeric sort with large positive and negative numbers
 CASE: 6, Numeric sort with numbers including leading zeros
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770059 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/leading_zeros_mixed.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed: Numeric sort with numbers including leading zeros
 CASE: 7, Numeric sort with mixed length positive and negative numbers
 CASE: 8, Numeric sort with large range of numbers
 CASE: 9, Numeric sort with duplicate and unique numbers
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770079 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/duplicate_unique.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed: Numeric sort with duplicate and unique numbers
 CASE: 10, Numeric sort with mixed positive and negative numbers of varying lengths
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770083 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/mixed_varying_lengths.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed: Numeric sort with mixed positive and negative numbers of varying lengths
 CASE: 11, Numeric sort with random numbers
 CASE: 12, Numeric sort with consecutive numbers
 timeout: the monitored command dumped core
-./sort_generality.sh: line 25: 1658576 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/consecutive_numbers.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+./sort_generality.sh: line 25: 3770102 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/consecutive_numbers.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed: Numeric sort with consecutive numbers
 CASE: 13, Numeric sort with alternating positive and negative numbers
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770106 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/alternating_numbers.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed: Numeric sort with alternating positive and negative numbers
 CASE: 14, Numeric sort with decimals and whole numbers
 CASE: 15, Numeric sort with large negative and small positive numbers
-CASE: 16, Numeric sort with repeated numbers
-CASE: 17, Numeric sort with 100000 numbers
 timeout: the monitored command dumped core
-./sort_generality.sh: line 25: 1658620 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/100000_numbers.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
-Test failed: Numeric sort with 100000 numbers
+./sort_generality.sh: line 25: 3770118 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/large_negative_small_positive.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed: Numeric sort with large negative and small positive numbers
+CASE: 16, Numeric sort with repeated numbers
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770132 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/repeated_numbers.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed: Numeric sort with repeated numbers
+CASE: 17, Numeric sort with 100000 numbers
 CASE: 18, Numeric sort with very small fractions
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770145 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/very_small_fractions.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed: Numeric sort with very small fractions
 CASE: 19, Numeric sort with random large integers
 timeout: the monitored command dumped core
-./sort_generality.sh: line 25: 1658635 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/random_large_integers.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+./sort_generality.sh: line 25: 3770153 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/random_large_integers.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed: Numeric sort with random large integers
 CASE: 20, Numeric sort with rational numbers
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770160 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/rational_numbers.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed: Numeric sort with rational numbers
 CASE: 21,  sort with small letters
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770164 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed:  sort with small letters
 CASE: 22,  sort with large letters
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770168 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_large.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed:  sort with large letters
 CASE: 23,  sort with special characters
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770172 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_special.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed:  sort with special characters
 CASE: 24,  sort with spaces
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770176 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_spaces.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed:  sort with spaces
 CASE: 25,  sort with punctuation
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770180 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_punctuation.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed:  sort with punctuation
 CASE: 26,  sort with tabs
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770191 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_tabs.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed:  sort with tabs
 CASE: 27,  sort with mixed alphanumeric content
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770195 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_mixed_alpha.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed:  sort with mixed alphanumeric content
 CASE: 28,  sort with repeated lines
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770199 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_repeated.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed:  sort with repeated lines
 CASE: 29,  sort with numeric and alpha mixed content
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770206 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_mixed.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed:  sort with numeric and alpha mixed content
 CASE: 30,  sort with special mixed content
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770210 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_special_mixed.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed:  sort with special mixed content
 CASE: 31,  sort with mixed case sensitivity
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770214 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_mixed_case.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed:  sort with mixed case sensitivity
 CASE: 32,  sort with numbers and special characters
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770225 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_numbers_special.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed:  sort with numbers and special characters
 CASE: 33,  sort with leading spaces
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770229 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_leading_spaces.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed:  sort with leading spaces
 CASE: 34,  sort with mixed tabs and spaces
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770233 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_tabs_spaces.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed:  sort with mixed tabs and spaces
 CASE: 35,  sort with mixed special characters and spaces
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770237 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_special_spaces.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed:  sort with mixed special characters and spaces
 CASE: 36,  sort with accented characters
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770241 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_accented.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed:  sort with accented characters
 CASE: 37,  sort with different encodings
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770247 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_utf16.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed:  sort with different encodings
 CASE: 38,  sort with numeric strings
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770251 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_numeric_strings.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed:  sort with numeric strings
 CASE: 39,  sort with Unicode characters
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770262 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_unicode.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed:  sort with Unicode characters
 CASE: 40,  sort with empty lines
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770266 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/case_insensitive_empty_lines.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed:  sort with empty lines
 CASE: 41, Sort simple numbers
 CASE: 42, Sort strings alphabetically
-Test failed: Sort strings alphabetically
 CASE: 43, Sort mixed content
+Test failed: Sort mixed content
 CASE: 44, Sort with duplicate lines
 CASE: 45, Sort a large file
 CASE: 46, Sort file with very long lines
 Test failed: Sort file with very long lines
 CASE: 47, File not found
-./sort_generality.sh: line 25: 1658905 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/non_existent_file.txt > /Blade_LLM/automated_runs/sort/gen/temp_error.txt 2> /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+./sort_generality.sh: line 25: 3770344 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/non_existent_file.txt > /Blade_LLM/automated_runs/sort/gen/temp_error.txt 2> /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed: File not found
 CASE: 48, Invalid flag
 /Blade_LLM/automated_runs/sort/gen/reduced_binary: invalid option -- 'x'
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770352 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary -x /Blade_LLM/automated_runs/sort/gen/invalid_flag.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 /Blade_LLM/automated_runs/sort/gen/original_binary: invalid option -- 'x'
 Try '/Blade_LLM/automated_runs/sort/gen/original_binary --help' for more information.
 CASE: 49, Permission denied
-free(): invalid pointer
 timeout: the monitored command dumped core
-./sort_generality.sh: line 25: 1658946 Aborted                 timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/protected_file.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+./sort_generality.sh: line 25: 3770362 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/protected_file.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed: Permission denied
 CASE: 50, Invalid option combination
-free(): invalid pointer
 timeout: the monitored command dumped core
-./sort_generality.sh: line 25: 1658957 Aborted                 timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary -M /Blade_LLM/automated_runs/sort/gen/invalid_option_combination.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+./sort_generality.sh: line 25: 3770371 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary -M /Blade_LLM/automated_runs/sort/gen/invalid_option_combination.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed: Invalid option combination
 CASE: 51, Sort an empty file
-free(): invalid pointer
 timeout: the monitored command dumped core
-./sort_generality.sh: line 25: 1658962 Aborted                 timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/empty_file.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+./sort_generality.sh: line 25: 3770379 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/empty_file.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed: Sort an empty file
 CASE: 52, Sort a single line file
 Test failed: Sort a single line file
 CASE: 53, Sort a file with non-ASCII characters
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770391 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/non_ascii_chars.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
 Test failed: Sort a file with non-ASCII characters
 CASE: 54, Sort files with very long lines
+timeout: the monitored command dumped core
+./sort_generality.sh: line 25: 3770398 Segmentation fault      timeout -k 1 1 /Blade_LLM/automated_runs/sort/gen/reduced_binary /Blade_LLM/automated_runs/sort/gen/very_long_lines.txt > /Blade_LLM/automated_runs/sort/gen/temp_output.txt
+Test failed: Sort files with very long lines
