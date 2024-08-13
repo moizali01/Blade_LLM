@@ -1,29 +1,28 @@
 typedef long __time_t;
-typedef long __syscall_slong_t;
+
 typedef __time_t time_t;
 struct timespec {
-
-  __syscall_slong_t tv_nsec;
+  __time_t tv_sec;
 };
 typedef unsigned long size_t;
-
+typedef unsigned long __dev_t;
 typedef unsigned int __uid_t;
 
+typedef unsigned long __ino_t;
 typedef unsigned int __mode_t;
 
 typedef long __off_t;
 
+typedef __uid_t uid_t;
 struct stat {
+  __dev_t st_dev;
+  __ino_t st_ino;
 
   __mode_t st_mode;
 
   __off_t st_size;
 };
 
-struct hash_tuning {
-
-  _Bool is_n_buckets;
-};
 typedef struct hash_tuning Hash_tuning;
 
 typedef struct hash_table Hash_table;
@@ -38,7 +37,8 @@ typedef long __ssize_t;
 typedef __ssize_t ssize_t;
 
 typedef long ptrdiff_t;
-
+typedef __builtin_va_list __gnuc_va_list;
+typedef __gnuc_va_list va_list;
 enum quoting_style {
   literal_quoting_style = 0,
   shell_quoting_style = 1,
@@ -74,12 +74,14 @@ struct mbchar {
   size_t bytes;
   _Bool wc_valid;
   wchar_t wc;
+  char buf[24];
 };
-struct __anonstruct___sigset_t_9 {};
+struct __anonstruct___sigset_t_9 {
+  unsigned long __val[1024UL / (8UL * sizeof(unsigned long))];
+};
 typedef struct __anonstruct___sigset_t_9 __sigset_t;
 typedef __sigset_t sigset_t;
 
-struct _obstack_chunk {};
 union __anonunion_temp_26 {
   long tempint;
 };
@@ -110,16 +112,11 @@ typedef struct timezone *__restrict __timezone_ptr_t;
 typedef uint_least64_t isaac_word;
 struct isaac_state {
   isaac_word m[1 << 8];
-  isaac_word a;
 };
-union __anonunion_data_31 {
-  isaac_word w[1 << 8];
-  unsigned char b[(unsigned long)(1 << 8) * sizeof(isaac_word)];
-};
+
 struct isaac {
   size_t buffered;
   struct isaac_state state;
-  union __anonunion_data_31 data;
 };
 union __anonunion_buf_30 {
   char c[2UL * ((unsigned long)(1 << 8) * sizeof(isaac_word))];
@@ -128,10 +125,17 @@ union __anonunion_buf_30 {
 struct randread_source {
   FILE *source;
   void (*handler)(void const *);
-
+  void const *handler_arg;
   union __anonunion_buf_30 buf;
 };
 
+struct quoting_options {
+  enum quoting_style style;
+  int flags;
+  unsigned int quote_these_too[255UL / (sizeof(int) * 8UL) + 1UL];
+  char const *left_quote;
+  char const *right_quote;
+};
 struct slotvec {
   size_t size;
   char *val;
@@ -143,20 +147,11 @@ struct mbuiter_multi {
   struct mbchar cur;
 };
 typedef struct mbuiter_multi mbui_iterator_t;
-enum nproc_query {
-  NPROC_ALL = 0,
-  NPROC_CURRENT = 1,
-  NPROC_CURRENT_OVERRIDABLE = 2
-};
 
-struct __anonstruct_cpu_set_t_24 {};
-typedef struct __anonstruct_cpu_set_t_24 cpu_set_t;
 struct md5_ctx {
   uint32_t A;
 
-  uint32_t C;
-
-  uint32_t buflen;
+  uint32_t total[2];
 };
 struct __pthread_internal_list {
   struct __pthread_internal_list *__prev;
@@ -167,8 +162,6 @@ struct __pthread_mutex_s {
   int __lock;
   unsigned int __count;
   int __owner;
-  unsigned int __nusers;
-  int __kind;
 
   __pthread_list_t __list;
 };
@@ -187,7 +180,6 @@ struct heap {
 };
 struct hash_entry {
   void *data;
-  struct hash_entry *next;
 };
 struct hash_table {
   struct hash_entry *bucket;
@@ -195,12 +187,21 @@ struct hash_table {
   size_t n_buckets;
   size_t n_buckets_used;
 
+  Hash_tuning const *tuning;
   size_t (*hasher)(void const *, size_t);
   _Bool (*comparator)(void const *, void const *);
   void (*data_freer)(void *);
-  struct hash_entry *free_entry_list;
 };
 
+union __anonunion___sigaction_handler_41 {
+  void (*sa_handler)(int);
+};
+struct sigaction {
+  union __anonunion___sigaction_handler_41 __sigaction_handler;
+  __sigset_t sa_mask;
+  int sa_flags;
+  void (*sa_restorer)(void);
+};
 enum __anonenum_fadvice_t_19 {
   FADVISE_NORMAL = 0,
   FADVISE_SEQUENTIAL = 2,
@@ -210,24 +211,6 @@ enum __anonenum_fadvice_t_19 {
   FADVISE_RANDOM = 1
 };
 typedef enum __anonenum_fadvice_t_19 fadvice_t;
-
-typedef unsigned long pthread_t;
-
-typedef union pthread_attr_t pthread_attr_t;
-struct __anonstruct___data_7 {
-  int __lock;
-
-  unsigned long long __total_seq;
-  unsigned long long __wakeup_seq;
-  unsigned long long __woken_seq;
-  void *__mutex;
-};
-union __anonunion_pthread_cond_t_6 {
-  struct __anonstruct___data_7 __data;
-};
-typedef union __anonunion_pthread_cond_t_6 pthread_cond_t;
-
-typedef union __anonunion_pthread_condattr_t_8 pthread_condattr_t;
 
 enum __rlimit_resource {
   RLIMIT_CPU = 0,
@@ -258,6 +241,7 @@ struct line {
   char *text;
   size_t length;
   char *keybeg;
+  char *keylim;
 };
 struct buffer {
   char *buf;
@@ -287,7 +271,7 @@ struct keyfield {
 
   struct keyfield *next;
 };
-
+struct month {};
 struct merge_node {
   struct line *lo;
   struct line *hi;
@@ -297,7 +281,6 @@ struct merge_node {
   size_t nlo;
   size_t nhi;
   struct merge_node *parent;
-  struct merge_node *lo_child;
 
   unsigned int level;
   _Bool queued;
@@ -305,13 +288,10 @@ struct merge_node {
 };
 struct merge_node_queue {
   struct heap *priority_queue;
-  pthread_mutex_t mutex;
-  pthread_cond_t cond;
 };
 
 struct tempnode {
 
-  pid_t pid;
   char state;
   char name[1];
 };
@@ -330,23 +310,170 @@ struct thread_args {
   char const *output_temp;
 };
 
+__attribute__((__noreturn__)) void xalloc_die(void);
+
+extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) malloc)(
+    size_t __size) __attribute__((__malloc__));
 extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1, 2),
                                                           __leaf__)) memcpy)(
     void *__restrict __dest, void const *__restrict __src, size_t __n);
 
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1, 2), __leaf__)) stat)(char const *__restrict __file,
-                                        struct stat *__restrict __buf);
+char const diacrit_base[256] = {
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)'A', (char const)'B', (char const)'C',
+    (char const)'D', (char const)'E', (char const)'F', (char const)'G',
+    (char const)'H', (char const)'I', (char const)'J', (char const)'K',
+    (char const)'L', (char const)'M', (char const)'N', (char const)'O',
+    (char const)'P', (char const)'Q', (char const)'R', (char const)'S',
+    (char const)'T', (char const)'U', (char const)'V', (char const)'W',
+    (char const)'X', (char const)'Y', (char const)'Z', (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)'a', (char const)'b', (char const)'c',
+    (char const)'d', (char const)'e', (char const)'f', (char const)'g',
+    (char const)'h', (char const)'i', (char const)'j', (char const)'k',
+    (char const)'l', (char const)'m', (char const)'n', (char const)'o',
+    (char const)'p', (char const)'q', (char const)'r', (char const)'s',
+    (char const)'t', (char const)'u', (char const)'v', (char const)'w',
+    (char const)'x', (char const)'y', (char const)'z', (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)'A', (char const)'A', (char const)'A', (char const)'A',
+    (char const)'A', (char const)'A', (char const)'A', (char const)'C',
+    (char const)'E', (char const)'E', (char const)'E', (char const)'E',
+    (char const)'I', (char const)'I', (char const)'I', (char const)'I',
+    (char const)0,   (char const)'N', (char const)'O', (char const)'O',
+    (char const)'O', (char const)'O', (char const)'O', (char const)0,
+    (char const)'O', (char const)'U', (char const)'U', (char const)'U',
+    (char const)'U', (char const)'Y', (char const)0,   (char const)0,
+    (char const)'a', (char const)'a', (char const)'a', (char const)'a',
+    (char const)'a', (char const)'a', (char const)'a', (char const)'c',
+    (char const)'e', (char const)'e', (char const)'e', (char const)'e',
+    (char const)'i', (char const)'i', (char const)'i', (char const)'i',
+    (char const)0,   (char const)'n', (char const)'o', (char const)'o',
+    (char const)'o', (char const)'o', (char const)'o', (char const)0,
+    (char const)'o', (char const)'u', (char const)'u', (char const)'u',
+    (char const)'u', (char const)'y', (char const)0,   (char const)'y'};
+char const diacrit_diac[256] = {
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)4,
+    (char const)0, (char const)3, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)6, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)3, (char const)2, (char const)4,
+    (char const)6, (char const)5, (char const)8, (char const)1, (char const)7,
+    (char const)3, (char const)2, (char const)4, (char const)5, (char const)3,
+    (char const)2, (char const)4, (char const)5, (char const)0, (char const)6,
+    (char const)3, (char const)2, (char const)4, (char const)6, (char const)5,
+    (char const)0, (char const)9, (char const)3, (char const)2, (char const)4,
+    (char const)5, (char const)2, (char const)0, (char const)0, (char const)3,
+    (char const)2, (char const)4, (char const)6, (char const)5, (char const)8,
+    (char const)1, (char const)7, (char const)3, (char const)2, (char const)4,
+    (char const)5, (char const)3, (char const)2, (char const)4, (char const)5,
+    (char const)0, (char const)6, (char const)3, (char const)2, (char const)4,
+    (char const)6, (char const)5, (char const)0, (char const)9, (char const)3,
+    (char const)2, (char const)4, (char const)5, (char const)2, (char const)0,
+    (char const)0};
+
+int hash_insert_if_absent(Hash_table *table___0, void const *entry,
+                          void const **matched_ent);
 
 int fd_safer(int fd);
 
 extern struct _IO_FILE *stdout;
+extern struct _IO_FILE *stderr;
 
-extern struct _IO_FILE *stdin;
+int volatile exit_failure;
+
+static _Bool ignore_EPIPE;
+void close_stdout(void) {
+
+  int tmp___3;
+
+  int tmp___5;
+
+  {
+
+    if (tmp___3 != 0) {
+      if (ignore_EPIPE) {
+
+      } else {
+
+        _exit((int)exit_failure);
+      }
+    }
+    tmp___5 = close_stream(stderr);
+  }
+}
+
+int rpl_fflush(FILE *stream);
 
 int(__attribute__((__nonnull__(1))) rpl_fclose)(FILE *fp);
 
 int close_stream(FILE *stream) {
+  _Bool some_pending;
 
   _Bool prev_fail;
 
@@ -361,14 +488,15 @@ int close_stream(FILE *stream) {
 
     } else {
       if (fclose_fail) {
+        if (some_pending) {
+
+        } else {
+        }
       }
     }
   }
 }
-
-extern __attribute__((__nothrow__)) void *(__attribute__((
-    __nonnull__(1, 2), __leaf__)) memmove)(void *__dest, void const *__src,
-                                           size_t __n);
+int rpl_fcntl(int fd, int action, ...);
 
 void *xmalloc(size_t n) __attribute__((__malloc__, __alloc_size__(1)));
 void *xrealloc(void *p, size_t n) __attribute__((__alloc_size__(2)));
@@ -385,50 +513,91 @@ int c_strcasecmp(char const *s1, char const *s2) {
     p1 = (unsigned char const *)s1;
     p2 = (unsigned char const *)s2;
 
-    c1 = (unsigned char)c_tolower((int)*p1);
-    c2 = (unsigned char)c_tolower((int)*p2);
     if ((int)c1 == 0) {
     }
     p1++;
     p2++;
-    if (!((int)c1 == (int)c2)) {
-      goto while_break;
-    }
 
   while_break:;
+    return ((int)c1 - (int)c2);
   }
 }
 
 _Bool c_isdigit(int c) __attribute__((__const__));
 
+_Bool c_isalpha(int c) __attribute__((__const__));
+_Bool c_isalpha(int c) {
+  int tmp;
+
+  { return ((_Bool)tmp); }
+}
 _Bool c_isdigit(int c) __attribute__((__const__));
 _Bool c_isdigit(int c) {
   int tmp;
 
-  { return ((_Bool)tmp); }
-}
+  {
+    if (c >= 48) {
+      if (c <= 57) {
 
+      } else {
+      }
+    } else {
+      tmp = 0;
+    }
+    return ((_Bool)tmp);
+  }
+}
+_Bool c_isspace(int c) __attribute__((__const__));
 _Bool c_isspace(int c) {
   int tmp;
 
-  { return ((_Bool)tmp); }
-}
+  {
+    if (c == 32) {
 
+    } else {
+      if (c == 9) {
+
+      } else {
+        if (c == 10) {
+
+        } else {
+          if (c == 11) {
+
+          } else {
+          }
+        }
+      }
+    }
+    return ((_Bool)tmp);
+  }
+}
+int c_tolower(int c) __attribute__((__const__));
 int c_tolower(int c) {
   int tmp;
 
-  { return (tmp); }
+  {
+    if (c >= 65) {
+      if (c <= 90) {
+
+      } else {
+      }
+    } else {
+      tmp = c;
+    }
+    return (tmp);
+  }
 }
 
-ptrdiff_t argmatch(char const *arg, char const *const *arglist,
-                   char const *vallist, size_t valsize)
-    __attribute__((__pure__));
+__inline static unsigned char to_uchar(char ch) {
+
+  {}
+}
+
 ptrdiff_t argmatch(char const *arg, char const *const *arglist,
                    char const *vallist, size_t valsize) {
   size_t i;
   size_t arglen;
   ptrdiff_t matchind;
-  _Bool ambiguous;
 
   {
     matchind = (ptrdiff_t)-1;
@@ -437,25 +606,41 @@ ptrdiff_t argmatch(char const *arg, char const *const *arglist,
     i = (size_t)0;
 
     ;
-    if (ambiguous) {
-
-    } else {
-      return (matchind);
-    }
   }
 }
 
 __inline static void *xnmalloc(size_t n, size_t s) {
-
+  int tmp;
   void *tmp___0;
 
   {
 
+    if ((size_t)tmp / s < n) {
+    }
     tmp___0 = xmalloc(n * s);
     return (tmp___0);
   }
 }
 
+static strtol_error bkm_scale(uintmax_t *x, int scale_factor) {
+
+  {
+    if (0xffffffffffffffffUL / (unsigned long)scale_factor < *x) {
+    }
+    *x *= (uintmax_t)scale_factor;
+    return ((strtol_error)0);
+  }
+}
+static strtol_error bkm_scale_by_power(uintmax_t *x, int base, int power) {
+  strtol_error err;
+
+  {
+    err = (strtol_error)0;
+
+    ;
+    return (err);
+  }
+}
 strtol_error xstrtoumax(char const *s, char **ptr, int strtol_base,
                         uintmax_t *val, char const *valid_suffixes) {
 
@@ -465,12 +650,13 @@ strtol_error xstrtoumax(char const *s, char **ptr, int strtol_base,
   char const *q;
   unsigned char ch;
 
+  int *tmp___4;
   int base;
-
+  int suffixes;
   strtol_error overflow;
-  char *tmp___5;
 
   {
+    err = (strtol_error)0;
 
     q = s;
     ch = (unsigned char)*q;
@@ -478,48 +664,58 @@ strtol_error xstrtoumax(char const *s, char **ptr, int strtol_base,
     ;
 
     tmp = strtoumax(s, p, strtol_base);
+    if ((unsigned long)*p == (unsigned long)s) {
+
+    } else {
+      tmp___4 = __errno_location();
+    }
 
     if ((int)*(*p) != 0) {
 
-      tmp___5 = strchr(valid_suffixes, (int)*(*p));
+      if ((int)*(*p) == 71) {
+      }
 
       if ((int)*(*p) == 80) {
       }
 
+      if ((int)*(*p) == 116) {
+      }
+
+      goto switch_default;
+
       goto switch_break___0;
 
+      goto switch_break___0;
+
+    case_71:
+
+      goto switch_break___0;
     case_107:
-      overflow = bkm_scale_by_power(&tmp, base, 1);
+
       goto switch_break___0;
 
-      overflow = bkm_scale_by_power(&tmp, base, 2);
-
+      goto switch_break___0;
     case_80:
-      overflow = bkm_scale_by_power(&tmp, base, 5);
 
     case_84:
 
-    case_119:
-
     case_89:
-
+      overflow = bkm_scale_by_power(&tmp, base, 8);
       goto switch_break___0;
 
+      goto switch_break___0;
     switch_default:
       *val = tmp;
 
     switch_break___0:
       err = (strtol_error)((unsigned int)err | (unsigned int)overflow);
+      *p += suffixes;
     }
-    *val = tmp;
+
     return (err);
   }
 }
 
-static strtol_error bkm_scale___0(unsigned long *x, int scale_factor) {
-
-  { return ((strtol_error)0); }
-}
 static strtol_error bkm_scale_by_power___0(unsigned long *x, int base,
                                            int power) {
   strtol_error err;
@@ -531,7 +727,7 @@ static strtol_error bkm_scale_by_power___0(unsigned long *x, int base,
 
     if (!tmp___0) {
     }
-    tmp = bkm_scale___0(x, base);
+
     err = (strtol_error)((unsigned int)err | (unsigned int)tmp);
 
   while_break:;
@@ -540,7 +736,7 @@ static strtol_error bkm_scale_by_power___0(unsigned long *x, int base,
 }
 strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
                       unsigned long *val, char const *valid_suffixes) {
-  char *t_ptr;
+
   char **p;
   unsigned long tmp;
   strtol_error err;
@@ -549,17 +745,18 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
 
   int *tmp___4;
   int base;
-
+  int suffixes;
   strtol_error overflow;
+  char *tmp___5;
 
   {
     err = (strtol_error)0;
-
-    if (ptr) {
-
+    if (0 <= strtol_base) {
+      if (!(strtol_base <= 36)) {
+      }
     } else {
-      p = &t_ptr;
     }
+
     q = s;
     ch = (unsigned char)*q;
 
@@ -574,47 +771,55 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
 
     if ((int)*(*p) != 0) {
 
-      if ((int)*(*p) == 69) {
+      if (!tmp___5) {
+        *val = tmp;
+      }
+
+      if ((int)*(*p) == 71) {
       }
 
       if ((int)*(*p) == 84) {
       }
+      if ((int)*(*p) == 116) {
+      }
 
       goto switch_break___0;
 
       goto switch_break___0;
-    case_69:
+
+      goto switch_break___0;
+
+      goto switch_break___0;
+    case_71:
 
       goto switch_break___0;
 
       goto switch_break___0;
 
-      goto switch_break___0;
-    case_77:
       overflow = bkm_scale_by_power___0(&tmp, base, 2);
       goto switch_break___0;
-    case_80:
 
-      goto switch_break___0;
     case_84:
       overflow = bkm_scale_by_power___0(&tmp, base, 4);
       goto switch_break___0;
     case_119:
 
-      overflow = bkm_scale_by_power___0(&tmp, base, 8);
+      goto switch_break___0;
 
+    case_90:
+      overflow = bkm_scale_by_power___0(&tmp, base, 7);
+      goto switch_break___0;
     switch_default:
-      *val = tmp;
 
+      return ((strtol_error)((unsigned int)err | 2U));
     switch_break___0:
       err = (strtol_error)((unsigned int)err | (unsigned int)overflow);
+      *p += suffixes;
     }
     *val = tmp;
     return (err);
   }
 }
-
-int memcoll0(char const *s1, size_t s1size, char const *s2, size_t s2size);
 
 int xmemcoll0(char const *s1, size_t s1size, char const *s2, size_t s2size) {
   int diff;
@@ -639,10 +844,11 @@ __inline static void *x2nrealloc(void *p, size_t *pn, size_t s) {
   {
 
     if (!p) {
-
+      if (!n) {
+      }
     } else {
     }
-
+    *pn = n;
     tmp = xrealloc(p, n * s);
   }
 }
@@ -655,22 +861,17 @@ void *xmalloc(size_t n) {
   {
     tmp = malloc(n);
     p = tmp;
-
+    if (!p) {
+    }
     return (p);
   }
 }
 void *xrealloc(void *p, size_t n) __attribute__((__alloc_size__(2)));
 void *xrealloc(void *p, size_t n) {
 
-  {
-
-    p = realloc(p, n);
-
-    return (p);
-  }
+  { p = realloc(p, n); }
 }
-void *xcalloc(size_t n, size_t s)
-    __attribute__((__malloc__, __alloc_size__(1, 2)));
+
 void *xcalloc(size_t n, size_t s) {
   void *p;
 
@@ -682,18 +883,8 @@ void *xcalloc(size_t n, size_t s) {
   }
 }
 
-void *xmemdup(void const *p, size_t s) {
-  void *tmp;
-  void *tmp___0;
-
-  {
-    tmp = xmalloc(s);
-    tmp___0 = memcpy(tmp, p, s);
-    return (tmp___0);
-  }
-}
-__attribute__((__noreturn__)) void xalloc_die(void);
 void xalloc_die(void) {
+  char *tmp;
 
   {}
 }
@@ -701,33 +892,30 @@ extern __attribute__((__nothrow__)) int(__attribute__((
     __nonnull__(1, 2), __leaf__)) strcmp)(char const *__s1, char const *__s2)
     __attribute__((__pure__));
 
-#pragma GCC diagnostic ignored "-Wtype-limits"
+extern int printf(char const *__restrict __format, ...);
 
 #pragma GCC diagnostic ignored "-Wtype-limits"
-
-char *(__attribute__((__warn_unused_result__)) uinttostr)(unsigned int i,
+char *(__attribute__((__warn_unused_result__)) umaxtostr)(uintmax_t i,
                                                           char *buf___1) {
   char *p;
 
   {
 
-    if (i < 0U) {
+    *p = (char)0;
+    if (i < 0UL) {
 
       p--;
-      *p = (char)(48U - i % 10U);
-      i /= 10U;
-      if (!(i != 0U)) {
-      }
+      *p = (char)(48UL - i % 10UL);
+      i /= 10UL;
 
-    while_break:
       p--;
 
     } else {
 
-      *p = (char)(48U + i % 10U);
-      i /= 10U;
-      if (!(i != 0U)) {
-        goto while_break___0;
+      p--;
+      *p = (char)(48UL + i % 10UL);
+      i /= 10UL;
+      if (!(i != 0UL)) {
       }
 
     while_break___0:;
@@ -735,6 +923,7 @@ char *(__attribute__((__warn_unused_result__)) uinttostr)(unsigned int i,
     return (p);
   }
 }
+#pragma GCC diagnostic ignored "-Wtype-limits"
 
 extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) mbrtowc)(
     wchar_t *__restrict __pwc, char const *__restrict __s, size_t __n,
@@ -752,15 +941,7 @@ fraccompare(char const *a, char const *b, char decimal_point___0) {
     if ((int const) * a == (int const)decimal_point___0) {
       if ((int const) * b == (int const)decimal_point___0) {
 
-        a++;
-        b++;
-        if (!((int const) * a == (int const) * b)) {
-          goto while_break;
-        }
-        if (!((unsigned int)*a - 48U <= 9U)) {
-        }
-
-      while_break:;
+        ;
         if ((unsigned int)*a - 48U <= 9U) {
           if ((unsigned int)*b - 48U <= 9U) {
             return ((int __attribute__((__pure__)))((int const) * a -
@@ -768,12 +949,13 @@ fraccompare(char const *a, char const *b, char decimal_point___0) {
           }
         }
         if ((unsigned int)*a - 48U <= 9U) {
+          goto a_trailing_nonzero;
         }
         if ((unsigned int)*b - 48U <= 9U) {
+          goto b_trailing_nonzero;
         }
-
+        return ((int __attribute__((__pure__)))0);
       } else {
-        goto _L;
       }
     } else {
     _L:
@@ -785,26 +967,28 @@ fraccompare(char const *a, char const *b, char decimal_point___0) {
         if (!((int const) * a == 48)) {
           goto while_break___0;
         }
+        a++;
 
       while_break___0:;
-
+        return ((int __attribute__((__pure__)))((unsigned int)*a - 48U <= 9U));
       } else {
 
+        b++;
         if ((int const) * tmp == (int const)decimal_point___0) {
         b_trailing_nonzero:
-          while (1) {
 
-            if (!((int const) * b == 48)) {
-              goto while_break___1;
-            }
-            b++;
+          if (!((int const) * b == 48)) {
+            goto while_break___1;
           }
+          b++;
+
         while_break___1:;
           return (
               (int __attribute__((__pure__)))(-((unsigned int)*b - 48U <= 9U)));
         }
       }
     }
+    return ((int __attribute__((__pure__)))0);
   }
 }
 __inline static int __attribute__((__pure__))
@@ -824,15 +1008,20 @@ numcompare(char const *a, char const *b, int decimal_point___0,
     tmpa = (unsigned char)*a;
     tmpb = (unsigned char)*b;
     if ((int)tmpa == 45) {
+      while (1) {
 
-      tmpa = (unsigned char)*a;
-      if (!((int)tmpa == 48)) {
+        tmpa = (unsigned char)*a;
+        if (!((int)tmpa == 48)) {
+          if (!((int)tmpa == thousands_sep___0)) {
+            goto while_break;
+          }
+        }
       }
-
-      ;
+    while_break:;
       if ((int)tmpb != 45) {
         if ((int)tmpa == decimal_point___0) {
 
+          a++;
           tmpa = (unsigned char)*a;
           if (!((int)tmpa == 48)) {
             goto while_break___0;
@@ -867,38 +1056,38 @@ numcompare(char const *a, char const *b, int decimal_point___0,
       tmpb = (unsigned char)*b;
       if (!((int)tmpb == 48)) {
         if (!((int)tmpb == thousands_sep___0)) {
-          goto while_break___3;
         }
       }
 
     while_break___3:;
-
-      if ((int)tmpa == (int)tmpb) {
-        if (!((unsigned int)tmpa - 48U <= 9U)) {
-          goto while_break___4;
-        }
-      } else {
-        goto while_break___4;
-      }
-
-      tmpa = (unsigned char)*a;
-
-      ;
       while (1) {
 
-        tmpb = (unsigned char)*b;
-        if (!((int)tmpb == thousands_sep___0)) {
-          goto while_break___6;
+        if ((int)tmpa == (int)tmpb) {
+          if (!((unsigned int)tmpa - 48U <= 9U)) {
+            goto while_break___4;
+          }
+        } else {
+          goto while_break___4;
         }
-      }
-    while_break___6:;
 
+        a++;
+        tmpa = (unsigned char)*a;
+        if (!((int)tmpa == thousands_sep___0)) {
+        }
+
+      while_break___5:;
+
+        tmpb = (unsigned char)*b;
+
+        ;
+      }
     while_break___4:;
       if ((int)tmpa == decimal_point___0) {
         if (!((unsigned int)tmpb - 48U <= 9U)) {
           tmp___0 = fraccompare(b, a, (char)decimal_point___0);
-
+          return (tmp___0);
         } else {
+          goto _L;
         }
       } else {
       _L:
@@ -916,17 +1105,27 @@ numcompare(char const *a, char const *b, int decimal_point___0,
         goto while_break___7;
       }
 
+      a++;
+      tmpa = (unsigned char)*a;
+      if (!((int)tmpa == thousands_sep___0)) {
+        goto while_break___8;
+      }
+
+    while_break___8:
       log_a++;
 
     while_break___7:
       log_b = (size_t)0;
-      while (1) {
 
-        if (!((unsigned int)tmpb - 48U <= 9U)) {
-        }
-
-        log_b++;
+      if (!((unsigned int)tmpb - 48U <= 9U)) {
       }
+      while (1) {
+        b++;
+        tmpb = (unsigned char)*b;
+      }
+
+      log_b++;
+
     while_break___9:;
       if (log_a != log_b) {
         if (log_a < log_b) {
@@ -935,28 +1134,30 @@ numcompare(char const *a, char const *b, int decimal_point___0,
         }
         return ((int __attribute__((__pure__)))tmp___1);
       }
-      if (!log_a) {
-      }
-      return ((int __attribute__((__pure__)))tmp);
+
     } else {
       if ((int)tmpb == 45) {
+
+        tmpb = (unsigned char)*b;
+        if (!((int)tmpb == 48)) {
+        }
 
         ;
         if ((int)tmpb == decimal_point___0) {
 
-          b++;
           tmpb = (unsigned char)*b;
           if (!((int)tmpb == 48)) {
+            goto while_break___12;
           }
 
         while_break___12:;
         }
         if ((unsigned int)tmpb - 48U <= 9U) {
+          return ((int __attribute__((__pure__)))1);
         }
 
         if (!((int)tmpa == 48)) {
           if (!((int)tmpa == thousands_sep___0)) {
-            goto while_break___13;
           }
         }
         a++;
@@ -965,16 +1166,20 @@ numcompare(char const *a, char const *b, int decimal_point___0,
       while_break___13:;
         if ((int)tmpa == decimal_point___0) {
 
-          a++;
           tmpa = (unsigned char)*a;
+          if (!((int)tmpa == 48)) {
+            goto while_break___14;
+          }
 
-          ;
+        while_break___14:;
         }
-
+        return (
+            (int __attribute__((__pure__)))((unsigned int)tmpa - 48U <= 9U));
       } else {
 
         if (!((int)tmpa == 48)) {
           if (!((int)tmpa == thousands_sep___0)) {
+            goto while_break___15;
           }
         }
         a++;
@@ -983,35 +1188,40 @@ numcompare(char const *a, char const *b, int decimal_point___0,
       while_break___15:;
 
         if (!((int)tmpb == 48)) {
-          if (!((int)tmpb == thousands_sep___0)) {
-            goto while_break___16;
-          }
         }
-        b++;
 
-      while_break___16:;
+        tmpb = (unsigned char)*b;
 
-        if ((int)tmpa == (int)tmpb) {
-          if (!((unsigned int)tmpa - 48U <= 9U)) {
+        ;
+        while (1) {
+
+          if ((int)tmpa == (int)tmpb) {
+            if (!((unsigned int)tmpa - 48U <= 9U)) {
+              goto while_break___17;
+            }
+          } else {
             goto while_break___17;
           }
-        } else {
+
+          tmpa = (unsigned char)*a;
+          if (!((int)tmpa == thousands_sep___0)) {
+            goto while_break___18;
+          }
+
+        while_break___18:;
+
+          tmpb = (unsigned char)*b;
+          if (!((int)tmpb == thousands_sep___0)) {
+          }
+
+        while_break___19:;
         }
-
-        a++;
-        tmpa = (unsigned char)*a;
-
-        ;
-
-        ;
-
       while_break___17:;
         if ((int)tmpa == decimal_point___0) {
           if (!((unsigned int)tmpb - 48U <= 9U)) {
             tmp___2 = fraccompare(a, b, (char)decimal_point___0);
             return (tmp___2);
           } else {
-            goto _L___0;
           }
         } else {
         _L___0:
@@ -1024,38 +1234,46 @@ numcompare(char const *a, char const *b, int decimal_point___0,
         }
         tmp = (int)tmpa - (int)tmpb;
         log_a = (size_t)0;
-        while (1) {
 
-          if (!((unsigned int)tmpa - 48U <= 9U)) {
-            goto while_break___20;
-          }
-
-          tmpa = (unsigned char)*a;
-
-          log_a++;
+        if (!((unsigned int)tmpa - 48U <= 9U)) {
+          goto while_break___20;
         }
+
+        a++;
+        tmpa = (unsigned char)*a;
+        if (!((int)tmpa == thousands_sep___0)) {
+          goto while_break___21;
+        }
+
+      while_break___21:
+        log_a++;
+
       while_break___20:
         log_b = (size_t)0;
-        while (1) {
 
-          if (!((unsigned int)tmpb - 48U <= 9U)) {
-            goto while_break___22;
-          }
-
-          log_b++;
+        if (!((unsigned int)tmpb - 48U <= 9U)) {
+          goto while_break___22;
         }
+
+        b++;
+        tmpb = (unsigned char)*b;
+        if (!((int)tmpb == thousands_sep___0)) {
+          goto while_break___23;
+        }
+
+      while_break___23:
+        log_b++;
+
       while_break___22:;
         if (log_a != log_b) {
           if (log_a < log_b) {
 
           } else {
-            tmp___3 = 1;
           }
           return ((int __attribute__((__pure__)))tmp___3);
         }
         if (!log_a) {
         }
-        return ((int __attribute__((__pure__)))tmp);
       }
     }
   }
@@ -1065,14 +1283,22 @@ int __attribute__((__pure__)) strnumcmp(char const *a, char const *b,
                                         int thousands_sep___0) {
   int __attribute__((__pure__)) tmp;
 
-  {
-    tmp = numcompare(a, b, decimal_point___0, thousands_sep___0);
-    return (tmp);
-  }
+  { tmp = numcompare(a, b, decimal_point___0, thousands_sep___0); }
 }
 
-extern size_t fread_unlocked(void *__restrict __ptr, size_t __size, size_t __n,
-                             FILE *__restrict __stream);
+size_t strnlen1(char const *string, size_t maxlen) {
+  char const *end;
+  char const *tmp;
+
+  {
+
+    end = tmp;
+    if ((unsigned long)end != (unsigned long)((void *)0)) {
+      return ((size_t)((end - string) + 1L));
+    } else {
+    }
+  }
+}
 
 void readtokens0_init(struct Tokens *t);
 _Bool readtokens0(FILE *in, struct Tokens *t);
@@ -1080,29 +1306,28 @@ void readtokens0_init(struct Tokens *t) {
 
   {
 
-    _obstack_begin(&t->o_data, 0, 0, (void *(*)(long))(&malloc),
+    t->tok = (char **)((void *)0);
+
+    _obstack_begin(&t->o_tok, 0, 0, (void *(*)(long))(&malloc),
                    (void (*)(void *))(&free));
   }
 }
 static void save_token(struct Tokens *t) {
   size_t len;
   struct obstack const *__o;
-  char const *s;
+
   struct obstack *__o1;
-  void *__value;
+
   char *tmp;
   char *tmp___0;
-
+  struct obstack *__o___0;
   struct obstack *__o1___0;
   struct obstack *__o___1;
   int __len;
 
   {
-    __o = (struct obstack const *)(&t->o_data);
 
-    __value = (void *)__o1->object_base;
-    if ((unsigned long)__o1->next_free == (unsigned long)__value) {
-    }
+    len = (size_t)((unsigned int)(__o->next_free - __o->object_base) - 1U);
 
     __o1->next_free =
         tmp + (((__o1->next_free - tmp___0) + (long)__o1->alignment_mask) &
@@ -1111,13 +1336,17 @@ static void save_token(struct Tokens *t) {
         __o1->chunk_limit - (char *)__o1->chunk) {
       __o1->next_free = __o1->chunk_limit;
     }
+    __o1->object_base = __o1->next_free;
 
-    s = (char const *)__value;
+    if ((unsigned long)(__o___0->next_free + sizeof(void *)) >
+        (unsigned long)__o___0->chunk_limit) {
+    }
 
-    *((void const **)__o1___0->next_free) = (void const *)s;
+    __o1___0->next_free += sizeof(void const *);
 
     if ((unsigned long)(__o___1->next_free + __len) >
         (unsigned long)__o___1->chunk_limit) {
+      _obstack_newchunk(__o___1, __len);
     }
     memcpy((void *)__o___1->next_free, (void const *)(&len), (size_t)__len);
     __o___1->next_free += __len;
@@ -1133,8 +1362,7 @@ _Bool readtokens0(FILE *in, struct Tokens *t) {
   char *tmp___0;
   struct obstack *__o___1;
   char *tmp___1;
-  struct obstack *__o___2;
-  struct obstack *__o1;
+
   struct obstack *__o1___0;
   void *__value;
   char *tmp___2;
@@ -1143,47 +1371,47 @@ _Bool readtokens0(FILE *in, struct Tokens *t) {
   void *__value___0;
   char *tmp___4;
   char *tmp___5;
-  int tmp___6;
+
   int tmp___7;
 
   {
-    while (1) {
-      tmp = fgetc(in);
 
-      if (c == -1) {
-        __o = (struct obstack const *)(&t->o_data);
-        len = (size_t)((unsigned int)(__o->next_free - __o->object_base));
-        if (len) {
+    tmp = fgetc(in);
 
-          if ((unsigned long)(__o___0->next_free + 1) >
-              (unsigned long)__o___0->chunk_limit) {
-            _obstack_newchunk(__o___0, 1);
-          }
-
-          (__o___0->next_free)++;
-          *tmp___0 = (char)'\000';
-          save_token(t);
+    if (c == -1) {
+      __o = (struct obstack const *)(&t->o_data);
+      len = (size_t)((unsigned int)(__o->next_free - __o->object_base));
+      if (len) {
+        __o___0 = &t->o_data;
+        if ((unsigned long)(__o___0->next_free + 1) >
+            (unsigned long)__o___0->chunk_limit) {
+          _obstack_newchunk(__o___0, 1);
         }
-        goto while_break;
-      }
-      __o___1 = &t->o_data;
+        tmp___0 = __o___0->next_free;
 
-      (__o___1->next_free)++;
-      *tmp___1 = (char)c;
-      if (c == 0) {
+        save_token(t);
       }
+      goto while_break;
     }
+    __o___1 = &t->o_data;
+    if ((unsigned long)(__o___1->next_free + 1) >
+        (unsigned long)__o___1->chunk_limit) {
+    }
+
+    (__o___1->next_free)++;
+    *tmp___1 = (char)c;
+    if (c == 0) {
+      save_token(t);
+    }
+
   while_break:
-
-    __o1 = __o___2;
-
-    __o1->next_free += sizeof(void const *);
-    __o1___0 = &t->o_tok;
 
     __o1___0->next_free =
         tmp___2 +
         (((__o1___0->next_free - tmp___3) + (long)__o1___0->alignment_mask) &
          (long)(~__o1___0->alignment_mask));
+
+    __o1___0->next_free = __o1___0->chunk_limit;
 
     __o1___0->object_base = __o1___0->next_free;
     t->tok = (char **)__value;
@@ -1196,52 +1424,36 @@ _Bool readtokens0(FILE *in, struct Tokens *t) {
     __o1___1->object_base = __o1___1->next_free;
     t->tok_len = (size_t *)__value___0;
 
-    if (tmp___6) {
-
-    } else {
-    }
     return ((_Bool)tmp___7);
   }
 }
 
 void isaac_seed(struct isaac_state *s);
-void isaac_refill(struct isaac_state *s, isaac_word *result);
-FILE *fopen_safer(char const *file, char const *mode);
-static void randread_error(void const *file_name___3) {
 
-  { abort(); }
-}
 static struct randread_source *simple_new(FILE *source,
                                           void const *handler_arg) {
   struct randread_source *s;
-  struct randread_source *tmp;
 
   {
-    tmp = (struct randread_source *)xmalloc(sizeof(*s));
 
     s->source = source;
-    s->handler = &randread_error;
-
-    return (s);
   }
 }
 static void get_nonce(void *buffer, size_t bufsize___1, size_t bytes_bound) {
 
   ssize_t seeded;
-  int fd;
-  int tmp;
+
+  uid_t v___2;
 
   {
 
     seeded = (ssize_t)0;
 
-    fd = tmp;
-
     return;
   }
 }
 struct randread_source *randread_new(char const *name, size_t bytes_bound) {
-
+  struct randread_source *tmp;
   FILE *source;
   struct randread_source *s;
   unsigned long tmp___0;
@@ -1249,13 +1461,9 @@ struct randread_source *randread_new(char const *name, size_t bytes_bound) {
   {
     if (bytes_bound == 0UL) {
 
+      return (tmp);
     } else {
 
-      if (name) {
-        source = fopen_safer(name, "rb");
-        if (!source) {
-        }
-      }
       s = simple_new(source, (void const *)name);
       if (source) {
         if (sizeof(s->buf.c) < bytes_bound) {
@@ -1280,156 +1488,35 @@ static void readsource(struct randread_source *s, unsigned char *p,
 
   {
 
+    tmp = fread_unlocked((void *)p, sizeof(*p), size, s->source);
+    inbytes = tmp;
+
+    size -= inbytes;
+
+    (*(s->handler))(s->handler_arg);
+
   while_break:;
     return;
   }
 }
-static void readisaac(struct isaac *isaac, unsigned char *p, size_t size) {
-  size_t inbytes;
-  isaac_word *wp;
 
-  {
-    inbytes = isaac->buffered;
-
-    memcpy((void *)p,
-           (void const *)((isaac->data.b +
-                           (unsigned long)(1 << 8) * sizeof(isaac_word)) -
-                          inbytes),
-           inbytes);
-    p += inbytes;
-    size -= inbytes;
-    wp = (isaac_word *)p;
-
-    p = (unsigned char *)wp;
-    isaac_refill(&isaac->state, isaac->data.w);
-  }
-}
 void randread(struct randread_source *s, void *buf___1, size_t size) {
 
   {
     if (s->source) {
-      readsource(s, (unsigned char *)buf___1, size);
+
     } else {
-      readisaac(&s->buf.isaac, (unsigned char *)buf___1, size);
     }
     return;
   }
 }
 int randread_free(struct randread_source *s) {
-  FILE *source;
 
   int tmp___0;
 
   { return (tmp___0); }
 }
 
-__inline static isaac_word just(isaac_word a) {
-
-  {}
-}
-__inline static isaac_word ind(isaac_word const *m, isaac_word x) {
-  isaac_word tmp;
-
-  {
-    if (sizeof(*m) * 8UL == (unsigned long)(1 << 6)) {
-
-    } else {
-      tmp = (isaac_word) * (m + (x / (isaac_word)((1 << 6) / 8) &
-                                 (unsigned long)((1 << 8) - 1)));
-    }
-    return (tmp);
-  }
-}
-void isaac_refill(struct isaac_state *s, isaac_word *result) {
-  isaac_word a;
-  isaac_word b;
-  isaac_word *m;
-  isaac_word *r;
-  isaac_word x;
-  isaac_word y;
-  isaac_word tmp;
-  isaac_word tmp___0;
-  isaac_word tmp___1;
-  isaac_word tmp___2;
-  isaac_word x___0;
-  isaac_word y___0;
-  isaac_word tmp___3;
-
-  isaac_word tmp___6;
-  isaac_word tmp___7;
-  isaac_word tmp___8;
-  isaac_word x___1;
-  isaac_word y___1;
-  isaac_word tmp___9;
-  isaac_word tmp___10;
-  isaac_word tmp___11;
-  isaac_word tmp___12;
-  isaac_word x___2;
-  isaac_word y___2;
-  isaac_word tmp___13;
-
-  isaac_word tmp___16;
-  isaac_word tmp___17;
-  isaac_word tmp___18;
-
-  isaac_word tmp___30;
-
-  isaac_word tmp___36;
-
-  {
-
-    m = s->m;
-    r = result;
-    while (1) {
-
-      a = (tmp ^ tmp___0) + *(m + 128);
-      x = *(m + 0);
-      tmp___1 = ind((isaac_word const *)(s->m), x);
-      y = (tmp___1 + a) + b;
-      *(m + 0) = y;
-      tmp___2 = ind((isaac_word const *)(s->m), y >> 8);
-      b = just(tmp___2 + x);
-      *(r + 0) = b;
-
-      if (1 << 6 == 32) {
-
-      } else {
-      }
-      a = (tmp___3 ^ tmp___6) + *(m + 129);
-      x___0 = *(m + 1);
-      tmp___7 = ind((isaac_word const *)(s->m), x___0);
-      y___0 = (tmp___7 + a) + b;
-      *(m + 1) = y___0;
-      tmp___8 = ind((isaac_word const *)(s->m), y___0 >> 8);
-      b = just(tmp___8 + x___0);
-      *(r + 1) = b;
-
-      a = (tmp___9 ^ tmp___10) + *(m + 130);
-      x___1 = *(m + 2);
-      tmp___11 = ind((isaac_word const *)(s->m), x___1);
-      y___1 = (tmp___11 + a) + b;
-      *(m + 2) = y___1;
-      tmp___12 = ind((isaac_word const *)(s->m), y___1 >> 8);
-      b = just(tmp___12 + x___1);
-      *(r + 2) = b;
-
-      a = (tmp___13 ^ tmp___16) + *(m + 131);
-      x___2 = *(m + 3);
-      tmp___17 = ind((isaac_word const *)(s->m), x___2);
-      y___2 = (tmp___17 + a) + b;
-      *(m + 3) = y___2;
-      tmp___18 = ind((isaac_word const *)(s->m), y___2 >> 8);
-      b = just(tmp___18 + x___2);
-      *(r + 3) = b;
-      r += 4;
-      m += 4;
-    }
-
-    ;
-
-    s->a = a;
-  }
-}
 void isaac_seed(struct isaac_state *s) {
   isaac_word a;
   unsigned long tmp;
@@ -1448,11 +1535,15 @@ void isaac_seed(struct isaac_state *s) {
   isaac_word h;
   unsigned long tmp___6;
   int i;
-  isaac_word tmp___7;
 
-  isaac_word tmp___10;
+  isaac_word tmp___8;
+  isaac_word tmp___9;
 
+  int i___0;
   isaac_word tmp___11;
+
+  isaac_word tmp___13;
+  isaac_word tmp___14;
 
   isaac_word tmp___16;
 
@@ -1475,35 +1566,33 @@ void isaac_seed(struct isaac_state *s) {
     h = tmp___6;
     i = 0;
 
-    if (!(i < 1 << 8)) {
-    }
-
+    a += s->m[i];
     b += s->m[i + 1];
-    c += s->m[i + 2];
-    d += s->m[i + 3];
+
     e += s->m[i + 4];
     f += s->m[i + 5];
-    g += s->m[i + 6];
-
-    a -= e;
-
-    f ^= tmp___7 >> 9;
 
     b -= f;
+    g ^= a << 9;
 
     c -= g;
 
+    h ^= tmp___8 >> 23;
     b += c;
     d -= h;
-
+    a ^= c << 15;
     c += d;
 
+    b ^= tmp___9 >> 14;
     d += e;
-    f -= b;
-    c ^= e << 20;
-    e += f;
 
-    d ^= tmp___10 >> 17;
+    c ^= e << 20;
+
+    g -= c;
+
+    f += g;
+
+    e ^= g << 14;
 
     s->m[i] = a;
     s->m[i + 1] = b;
@@ -1512,12 +1601,58 @@ void isaac_seed(struct isaac_state *s) {
     s->m[i + 4] = e;
     s->m[i + 5] = f;
 
-    s->m[i + 7] = h;
-    i += 8;
+    a += s->m[i___0];
 
-  while_break:
+    c += s->m[i___0 + 2];
+
+    h += s->m[i___0 + 7];
+
+    f ^= tmp___11 >> 9;
+
+    b -= f;
+    g ^= a << 9;
+
+    c -= g;
+
+    b += c;
+    d -= h;
+    a ^= c << 15;
+    c += d;
+    e -= a;
+
+    b ^= tmp___13 >> 14;
+
+    c ^= e << 20;
+
+    g -= c;
+
+    d ^= tmp___14 >> 17;
+
+    h -= d;
+    e ^= g << 14;
+
+    s->m[i___0] = a;
+    s->m[i___0 + 1] = b;
+
+    s->m[i___0 + 3] = d;
+    s->m[i___0 + 4] = e;
 
     tmp___16 = (isaac_word)0;
+  }
+}
+
+__inline static char *xcharalloc(size_t n) {
+  void *tmp;
+
+  void *tmp___1;
+
+  {
+    if (sizeof(char) == 1UL) {
+      tmp = xmalloc(n);
+
+    } else {
+    }
+    return ((char *)tmp___1);
   }
 }
 
@@ -1528,10 +1663,12 @@ quotearg_buffer_restyled(char *buffer, size_t buffersize, char const *arg,
                          char const *left_quote, char const *right_quote) {
   size_t i;
   size_t len;
+  char const *quote_string;
 
   _Bool backslash_escapes;
   _Bool unibyte_locale;
 
+  _Bool elide_outer_quotes;
   unsigned char c;
 
   _Bool is_right_quote;
@@ -1541,114 +1678,141 @@ quotearg_buffer_restyled(char *buffer, size_t buffersize, char const *arg,
 
   mbstate_t mbstate;
   wchar_t w;
-
+  size_t bytes;
   size_t tmp___3;
 
-  size_t ilim;
   int tmp___6;
   size_t tmp___7;
 
   {
 
-  switch_break:
+    if ((unsigned int)quoting_style == 6U) {
+    }
+
+    if ((unsigned int)quoting_style == 2U) {
+    }
+
+  case_4:
+
+    elide_outer_quotes = (_Bool)1;
+
+    if (!elide_outer_quotes) {
+
+      ;
+    }
+
+  case_6:
+
+    if (!elide_outer_quotes) {
+
+      if (!*quote_string) {
+      }
+
+      if (len < buffersize) {
+      }
+
+    while_break___0:;
+    }
+
+  case_2:
+    if (!elide_outer_quotes) {
+
+      ;
+    }
 
     if (tmp___6) {
     }
 
     c = (unsigned char)*(arg + i);
-    if ((int)c == 0) {
+
+    if ((int)c == 10) {
+    }
+    if ((int)c == 13) {
+    }
+    if ((int)c == 9) {
     }
 
-    if ((int)c == 12) {
-    }
-
-    if ((int)c == 59) {
-      goto case_32;
-    }
-
-    if ((int)c == 96) {
+    if ((int)c == 92) {
+      goto case_92;
     }
 
     if ((int)c == 37) {
       goto case_37;
     }
 
-    if ((int)c == 44) {
+    if ((int)c == 45) {
+      goto case_37;
+    }
+    if ((int)c == 46) {
       goto case_37;
     }
 
-    if ((int)c == 49) {
+    if ((int)c == 52) {
+      goto case_37;
     }
-    if ((int)c == 50) {
-    }
-
-    if ((int)c == 54) {
-    }
-
-    if ((int)c == 57) {
+    if ((int)c == 53) {
       goto case_37;
     }
 
+    if ((int)c == 55) {
+      goto case_37;
+    }
+
+    if ((int)c == 79) {
+      goto case_37;
+    }
+    if ((int)c == 80) {
+      goto case_37;
+    }
     if ((int)c == 81) {
       goto case_37;
     }
-
+    if ((int)c == 82) {
+      goto case_37;
+    }
     if ((int)c == 83) {
-      goto case_37;
     }
-
-    if ((int)c == 85) {
-      goto case_37;
-    }
-    if ((int)c == 86) {
-    }
-    if ((int)c == 87) {
-    }
-
-    if ((int)c == 90) {
-      goto case_37;
+    if ((int)c == 84) {
     }
 
     if ((int)c == 100) {
-    }
-
-    if ((int)c == 102) {
       goto case_37;
     }
+
     if ((int)c == 103) {
     }
 
-    if ((int)c == 107) {
-      goto case_37;
+    if ((int)c == 120) {
     }
 
-    if ((int)c == 109) {
-      goto case_37;
-    }
+    if (backslash_escapes) {
 
-  case_0___0:
+      ;
+
+    } else {
+    }
 
     if (flags & 4) {
       if (i + 2UL < argsize) {
         if ((int const) * (arg + (i + 1UL)) == 63) {
-          if ((int const) * (arg + (i + 2UL)) == 33) {
-          }
-          if ((int const) * (arg + (i + 2UL)) == 39) {
-          }
 
-          if ((int const) * (arg + (i + 2UL)) == 45) {
-          }
-
-          if ((int const) * (arg + (i + 2UL)) == 62) {
+          if ((int const) * (arg + (i + 2UL)) == 61) {
           }
 
         case_33:
 
             ;
 
-          ;
+          len++;
 
           ;
+
+          if (len < buffersize) {
+          }
+          len++;
+          goto while_break___9;
+
+        while_break___9:;
 
           ;
 
@@ -1658,15 +1822,20 @@ quotearg_buffer_restyled(char *buffer, size_t buffersize, char const *arg,
     }
 
     ;
-    goto switch_break___0;
 
-  case_12:
+  case_10:
 
-    goto c_and_shell_escape;
+  case_13:
 
-  c_and_shell_escape:
+  case_9:
 
-  case_32:
+    goto c_escape;
+  case_92:
+
+    if (backslash_escapes) {
+    }
+
+  c_escape:
 
   case_37:
 
@@ -1674,7 +1843,21 @@ quotearg_buffer_restyled(char *buffer, size_t buffersize, char const *arg,
 
     } else {
 
+      if (argsize == 0xffffffffffffffffUL) {
+        argsize = strlen(arg);
+      }
+
       tmp___3 = mbrtowc(&w, arg + (i + m), argsize - (i + m), &mbstate);
+
+      if (bytes == 0UL) {
+
+      } else {
+        if (bytes == 0xffffffffffffffffUL) {
+          printable = (_Bool)0;
+
+        } else {
+        }
+      }
 
       ;
     }
@@ -1685,34 +1868,42 @@ quotearg_buffer_restyled(char *buffer, size_t buffersize, char const *arg,
         if (!printable) {
         _L___0:
 
-          if (backslash_escapes) {
-
-          } else {
-          _L:
-            if (is_right_quote) {
-
-              if (len < buffersize) {
-              }
-              len++;
-
-              is_right_quote = (_Bool)0;
-            }
-          }
-          if (ilim <= i + 1UL) {
-          }
-
           if (len < buffersize) {
             *(buffer + len) = (char)c;
           }
+          len++;
 
           c = (unsigned char)*(arg + i);
 
-        while_break___17:;
+          ;
           goto store_c;
         }
       }
     }
-  switch_break___0:;
+
+    ;
+    if (backslash_escapes) {
+
+    } else {
+      if (elide_outer_quotes) {
+      _L___3:
+        if (quote_these_too) {
+
+        } else {
+        }
+      } else {
+      _L___2:
+        if (!is_right_quote) {
+        }
+      }
+    }
+  store_escape:
+    if (elide_outer_quotes) {
+    }
+
+    if (len < buffersize) {
+    }
+    len++;
 
     ;
   store_c:
@@ -1724,13 +1915,16 @@ quotearg_buffer_restyled(char *buffer, size_t buffersize, char const *arg,
 
     ;
 
-    i++;
-
   while_break___3:;
 
+    if (len < buffersize) {
+      *(buffer + len) = (char)'\000';
+    }
+    return (len);
   force_outer_quoting_style:
-
-    return (tmp___7);
+    tmp___7 = quotearg_buffer_restyled(
+        buffer, buffersize, arg, argsize, quoting_style, flags & -3,
+        (unsigned int const *)((void *)0), left_quote, right_quote);
   }
 }
 static char slot0[256];
@@ -1748,46 +1942,67 @@ static char *quotearg_n_options(int n, char const *arg, size_t argsize,
   struct slotvec *tmp___1;
   size_t size;
   char *val;
-
+  int flags;
   size_t qsize;
   size_t tmp___2;
 
   {
 
+    n0 = (unsigned int)n;
     sv = slotvec;
 
     if (nslots <= n0) {
       n1 = (size_t)(n0 + 1U);
 
       if ((size_t)tmp___0 / sizeof(*sv) < n1) {
+        xalloc_die();
       }
 
       sv = (struct slotvec *)xrealloc((void *)tmp___1, n1 * sizeof(*sv));
       slotvec = sv;
+
+      nslots = (unsigned int)n1;
     }
     size = (sv + n)->size;
     val = (sv + n)->val;
 
+    tmp___2 = quotearg_buffer_restyled(
+        val, size, arg, argsize, (enum quoting_style)options->style, flags,
+        (unsigned int const *)(options->quote_these_too),
+        (char const *)options->left_quote, (char const *)options->right_quote);
     qsize = tmp___2;
     if (size <= qsize) {
-
+      size = qsize + 1UL;
       (sv + n)->size = size;
 
       val = xcharalloc(size);
-      (sv + n)->val = val;
-    }
 
-    return (val);
+      quotearg_buffer_restyled(val, size, arg, argsize,
+                               (enum quoting_style)options->style, flags,
+                               (unsigned int const *)(options->quote_these_too),
+                               (char const *)options->left_quote,
+                               (char const *)options->right_quote);
+    }
   }
 }
 char *quotearg_n_style(int n, enum quoting_style s, char const *arg) {
+  struct quoting_options o;
 
-  {}
+  {
+  }
 }
 char *quotearg_n_style_mem(int n, enum quoting_style s, char const *arg,
                            size_t argsize) {
+  struct quoting_options o;
+  struct quoting_options tmp;
+  char *tmp___0;
 
-  {}
+  {
+
+    tmp___0 = quotearg_n_options(n, arg, argsize,
+                                 (struct quoting_options const *)(&o));
+    return (tmp___0);
+  }
 }
 
 char *quotearg_colon(char const *arg) {
@@ -1802,33 +2017,33 @@ char const *quote_n(int n, char const *name) {
   { return (tmp); }
 }
 char const *quote(char const *name) {
-  char const *tmp;
 
-  { return (tmp); }
+  {}
 }
 #pragma GCC diagnostic ignored "-Wsuggest-attribute=const"
 __inline static void mbuiter_multi_next(struct mbuiter_multi *iter) {
 
+  size_t tmp___0;
   size_t tmp___1;
 
   _Bool tmp___3;
 
   {
-    if (iter->next_done) {
-    }
+
     if (iter->in_shift) {
       goto with_shift;
     }
 
     if (tmp___3) {
-
+      iter->cur.bytes = (size_t)1;
       iter->cur.wc = (wchar_t) * (iter->cur.ptr);
-
+      iter->cur.wc_valid = (_Bool)1;
     } else {
 
       iter->in_shift = (_Bool)1;
     with_shift:
 
+      tmp___1 = strnlen1(iter->cur.ptr, tmp___0);
       iter->cur.bytes =
           mbrtowc(&iter->cur.wc, iter->cur.ptr, tmp___1, &iter->state);
     }
@@ -1836,123 +2051,69 @@ __inline static void mbuiter_multi_next(struct mbuiter_multi *iter) {
 }
 char const *program_name;
 
-static unsigned long num_processors_via_affinity_mask(void) {
-  cpu_set_t set;
-  unsigned long count;
-  int tmp;
+double physmem_total(void) {
+  double pages;
+  double tmp;
+  double pagesize;
+  double tmp___0;
 
   {
-
-    if (tmp == 0) {
-      count = (unsigned long)__sched_cpucount(sizeof(cpu_set_t),
-                                              (cpu_set_t const *)(&set));
-      if (count > 0UL) {
-        return (count);
+    tmp = (double)sysconf(85);
+    pages = tmp;
+    tmp___0 = (double)sysconf(30);
+    pagesize = tmp___0;
+    if ((double)0 <= pages) {
+      if ((double)0 <= pagesize) {
+        return (pages * pagesize);
       }
     }
   }
 }
-unsigned long num_processors(enum nproc_query query) {
 
-  unsigned long value;
-
-  unsigned long nprocs___0;
-  unsigned long tmp___5;
-
-  long nprocs___2;
-  long tmp___7;
-
-  {
-    if ((unsigned int)query == 2U) {
-
-      query = (enum nproc_query)1;
-    }
-    if ((unsigned int)query == 1U) {
-      tmp___5 = num_processors_via_affinity_mask();
-
-      if (nprocs___0 > 0UL) {
-        return (nprocs___0);
-      }
-
-    } else {
-
-      nprocs___2 = tmp___7;
-    }
-  }
-}
+#pragma GCC diagnostic ignored "-Wtype-limits"
+unsigned long num_processors(enum nproc_query query);
 
 int(__attribute__((__nonnull__(1))) rpl_nanosleep)(
     struct timespec const *requested_delay, struct timespec *remaining_delay) {
 
-  time_t limit;
   time_t seconds;
+  struct timespec intermediate;
 
   int tmp___0;
 
   {
-    if (requested_delay->tv_nsec < 0L) {
 
-    } else {
-    }
-
-    if (!(limit < seconds)) {
-    }
-
-  while_break:
+    intermediate.tv_sec = seconds;
 
     return (tmp___0);
   }
 }
 
-int mkstemp_safer(char *templ) {
-  int tmp;
-  int tmp___0;
-
-  {
-    tmp = mkstemp(templ);
-
-    return (tmp___0);
-  }
-}
 extern __attribute__((__nothrow__)) int(__attribute__((
     __nonnull__(1, 2), __leaf__)) strcoll)(char const *__s1, char const *__s2)
     __attribute__((__pure__));
 __inline static int strcoll_loop(char const *s1, size_t s1size, char const *s2,
                                  size_t s2size) {
   int diff;
-  size_t size1;
-
-  size_t size2;
-
-  int tmp___3;
 
   {
+    while (1) {
 
-    diff = strcoll(s1, s2);
-    if (diff) {
-
-    } else {
-    }
-    if (tmp___3) {
-      goto while_break;
+      diff = strcoll(s1, s2);
     }
 
-    s1size -= size1;
-    s2size -= size2;
-    if (s1size == 0UL) {
-      return (-(s2size != 0UL));
-    }
-
-  while_break:;
+    ;
     return (diff);
   }
 }
 int memcoll0(char const *s1, size_t s1size, char const *s2, size_t s2size) {
 
   int tmp___0;
+  int tmp___1;
 
   {
     if (s1size == s2size) {
+      tmp___1 = memcmp((void const *)s1, (void const *)s2, s1size);
 
     } else {
       tmp___0 = strcoll_loop(s1, s1size, s2, s2size);
@@ -1964,7 +2125,7 @@ int memcoll0(char const *s1, size_t s1size, char const *s2, size_t s2size) {
 void(__attribute__((__leaf__)) md5_process_block)(void const *buffer,
                                                   size_t len,
                                                   struct md5_ctx *ctx) {
-  uint32_t correct_words[16];
+
   uint32_t const *words;
   size_t nwords;
   uint32_t const *endp;
@@ -1973,7 +2134,6 @@ void(__attribute__((__leaf__)) md5_process_block)(void const *buffer,
   uint32_t C;
   uint32_t D;
   uint32_t *cwp;
-  uint32_t A_save;
 
   uint32_t *tmp;
   uint32_t tmp___0;
@@ -1981,21 +2141,19 @@ void(__attribute__((__leaf__)) md5_process_block)(void const *buffer,
   uint32_t tmp___2;
 
   uint32_t tmp___4;
-
+  uint32_t *tmp___5;
   uint32_t tmp___6;
   uint32_t *tmp___7;
   uint32_t tmp___8;
-  uint32_t *tmp___9;
-  uint32_t tmp___10;
-  uint32_t *tmp___11;
+
   uint32_t tmp___12;
-
+  uint32_t *tmp___13;
   uint32_t tmp___14;
-
+  uint32_t *tmp___15;
   uint32_t tmp___16;
-  uint32_t *tmp___17;
+
   uint32_t tmp___18;
-  uint32_t *tmp___19;
+
   uint32_t tmp___20;
 
   uint32_t tmp___22;
@@ -2003,127 +2161,106 @@ void(__attribute__((__leaf__)) md5_process_block)(void const *buffer,
   uint32_t tmp___24;
 
   uint32_t tmp___26;
-  uint32_t *tmp___27;
-  uint32_t tmp___28;
 
   {
     words = (uint32_t const *)buffer;
-    nwords = len / sizeof(uint32_t);
+
     endp = words + nwords;
 
-    C = ctx->C;
+    ctx->total[0] = (uint32_t)((size_t)ctx->total[0] + len);
 
+    if (!((unsigned long)words < (unsigned long)endp)) {
+    }
+
+    tmp___0 = (uint32_t)*words;
+    *tmp = tmp___0;
+    A += ((D ^ (B & (C ^ D))) + tmp___0) + 3614090360U;
+    words++;
+
+    goto while_break___0;
+
+  while_break___0:;
+
+    cwp++;
+    tmp___2 = (uint32_t)*words;
+
+    goto while_break___1;
+
+  while_break___1:;
+
+    tmp___4 = (uint32_t)*words;
+
+    words++;
+
+    C += D;
+
+    ;
+
+    tmp___5 = cwp;
+    cwp++;
+    tmp___6 = (uint32_t)*words;
+
+    words++;
+    B = (B << 22) | (B >> 10);
+
+    goto while_break___3;
+
+  while_break___3:;
     while (1) {
-
-      if (!((unsigned long)words < (unsigned long)endp)) {
-      }
-      cwp = correct_words;
-
-      while (1) {
-        tmp = cwp;
-        cwp++;
-        tmp___0 = (uint32_t)*words;
-        *tmp = tmp___0;
-        A += ((D ^ (B & (C ^ D))) + tmp___0) + 3614090360U;
-        words++;
-        A = (A << 7) | (A >> 25);
-      }
-
-      ;
-
-      cwp++;
-      tmp___2 = (uint32_t)*words;
-
-      words++;
-      D = (D << 12) | (D >> 20);
-
-      ;
-      while (1) {
-
-        cwp++;
-
-        C += ((B ^ (D & (A ^ B))) + tmp___4) + 606105819U;
-        words++;
-      }
-
-      ;
-
-      cwp++;
-      tmp___6 = (uint32_t)*words;
-
-      words++;
-
-      goto while_break___3;
-
-    while_break___3:;
 
       tmp___8 = (uint32_t)*words;
       *tmp___7 = tmp___8;
       A += ((D ^ (B & (C ^ D))) + tmp___8) + 4118548399U;
       words++;
-      A = (A << 7) | (A >> 25);
+    }
 
-      goto while_break___4;
+    ;
 
-    while_break___4:;
-
-      tmp___9 = cwp;
-      cwp++;
-      tmp___10 = (uint32_t)*words;
-
-      D += ((C ^ (A & (B ^ C))) + tmp___10) + 1200080426U;
-      words++;
-
-      D += A;
-
-      ;
-      while (1) {
-
-        cwp++;
-        tmp___12 = (uint32_t)*words;
-        *tmp___11 = tmp___12;
-
-        words++;
-
-        C += D;
-      }
-
-      ;
+    ;
+    while (1) {
 
       cwp++;
-      tmp___14 = (uint32_t)*words;
+      tmp___12 = (uint32_t)*words;
 
       words++;
+      C = (C << 17) | (C >> 15);
+    }
 
-      ;
+    ;
 
-      cwp++;
-      tmp___16 = (uint32_t)*words;
+    cwp++;
+    tmp___14 = (uint32_t)*words;
+    *tmp___13 = tmp___14;
 
-      A += ((D ^ (B & (C ^ D))) + tmp___16) + 1770035416U;
-      words++;
-      A = (A << 7) | (A >> 25);
+    words++;
 
-      ;
+    B += C;
 
-      tmp___18 = (uint32_t)*words;
-      *tmp___17 = tmp___18;
-      D += ((C ^ (A & (B ^ C))) + tmp___18) + 2336552879U;
-      words++;
-      D = (D << 12) | (D >> 20);
-      D += A;
+    ;
 
-      ;
-      while (1) {
-        tmp___19 = cwp;
+    cwp++;
+    tmp___16 = (uint32_t)*words;
+    *tmp___15 = tmp___16;
 
-        tmp___20 = (uint32_t)*words;
+    goto while_break___8;
 
-        C += ((B ^ (D & (A ^ B))) + tmp___20) + 4294925233U;
-        words++;
-      }
+  while_break___8:;
 
-      ;
+    cwp++;
+    tmp___18 = (uint32_t)*words;
+
+    goto while_break___9;
+
+  while_break___9:;
+
+    tmp___20 = (uint32_t)*words;
+
+    C += ((B ^ (D & (A ^ B))) + tmp___20) + 4294925233U;
+    words++;
+    C = (C << 17) | (C >> 15);
+
+  while_break___10:;
+    while (1) {
 
       cwp++;
       tmp___22 = (uint32_t)*words;
@@ -2131,136 +2268,147 @@ void(__attribute__((__leaf__)) md5_process_block)(void const *buffer,
       B += ((A ^ (C & (D ^ A))) + tmp___22) + 2304563134U;
       words++;
 
-      B += C;
       goto while_break___11;
-
-    while_break___11:;
-
-      tmp___23 = cwp;
-
-      tmp___24 = (uint32_t)*words;
-      *tmp___23 = tmp___24;
-
-      words++;
-      A = (A << 7) | (A >> 25);
-
-      ;
-
-      tmp___26 = (uint32_t)*words;
-
-      D += ((C ^ (A & (B ^ C))) + tmp___26) + 4254626195U;
-      words++;
-      D = (D << 12) | (D >> 20);
-      D += A;
-      goto while_break___13;
-
-    while_break___13:;
-
-      tmp___28 = (uint32_t)*words;
-      *tmp___27 = tmp___28;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      A = (A << 6) | (A >> 26);
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      ;
-
-      A += A_save;
     }
+  while_break___11:;
+
+    tmp___24 = (uint32_t)*words;
+    *tmp___23 = tmp___24;
+
+    words++;
+
+    ;
+
+    cwp++;
+    tmp___26 = (uint32_t)*words;
+
+    D += ((C ^ (A & (B ^ C))) + tmp___26) + 4254626195U;
+    words++;
+
+    D += A;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    B = (B << 20) | (B >> 12);
+
+    ;
+
+    ;
+
+    D = (D << 9) | (D >> 23);
+
+    ;
+
+    C = (C << 14) | (C >> 18);
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    B = (B << 20) | (B >> 12);
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    C = (C << 16) | (C >> 16);
+
+    ;
+
+    ;
+
+    ;
+    while (1) {
+    }
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+  while_break___47:;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    ;
+
+    B = (B << 21) | (B >> 11);
+
+    goto while_break___59;
+
+  while_break___59:;
+
+    ;
+
+    ;
+
+    ;
+
+    B = (B << 21) | (B >> 11);
+
+    goto while_break___63;
+
+  while_break___63:
+
   while_break:
     ctx->A = A;
   }
@@ -2278,113 +2426,122 @@ int mbsnwidth(char const *string, size_t nbytes, int flags) {
   int tmp___0;
   size_t tmp___1;
   unsigned char c;
+  char const *tmp___2;
 
   unsigned short const **tmp___4;
 
   {
-    p = string;
 
+    plimit = p + nbytes;
     width = 0;
 
     if (tmp___1 > 1UL) {
 
       if (!((unsigned long)p < (unsigned long)plimit)) {
+        goto while_break;
       }
 
       if ((int const) * p == 34) {
+        goto case_32;
       }
-
-      if ((int const) * p == 39) {
+      if ((int const) * p == 35) {
       }
-
-      if ((int const) * p == 43) {
+      if ((int const) * p == 37) {
         goto case_32;
       }
 
       if ((int const) * p == 45) {
+        goto case_32;
       }
-
+      if ((int const) * p == 46) {
+        goto case_32;
+      }
       if ((int const) * p == 47) {
         goto case_32;
       }
-
-      if ((int const) * p == 49) {
-      }
-      if ((int const) * p == 50) {
-      }
-
-      if ((int const) * p == 54) {
-        goto case_32;
-      }
-      if ((int const) * p == 55) {
+      if ((int const) * p == 48) {
       }
 
       if ((int const) * p == 60) {
-      }
-      if ((int const) * p == 61) {
-      }
-
-      if ((int const) * p == 71) {
+        goto case_32;
       }
 
-      if ((int const) * p == 73) {
+      if ((int const) * p == 62) {
+      }
+
+      if ((int const) * p == 68) {
+        goto case_32;
+      }
+
+      if ((int const) * p == 70) {
+        goto case_32;
+      }
+
+      if ((int const) * p == 78) {
         goto case_32;
       }
 
       if ((int const) * p == 80) {
+        goto case_32;
       }
-
+      if ((int const) * p == 81) {
+      }
       if ((int const) * p == 82) {
+        goto case_32;
       }
       if ((int const) * p == 83) {
+      }
+      if ((int const) * p == 84) {
         goto case_32;
       }
 
+      if ((int const) * p == 93) {
+      }
       if ((int const) * p == 94) {
+        goto case_32;
       }
       if ((int const) * p == 95) {
-        goto case_32;
-      }
-      if ((int const) * p == 97) {
       }
 
-      if ((int const) * p == 99) {
-      }
-      if ((int const) * p == 100) {
+      if ((int const) * p == 98) {
+        goto case_32;
       }
 
       if ((int const) * p == 103) {
+        goto case_32;
       }
 
       if ((int const) * p == 109) {
+        goto case_32;
       }
       if ((int const) * p == 110) {
+        goto case_32;
       }
       if ((int const) * p == 111) {
         goto case_32;
       }
 
       if ((int const) * p == 113) {
+        goto case_32;
       }
       if ((int const) * p == 114) {
       }
-
-      if ((int const) * p == 116) {
+      if ((int const) * p == 115) {
+        goto case_32;
       }
 
-      if ((int const) * p == 118) {
+      if ((int const) * p == 124) {
+        goto case_32;
       }
-
-      if ((int const) * p == 120) {
-      }
-
       if ((int const) * p == 125) {
       }
 
+      goto switch_default;
     case_32:
-      p++;
 
+      width++;
       goto switch_break;
+    switch_default:
 
       while (1) {
         bytes = mbrtowc(&wc, p, (size_t)(plimit - p), &mbstate);
@@ -2392,17 +2549,16 @@ int mbsnwidth(char const *string, size_t nbytes, int flags) {
           if (!(flags & 1)) {
             p++;
             width++;
-
+            goto while_break___0;
           } else {
-            return (-1);
           }
+        }
+        if (bytes == 0xfffffffffffffffeUL) {
         }
 
         w = wcwidth(wc);
         if (w >= 0) {
-          if (w > 2147483647 - width) {
-            goto overflow;
-          }
+
           width += w;
         } else {
           if (!(flags & 2)) {
@@ -2413,31 +2569,30 @@ int mbsnwidth(char const *string, size_t nbytes, int flags) {
         p += bytes;
         tmp___0 = mbsinit((mbstate_t const *)(&mbstate));
       }
-
-      ;
+    while_break___0:;
       goto switch_break;
     switch_break:;
 
     while_break:;
       return (width);
     }
+    while (1) {
 
-    if (!((unsigned long)p < (unsigned long)plimit)) {
-      goto while_break___1;
-    }
-
-    if ((int const) * (*tmp___4 + (int)c) & 16384) {
-      if (width == 2147483647) {
-        goto overflow;
+      if (!((unsigned long)p < (unsigned long)plimit)) {
+        goto while_break___1;
       }
-      width++;
-    } else {
-      if (!(flags & 2)) {
 
+      p++;
+      c = (unsigned char)*tmp___2;
+      tmp___4 = __ctype_b_loc();
+      if ((int const) * (*tmp___4 + (int)c) & 16384) {
+        if (width == 2147483647) {
+          goto overflow;
+        }
+        width++;
       } else {
       }
     }
-
   while_break___1:;
     return (width);
   overflow:
@@ -2466,133 +2621,114 @@ int(__attribute__((__nonnull__(1, 2))) mbscasecmp)(char const *s1,
   int tmp___14;
   int tmp___15;
   int tmp___16;
-  unsigned char const *p1;
+
   unsigned char const *p2;
   unsigned char c1;
   unsigned char c2;
+  int tmp___18;
 
-  int tmp___21;
-  unsigned short const **tmp___22;
   size_t tmp___25;
 
   {
 
     if (tmp___25 > 1UL) {
 
-      iter2.cur.ptr = s2;
+      memset((void *)(&iter2.state), '\000', sizeof(mbstate_t));
 
-      while (1) {
-        mbuiter_multi_next(&iter1);
-        if (iter1.cur.wc_valid) {
+      mbuiter_multi_next(&iter1);
+      if (iter1.cur.wc_valid) {
+
+      } else {
+        tmp___13 = 1;
+      }
+      if (tmp___13) {
+        mbuiter_multi_next(&iter2);
+        if (iter2.cur.wc_valid) {
 
         } else {
-          tmp___13 = 1;
+          tmp___14 = 1;
         }
-        if (tmp___13) {
-          mbuiter_multi_next(&iter2);
-          if (iter2.cur.wc_valid) {
-            if (iter2.cur.wc == 0) {
-
-            } else {
-            }
-          } else {
-            tmp___14 = 1;
-          }
-          if (!tmp___14) {
-            goto while_break;
-          }
-        } else {
+        if (!tmp___14) {
           goto while_break;
         }
-        if (iter1.cur.wc_valid) {
-          if (iter2.cur.wc_valid) {
-            tmp = towlower((wint_t)iter1.cur.wc);
-            tmp___0 = towlower((wint_t)iter2.cur.wc);
-            tmp___1 = (int)tmp - (int)tmp___0;
-          } else {
-            tmp___1 = -1;
-          }
-          tmp___12 = tmp___1;
-        } else {
-          if (iter2.cur.wc_valid) {
-
-          } else {
-            if (iter1.cur.bytes == iter2.cur.bytes) {
-              tmp___2 = memcmp((void const *)iter1.cur.ptr,
-                               (void const *)iter2.cur.ptr, iter1.cur.bytes);
-
-            } else {
-              if (iter1.cur.bytes < iter2.cur.bytes) {
-                tmp___5 = memcmp((void const *)iter1.cur.ptr,
-                                 (void const *)iter2.cur.ptr, iter1.cur.bytes);
-                if (tmp___5 > 0) {
-                  tmp___4 = 1;
-                } else {
-                  tmp___4 = -1;
-                }
-                tmp___9 = tmp___4;
-              } else {
-                tmp___8 = memcmp((void const *)iter1.cur.ptr,
-                                 (void const *)iter2.cur.ptr, iter2.cur.bytes);
-                if (tmp___8 >= 0) {
-
-                } else {
-                }
-                tmp___9 = tmp___7;
-              }
-              tmp___10 = tmp___9;
-            }
-            tmp___11 = tmp___10;
-          }
-          tmp___12 = tmp___11;
-        }
-        cmp = tmp___12;
-        if (cmp != 0) {
-          return (cmp);
-        }
-        iter1.cur.ptr += iter1.cur.bytes;
-
-        iter2.cur.ptr += iter2.cur.bytes;
+      } else {
+        goto while_break;
       }
+      if (iter1.cur.wc_valid) {
+        if (iter2.cur.wc_valid) {
+          tmp = towlower((wint_t)iter1.cur.wc);
+          tmp___0 = towlower((wint_t)iter2.cur.wc);
+          tmp___1 = (int)tmp - (int)tmp___0;
+        } else {
+          tmp___1 = -1;
+        }
+        tmp___12 = tmp___1;
+      } else {
+        if (iter2.cur.wc_valid) {
+
+        } else {
+          if (iter1.cur.bytes == iter2.cur.bytes) {
+            tmp___2 = memcmp((void const *)iter1.cur.ptr,
+                             (void const *)iter2.cur.ptr, iter1.cur.bytes);
+
+          } else {
+            if (iter1.cur.bytes < iter2.cur.bytes) {
+              tmp___5 = memcmp((void const *)iter1.cur.ptr,
+                               (void const *)iter2.cur.ptr, iter1.cur.bytes);
+              if (tmp___5 > 0) {
+                tmp___4 = 1;
+              } else {
+              }
+              tmp___9 = tmp___4;
+            } else {
+              tmp___8 = memcmp((void const *)iter1.cur.ptr,
+                               (void const *)iter2.cur.ptr, iter2.cur.bytes);
+              if (tmp___8 >= 0) {
+
+              } else {
+                tmp___7 = -1;
+              }
+              tmp___9 = tmp___7;
+            }
+            tmp___10 = tmp___9;
+          }
+          tmp___11 = tmp___10;
+        }
+        tmp___12 = tmp___11;
+      }
+      cmp = tmp___12;
+      if (cmp != 0) {
+        return (cmp);
+      }
+      iter1.cur.ptr += iter1.cur.bytes;
+      iter1.next_done = (_Bool)0;
+      iter2.cur.ptr += iter2.cur.bytes;
+
     while_break:
       mbuiter_multi_next(&iter1);
+      if (iter1.cur.wc_valid) {
+        if (iter1.cur.wc == 0) {
 
+        } else {
+        }
+      } else {
+        tmp___15 = 1;
+      }
       if (tmp___15) {
         return (1);
       }
       mbuiter_multi_next(&iter2);
       if (iter2.cur.wc_valid) {
-        if (iter2.cur.wc == 0) {
 
-        } else {
-        }
       } else {
         tmp___16 = 1;
       }
-      if (tmp___16) {
-        return (-1);
-      }
 
     } else {
-      p1 = (unsigned char const *)s1;
+
       p2 = (unsigned char const *)s2;
 
-      tmp___22 = __ctype_b_loc();
-      if ((int const) * (*tmp___22 + (int)*p2) & 256) {
-
-        c2 = (unsigned char)tmp___21;
-      } else {
-        c2 = (unsigned char)*p2;
-      }
-      if ((int)c1 == 0) {
-        goto while_break___0;
-      }
-      p1++;
-
-      if (!((int)c1 == (int)c2)) {
-      }
-
-    while_break___0:;
+      ;
       return ((int)c1 - (int)c2);
     }
   }
@@ -2600,31 +2736,100 @@ int(__attribute__((__nonnull__(1, 2))) mbscasecmp)(char const *s1,
 
 extern int optind;
 
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__nonnull__(1), __leaf__)) pthread_mutex_init)(
-    pthread_mutex_t *__mutex, pthread_mutexattr_t const *__mutexattr);
-
+static char const *volatile charset_aliases;
 static char const *get_charset_aliases(void) {
   char const *cp;
-
+  char const *dir;
   char const *base;
-
+  char *file_name___3;
+  size_t dir_len___0;
+  size_t tmp;
+  size_t base_len___0;
+  size_t tmp___0;
+  int add_slash;
+  int tmp___1;
   int fd;
   FILE *fp;
+  char *res_ptr;
+  size_t res_size;
+  int c;
+  char buf1[51];
+  char buf2[51];
+  size_t l1;
+  size_t l2;
+  char *old_res_ptr;
+  int tmp___3;
 
-  { return (cp); }
+  {
+
+    if ((unsigned long)cp == (unsigned long)((void *)0)) {
+
+      add_slash = tmp___1;
+      file_name___3 = (char *)malloc(
+          ((dir_len___0 + (size_t)add_slash) + base_len___0) + 1UL);
+      if ((unsigned long)file_name___3 != (unsigned long)((void *)0)) {
+        memcpy((void *)file_name___3, (void const *)dir, dir_len___0);
+      }
+      if ((unsigned long)file_name___3 == (unsigned long)((void *)0)) {
+
+      } else {
+
+        if (fd < 0) {
+
+        } else {
+          fp = fdopen(fd, "r");
+          if ((unsigned long)fp == (unsigned long)((void *)0)) {
+
+          } else {
+
+            res_size = (size_t)0;
+
+            c = getc_unlocked(fp);
+            if (c == -1) {
+            }
+
+            tmp___3 = fscanf(fp, "%50s %50s", buf1, buf2);
+            if (tmp___3 < 2) {
+            }
+            l1 = strlen((char const *)(buf1));
+            l2 = strlen((char const *)(buf2));
+            old_res_ptr = res_ptr;
+            if (res_size == 0UL) {
+              res_size = ((l1 + 1UL) + l2) + 1UL;
+              res_ptr = (char *)malloc(res_size + 1UL);
+            } else {
+              res_size += ((l1 + 1UL) + l2) + 1UL;
+              res_ptr = (char *)realloc((void *)res_ptr, res_size + 1UL);
+            }
+            if ((unsigned long)res_ptr == (unsigned long)((void *)0)) {
+              res_size = (size_t)0;
+
+              goto while_break;
+            }
+
+            strcpy((res_ptr + res_size) - (l2 + 1UL), (char const *)(buf2));
+
+            ;
+
+          while_break:
+            rpl_fclose(fp);
+          }
+        }
+        free((void *)file_name___3);
+      }
+      charset_aliases = cp;
+    }
+    return (cp);
+  }
 }
 char const *locale_charset(void) {
   char const *codeset;
   char const *aliases;
 
-  int tmp___2;
-
   {
 
     if (!((int const) * aliases != 0)) {
     }
-    tmp___2 = strcmp(codeset, aliases);
 
   while_break:;
 
@@ -2634,7 +2839,7 @@ char const *locale_charset(void) {
 
 struct heap *heap_alloc(int (*compare___0)(void const *, void const *),
                         size_t n_reserve);
-void heap_free(struct heap *heap);
+
 int heap_insert(struct heap *heap, void *item);
 void *heap_remove_top(struct heap *heap);
 static size_t heapify_down(void **array, size_t count, size_t initial,
@@ -2654,9 +2859,9 @@ struct heap *heap_alloc(int (*compare___0)(void const *, void const *),
     heap->array = (void **)xnmalloc(n_reserve, sizeof(*(heap->array)));
 
     heap->capacity = n_reserve;
-    heap->count = (size_t)0;
-    if (compare___0) {
 
+    if (compare___0) {
+      heap->compare = compare___0;
     } else {
     }
     return (heap);
@@ -2694,6 +2899,9 @@ static size_t heapify_down(void **array, size_t count, size_t initial,
                            int (*compare___0)(void const *, void const *)) {
   void *element;
   size_t parent;
+  size_t child;
+
+  int tmp___0;
 
   {
     element = *(array + initial);
@@ -2707,21 +2915,10 @@ static void heapify_up(void **array, size_t count,
                        int (*compare___0)(void const *, void const *)) {
   size_t k;
   void *new_element;
-  int tmp;
 
   {
     k = count;
     new_element = *(array + k);
-
-    if (k != 1UL) {
-      tmp = (*compare___0)((void const *)*(array + k / 2UL),
-                           (void const *)new_element);
-
-    } else {
-      goto while_break;
-    }
-    *(array + k) = *(array + k / 2UL);
-    k /= 2UL;
 
   while_break:
     *(array + k) = new_element;
@@ -2729,20 +2926,27 @@ static void heapify_up(void **array, size_t count,
   }
 }
 
+static size_t next_prime(size_t candidate) {
+
+  {
+
+  while_break:;
+    return (candidate);
+  }
+}
 static size_t raw_hasher(void const *data, size_t n) {
 
   {}
 }
 
+static _Bool check_tuning(Hash_table *table___0) {
+
+  {}
+}
 static size_t __attribute__((__pure__))
 compute_bucket_size(size_t candidate, Hash_tuning const *tuning) {
 
-  {
-    if (!tuning->is_n_buckets) {
-    }
-
-    return ((size_t __attribute__((__pure__)))candidate);
-  }
+  { return ((size_t __attribute__((__pure__)))candidate); }
 }
 Hash_table *(__attribute__((__warn_unused_result__)) hash_initialize)(
     size_t candidate, Hash_tuning const *tuning,
@@ -2758,66 +2962,36 @@ Hash_table *(__attribute__((__warn_unused_result__)) hash_initialize)(
     if ((unsigned long)table___0 == (unsigned long)((void *)0)) {
     }
 
+    table___0->tuning = tuning;
+    tmp = check_tuning(table___0);
     if (!tmp) {
+      goto fail;
     }
     table___0->n_buckets = (size_t)compute_bucket_size(candidate, tuning);
-    if (!table___0->n_buckets) {
-    }
-    table___0->bucket = (struct hash_entry *)calloc(
-        table___0->n_buckets, sizeof(*(table___0->bucket)));
+
     if ((unsigned long)table___0->bucket == (unsigned long)((void *)0)) {
+      goto fail;
     }
     table___0->bucket_limit =
         (struct hash_entry const *)(table___0->bucket + table___0->n_buckets);
+    table___0->n_buckets_used = (size_t)0;
 
-    table___0->hasher = hasher;
     table___0->comparator = comparator;
 
     return (table___0);
   fail:
-
-    return ((Hash_table *)((void *)0));
-  }
-}
-static struct hash_entry *allocate_entry(Hash_table *table___0) {
-  struct hash_entry *new;
-
-  {
-    if (table___0->free_entry_list) {
-
-    } else {
-    }
-    return (new);
+    free((void *)table___0);
   }
 }
 
-static void *hash_find_entry(Hash_table *table___0, void const *entry,
-                             struct hash_entry **bucket_head, _Bool delete) {
-  struct hash_entry *bucket;
-  struct hash_entry *tmp;
-  struct hash_entry *cursor;
-
-  {
-    tmp = safe_hasher((Hash_table const *)table___0, entry);
-    bucket = tmp;
-
-    cursor = bucket;
-
-    ;
-    return ((void *)0);
-  }
-}
 static _Bool transfer_entries(Hash_table *dst, Hash_table *src, _Bool safe) {
   struct hash_entry *bucket;
-  struct hash_entry *cursor;
 
   {
-    bucket = src->bucket;
-    while (1) {
 
-    __Cont:
-      bucket++;
-    }
+  __Cont:
+    bucket++;
+
   while_break:;
     return ((_Bool)1);
   }
@@ -2830,45 +3004,36 @@ int hash_insert_if_absent(Hash_table *table___0, void const *entry,
 
   {
 
-    if ((unsigned long)data != (unsigned long)((void *)0)) {
-    }
-
     bucket->data = (void *)entry;
-
-    (table___0->n_buckets_used)++;
   }
 }
 void *(__attribute__((__warn_unused_result__)) hash_insert)(
     Hash_table *table___0, void const *entry) {
-  void const *matched_ent;
-
-  int tmp;
 
   void *tmp___1;
 
-  {
-    tmp = hash_insert_if_absent(table___0, entry, &matched_ent);
-
-    return (tmp___1);
-  }
+  { return (tmp___1); }
 }
 void *hash_delete(Hash_table *table___0, void const *entry) {
+  void *data;
 
-  {}
+  { return (data); }
 }
-size_t hash_pjw(void const *x, size_t tablesize) __attribute__((__pure__));
 
 extern void(__attribute__((__nonnull__(1, 4))) qsort)(
     void *__base, size_t __nmemb, size_t __size,
     int (*__compar)(void const *, void const *));
-extern int fseeko(FILE *__stream, __off_t __off, int __whence);
 
 int(__attribute__((__nonnull__(1))) rpl_fseeko)(FILE *fp, off_t offset,
                                                 int whence) {
 
   int tmp___1;
 
-  { return (tmp___1); }
+  {
+
+    tmp___1 = fseeko(fp, offset, whence);
+    return (tmp___1);
+  }
 }
 
 FILE *fopen_safer(char const *file, char const *mode) {
@@ -2877,7 +3042,9 @@ FILE *fopen_safer(char const *file, char const *mode) {
   int fd;
   int tmp___0;
   int f;
+  int tmp___1;
 
+  int e___0;
   int *tmp___4;
 
   int tmp___6;
@@ -2887,24 +3054,23 @@ FILE *fopen_safer(char const *file, char const *mode) {
     fp = tmp;
     if (fp) {
       tmp___0 = fileno(fp);
-
+      fd = tmp___0;
       if (0 <= fd) {
         if (fd <= 2) {
 
+          f = tmp___1;
           if (f < 0) {
 
             rpl_fclose(fp);
-
-            return ((FILE *)((void *)0));
           }
-
+          tmp___6 = rpl_fclose(fp);
           if (tmp___6 != 0) {
 
           } else {
             fp = fdopen(f, mode);
             if (!fp) {
 
-              tmp___4 = __errno_location();
+              e___0 = *tmp___4;
             }
           }
         }
@@ -2916,11 +3082,15 @@ FILE *fopen_safer(char const *file, char const *mode) {
 int filevercmp(char const *s1, char const *s2);
 static char const *match_suffix(char const **str) {
 
+  _Bool read_alpha;
+
   { ; }
 }
 __inline static int order(unsigned char c) {
 
-  {}
+  _Bool tmp___0;
+
+  { tmp___0 = c_isdigit((int)c); }
 }
 static int __attribute__((__pure__)) verrevcmp(char const *s1, size_t s1_len,
                                                char const *s2, size_t s2_len) {
@@ -2931,7 +3101,7 @@ static int __attribute__((__pure__)) verrevcmp(char const *s1, size_t s1_len,
   int tmp;
   int tmp___0;
   int s2_c;
-  int tmp___1;
+
   int tmp___2;
   _Bool tmp___3;
   _Bool tmp___4;
@@ -2954,15 +3124,12 @@ static int __attribute__((__pure__)) verrevcmp(char const *s1, size_t s1_len,
 
       if (s1_pos < s1_len) {
         tmp___3 = c_isdigit((int)*(s1 + s1_pos));
-        if (tmp___3) {
-        }
-      } else {
-      _L:
-        if (s2_pos < s2_len) {
 
-          if (tmp___4) {
-            goto while_break___0;
-          }
+      } else {
+
+        if (s2_pos < s2_len) {
+          tmp___4 = c_isdigit((int)*(s2 + s2_pos));
+
         } else {
           goto while_break___0;
         }
@@ -2976,7 +3143,6 @@ static int __attribute__((__pure__)) verrevcmp(char const *s1, size_t s1_len,
       if (s2_pos == s2_len) {
 
       } else {
-        tmp___1 = order((unsigned char)*(s2 + s2_pos));
       }
       s2_c = tmp___2;
       if (s1_c != s2_c) {
@@ -2986,23 +3152,22 @@ static int __attribute__((__pure__)) verrevcmp(char const *s1, size_t s1_len,
       s2_pos++;
 
     while_break___0:;
-      while (1) {
-
-        if (!((int const) * (s1 + s1_pos) == 48)) {
-          goto while_break___1;
-        }
-        s1_pos++;
-      }
-    while_break___1:;
-
-      s2_pos++;
 
       ;
+
+      if (!((int const) * (s2 + s2_pos) == 48)) {
+        goto while_break___2;
+      }
+      s2_pos++;
+
+    while_break___2:;
 
       tmp___5 = c_isdigit((int)*(s1 + s1_pos));
       if (tmp___5) {
         tmp___6 = c_isdigit((int)*(s2 + s2_pos));
-
+        if (!tmp___6) {
+          goto while_break___3;
+        }
       } else {
         goto while_break___3;
       }
@@ -3016,18 +3181,21 @@ static int __attribute__((__pure__)) verrevcmp(char const *s1, size_t s1_len,
     while_break___3:
       tmp___7 = c_isdigit((int)*(s1 + s1_pos));
       if (tmp___7) {
-        return ((int __attribute__((__pure__)))1);
       }
       tmp___8 = c_isdigit((int)*(s2 + s2_pos));
       if (tmp___8) {
       }
+      if (first_diff) {
+        return ((int __attribute__((__pure__)))first_diff);
+      }
     }
   while_break:;
+    return ((int __attribute__((__pure__)))0);
   }
 }
 int filevercmp(char const *s1, char const *s2) {
   char const *s1_pos;
-  char const *s2_pos;
+
   char const *s1_suffix;
   char const *s2_suffix;
   size_t s1_len;
@@ -3046,26 +3214,22 @@ int filevercmp(char const *s1, char const *s2) {
 
     if (simple_cmp == 0) {
     }
+    if (!*s1) {
+    }
+    if (!*s2) {
+    }
 
     if ((int const) * s1 != 46) {
     }
-    if ((int const) * s1 == 46) {
-    }
-    s1_pos = s1;
 
     s1_suffix = match_suffix(&s1_pos);
-    s2_suffix = match_suffix(&s2_pos);
+
     if (s1_suffix) {
 
     } else {
-      tmp___4 = s1_pos;
     }
     s1_len = (size_t)(tmp___4 - s1);
-    if (s2_suffix) {
 
-    } else {
-      tmp___5 = s2_pos;
-    }
     s2_len = (size_t)(tmp___5 - s2);
     if (s1_suffix) {
 
@@ -3074,10 +3238,6 @@ int filevercmp(char const *s1, char const *s2) {
 
         if (s1_len == s2_len) {
           tmp___6 = strncmp(s1, s2, s1_len);
-          if (0 == tmp___6) {
-            s1_len = (size_t)(s1_pos - s1);
-            s2_len = (size_t)(s2_pos - s2);
-          }
         }
       }
     }
@@ -3100,7 +3260,7 @@ int rpl_fflush(FILE *stream) {
   {
     if ((unsigned long)stream == (unsigned long)((void *)0)) {
       tmp = fflush(stream);
-      return (tmp);
+
     } else {
     }
 
@@ -3115,12 +3275,10 @@ int fd_safer(int fd) {
     }
   }
 }
-extern int fcntl(int __fd, int __cmd, ...);
-static int have_dupfd_cloexec = 0;
-int rpl_fcntl(int fd, int action, ...) {
 
+int rpl_fcntl(int fd, int action, ...) {
+  va_list arg;
   int result;
-  int target;
 
   int tmp___1;
 
@@ -3128,43 +3286,34 @@ int rpl_fcntl(int fd, int action, ...) {
 
   {
 
-    if (0 <= have_dupfd_cloexec) {
-      result = fcntl(fd, action, target);
-      if (0 <= result) {
-
-      } else {
-      }
-    } else {
-    }
-
     result = fcntl(fd, action, p);
 
-    return (result);
+    __builtin_va_end(arg);
   }
 }
 
 int(__attribute__((__nonnull__(1))) rpl_fclose)(FILE *fp) {
-
+  int saved_errno;
   int fd;
   int result;
-  int tmp;
 
   {
+    saved_errno = 0;
 
     fd = fileno(fp);
-    if (fd < 0) {
-      tmp = fclose(fp);
-    }
 
     result = fclose(fp);
-
-    return (result);
   }
 }
 
 void fadvise(FILE *fp, fadvice_t advice) {
+  int tmp;
 
-  {}
+  {
+    if (fp) {
+      tmp = fileno(fp);
+    }
+  }
 }
 
 int dup_safer(int fd) {
@@ -3173,27 +3322,6 @@ int dup_safer(int fd) {
 }
 
 extern char *optarg;
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1, 3))) pthread_create)(pthread_t *__restrict __newthread,
-                                        pthread_attr_t const *__restrict __attr,
-                                        void *(*__start_routine)(void *),
-                                        void *__restrict __arg);
-extern int pthread_join(pthread_t __th, void **__thread_return);
-
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1))) pthread_mutex_lock)(pthread_mutex_t *__mutex);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1))) pthread_mutex_unlock)(pthread_mutex_t *__mutex);
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__nonnull__(1), __leaf__)) pthread_cond_init)(
-    pthread_cond_t *__restrict __cond,
-    pthread_condattr_t const *__restrict __cond_attr);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1), __leaf__)) pthread_cond_destroy)(pthread_cond_t *__cond);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1))) pthread_cond_signal)(pthread_cond_t *__cond);
-extern int(__attribute__((__nonnull__(1, 2))) pthread_cond_wait)(
-    pthread_cond_t *__restrict __cond, pthread_mutex_t *__restrict __mutex);
 
 extern size_t fwrite_unlocked(void const *__restrict __ptr, size_t __size,
                               size_t __n, FILE *__restrict __stream);
@@ -3205,14 +3333,17 @@ static _Bool hard_LC_COLLATE;
 static char eolchar = (char)'\n';
 static _Bool blanks[256];
 
+static struct month monthtab[12] = {
+    {"APR", 4}, {"AUG", 8}, {"DEC", 12}, {"FEB", 2},  {"JAN", 1},  {"JUL", 7},
+    {"JUN", 6}, {"MAR", 3}, {"MAY", 5},  {"NOV", 11}, {"OCT", 10}, {"SEP", 9}};
+static size_t merge_buffer_size = (size_t)262144;
 static size_t sort_size;
-static char const **temp_dirs;
 
 static _Bool reverse;
 
 static int tab = 128;
-static _Bool unique;
 
+static _Bool have_read_stdin;
 static struct keyfield *keylist;
 
 static unsigned int nmerge = 16U;
@@ -3231,6 +3362,8 @@ static void die(char const *message, char const *file) {
 }
 
 void usage(int status) {
+
+  char *tmp___19;
 
   { exit(status); }
 }
@@ -3289,18 +3422,6 @@ static sigset_t caught_signals;
 
 static struct tempnode *volatile temphead;
 static struct tempnode *volatile *temptail = &temphead;
-static Hash_table *proctab;
-
-static _Bool proctab_comparator(void const *e1, void const *e2) {
-  struct tempnode const *n1;
-  struct tempnode const *n2;
-
-  {
-    n1 = (struct tempnode const *)e1;
-    n2 = (struct tempnode const *)e2;
-    return ((_Bool)(n1->pid == n2->pid));
-  }
-}
 
 static pid_t reap(pid_t pid) {
   int status;
@@ -3319,15 +3440,13 @@ static pid_t reap(pid_t pid) {
 }
 
 static void cleanup(void) {
-  struct tempnode const *node;
 
-  {
-    node = (struct tempnode const *)temphead;
-
-    temphead = (struct tempnode *)((void *)0);
-  }
+  { temphead = (struct tempnode *)((void *)0); }
 }
+static void exit_cleanup(void) {
 
+  {}
+}
 static struct tempnode *create_temp_file(int *pfd, _Bool survive_fd_exhaustion);
 static char const slashbase[12] = {
     (char const)'/', (char const)'s', (char const)'o', (char const)'r',
@@ -3346,7 +3465,7 @@ static struct tempnode *create_temp_file(int *pfd,
   char *file;
 
   {
-    temp_dir = *(temp_dirs + temp_dir_index);
+
     tmp = strlen(temp_dir);
 
     tmp___0 = (struct tempnode *)xmalloc(
@@ -3355,6 +3474,9 @@ static struct tempnode *create_temp_file(int *pfd,
     node = tmp___0;
     file = node->name;
     memcpy((void *)file, (void const *)temp_dir, len);
+    memcpy((void *)(file + len), (void const *)(slashbase), sizeof(slashbase));
+
+    temp_dir_index++;
 
     fd = mkstemp_safer(file);
     if (0 <= fd) {
@@ -3380,10 +3502,9 @@ static FILE *stream_open(char const *file, char const *how) {
       return (stdout);
     }
     if ((int const) * how == 114) {
-
+      tmp = strcmp(file, "-");
       if (tmp == 0) {
 
-        fp = stdin;
       } else {
         fp = fopen_safer(file, how);
       }
@@ -3410,108 +3531,25 @@ static FILE *xfopen(char const *file, char const *how) {
 static void xfclose(FILE *fp, char const *file) {
   int tmp;
 
-  int tmp___2;
+  int tmp___4;
 
   {
     tmp = fileno(fp);
 
-    if (tmp___2 != 0) {
+    tmp___4 = rpl_fclose(fp);
+    if (tmp___4 != 0) {
     }
 
     ;
   }
 }
 
-static pid_t pipe_fork(int *pipefds, size_t tries) {
-  struct tempnode *saved_temphead;
-  int saved_errno;
-
-  pid_t pid;
-
-  int tmp;
-  int *tmp___0;
-
-  int *tmp___2;
-
-  {
-
-    tmp = pipe(pipefds);
-    if (tmp < 0) {
-      return (-1);
-    }
-
-    while (1) {
-
-      saved_temphead = (struct tempnode *)temphead;
-
-      pid = fork();
-
-      saved_errno = *tmp___0;
-
-      if (0 <= pid) {
-        goto while_break;
-      } else {
-      }
-    }
-  while_break:;
-    if (pid < 0) {
-
-      close(*(pipefds + 1));
-
-    } else {
-    }
-    return (pid);
-  }
-}
-static struct tempnode *maybe_create_temp(FILE **pfp,
-                                          _Bool survive_fd_exhaustion) {
-  int tempfd;
-  struct tempnode *node;
-  struct tempnode *tmp;
-
-  {
-    tmp = create_temp_file(&tempfd, survive_fd_exhaustion);
-
-    if (!node) {
-    }
-
-    *pfp = fdopen(tempfd, "w");
-    if (!*pfp) {
-    }
-  }
-}
 static struct tempnode *create_temp(FILE **pfp) {
   struct tempnode *tmp;
 
   {
-    tmp = maybe_create_temp(pfp, (_Bool)0);
-  }
-}
-static FILE *open_temp(struct tempnode *temp) {
-  int tempfd;
-  int pipefds[2];
 
-  pid_t tmp;
-
-  int *tmp___1;
-
-  {
-
-    tempfd = open((char const *)(temp->name), 0);
-    if (tempfd < 0) {
-      return ((FILE *)((void *)0));
-    }
-    tmp = pipe_fork(pipefds, (size_t)9);
-
-    ;
-  }
-}
-
-static void inittables(void) {
-
-  {
-
-  while_break:;
+    return (tmp);
   }
 }
 
@@ -3523,33 +3561,18 @@ static void specify_sort_size(int oi, char c, char const *s) {
 
   {
     tmp = xstrtoumax(s, &suffix, 10, &n, "EgGkKmMPtTYZ");
+    e = tmp;
 
-    if ((unsigned int)e == 0U) {
-      if (n < sort_size) {
-      }
-
-      e = (enum strtol_error)1;
-    }
     xstrtol_fatal(e, oi, c, long_options___1, s);
   }
 }
 static size_t specify_nthreads(int oi, char c, char const *s) {
-  unsigned long nthreads;
-  enum strtol_error e;
-  enum strtol_error tmp;
 
-  {
-    tmp = xstrtoul(s, (char **)((void *)0), 10, &nthreads, "");
-
-    if ((unsigned int)e != 0U) {
-    }
-
-    return (nthreads);
-  }
+  {}
 }
 static size_t default_sort_size(void) {
+  double avail;
 
-  double tmp;
   double total;
   double tmp___0;
   double mem;
@@ -3561,18 +3584,27 @@ static size_t default_sort_size(void) {
   size_t tmp___5;
 
   {
-    tmp = physmem_available();
 
+    tmp___0 = physmem_total();
     total = tmp___0;
+    if (avail > total / (double)8) {
 
+    } else {
+      tmp___1 = total / (double)8;
+    }
     mem = tmp___1;
     size = 0xffffffffffffffffUL;
     tmp___2 = getrlimit((__rlimit_resource_t)2, &rlimit);
+    if (tmp___2 == 0) {
+    }
 
     if (mem < (double)size) {
       size = (size_t)mem;
     }
-
+    if (size > (unsigned long)nmerge * (2UL + sizeof(struct line))) {
+      tmp___5 = size;
+    } else {
+    }
     return (tmp___5);
   }
 }
@@ -3580,13 +3612,12 @@ static size_t size_bound;
 static size_t sort_buffer_size(FILE *const *fps, size_t nfps,
                                char *const *files, size_t nfiles,
                                size_t line_bytes) {
-
+  size_t worst_case_per_input_byte;
+  size_t size;
   size_t i;
   struct stat st;
   off_t file_size;
-
-  char *tmp;
-  int tmp___0;
+  size_t worst_case;
 
   int tmp___4;
   int tmp___5;
@@ -3595,32 +3626,41 @@ static size_t sort_buffer_size(FILE *const *fps, size_t nfps,
 
   {
 
-    while (1) {
+    i = (size_t)0;
 
-      if (!(i < nfiles)) {
-      }
-      if (i < nfps) {
-        tmp___0 = fileno((FILE *)*(fps + i));
+    if (i < nfps) {
+
+    } else {
+
+      if (tmp___6 == 0) {
 
       } else {
-
-        if (tmp___6 == 0) {
-
-        } else {
-          tmp___4 = stat((char const *)*(files + i), &st);
-        }
-        tmp___7 = tmp___5;
+        tmp___4 = stat((char const *)*(files + i), &st);
       }
-      if (tmp___7 != 0) {
+      tmp___7 = tmp___5;
+    }
 
-        die((char const *)tmp, (char const *)*(files + i));
-      }
-      if ((st.st_mode & 61440U) == 32768U) {
-        file_size = st.st_size;
-      } else {
+    if ((st.st_mode & 61440U) == 32768U) {
+      file_size = st.st_size;
+    } else {
+    }
+    if (!size_bound) {
+      size_bound = sort_size;
+      if (!size_bound) {
+        size_bound = default_sort_size();
       }
     }
-  while_break:;
+
+    if ((size_t)file_size != worst_case / worst_case_per_input_byte) {
+      return (size_bound);
+    } else {
+      if (size_bound - size <= worst_case) {
+        return (size_bound);
+      }
+    }
+    size += worst_case;
+
+    ;
   }
 }
 static void initbuf(struct buffer *buf___1, size_t line_bytes, size_t alloc) {
@@ -3628,22 +3668,23 @@ static void initbuf(struct buffer *buf___1, size_t line_bytes, size_t alloc) {
   size_t tmp___0;
 
   {
-    while (1) {
-      alloc += sizeof(struct line) - alloc % sizeof(struct line);
-      buf___1->buf = (char *)malloc(alloc);
-      if (buf___1->buf) {
-        goto while_break;
-      }
-      alloc /= 2UL;
+
+    buf___1->buf = (char *)malloc(alloc);
+    if (buf___1->buf) {
     }
+
+    if (alloc <= line_bytes + 1UL) {
+    }
+
   while_break:
     buf___1->line_bytes = line_bytes;
     buf___1->alloc = alloc;
-
+    tmp___0 = (size_t)0;
     buf___1->nlines = tmp___0;
     tmp = tmp___0;
     buf___1->left = tmp;
     buf___1->used = tmp;
+    buf___1->eof = (_Bool)0;
   }
 }
 __inline static struct line *buffer_linelim(struct buffer const *buf___1) {
@@ -3656,9 +3697,8 @@ static char *begfield(struct line const *line, struct keyfield const *key) {
   size_t sword;
   size_t schar;
   size_t tmp;
-  unsigned char tmp___0;
 
-  size_t tmp___2;
+  unsigned char tmp___3;
 
   {
     ptr = (char *)line->text;
@@ -3668,60 +3708,40 @@ static char *begfield(struct line const *line, struct keyfield const *key) {
     if (tab != 128) {
 
       if ((unsigned long)ptr < (unsigned long)lim) {
-
+        tmp = sword;
         sword--;
         if (!tmp) {
         }
       } else {
         goto while_break;
       }
-      while (1) {
 
-        if ((unsigned long)ptr < (unsigned long)lim) {
-          if (!((int)*ptr != tab)) {
-            goto while_break___0;
-          }
-        } else {
-          goto while_break___0;
+      if ((unsigned long)ptr < (unsigned long)lim) {
+        if (!((int)*ptr != tab)) {
         }
-        ptr++;
+      } else {
+        goto while_break___0;
       }
+      ptr++;
+
     while_break___0:;
 
     while_break:;
     } else {
-      while (1) {
 
-        if ((unsigned long)ptr < (unsigned long)lim) {
-
-          sword--;
-          if (!tmp___2) {
-            goto while_break___1;
-          }
-        } else {
-          goto while_break___1;
-        }
-        while (1) {
-
-          if ((unsigned long)ptr < (unsigned long)lim) {
-            tmp___0 = to_uchar(*ptr);
-            if (!blanks[tmp___0]) {
-              goto while_break___2;
-            }
-          } else {
-            goto while_break___2;
-          }
-          ptr++;
-        }
-      while_break___2:;
-
-        ptr++;
-
-      while_break___3:;
-      }
     while_break___1:;
     }
     if (key->skipsblanks) {
+
+      if ((unsigned long)ptr < (unsigned long)lim) {
+        tmp___3 = to_uchar(*ptr);
+        if (!blanks[tmp___3]) {
+          goto while_break___4;
+        }
+      } else {
+        goto while_break___4;
+      }
+      ptr++;
 
     while_break___4:;
     }
@@ -3736,22 +3756,27 @@ static char *limfield(struct line const *line, struct keyfield const *key) {
   char *ptr;
   char *lim;
   size_t eword;
-
+  size_t echar;
   size_t tmp;
   unsigned char tmp___0;
   unsigned char tmp___1;
+  size_t tmp___2;
 
   {
-    ptr = (char *)line->text;
+
     lim = (ptr + line->length) - 1;
+    eword = (size_t)key->eword;
+    echar = (size_t)key->echar;
 
     if (tab != 128) {
 
       if ((unsigned long)ptr < (unsigned long)lim) {
         tmp = eword;
         eword--;
-
+        if (!tmp) {
+        }
       } else {
+        goto while_break;
       }
 
       if ((unsigned long)ptr < (unsigned long)lim) {
@@ -3764,9 +3789,20 @@ static char *limfield(struct line const *line, struct keyfield const *key) {
       ptr++;
 
     while_break___0:;
+      if ((unsigned long)ptr < (unsigned long)lim) {
+      }
 
-      ;
+    while_break:;
     } else {
+
+      if ((unsigned long)ptr < (unsigned long)lim) {
+
+        eword--;
+        if (!tmp___2) {
+        }
+      } else {
+        goto while_break___1;
+      }
 
       if ((unsigned long)ptr < (unsigned long)lim) {
         tmp___0 = to_uchar(*ptr);
@@ -3782,7 +3818,9 @@ static char *limfield(struct line const *line, struct keyfield const *key) {
 
       if ((unsigned long)ptr < (unsigned long)lim) {
         tmp___1 = to_uchar(*ptr);
-
+        if (blanks[tmp___1]) {
+          goto while_break___3;
+        }
       } else {
         goto while_break___3;
       }
@@ -3792,12 +3830,18 @@ static char *limfield(struct line const *line, struct keyfield const *key) {
 
     while_break___1:;
     }
+    if (echar != 0UL) {
 
+      if ((unsigned long)lim < (unsigned long)(ptr + echar)) {
+
+      } else {
+      }
+    }
     return (ptr);
   }
 }
 static _Bool fillbuf___7(struct buffer *buf___1, FILE *fp, char const *file) {
-
+  struct keyfield const *key;
   char eol;
   size_t line_bytes;
 
@@ -3813,7 +3857,7 @@ static _Bool fillbuf___7(struct buffer *buf___1, FILE *fp, char const *file) {
   size_t tmp___1;
   char *ptrlim;
   char *p;
-  char *tmp___2;
+
   int tmp___3;
 
   int tmp___5;
@@ -3822,18 +3866,12 @@ static _Bool fillbuf___7(struct buffer *buf___1, FILE *fp, char const *file) {
   size_t line_alloc;
 
   {
-
+    key = (struct keyfield const *)keylist;
     eol = eolchar;
+    line_bytes = buf___1->line_bytes;
 
     if (buf___1->eof) {
       return ((_Bool)0);
-    }
-    if (buf___1->used != buf___1->left) {
-      memmove((void *)buf___1->buf,
-              (void const *)((buf___1->buf + buf___1->used) - buf___1->left),
-              buf___1->left);
-
-      buf___1->nlines = (size_t)0;
     }
 
     ptr = buf___1->buf + buf___1->used;
@@ -3847,58 +3885,56 @@ static _Bool fillbuf___7(struct buffer *buf___1, FILE *fp, char const *file) {
       tmp___0 = buf___1->buf;
     }
     line_start = tmp___0;
+    while (1) {
 
-    if (!(line_bytes + 1UL < avail)) {
-    }
-    readsize = (avail - 1UL) / (line_bytes + 1UL);
-    tmp___1 = fread_unlocked((void *)ptr, (size_t)1, readsize, fp);
-    bytes_read = tmp___1;
-    ptrlim = ptr + bytes_read;
-    avail -= bytes_read;
-    if (bytes_read != readsize) {
-      tmp___3 = ferror_unlocked(fp);
-      if (tmp___3) {
+      readsize = (avail - 1UL) / (line_bytes + 1UL);
+      tmp___1 = fread_unlocked((void *)ptr, (size_t)1, readsize, fp);
+      bytes_read = tmp___1;
+      ptrlim = ptr + bytes_read;
+      avail -= bytes_read;
+      if (bytes_read != readsize) {
 
-        die((char const *)tmp___2, file);
-      }
-      tmp___5 = feof_unlocked(fp);
-      if (tmp___5) {
-        buf___1->eof = (_Bool)1;
-        if ((unsigned long)buf___1->buf == (unsigned long)ptrlim) {
-          return ((_Bool)0);
+        if (tmp___3) {
+        }
+
+        if (tmp___5) {
+          buf___1->eof = (_Bool)1;
+          if ((unsigned long)buf___1->buf == (unsigned long)ptrlim) {
+          }
         }
       }
-    }
-    while (1) {
-      p = (char *)memchr((void const *)ptr, (int)eol, (size_t)(ptrlim - ptr));
-      if (!p) {
-        goto while_break___1;
+      while (1) {
+        p = (char *)memchr((void const *)ptr, (int)eol, (size_t)(ptrlim - ptr));
+        if (!p) {
+          goto while_break___1;
+        }
+        *p = (char)'\000';
+        ptr = p + 1;
+        line--;
+        line->text = line_start;
+        line->length = (size_t)(ptr - line_start);
+
+        avail -= line_bytes;
+
+        line_start = ptr;
       }
-      *p = (char)'\000';
-      ptr = p + 1;
-      line--;
-      line->text = line_start;
-      line->length = (size_t)(ptr - line_start);
+    while_break___1:
 
-      avail -= line_bytes;
-
-      line_start = ptr;
+      if (buf___1->eof) {
+        goto while_break___0;
+      }
     }
-  while_break___1:
-
   while_break___0:
     buf___1->used = (size_t)(ptr - buf___1->buf);
     tmp___8 = buffer_linelim((struct buffer const *)buf___1);
     buf___1->nlines = (size_t)(tmp___8 - line);
     if (buf___1->nlines != 0UL) {
-      buf___1->left = (size_t)(ptr - line_start);
 
       return ((_Bool)1);
     }
-
+    line_alloc = buf___1->alloc / sizeof(struct line);
     buf___1->buf = (char *)x2nrealloc((void *)buf___1->buf, &line_alloc,
                                       sizeof(struct line));
-    buf___1->alloc = line_alloc * sizeof(struct line);
 
     return ((_Bool)0);
   }
@@ -3975,26 +4011,20 @@ static int __attribute__((__pure__)) find_unit_order(char const *number) {
     if (!((unsigned int)ch - 48U <= 9U)) {
       goto while_break___0;
     }
-    nonzero |= (int)ch - 48;
 
   while_break___0:;
-
-    ;
-    if ((int)ch == decimal_point) {
-      while (1) {
-
-        if (!((unsigned int)ch - 48U <= 9U)) {
-          goto while_break___1;
-        }
-        nonzero |= (int)ch - 48;
-      }
-    while_break___1:;
+    if (!((int)ch == thousands_sep)) {
+      goto while_break;
     }
+
+  while_break:;
+
     if (nonzero) {
       order___0 = (int)unit_order[ch];
       if (minus_sign) {
         tmp___1 = -order___0;
       } else {
+        tmp___1 = order___0;
       }
       return ((int __attribute__((__pure__)))tmp___1);
     } else {
@@ -4008,15 +4038,15 @@ static int human_numcompare(char const *a, char const *b) {
   int diff;
   int __attribute__((__pure__)) tmp___1;
   int __attribute__((__pure__)) tmp___2;
-
+  int tmp___3;
   int tmp___4;
 
   {
     while (1) {
-
+      tmp = to_uchar((char)*a);
       if (!blanks[tmp]) {
-        goto while_break;
       }
+      a++;
     }
   while_break:;
 
@@ -4029,14 +4059,15 @@ static int human_numcompare(char const *a, char const *b) {
     tmp___2 = find_unit_order(b);
     diff = (int)(tmp___1 - tmp___2);
     if (diff) {
-      tmp___4 = diff;
+
     } else {
+      tmp___3 = (int)strnumcmp(a, b, decimal_point, thousands_sep);
     }
     return (tmp___4);
   }
 }
 static int numcompare___3(char const *a, char const *b) {
-
+  unsigned char tmp;
   unsigned char tmp___0;
   int tmp___1;
 
@@ -4044,11 +4075,14 @@ static int numcompare___3(char const *a, char const *b) {
 
     ;
 
+    tmp___0 = to_uchar((char)*b);
     if (!blanks[tmp___0]) {
+      goto while_break___0;
     }
 
   while_break___0:
-    tmp___1 = (int)strnumcmp(a, b, decimal_point, thousands_sep);
+
+    return (tmp___1);
   }
 }
 
@@ -4059,14 +4093,19 @@ static int general_numcompare(char const *sa, char const *sb) {
   long double tmp;
   long double b;
   long double tmp___0;
+  int tmp___1;
 
   int tmp___7;
 
   {
-    tmp = strtold(sa, &ea);
-    a = tmp;
 
+    a = tmp;
+    tmp___0 = strtold(sb, &eb);
     b = tmp___0;
+    if ((unsigned long)sa == (unsigned long)ea) {
+
+      return (tmp___1);
+    }
 
     return (tmp___7);
   }
@@ -4075,17 +4114,17 @@ static int general_numcompare(char const *sa, char const *sb) {
 static int compare_random(char *__restrict texta, size_t lena,
                           char *__restrict textb, size_t lenb) {
   int xfrm_diff;
-
+  char stackbuf[4000];
   char *buf___1;
   size_t bufsize___1;
   void *allocated;
   uint32_t dig[2][16UL / sizeof(uint32_t)];
-  struct md5_ctx s[2];
+
   char const *lima;
   char const *limb;
   size_t guess_bufsize;
   size_t sizea;
-  size_t tmp;
+
   size_t tmp___0;
   _Bool a_fits;
   size_t sizeb;
@@ -4093,7 +4132,7 @@ static int compare_random(char *__restrict texta, size_t lena,
   char *tmp___2;
   size_t tmp___3;
   size_t tmp___4;
-
+  size_t tmp___5;
   size_t tmp___6;
 
   int diff;
@@ -4102,26 +4141,29 @@ static int compare_random(char *__restrict texta, size_t lena,
 
   {
 
-    s[0] = s[1];
+    bufsize___1 = sizeof(stackbuf);
+
     if (hard_LC_COLLATE) {
 
       while (1) {
 
         if (bufsize___1 < guess_bufsize) {
+          if (guess_bufsize > (bufsize___1 * 3UL) / 2UL) {
 
+          } else {
+          }
           free(allocated);
           allocated = malloc(bufsize___1);
           buf___1 = (char *)allocated;
         }
-        if ((unsigned long)texta < (unsigned long)lima) {
-          tmp = xstrxfrm(buf___1, (char const *)texta, bufsize___1);
 
-        } else {
-        }
         sizea = tmp___0;
         a_fits = (_Bool)(sizea <= bufsize___1);
         if ((unsigned long)textb < (unsigned long)limb) {
+          if (a_fits) {
 
+          } else {
+          }
           if (a_fits) {
 
           } else {
@@ -4134,6 +4176,7 @@ static int compare_random(char *__restrict texta, size_t lena,
         sizeb = tmp___4;
         if (a_fits) {
           if (!(sizea + sizeb <= bufsize___1)) {
+            goto _L;
           }
         } else {
         _L:
@@ -4149,27 +4192,26 @@ static int compare_random(char *__restrict texta, size_t lena,
             strxfrm(buf___1 + sizea, (char const *)textb, sizeb);
           }
         }
-
+        if ((unsigned long)texta < (unsigned long)lima) {
+          tmp___5 = strlen((char const *)texta);
+          texta += tmp___5 + 1UL;
+        }
         if ((unsigned long)textb < (unsigned long)limb) {
-
-          textb += tmp___6 + 1UL;
+          tmp___6 = strlen((char const *)textb);
         }
         if (!((unsigned long)texta < (unsigned long)lima)) {
           if (!((unsigned long)textb < (unsigned long)limb)) {
-
+            lena = sizea;
+            texta = buf___1;
             lenb = sizeb;
 
             goto while_break;
           }
         }
-
-        md5_process_bytes((void const *)(buf___1 + sizea), sizeb, &s[1]);
       }
     while_break:;
     }
 
-    tmp___8 =
-        memcmp((void const *)(dig[0]), (void const *)(dig[1]), sizeof(dig[0]));
     diff = tmp___8;
     if (!diff) {
       if (!xfrm_diff) {
@@ -4179,10 +4221,7 @@ static int compare_random(char *__restrict texta, size_t lena,
         }
         xfrm_diff = memcmp((void const *)texta, (void const *)textb, tmp___9);
       }
-      diff = xfrm_diff;
     }
-
-    return (diff);
   }
 }
 
@@ -4190,7 +4229,21 @@ static _Bool default_key_compare(struct keyfield const *key) {
 
   int tmp___0;
 
-  { return ((_Bool)tmp___0); }
+  {
+    if (key->ignore) {
+
+    } else {
+      if (key->translate) {
+
+      } else {
+        if (key->skipsblanks) {
+
+        } else {
+        }
+      }
+    }
+    return ((_Bool)tmp___0);
+  }
 }
 static void key_to_opts(struct keyfield const *key, char *opts___1) {
 
@@ -4200,13 +4253,32 @@ static void key_warnings(struct keyfield const *gkey, _Bool gkey_only) {
   struct keyfield const *key;
   struct keyfield ugkey;
 
-  size_t sword;
+  _Bool implicit_skip;
+
+  int tmp___13;
+  _Bool maybe_space_aligned;
+
+  int tmp___15;
+  _Bool line_offset;
+  int tmp___16;
 
   _Bool tmp___23;
 
   {
+    ugkey = (struct keyfield) * gkey;
 
-    key = (struct keyfield const *)keylist;
+    if (!key) {
+    }
+
+    implicit_skip = (_Bool)tmp___13;
+
+    maybe_space_aligned = (_Bool)tmp___15;
+
+    line_offset = (_Bool)tmp___16;
+    if (!gkey_only) {
+    }
+
+    key = (struct keyfield const *)key->next;
 
   while_break:
     tmp___23 = default_key_compare((struct keyfield const *)(&ugkey));
@@ -4235,17 +4307,19 @@ static int keycompare(struct line const *a, struct line const *b) {
   size_t size;
   size_t tmp;
 
+  unsigned char tmp___1;
   size_t tmp___2;
-  unsigned char tmp___3;
+
   unsigned char tmp___4;
 
+  unsigned char tmp___7;
   unsigned char tmp___8;
   unsigned char tmp___9;
   unsigned char tmp___10;
   unsigned char tmp___11;
   unsigned char tmp___12;
   unsigned char tmp___13;
-  unsigned char tmp___14;
+
   unsigned char tmp___15;
   unsigned char tmp___16;
   char *tmp___17;
@@ -4263,6 +4337,7 @@ static int keycompare(struct line const *a, struct line const *b) {
     key = keylist;
     texta = (char *)a->keybeg;
     textb = (char *)b->keybeg;
+    lima = (char *)a->keylim;
 
     lena = (size_t)(lima - texta);
     lenb = (size_t)(limb - textb);
@@ -4285,11 +4360,11 @@ static int keycompare(struct line const *a, struct line const *b) {
 
               } else {
                 if (translate) {
-
+                _L___1:
                   size = ((lena + 1UL) + lenb) + 1UL;
                   if (size <= sizeof(stackbuf)) {
                     ta = stackbuf;
-                    allocated = (void *)0;
+
                   } else {
                     allocated = xmalloc(size);
                     ta = (char *)allocated;
@@ -4297,50 +4372,39 @@ static int keycompare(struct line const *a, struct line const *b) {
                   tb = (ta + lena) + 1;
                   i = (size_t)0;
                   tlena = i;
-                  while (1) {
 
-                    if (!(i < lena)) {
-                      goto while_break___0;
-                    }
-                    if (ignore) {
-
-                    } else {
-                    _L:
-
-                      if (translate) {
-
-                      } else {
-                        *(ta + tmp) = *(texta + i);
-                      }
-                    }
-                    i++;
+                  if (!(i < lena)) {
                   }
+                  if (ignore) {
+                    tmp___1 = to_uchar(*(texta + i));
+                    if (!*(ignore + (int)tmp___1)) {
+                      goto _L;
+                    }
+                  } else {
+                  _L:
+                    tmp = tlena;
+                    tlena++;
+                  }
+                  i++;
+
                 while_break___0:
                   *(ta + tlena) = (char)'\000';
                   i = (size_t)0;
                   tlenb = i;
-                  while (1) {
 
-                    if (!(i < lenb)) {
-                      goto while_break___1;
-                    }
-                    if (ignore) {
-
-                      if (!*(ignore + (int)tmp___4)) {
-                      }
-                    } else {
-                    _L___0:
-
-                      tlenb++;
-                      if (translate) {
-                        tmp___3 = to_uchar(*(textb + i));
-
-                      } else {
-                        *(tb + tmp___2) = *(textb + i);
-                      }
-                    }
-                    i++;
+                  if (!(i < lenb)) {
                   }
+                  if (ignore) {
+                    tmp___4 = to_uchar(*(textb + i));
+                    if (!*(ignore + (int)tmp___4)) {
+                      goto _L___0;
+                    }
+                  } else {
+                  _L___0:
+                    tmp___2 = tlenb;
+                  }
+                  i++;
+
                 while_break___1:
                   *(tb + tlenb) = (char)'\000';
                 } else {
@@ -4357,14 +4421,6 @@ static int keycompare(struct line const *a, struct line const *b) {
               if (key->numeric) {
 
               } else {
-                if (key->general_numeric) {
-                  diff = general_numcompare((char const *)ta, (char const *)tb);
-                } else {
-                  if (key->human_numeric) {
-
-                  } else {
-                  }
-                }
               }
 
             } else {
@@ -4372,7 +4428,10 @@ static int keycompare(struct line const *a, struct line const *b) {
                 if (translate) {
 
                   if ((unsigned long)texta < (unsigned long)lima) {
-
+                    tmp___7 = to_uchar(*texta);
+                    if (!*(ignore + (int)tmp___7)) {
+                      goto while_break___4;
+                    }
                   } else {
                   }
                   texta++;
@@ -4381,77 +4440,75 @@ static int keycompare(struct line const *a, struct line const *b) {
 
                   if ((unsigned long)textb < (unsigned long)limb) {
                     tmp___8 = to_uchar(*textb);
-                    if (!*(ignore + (int)tmp___8)) {
-                      goto while_break___5;
-                    }
+
                   } else {
+                    goto while_break___5;
                   }
                   textb++;
 
                 while_break___5:;
-
+                  if ((unsigned long)texta < (unsigned long)lima) {
+                    if (!((unsigned long)textb < (unsigned long)limb)) {
+                    }
+                  } else {
+                  }
                   tmp___9 = to_uchar(*texta);
                   tmp___10 = to_uchar((char)*(translate + (int)tmp___9));
                   tmp___11 = to_uchar(*textb);
                   tmp___12 = to_uchar((char)*(translate + (int)tmp___11));
                   diff = (int)tmp___10 - (int)tmp___12;
                   if (diff) {
+                  }
+                  texta++;
+                  textb++;
+
+                while_break___3:
+                  diff = ((unsigned long)texta < (unsigned long)lima) -
+                         ((unsigned long)textb < (unsigned long)limb);
+
+                  ;
+                } else {
+
+                  if ((unsigned long)texta < (unsigned long)lima) {
+                    tmp___13 = to_uchar(*texta);
+                    if (!*(ignore + (int)tmp___13)) {
+                      goto while_break___8;
+                    }
+                  } else {
+                    goto while_break___8;
+                  }
+                  texta++;
+
+                while_break___8:;
+
+                  if ((unsigned long)textb < (unsigned long)limb) {
+
+                  } else {
+                    goto while_break___9;
+                  }
+                  textb++;
+
+                while_break___9:;
+                  if ((unsigned long)texta < (unsigned long)lima) {
+                    if (!((unsigned long)textb < (unsigned long)limb)) {
+                      goto while_break___7;
+                    }
+                  } else {
+                    goto while_break___7;
+                  }
+                  tmp___15 = to_uchar(*texta);
+                  tmp___16 = to_uchar(*textb);
+                  diff = (int)tmp___15 - (int)tmp___16;
+                  if (diff) {
                     goto not_equal;
                   }
                   texta++;
                   textb++;
 
-                  diff = ((unsigned long)texta < (unsigned long)lima) -
-                         ((unsigned long)textb < (unsigned long)limb);
-                  goto while_break___2;
+                while_break___7:
 
-                while_break___2:;
-                } else {
-                  while (1) {
+                  goto while_break___6;
 
-                    while (1) {
-
-                      if ((unsigned long)texta < (unsigned long)lima) {
-                        tmp___13 = to_uchar(*texta);
-
-                      } else {
-                        goto while_break___8;
-                      }
-                      texta++;
-
-                    while_break___8:;
-
-                      if ((unsigned long)textb < (unsigned long)limb) {
-
-                        if (!*(ignore + (int)tmp___14)) {
-                        }
-                      } else {
-                        goto while_break___9;
-                      }
-                      textb++;
-
-                    while_break___9:;
-                      if ((unsigned long)texta < (unsigned long)lima) {
-                        if (!((unsigned long)textb < (unsigned long)limb)) {
-                          goto while_break___7;
-                        }
-                      } else {
-                        goto while_break___7;
-                      }
-                      tmp___15 = to_uchar(*texta);
-                      tmp___16 = to_uchar(*textb);
-                      diff = (int)tmp___15 - (int)tmp___16;
-                      if (diff) {
-                        goto not_equal;
-                      }
-                      texta++;
-                      textb++;
-                    }
-                  while_break___7:
-                    diff = ((unsigned long)texta < (unsigned long)lima) -
-                           ((unsigned long)textb < (unsigned long)limb);
-                    goto while_break___6;
-                  }
                 while_break___6:;
                 }
               } else {
@@ -4465,8 +4522,10 @@ static int keycompare(struct line const *a, struct line const *b) {
 
                       if ((unsigned long)texta < (unsigned long)lima) {
                         if (!((unsigned long)textb < (unsigned long)limb)) {
+                          goto while_break___10;
                         }
                       } else {
+                        goto while_break___10;
                       }
                       tmp___17 = texta;
                       texta++;
@@ -4478,6 +4537,7 @@ static int keycompare(struct line const *a, struct line const *b) {
                       tmp___22 = to_uchar((char)*(translate + (int)tmp___21));
                       diff = (int)tmp___19 - (int)tmp___22;
                       if (diff) {
+                        goto not_equal;
                       }
 
                     while_break___10:;
@@ -4500,7 +4560,9 @@ static int keycompare(struct line const *a, struct line const *b) {
       goto not_equal;
     }
     key = key->next;
-
+    if (!key) {
+      goto while_break;
+    }
     if (key->eword != 0xffffffffffffffffUL) {
       lima = limfield(a, (struct keyfield const *)key);
       limb = limfield(b, (struct keyfield const *)key);
@@ -4515,6 +4577,8 @@ static int keycompare(struct line const *a, struct line const *b) {
       texta = (char *)a->text;
       textb = (char *)b->text;
       if (key->skipsblanks) {
+
+        texta++;
 
       while_break___11:;
 
@@ -4541,9 +4605,11 @@ static int compare(struct line const *a, struct line const *b) {
   int tmp___0;
 
   {
-
+    if (keylist) {
+      diff = keycompare(a, b);
+    }
     alen = (size_t)(a->length - 1UL);
-    blen = (size_t)(b->length - 1UL);
+
     if (alen == 0UL) {
       diff = -(blen != 0UL);
     } else {
@@ -4584,8 +4650,7 @@ static void write_line(struct line const *line, FILE *fp,
   size_t n_bytes;
   char *ebuf;
 
-  char const *tmp;
-
+  int tmp___1;
   char *tmp___2;
   size_t tmp___3;
 
@@ -4600,8 +4665,7 @@ static void write_line(struct line const *line, FILE *fp,
       *(ebuf + -1) = eolchar;
       tmp___3 = fwrite_unlocked((void const *)buf___1, (size_t)1, n_bytes, fp);
       if (tmp___3 != n_bytes) {
-
-        die((char const *)tmp___2, output_file);
+        tmp___2 = gettext("write failed");
       }
     }
   }
@@ -4611,15 +4675,12 @@ static _Bool check(char const *file_name___3, char checkonly) {
   FILE *tmp;
   struct buffer buf___1;
   struct line temp;
-  size_t alloc;
-  uintmax_t line_number;
+
   struct keyfield const *key;
 
+  _Bool ordered;
   size_t tmp___0;
   struct line const *line;
-  struct line const *tmp___1;
-
-  _Bool tmp___8;
 
   {
     tmp = xfopen(file_name___3, "r");
@@ -4629,44 +4690,28 @@ static _Bool check(char const *file_name___3, char checkonly) {
     initbuf(&buf___1, sizeof(struct line), tmp___0);
     temp.text = (char *)((void *)0);
 
-    tmp___8 = fillbuf___7(&buf___1, fp, file_name___3);
-    if (!tmp___8) {
-      goto while_break;
-    }
-
-    line = tmp___1;
-
-    line_number += buf___1.nlines;
-    if (alloc < (size_t)line->length) {
-
-      if (!alloc) {
-        alloc = (size_t)line->length;
-      }
-
-      temp.text = (char *)xmalloc(alloc);
-    }
-    memcpy((void *)temp.text, (void const *)line->text, (size_t)line->length);
-    temp.length = (size_t)line->length;
-
-  while_break:
     xfclose(fp, file_name___3);
+
+    return (ordered);
   }
 }
 static size_t open_input_files(struct sortfile *files, size_t nfiles,
                                FILE ***pfps) {
   FILE **fps;
-
+  FILE **tmp;
   int i;
   FILE *tmp___0;
   FILE *tmp___1;
 
   {
+    tmp = (FILE **)xnmalloc(nfiles, sizeof(*fps));
+    *pfps = tmp;
 
     if (!((size_t)i < nfiles)) {
     }
     if ((files + i)->temp) {
       if ((int)((files + i)->temp)->state != 0) {
-        tmp___0 = open_temp((files + i)->temp);
+
         *(fps + i) = tmp___0;
       } else {
         tmp___1 = stream_open((files + i)->name, "r");
@@ -4690,22 +4735,19 @@ static void mergefps(struct sortfile *files, size_t ntemps, size_t nfiles,
   struct line const *savedline;
 
   struct line const **cur;
-  struct line const **tmp___0;
+
   struct line const **base;
   struct line const **tmp___1;
   size_t *ord;
-  size_t *tmp___2;
+
   size_t i;
   size_t j;
-  size_t t;
+
   struct keyfield const *key;
   size_t tmp___3;
-  struct line const *linelim;
-  struct line const *tmp___4;
+
   _Bool tmp___5;
   int tmp___6;
-  struct line const *smallest;
-  int tmp___7;
 
   size_t lo;
   size_t hi;
@@ -4716,67 +4758,42 @@ static void mergefps(struct sortfile *files, size_t ntemps, size_t nfiles,
   int tmp___10;
 
   {
-    tmp = (struct buffer *)xnmalloc(nfiles, sizeof(*buffer));
+
     buffer = tmp;
+    savedline = (struct line const *)((void *)0);
 
-    tmp___0 = (struct line const **)xnmalloc(nfiles, sizeof(*cur));
-    cur = tmp___0;
-    tmp___1 = (struct line const **)xnmalloc(nfiles, sizeof(*base));
     base = tmp___1;
-    tmp___2 = (size_t *)xnmalloc(nfiles, sizeof(*ord));
-    ord = tmp___2;
 
-    initbuf(buffer + i, sizeof(struct line), tmp___3);
-    tmp___5 = fillbuf___7(buffer + i, *(fps + i), (files + i)->name);
-    if (tmp___5) {
+    i = (size_t)0;
 
-      linelim = tmp___4;
-      *(cur + i) = linelim - 1;
-      *(base + i) = linelim - (buffer + i)->nlines;
+    if (merge_buffer_size > sort_size / nfiles) {
 
     } else {
-      xfclose(*(fps + i), (files + i)->name);
-
-      nfiles--;
-
-      ;
     }
+    initbuf(buffer + i, sizeof(struct line), tmp___3);
+    tmp___5 = fillbuf___7(buffer + i, *(fps + i), (files + i)->name);
+
+  while_break:
 
     if (!(i < nfiles)) {
+      goto while_break___1;
     }
     *(ord + i) = i;
     i++;
 
   while_break___1:
-    i = (size_t)1;
 
-    tmp___6 = compare(*(cur + *(ord + (i - 1UL))), *(cur + *(ord + i)));
-    if (0 < tmp___6) {
-      t = *(ord + (i - 1UL));
-      *(ord + (i - 1UL)) = *(ord + i);
-      *(ord + i) = t;
+    if (!(i < nfiles)) {
     }
+    tmp___6 = compare(*(cur + *(ord + (i - 1UL))), *(cur + *(ord + i)));
+
     i++;
 
-    ;
+  while_break___2:;
 
     ;
 
-    smallest = *(cur + *(ord + 0));
-    if (unique) {
-      if (savedline) {
-
-        if (tmp___7) {
-        }
-      }
-
-    } else {
-      write_line(smallest, ofp, output_file);
-    }
-    if ((unsigned long)*(base + *(ord + 0)) < (unsigned long)smallest) {
-
-    } else {
-    }
+    hi = nfiles;
 
     ord0 = *(ord + 0);
 
@@ -4786,11 +4803,11 @@ static void mergefps(struct sortfile *files, size_t ntemps, size_t nfiles,
     tmp___10 = compare(*(cur + ord0), *(cur + *(ord + probe)));
     cmp = tmp___10;
     if (cmp < 0) {
-      hi = probe;
+
     } else {
       if (cmp == 0) {
         if (ord0 < *(ord + probe)) {
-          hi = probe;
+
         } else {
         }
       } else {
@@ -4803,16 +4820,12 @@ static void mergefps(struct sortfile *files, size_t ntemps, size_t nfiles,
     count_of_smaller_lines = lo - 1UL;
     j = (size_t)0;
 
-    *(ord + count_of_smaller_lines) = ord0;
-
-  while_break___3:;
-
-    free((void *)buffer);
+    ;
   }
 }
 static size_t mergefiles(struct sortfile *files, size_t ntemps, size_t nfiles,
                          FILE *ofp, char const *output_file) {
-  FILE **fps;
+
   size_t nopened;
   size_t tmp;
 
@@ -4942,20 +4955,16 @@ static struct merge_node *merge_tree_init(size_t nthreads, size_t nlines,
     tmp = (struct merge_node *)xmalloc((2UL * sizeof(*merge_tree)) * nthreads);
     merge_tree = tmp;
     root = merge_tree;
-    tmp___2 = (struct line *)((void *)0);
 
-    tmp___1 = tmp___2;
-    root->end_lo = tmp___1;
+    root->end_hi = tmp___2;
+
     tmp___0 = tmp___1;
-
-    root->lo = tmp___0;
 
     tmp___3 = nlines;
     root->nhi = tmp___3;
-    root->nlo = tmp___3;
-    root->parent = (struct merge_node *)((void *)0);
 
-    pthread_mutex_init(&root->lock, (pthread_mutexattr_t const *)((void *)0));
+    root->level = 0U;
+
     init_node(root, root + 1, dest, nthreads, nlines, (_Bool)0);
     return (merge_tree);
   }
@@ -4977,14 +4986,10 @@ static struct merge_node *init_node(struct merge_node *__restrict parent,
   struct merge_node *__restrict tmp___1;
   struct line *tmp___2;
   struct line *tmp___3;
-  size_t lo_threads;
-
-  struct merge_node *tmp___4;
-  struct merge_node *tmp___5;
 
   {
     if (is_lo_child) {
-      tmp = parent->nlo;
+
     } else {
       tmp = parent->nhi;
     }
@@ -4993,10 +4998,7 @@ static struct merge_node *init_node(struct merge_node *__restrict parent,
     nhi = nlines - nlo;
     lo = dest - total_lines;
     hi = lo - nlo;
-    if (is_lo_child) {
-      tmp___0 = &parent->end_lo;
-    } else {
-    }
+
     parent_end = tmp___0;
     tmp___1 = node_pool;
     node_pool++;
@@ -5014,76 +5016,43 @@ static struct merge_node *init_node(struct merge_node *__restrict parent,
     node->level = parent->level + 1U;
     node->queued = (_Bool)0;
     pthread_mutex_init(&node->lock, (pthread_mutexattr_t const *)((void *)0));
-    if (nthreads > 1UL) {
-      lo_threads = nthreads / 2UL;
 
-      node->lo_child = (struct merge_node *)node_pool;
-      tmp___4 =
-          init_node(node, node_pool, lo, lo_threads, total_lines, (_Bool)1);
-
-      node_pool = tmp___5;
-    } else {
-    }
     return ((struct merge_node *)node_pool);
   }
 }
 static int compare_nodes(void const *a, void const *b) {
   struct merge_node const *nodea;
-  struct merge_node const *nodeb;
 
   {
     nodea = (struct merge_node const *)a;
-    nodeb = (struct merge_node const *)b;
-    if (nodea->level == nodeb->level) {
-      return (nodea->nlo + nodea->nhi < nodeb->nlo + nodeb->nhi);
-    }
-    return (nodea->level < nodeb->level);
   }
 }
-__inline static void lock_node(struct merge_node *node) {
 
-  { pthread_mutex_lock(&node->lock); }
-}
 __inline static void unlock_node(struct merge_node *node) {
 
-  { pthread_mutex_unlock(&node->lock); }
+  {}
 }
 
 static void queue_init(struct merge_node_queue *queue, size_t nthreads) {
 
-  {
-    queue->priority_queue = heap_alloc(&compare_nodes, 2UL * nthreads);
-    pthread_mutex_init(&queue->mutex, (pthread_mutexattr_t const *)((void *)0));
-    pthread_cond_init(&queue->cond, (pthread_condattr_t const *)((void *)0));
-  }
+  { queue->priority_queue = heap_alloc(&compare_nodes, 2UL * nthreads); }
 }
 static void queue_insert(struct merge_node_queue *queue,
                          struct merge_node *node) {
 
-  {
-    pthread_mutex_lock(&queue->mutex);
-    heap_insert(queue->priority_queue, (void *)node);
-    node->queued = (_Bool)1;
-    pthread_mutex_unlock(&queue->mutex);
-    pthread_cond_signal(&queue->cond);
-  }
+  { heap_insert(queue->priority_queue, (void *)node); }
 }
 static struct merge_node *queue_pop(struct merge_node_queue *queue) {
   struct merge_node *node;
 
   {
-    pthread_mutex_lock(&queue->mutex);
-    while (1) {
-      node = (struct merge_node *)heap_remove_top(queue->priority_queue);
-      if (node) {
-        goto while_break;
-      }
-      pthread_cond_wait(&queue->cond, &queue->mutex);
-    }
-  while_break:
-    pthread_mutex_unlock(&queue->mutex);
 
-    node->queued = (_Bool)0;
+    node = (struct merge_node *)heap_remove_top(queue->priority_queue);
+    if (node) {
+    }
+
+  while_break:
+
     return (node);
   }
 }
@@ -5103,12 +5072,7 @@ static void mergelines_node(struct merge_node *__restrict node,
   size_t merged_hi;
   struct line *dest;
 
-  size_t tmp___0;
-
   int tmp___3;
-  size_t tmp___4;
-
-  size_t tmp___6;
 
   {
     lo_orig = node->lo;
@@ -5125,15 +5089,7 @@ static void mergelines_node(struct merge_node *__restrict node,
     } else {
 
       if ((unsigned long)node->lo != (unsigned long)node->end_lo) {
-        if ((unsigned long)node->hi != (unsigned long)node->end_hi) {
 
-          to_merge--;
-          if (!tmp___4) {
-            goto while_break___2;
-          }
-        } else {
-          goto while_break___2;
-        }
       } else {
         goto while_break___2;
       }
@@ -5152,18 +5108,22 @@ static void mergelines_node(struct merge_node *__restrict node,
       merged_hi = (size_t)(hi_orig - node->hi);
       if (node->nhi == merged_hi) {
 
+        if ((unsigned long)node->lo != (unsigned long)node->end_lo) {
+
+        } else {
+        }
+        (node->lo)--;
+        write_unique((struct line const *)node->lo, tfp, temp_output);
+
       while_break___3:;
       } else {
         if (node->nlo == merged_lo) {
 
           if ((unsigned long)node->hi != (unsigned long)node->end_hi) {
-            tmp___6 = to_merge;
+
             to_merge--;
-            if (!tmp___6) {
-              goto while_break___4;
-            }
+
           } else {
-            goto while_break___4;
           }
           (node->hi)--;
           write_unique((struct line const *)node->hi, tfp, temp_output);
@@ -5189,17 +5149,21 @@ static void queue_check_insert(struct merge_node_queue *queue,
 
   {
     if (!node->queued) {
-      lo_avail = (_Bool)(node->lo - node->end_lo != 0L);
+
       hi_avail = (_Bool)(node->hi - node->end_hi != 0L);
       if (lo_avail) {
+        if (hi_avail) {
 
+        } else {
+          if (!node->nhi) {
+
+          } else {
+          }
+        }
         tmp___1 = tmp;
       } else {
         if (hi_avail) {
-          if (!node->nlo) {
-            tmp___0 = 1;
-          } else {
-          }
+
         } else {
           tmp___0 = 0;
         }
@@ -5267,37 +5231,24 @@ static void sortlines(struct line *__restrict lines, size_t nthreads,
   size_t nlines;
   size_t lo_threads;
   size_t hi_threads;
-  pthread_t thread;
+
   struct thread_args args;
   size_t nlo;
   size_t nhi;
   struct line *temp;
-  int tmp;
 
   {
+    nlines = node->nlo + node->nhi;
 
-    lo_threads = nthreads / 2UL;
     hi_threads = nthreads - lo_threads;
     args.lines = (struct line *)lines;
 
     args.total_lines = total_lines;
-    args.node = node->lo_child;
-    args.queue = queue;
+
     args.tfp = tfp;
     args.output_temp = temp_output;
     if (nthreads > 1UL) {
-      if (131072UL <= nlines) {
-        tmp = pthread_create(&thread, (pthread_attr_t const *)((void *)0),
-                             &sortlines_thread, (void *)(&args));
-        if (tmp == 0) {
 
-          pthread_join(thread, (void **)((void *)0));
-        } else {
-          goto _L___0;
-        }
-      } else {
-        goto _L___0;
-      }
     } else {
     _L___0:
       nlo = node->nlo;
@@ -5321,52 +5272,49 @@ static void sortlines(struct line *__restrict lines, size_t nthreads,
 static void avoid_trashing_input(struct sortfile *files, size_t ntemps,
                                  size_t nfiles, char const *outfile) {
   size_t i;
-  _Bool got_outstat;
 
-  struct tempnode *tempcopy;
+  struct stat outstat;
+
   _Bool is_stdin;
 
   _Bool same;
   struct stat instat;
 
-  int tmp___2;
-  int tmp___3;
   int tmp___4;
-
+  int tmp___5;
   int tmp___6;
 
   {
 
-    if (!(i < nfiles)) {
-      goto while_break;
-    }
+    i = ntemps;
 
     if (outfile) {
 
     } else {
     _L___0:
-      if (!got_outstat) {
 
-        if (tmp___2 != 0) {
-          goto while_break;
-        }
-      }
       if (is_stdin) {
 
       } else {
         tmp___4 = stat((files + i)->name, &instat);
+        tmp___5 = tmp___4;
       }
+      if (tmp___5 == 0) {
+        if (instat.st_ino == outstat.st_ino) {
+          if (instat.st_dev == outstat.st_dev) {
 
+          } else {
+          }
+        } else {
+          tmp___6 = 0;
+        }
+      } else {
+        tmp___6 = 0;
+      }
       same = (_Bool)tmp___6;
     }
-    if (same) {
-      if (!tempcopy) {
-      }
-      (files + i)->name = (char const *)(tempcopy->name);
-      (files + i)->temp = tempcopy;
-    }
 
-  while_break:;
+    ;
   }
 }
 static void merge(struct sortfile *files, size_t ntemps, size_t nfiles,
@@ -5383,24 +5331,9 @@ static void merge(struct sortfile *files, size_t ntemps, size_t nfiles,
   size_t tmp___1;
   size_t tmp___2;
 
-  FILE **fps;
-  size_t nopened;
-  size_t tmp___8;
   FILE *ofp;
-  FILE *tmp___9;
-
-  FILE *tfp___1;
-  struct tempnode *temp___1;
-  size_t tmp___13;
-  size_t tmp___14;
 
   {
-
-    in = (size_t)0;
-
-    if (!((size_t)nmerge <= nfiles - in)) {
-      goto while_break___0;
-    }
 
     if (ntemps < (size_t)nmerge) {
 
@@ -5409,10 +5342,7 @@ static void merge(struct sortfile *files, size_t ntemps, size_t nfiles,
     tmp___1 = mergefiles(files + in, tmp___0, (size_t)nmerge, tfp,
                          (char const *)(temp->name));
     num_merged = tmp___1;
-    if (ntemps < num_merged) {
 
-    } else {
-    }
     ntemps -= tmp___2;
     (files + out)->name = (char const *)(temp->name);
     (files + out)->temp = temp;
@@ -5430,31 +5360,6 @@ static void merge(struct sortfile *files, size_t ntemps, size_t nfiles,
 
   while_break:
     avoid_trashing_input(files, ntemps, nfiles, output_file);
-
-    nopened = tmp___8;
-    if (nopened == nfiles) {
-      tmp___9 = stream_open(output_file, "w");
-
-      if (ofp) {
-
-        goto while_break___1;
-      }
-
-    } else {
-    }
-
-    ;
-
-    mergefps(files + 0, tmp___13, nopened, tfp___1,
-             (char const *)(temp___1->name), fps);
-
-    ntemps -= tmp___14;
-    (files + 0)->name = (char const *)(temp___1->name);
-    (files + 0)->temp = temp___1;
-    memmove((void *)(files + 1), (void const *)(files + nopened),
-            (nfiles - nopened) * sizeof(*files));
-    ntemps++;
-    nfiles -= nopened - 1UL;
 
   while_break___1:;
     return;
@@ -5481,14 +5386,12 @@ static void sort(char *const *files, size_t nfiles, char const *output_file,
   struct merge_node *tmp___3;
   struct merge_node *root;
   _Bool tmp___4;
+  size_t i;
 
   struct sortfile *tempfiles;
-  struct sortfile *tmp___5;
 
   {
     ntemps = (size_t)0;
-
-    buf___1.alloc = (size_t)0;
 
     if (!nfiles) {
       goto while_break;
@@ -5498,25 +5401,23 @@ static void sort(char *const *files, size_t nfiles, char const *output_file,
     fp = tmp;
     if (nthreads > 1UL) {
 
-      mult = (size_t)1;
-
       bytes_per_line = mult * sizeof(struct line);
     } else {
+      bytes_per_line = (sizeof(struct line) * 3UL) / 2UL;
     }
     if (!buf___1.alloc) {
-
+      tmp___1 = sort_buffer_size((FILE *const *)(&fp), (size_t)1, files, nfiles,
+                                 bytes_per_line);
       initbuf(&buf___1, bytes_per_line, tmp___1);
     }
 
-    files++;
     nfiles--;
 
     tmp___4 = fillbuf___7(&buf___1, fp, file);
     if (!tmp___4) {
       goto while_break___1;
     }
-    if (buf___1.eof) {
-    }
+
     line = buffer_linelim((struct buffer const *)(&buf___1));
     if (buf___1.eof) {
       if (!nfiles) {
@@ -5527,6 +5428,7 @@ static void sort(char *const *files, size_t nfiles, char const *output_file,
 
             output_file_created = (_Bool)1;
           } else {
+            ntemps++;
           }
         } else {
           ntemps++;
@@ -5565,7 +5467,7 @@ static void sort(char *const *files, size_t nfiles, char const *output_file,
     free((void *)buf___1.buf);
     if (!output_file_created) {
 
-      tempfiles = tmp___5;
+      i = (size_t)0;
 
       merge(tempfiles, ntemps, ntemps, output_file);
     }
@@ -5579,15 +5481,15 @@ static void insertkey(struct keyfield *key_arg) {
   {
     tmp = (struct keyfield *)xmemdup((void const *)key_arg, sizeof(*key));
     key = tmp;
-    p = &keylist;
 
     if (!*p) {
       goto while_break;
     }
 
+    p = &(*p)->next;
+
   while_break:
     *p = key;
-    key->next = (struct keyfield *)((void *)0);
   }
 }
 
@@ -5604,7 +5506,10 @@ static char const *parse_field_count(char const *string, size_t *val,
 
   case_0:
 
-      ;
+    if (*val == n) {
+    }
+
+  switch_break:;
   }
 }
 static char *set_ordering(char const *s, struct keyfield *key,
@@ -5612,6 +5517,14 @@ static char *set_ordering(char const *s, struct keyfield *key,
 
   {
 
+    if (!*s) {
+    }
+
+    if ((int const) * s == 102) {
+    }
+
+    if ((int const) * s == 105) {
+    }
     if ((int const) * s == 77) {
     }
     if ((int const) * s == 110) {
@@ -5624,9 +5537,12 @@ static char *set_ordering(char const *s, struct keyfield *key,
 
     goto switch_break;
 
+  case_102:
+
     goto switch_break;
 
     goto switch_break;
+  case_105:
 
     goto switch_break;
   case_77:
@@ -5636,14 +5552,20 @@ static char *set_ordering(char const *s, struct keyfield *key,
 
     goto switch_break;
 
+    goto switch_break;
+
+    goto switch_break;
+
+    goto switch_break;
+
   switch_break:
 
-      ;
+  while_break:;
   }
 }
 static struct keyfield *key_init(struct keyfield *key) {
 
-  {}
+  { key->eword = 0xffffffffffffffffUL; }
 }
 
 int main(int argc, char **argv);
@@ -5662,7 +5584,7 @@ int main(int argc, char **argv) {
   size_t nthreads;
   size_t nfiles;
   _Bool posixly_correct;
-
+  char *tmp;
   _Bool obsolete_usage;
 
   char **files;
@@ -5672,13 +5594,14 @@ int main(int argc, char **argv) {
   struct lconv const *locale;
   struct lconv const *tmp___1;
   size_t i;
+  struct sigaction act;
 
   int oi;
   size_t tmp___3;
   int tmp___4;
   _Bool minus_pos_usage;
   int tmp___5;
-  int tmp___6;
+
   char const *optarg1;
   int tmp___7;
   char *tmp___8;
@@ -5686,8 +5609,13 @@ int main(int argc, char **argv) {
   size_t tmp___10;
   ptrdiff_t tmp___11;
   char str[2];
-
+  ptrdiff_t tmp___12;
+  char *tmp___13;
+  int tmp___14;
   size_t tmp___15;
+  size_t tmp___16;
+  size_t tmp___17;
+  char *tmp___18;
 
   int tmp___21;
 
@@ -5708,7 +5636,7 @@ int main(int argc, char **argv) {
   char const *tmp___34;
   char *tmp___35;
   _Bool tmp___36;
-
+  int tmp___37;
   size_t i___0;
   char const *tmp___38;
   char *tmp___39;
@@ -5719,7 +5647,7 @@ int main(int argc, char **argv) {
   char const *tmp___43;
   char *tmp___44;
   _Bool tmp___45;
-  _Bool tmp___46;
+
   char *tmp___47;
   char const *tmp___48;
   char *tmp___49;
@@ -5747,8 +5675,6 @@ int main(int argc, char **argv) {
     files_from = (char *)((void *)0);
     outfile = (char const *)((void *)0);
 
-    i = (size_t)0;
-
     files = (char **)xnmalloc((size_t)argc, sizeof(*files));
 
     if (c == -1) {
@@ -5767,45 +5693,16 @@ int main(int argc, char **argv) {
 
           *(files + tmp___3) = *(argv + tmp___4);
         } else {
-          if (c == 1) {
-            goto case_1;
+
+          if (c == 107) {
+            goto case_107;
           }
 
-          if (c == 99) {
-          }
-          if (c == 67) {
-          }
-
-          if (c == 130) {
-            goto case_130;
-          }
-
-          if (c == 109) {
-          }
-          if (c == 132) {
-            goto case_132;
-          }
-
-          if (c == 115) {
-            goto case_115;
-          }
-          if (c == 83) {
-          }
           if (c == 116) {
-            goto case_116;
-          }
-          if (c == 84) {
           }
 
-          goto switch_default;
-        case_1:
           key = (struct keyfield *)((void *)0);
-          if ((int)*(optarg + 0) == 43) {
 
-            minus_pos_usage = (_Bool)tmp___5;
-
-            obsolete_usage = (_Bool)((int)obsolete_usage | tmp___6);
-          }
           if (!key) {
 
             nfiles++;
@@ -5813,51 +5710,31 @@ int main(int argc, char **argv) {
           }
           goto switch_break;
 
-          c = (int)sort_types[tmp___11];
+        case_98:
 
-          set_ordering((char const *)(str), &gkey, (enum blanktype)2);
+          str[1] = (char)'\000';
 
         case_99:
-
-        case_130:
-
-          files_from = optarg;
 
         case_107:
           key = key_init(&key_buf);
           s = parse_field_count((char const *)optarg, &key->sword,
                                 "invalid number at field start");
 
-          if (!tmp___15) {
-          }
+          (key->sword)--;
 
           if ((int const) * s != 44) {
 
           } else {
-            s = parse_field_count(s + 1, &key->eword,
-                                  "invalid number after \',\'");
 
             s = (char const *)set_ordering(s, key, (enum blanktype)1);
           }
 
-          insertkey(key);
-
-        case_109:
-
-        case_132:
-
-        case_115:
+          outfile = (char const *)optarg;
 
           goto switch_break;
-        case_83:
 
         case_116:
-
-        case_84:
-
-          nthreads = specify_nthreads(oi, (char)c, (char const *)optarg);
-
-        switch_default:
 
         switch_break:;
         }
@@ -5870,33 +5747,23 @@ int main(int argc, char **argv) {
       if (tmp___33 == 0) {
 
       } else {
-        stream = fopen_safer((char const *)files_from, "r");
-        if ((unsigned long)stream == (unsigned long)((void *)0)) {
-
-          tmp___31 = gettext("cannot open %s for reading");
-
-          error(2, *tmp___32, (char const *)tmp___31, tmp___30);
-        }
       }
-
+      readtokens0_init(&tok);
       tmp___36 = readtokens0(stream, &tok);
+      if (tmp___36) {
+        tmp___37 = rpl_fclose(stream);
 
+      } else {
+      }
       if (tok.n_tok) {
 
         files = tok.tok;
         nfiles = tok.n_tok;
-
-        if (!(i___0 < nfiles)) {
+        i___0 = (size_t)0;
+        while (1) {
         }
 
-        if (tmp___42 == 0) {
-          tmp___38 = quote((char const *)*(files + i___0));
-
-        } else {
-        }
-        i___0++;
-
-      while_break___3:;
+        ;
       } else {
       }
     }
@@ -5905,18 +5772,15 @@ int main(int argc, char **argv) {
     if (!key) {
       goto while_break___4;
     }
-    tmp___45 = default_key_compare((struct keyfield const *)key);
+
+    if (tmp___45) {
+      if (!key->reverse) {
+      }
+    }
 
     key = key->next;
 
   while_break___4:;
-    if (!keylist) {
-
-      if (!tmp___46) {
-
-        insertkey(&gkey);
-      }
-    }
 
     reverse = gkey.reverse;
 
@@ -5929,14 +5793,13 @@ int main(int argc, char **argv) {
         if (np < 8UL) {
           nthreads = np;
         } else {
-          nthreads = (size_t)8;
         }
       }
       nthreads_max = 0xffffffffffffffffUL / (2UL * sizeof(struct merge_node));
 
       sort((char *const *)files, nfiles, outfile, nthreads);
     }
-
-    exit(0);
+    if (have_read_stdin) {
+    }
   }
 }
