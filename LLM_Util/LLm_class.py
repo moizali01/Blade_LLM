@@ -74,7 +74,10 @@ class QAClass:
             # cls._embeddings = VoyageAIEmbeddings(model="voyage-code-2")
 
             splits = get_code_chunks(docs)
-            documents = [Document(page_content=split) for split in splits]
+            new_splits = [split for split in splits if len(split) > 2]
+            new_splits2 = doc_merger(new_splits)
+            # documents = [Document(page_content=split) for split in splits]
+            documents = [Document(page_content=split) for split in new_splits2]
             os.environ['GOOGLE_API_KEY'] = os.environ.get("GOOGLE_API_KEY")
             cls._embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
             cls._db = Chroma.from_documents(documents=documents, embedding=cls._embeddings)

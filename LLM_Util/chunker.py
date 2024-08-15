@@ -42,14 +42,9 @@ class Span:
     def __len__(self) -> int:
         # i.e. Span(a, b) = b - a
         return self.end - self.start
-    
-# example_file = "https://raw.githubusercontent.com/sweepai/sweep/b267b613d4c706eaf959fe6789f11e9a856521d1/sweepai/handlers/on_check_suite.py"
-# python_code = requests.get(example_file).text
 
-# with open("sort.c") as f:
-#     python_code = f.read()
-
-# tree = parser.parse(python_code.encode("utf-8"))
+def non_whitespace_len(s: str) -> int:  # new len function
+    return len(re.sub("\s", "", s))
 
 def get_line_number(index: int, source_code: str) -> int:
     total_chars = 0
@@ -59,14 +54,12 @@ def get_line_number(index: int, source_code: str) -> int:
             return line_number - 1
     return line_number
 
-def non_whitespace_len(s: str) -> int:  # new len function
-    return len(re.sub("\s", "", s))
 
 def chunker(
     tree: Tree,
     source_code: bytes,
     MAX_CHARS=512 * 3,
-    coalesce=50,  # Any chunk less than 50 characters long gets coalesced with the next chunk
+    coalesce=75,  # Any chunk less than 50 characters long gets coalesced with the next chunk
 ) -> list[Span]:
 
     # 1. Recursively form chunks based on the last post (https://docs.sweep.dev/blogs/chunking-2m-files)
@@ -94,18 +87,57 @@ def chunker(
         prev.end = curr.start
     curr.start = tree.root_node.end_byte
 
-    # 3. Combining small chunks with bigger ones
+    # # 3. Combining small chunks with bigger ones
+    # new_chunks = []
+    # current_chunk = Span(0, 0)
+    # for chunk in chunks:
+    #     current_chunk += chunk
+    #     if non_whitespace_len(
+    #         current_chunk.extract(source_code)
+    #     ) > coalesce and "\n" in current_chunk.extract(source_code):
+    #         new_chunks.append(current_chunk)
+    #         current_chunk = Span(chunk.end, chunk.end)
+    # if len(current_chunk) > 0:
+    #     new_chunks.append(current_chunk)
+
+    ######## Modified Step.3 Below ########
+
     new_chunks = []
     current_chunk = Span(0, 0)
+
     for chunk in chunks:
-        current_chunk += chunk
-        if non_whitespace_len(
-            current_chunk.extract(source_code)
-        ) > coalesce and "\n" in current_chunk.extract(source_code):
-            new_chunks.append(current_chunk)
-            current_chunk = Span(chunk.end, chunk.end)
+        # Extract the chunk's text from the source code
+        chunk_text = chunk.extract(source_code)
+        
+        # Check if the chunk starts with '}'
+        if chunk_text.strip().startswith('return') or chunk_text.strip() == '}' or chunk_text.strip() == '};':
+            # If it does, append the current chunk to new_chunks
+            # and then add the new chunk to the previous chunk
+            print("chunk to be appended: ", chunk_text)
+            if len(new_chunks) > 0:
+                previous_chunk = new_chunks.pop()
+                previous_chunk += chunk
+                new_chunks.append(previous_chunk)
+                # print("\n===========\n",previous_chunk.extract(source_code))
+                print("success")
+            else:
+                # If no previous chunk exists, just add it to the current_chunk
+                current_chunk += chunk
+        else:
+            # Regular processing: append the chunk to the current chunk
+            current_chunk += chunk
+            
+            # If the current_chunk is large enough or contains a newline
+            if (non_whitespace_len(current_chunk.extract(source_code)) > coalesce) and "\n" in current_chunk.extract(source_code):
+                new_chunks.append(current_chunk)
+                current_chunk = Span(chunk.end, chunk.end)
+
+    # Add any remaining current_chunk to new_chunks
     if len(current_chunk) > 0:
         new_chunks.append(current_chunk)
+
+    ######## Modified Step.3 Above ########
+
 
     # 4. Changing line numbers
     line_chunks = [
@@ -122,13 +154,10 @@ def chunker(
     return line_chunks
 
 
-def get_code_chunks(code_file: str) -> list[str]:
-
-
-
-    tree = parser.parse(code_file.encode("utf-8"))
-    chunks = chunker(tree, code_file)
-    return [chunk.extract_lines(code_file) for chunk in chunks]
+def get_code_chunks(python_code: str) -> list[str]:
+    tree = parser.parse(python_code.encode("utf-8"))
+    chunks = chunker(tree, python_code)
+    return [chunk.extract_lines(python_code) for chunk in chunks]
 
 # # Example usage
 # with open("../src/original.txt") as f:

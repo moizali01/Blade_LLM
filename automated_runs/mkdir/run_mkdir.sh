@@ -48,18 +48,25 @@ clear
 # run the program
 cd ../../src
 python3 blade.py -p target-program/mkdir-debloated.c -t target-program/mkdir.sh -u 1 -d 1
-cp mkdir-debloated.c ../automated_runs/rm/mkdir-debloated.c.blade.c
+cp mkdir-debloated.c.blade.c ../automated_runs/mkdir/gen/mkdir-debloated.c.blade.c
 # clear
+
+# add deadcode removal here
+python3 deadcode_removal.py
 
 # run generality cases
-cd $DIR
+cd $DIR/gen
 chmod +x mkdir_gen.sh
+chmod +x sec_gen.sh
+touch mkdir_generality_results.txt
+./mkdir_gen.sh >> mkdir_generality_results.txt
+echo " " >> mkdir_generality_results.txt
+./sec_gen.sh >> mkdir_generality_results.txt
 
-
-# ./mkdir_gen.sh > generality_results.txt
+# ./mkdir_gen.sh > mkdir_generality_results.txt
 # clear
 
-# echo "Results saved in generality_results.txt"
+# echo "Results saved in mkdir_generality_results.txt"
 
 exit 0
 
