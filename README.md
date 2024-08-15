@@ -2,7 +2,47 @@
 
 This repository contains a tool for debloating programs using Language Model (LLM) techniques, aimed at increasing the generality of debloating tools.
 
-## How to Set Up
+By default, the tool is setup to use Gemini 1.5 Flash as the LLM Model.
+
+## How to Set Up (in docker)
+
+### Installing dependancies
+
+You must install docker first. You may follow the following [link](https://docs.docker.com/engine/install/) for the relevant steps.
+
+
+### Setting up the tool
+Simply download the docker file from [here](https://github.com/moizali01/Blade_LLM/blob/main/docker/Dockerfile), and run the following commands in the directory in which the Dockerfile is located.
+
+```
+docker build -t blade-llm . 
+docker run --privileged -it blade-llm
+```
+
+### Setting Environment Variables
+Since we are using google's embeddings and AI model, you will have to setup an `.env` file with the API keys by the following steps: 
+
+1) Navigate to the `Blade_LLM` directory in the docker container.
+2) Create a file there named `.env`. The file should be in the following format:
+```
+GENAI_API_KEY=
+GOOGLE_API_KEY=
+```
+3. The google AI key can be obtained by visiting the following [Link](https://aistudio.google.com/)
+
+
+
+### Running the automated tests with Blade
+Navigate to  from the root directory and simply run any of the given scripts within the folder.
+
+### Automated Running
+1) navigate to `Blade_LLM/automated_runs` folder in the docker directory
+2) navigate to the relevant program.
+3) run the run_{program}.sh file
+4) It will run all processes and generate the debbloated code in the same directory.
+
+
+## Setup natively on linux (Without docker)
 
 ### Installation
 1. Clone this repository.
@@ -55,8 +95,4 @@ make -f test.mk test-4
 
 Note: You must install ollama on your system before running with Llama. If you do not have ollama setup, it is recommend changing to a different LLM from the available options. 
 
-### Automated Running
-1) navigate to automated_runs folder in the project directory
-2) navigate to the relevant program.
-3) run the run_{program}.sh file
-4) It will run all processes and generate the debbloated code the project directory
+

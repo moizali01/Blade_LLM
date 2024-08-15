@@ -5,13 +5,22 @@ from threading import Thread
 
 # Set the filename to be used
 filename = "mkdir-debloated.c.blade.c"
-# filename = input("Entcer the filename: ")
+# filename = input("Enter the filename: ")
+
+# Function to format the file with clang-format
+def run_clang_format():
+    clang_format_cmd = (
+        f'clang-format -style="{{ColumnLimit: 300, AllowShortFunctionsOnASingleLine: All, '
+        f'AllowShortIfStatementsOnASingleLine: true}}" -i {filename}'
+    )
+    subprocess.run(clang_format_cmd, shell=True, check=True)
 
 # Functions from deadcodeelimination.py
 def run_cppcheck():
+    run_clang_format()
     cmd = f'cppcheck --enable=unusedFunction --enable=style {filename} 2>&1 | grep -v "constVariablePointer" | grep -v "variableScope" | grep -v "unreadVariable" | grep -v "uninitvar" | grep -v "missingReturn" | grep {filename} > cppcheck_output.txt'
     subprocess.run(cmd, shell=True, check=True)
-
+ 
 def read_cppcheck_output():
     with open("cppcheck_output.txt", "r") as file:
         lines = file.readlines()
@@ -314,7 +323,7 @@ def compile_and_remove_errors():
 # Main execution
 def main():
     deadcode_elimination()
-    compile_and_remove_errors()
+    # compile_and_remove_errors()
     redundant_line_removal()
 
 if __name__ == "__main__":

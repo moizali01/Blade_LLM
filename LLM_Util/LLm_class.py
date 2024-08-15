@@ -77,7 +77,6 @@ class QAClass:
             # new_splits = [split for split in splits if len(split) > 4]
             # new_splits2 = doc_merger(new_splits)
             # documents = [Document(page_content=split) for split in new_splits2]
-            # os.environ["VOYAGE_API_KEY"] = "pa--BOSQZqPkJiCF1-o9yaoFgh00DW_W0PQUh37N9vY6DU"
             # os.environ["VOYAGE_API_KEY"] = os.environ.get("VOYAGE_API_KEY")
             # cls._embeddings = VoyageAIEmbeddings(model="voyage-code-2")
 
@@ -105,19 +104,18 @@ class QAClass:
     def combine_docs(self, docs):
         return "\n\n".join(f"Snippet.{i+1}:\n\n{doc.page_content}" for i, doc in enumerate(docs))
 
-    # os.environ["GROQ_API_KEY"] = "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"
-    os.environ["GROQ_API_KEY"] = os.environ.get("GROQ_API_KEY")
-    def call_groq(self,prompt):
-            client = Groq(
-                api_key=os.environ.get("GROQ_API_KEY"),
-            )
-            chat_completion = client.chat.completions.create(
-                temperature=0.1,
-                messages=[{"role": "user", "content": prompt},],
-                model="gemma-7b-it",
-            )
+    # os.environ["GROQ_API_KEY"] = os.environ.get("GROQ_API_KEY")
+    # def call_groq(self,prompt):
+    #         client = Groq(
+    #             api_key=os.environ.get("GROQ_API_KEY"),
+    #         )
+    #         chat_completion = client.chat.completions.create(
+    #             temperature=0.1,
+    #             messages=[{"role": "user", "content": prompt},],
+    #             model="gemma-7b-it",
+    #         )
 
-            return chat_completion.choices[0].message.content
+    #         return chat_completion.choices[0].message.content
 
     # LOCAL LLM FUNCTIONS END HERE
     # ********************************************
@@ -131,11 +129,10 @@ class QAClass:
         # 1. ***** OpenAI API (Azure AI Search) *****
 
         # Setting up environment variables 
-        os.environ["OPENAI_API_TYPE"] = "Azure"
-        os.environ["OPENAI_API_VERSION"] = "2023-05-15"
-        os.environ["OPENAI_API_BASE"] = "https://debb.openai.azure.com/"
-        # os.environ["OPENAI_API_KEY"] = "b549b12be3b64063a0963a3fd1755fe6"
-        os.environ["OPENAI_API_KEY"] = os.environ.get("OPENAI_API_KEY")
+        # os.environ["OPENAI_API_TYPE"] = "Azure"
+        # os.environ["OPENAI_API_VERSION"] = "2023-05-15"
+        # os.environ["OPENAI_API_BASE"] = "https://debb.openai.azure.com/"
+        # os.environ["OPENAI_API_KEY"] = os.environ.get("OPENAI_API_KEY")
 
         # # Suppressing warnings
         # with warnings.catch_warnings():
