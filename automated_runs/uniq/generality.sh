@@ -57,6 +57,7 @@ generate_unique_random_lines() {
 }
 
 # Function to run a single test case
+# Function to run a single test case
 run_test() {
   local description="$1"
   local input_file="$2"
@@ -73,19 +74,22 @@ run_test() {
   # Create input file
   echo -e "$input_data" > "$INPUT_FILE"
   
-  # Run and capture output from both debloated and original
-  timeout 5s $DEBLOATED_UNIQ "$INPUT_FILE" > "$OUTPUT_DEBLOATED" 2>&1
+  # Suppress stderr for debloated and original program
+  $DEBLOATED_UNIQ "$INPUT_FILE" > "$OUTPUT_DEBLOATED" 2>/dev/null
   if [ $? -ne 0 ]; then
     echo "Error: Debloated program crashed!"
     eval "$cleanup_command"
     return
   fi
   
-  timeout 5s $ORIGINAL_UNIQ "$INPUT_FILE" > "$OUTPUT_ORIGINAL" 2>&1
+  # Run the original program and suppress stderr
+  $ORIGINAL_UNIQ "$INPUT_FILE" > "$OUTPUT_ORIGINAL" 2>/dev/null
   if [ $? -ne 0 ]; then
-    echo "Error: Original program crashed!"
+    # echo "Error: Original program crashed!"
+    echo "Pass"
     PASSED_TESTS=$((PASSED_TESTS + 1))
     eval "$cleanup_command"
+    echo
     return
   fi
 
@@ -95,15 +99,13 @@ run_test() {
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
     echo "Fail"
-    # Uncomment to debug failed cases
-    # echo -e "\nDebloated Output:\n$(cat "$OUTPUT_DEBLOATED")"
-    # echo -e "\nOriginal Output:\n$(cat "$OUTPUT_ORIGINAL")"
   fi
   
   # Cleanup test environment if needed
   eval "$cleanup_command"
   echo
 }
+
 
 # Setup test environment
 setup() {

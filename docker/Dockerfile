@@ -49,7 +49,17 @@ RUN wget https://bootstrap.pypa.io/get-pip.py && \
 # Create symlink for python3
 RUN ln -sf /usr/local/bin/python3.10 /usr/bin/python3
 
-# Clone and build the Chisel project
+# Install cppcheck
+RUN wget https://github.com/danmar/cppcheck/archive/2.13.0.tar.gz -O cppcheck-2.13.0.tar.gz && \
+    tar -xzf cppcheck-2.13.0.tar.gz && \
+    cd cppcheck-2.13.0 && \
+    mkdir build && cd build && \
+    cmake .. && \
+    make && make install && \
+    cd ../../ && \
+    rm -rf cppcheck-2.13.0 cppcheck-2.13.0.tar.gz
+
+# Clone and build the Blade project
 RUN git clone https://github.com/moizali01/Blade_LLM
 
 # Install Python dependencies
