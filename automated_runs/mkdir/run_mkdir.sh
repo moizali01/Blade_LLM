@@ -11,6 +11,11 @@ cd ../../
 
 # Copy all files need for run to relevant locations
 cd $DIR
+
+if [ ! -d "../../src/target-program" ]; then
+    mkdir -p ../../src/target-program
+fi
+
 cp mkdir-debloated.c ../../src/target-program/mkdir-debloated.c
 cp mkdir-5.2.1.c.origin.c ../../src/target-program/mkdir-5.2.1.c.origin.c
 cp mkdir.sh ../../src/target-program/mkdir.sh
