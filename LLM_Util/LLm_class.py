@@ -27,6 +27,8 @@ from tree_sitter_languages import get_language, get_parser
 from llama_index.core.text_splitter import CodeSplitter
 from dotenv import load_dotenv
 from LLM_Util.chunker import get_code_chunks
+import subprocess
+
 
 dotenv_path = '../.env'
 load_dotenv(dotenv_path)
@@ -40,7 +42,7 @@ def doc_merger(splits):
     current = 0
     while True:
         doc_lines = len(splits[current].splitlines())
-        if doc_lines < 5:
+        if doc_lines < 3:
             # merge with next doc
             splits[current] += splits[current + 1]
             splits.pop(current + 1)
@@ -60,6 +62,12 @@ class QAClass:
         if cls._embeddings is None or cls._db is None:
 
             ########### Voyage Code Embeddings ############
+
+            command = ["clang-format","-style={ColumnLimit: 300, AllowShortFunctionsOnASingleLine: All, AllowShortIfStatementsOnASingleLine: true}","-i","original.txt"]
+
+            # Run the command
+            subprocess.run(command, check=True)
+
             file_path = "original.txt"
             with open(file_path, "r") as f:
                 docs = f.read()

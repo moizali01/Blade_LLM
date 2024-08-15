@@ -113,13 +113,11 @@ def chunker(
         if chunk_text.strip().startswith('return') or chunk_text.strip() == '}' or chunk_text.strip() == '};':
             # If it does, append the current chunk to new_chunks
             # and then add the new chunk to the previous chunk
-            print("chunk to be appended: ", chunk_text)
             if len(new_chunks) > 0:
                 previous_chunk = new_chunks.pop()
                 previous_chunk += chunk
                 new_chunks.append(previous_chunk)
                 # print("\n===========\n",previous_chunk.extract(source_code))
-                print("success")
             else:
                 # If no previous chunk exists, just add it to the current_chunk
                 current_chunk += chunk
