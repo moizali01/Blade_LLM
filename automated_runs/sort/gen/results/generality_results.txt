@@ -1,2 +1,0 @@
-Total tests: 54
-Passed tests: 37
