@@ -38,6 +38,7 @@ mkdir -p context
 mkdir -p pretext_code
 mkdir -p removed_code
 mkdir -p llm_response
+mkdir -p fifty_text
 
 cd ..
 chmod +x clear_cands.sh
@@ -52,7 +53,7 @@ cp mkdir-debloated.c.blade.c ../automated_runs/mkdir/gen/mkdir-debloated.c.blade
 # clear
 
 # add deadcode removal here
-python3 deadcode_removal.py
+# python3 deadcode_removal.py
 
 # run generality cases
 cd $DIR/gen
@@ -63,8 +64,6 @@ touch mkdir_generality_results.txt
 echo " " >> mkdir_generality_results.txt
 ./sec_gen.sh >> mkdir_generality_results.txt
 
-# ./mkdir_gen.sh > mkdir_generality_results.txt
-# clear
 
 # echo "Results saved in mkdir_generality_results.txt"
 

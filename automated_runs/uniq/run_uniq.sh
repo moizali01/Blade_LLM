@@ -28,6 +28,7 @@ mkdir -p context
 mkdir -p pretext_code
 mkdir -p removed_code
 mkdir -p llm_response
+mkdir -p fifty_text
 
 cd ..
 chmod +x clear_cands.sh
