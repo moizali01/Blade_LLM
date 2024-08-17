@@ -22,6 +22,7 @@ clear
 cd $DIR
 cp prompt_in_coverage.txt ../../LLM_Util/prompt_in_coverage.txt
 cp prompt_not_in_coverage.txt ../../LLM_Util/prompt_not_in_coverage.txt
+cp sec_list.txt ../../LLM_Util/sec_list.txt
 clear
 
 # clear cands
@@ -48,14 +49,9 @@ cp deb.c.blade.c ../automated_runs/rm/deb.c.blade.c
 
 # run generality cases
 cd $DIR
-chmod +x test_score.sh
-mkdir -p bins
-clang -w deb.c.blade.c -o bins/rm-rf
-clang -w deb.c.blade.c -o bins/rm-r
-clang -w deb.c.blade.c -o bins/rm-f
-clang -w deb.c.blade.c -o bins/rm-i
+chmod +x generality.sh
 
-./test_score.sh > generality_results.txt
+./generality.sh > generality_results.txt
 # clear
 
 echo "Results saved in generality_results.txt"

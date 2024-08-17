@@ -1,0 +1,28 @@
+* **Race conditions:**  Multiple processes attempting to remove files simultaneously can lead to unexpected behavior or data corruption.
+* **Symbolic links:**  Handle symbolic links securely by distinguishing them from regular files using lstat, preventing accidental link traversal, and safeguarding against symlink attacks by verifying ownership and preventing race conditions.
+* **File permissions:**  Test scenarios where the user lacks permissions to remove files or directories. The program should handle permission errors gracefully.
+* **File system errors:** Test scenarios where file system errors occur during removal (e.g., disk full, corrupted inode, etc.). The program should handle these errors robustly.
+* **Directory traversal:**  Ensure the program handles directory traversal correctly, including scenarios involving circular directory structures.
+* **File locking:** Test the program's behavior when attempting to remove files that are locked by other processes. The program should either handle the lock or fail gracefully with an appropriate error.
+* **Signal handling:** Test the program's behavior when receiving signals like SIGINT (Ctrl+C) or SIGTERM. The program should handle these signals gracefully, perhaps by interrupting the removal operation.
+* **Malicious input:**  Test with carefully crafted input, including filenames with unusual characters, spaces, or special characters, to ensure the program handles them correctly and doesn't become vulnerable to injection attacks.
+* **Resource exhaustion:** Test the program's behavior when processing a large number of files or a deeply nested directory structure. The program should avoid memory leaks or buffer overflows. Variables that have important data should not be freed before the removal of that data.
+* **Corner cases:** Test scenarios involving file names like ".", "..", or empty strings.
+* **File system type:** Test the program's behavior on different types of file systems (e.g., ext2, ext3, XFS, NTFS). Some file systems may have specific behaviors that need to be accounted for.
+* **Hard links:**  The program should handle hard links correctly. Deleting a file with hard links should not remove the file completely. 
+* **Ulimits:**  Test the program's behavior when the user has limited resource constraints, such as limited file descriptors or process memory. 
+* **Security hardening:**  If the program relies on external libraries or system calls, test those components for vulnerabilities. 
+* **Privilege escalation:**  Verify that the program cannot be used for privilege escalation (e.g., by manipulating file ownership or permissions).
+* **Time-of-check-to-time-of-use (TOCTOU):** Test for TOCTOU vulnerabilities, where the program checks the state of a file but then performs an action on it after a possible change in state.
+* **Data integrity:**  Ensure that the removal process doesn't introduce data corruption or inconsistencies in the file system.
+* **Error messages:** The program should provide clear and informative error messages in all situations.
+* **Environment variables:**  Verify that the program is not susceptible to injection attacks through environment variables. 
+* **Buffer overflows:** Test for potential buffer overflows in functions that handle user-supplied input, especially when dealing with filenames.
+* **Integer overflows:**  Test for potential integer overflows in calculations related to file sizes, offsets, or other numerical values.
+* **Unintentional file deletion:**  Ensure that the program does not accidentally delete files outside of the specified path, especially when using the `-r` option.
+* **File system integrity:**  Test the program's behavior on a file system that is already in a corrupted state. The program should handle such situations gracefully.
+* **File system consistency:**  Ensure that the program maintains file system consistency after removing files or directories.
+* **Security hardening:**  Test the program's behavior when run with different user privileges (e.g., root vs. non-root).
+* **Input validation:**  Test the program's behavior with invalid input, such as non-existent files, invalid file names, or malformed paths.
+* **Resource cleanup:**  Ensure that the program properly cleans up resources (e.g., file descriptors, memory) after completing its operations.
+* **Error handling:**  Test the program's behavior when encountering errors during file removal, such as permission errors, I/O errors, or file system errors.
