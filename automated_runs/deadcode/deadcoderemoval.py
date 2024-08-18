@@ -4,13 +4,11 @@ import time
 from threading import Thread
 
 # global variable
-filename = "sort-llm.c"
-# filename = input("Enter the filename: ")
+# filename = "sort-llm.c"
+filename = input("Enter the filename: ")
 
 def run_cppcheck():
-    # Run the cppcheck command and filter the output
-
-    cmd = f'cppcheck --enable=unusedFunction --enable=style {filename} 2>&1 | grep -v "constVariablePointer" | grep -v "variableScope" | grep -v "unreadVariable" | grep -v "uninitvar" | grep -v "missingReturn" | grep {filename} > cppcheck_output.txt'
+    cmd = rf'cppcheck --enable=unusedFunction --enable=style -D__attribute__\(x\)= {filename} 2>&1 | grep -v "constVariablePointer" | grep -v "variableScope" | grep -v "unreadVariable" | grep -v "uninitvar" | grep -v "missingReturn" | grep {filename} > cppcheck_output.txt'
     subprocess.run(cmd, shell=True, check=True)
 
 def read_cppcheck_output():
@@ -18,30 +16,6 @@ def read_cppcheck_output():
     with open("cppcheck_output.txt", "r") as file:
         lines = file.readlines()
     return lines
-
-def parse_syntax_error(lines):
-    # Parse the cppcheck output to find the syntax error line number
-    for line in lines:
-        match = re.search(rf'{re.escape(filename)}:(\d+):\d+: error', line)
-        if match:
-            return int(match.group(1))
-    return None
-
-def comment_out_line_in_file(line_number):
-    # Read the file content
-    with open(filename, "r") as file:
-        lines = file.readlines()
-
-    # Comment out the specified line
-    if line_number <= len(lines):
-        if lines[line_number - 1].endswith("\n"):
-            lines[line_number - 1] = "// " + lines[line_number - 1][:-1] + "----- this is a temporary automated comment.\n"
-        else:
-            lines[line_number - 1] = "// " + lines[line_number - 1] + "----- this is a temporary automated comment.\n"
-
-    # Write the modified content back to the file
-    with open(filename, "w") as file:
-        file.writelines(lines)
 
 def find_function_boundaries(lines, start_line):
     brace_count = 0
@@ -120,13 +94,11 @@ def modify_file_to_remove_unused_lines(line_numbers, action="remove"):
                     continue
                 lines.pop(line_number - 1)
 
-
     # Write the modified content back to the file
     with open(filename, "w") as file:
         file.writelines(lines)
 
 def deadcode_elimination():
-    # read the total number of lines in the file
     previous_total_lines = 0
     iterations = 0
     while True:
@@ -142,16 +114,7 @@ def deadcode_elimination():
             previous_total_lines = total_lines
         
         print("Starting the dead code elimination process...")
-        while True:
-            run_cppcheck()
-            lines = read_cppcheck_output()
-            line_number = parse_syntax_error(lines)
-            if line_number is None:
-                # print("No more syntax errors found.")
-                break
-            comment_out_line_in_file(line_number)
-
-        # check for unused functions, labels, struct members, and variables
+        run_cppcheck()
         print("Checking for unused functions, labels, struct members, and variables...")
         lines = read_cppcheck_output()
         unused_lines = parse_unsused_warnings(lines)
@@ -173,9 +136,7 @@ def deadcode_elimination():
 
     # finally delete the cppcheck output file and run the test script
     subprocess.run("rm cppcheck_output.txt", shell=True)
-    # subprocess.run("./sort_test_new.sh", shell=True)
 
-# Functions from remove-redundant-lines.py
 def remove_cluttered_code(file_path):
     with open(file_path, 'r') as file:
         lines = file.readlines()
@@ -189,7 +150,7 @@ def remove_cluttered_code(file_path):
         line = lines[i].strip()
 
         if ':' in line:
-                print("skipping the next line after line", line)
+                # print("skipping the next line after line", line)
                 modified_lines.append(line)
                 previous_colon = True
                 i += 1
@@ -225,7 +186,6 @@ def remove_cluttered_code(file_path):
     with open(file_path, 'w') as file:
         file.writelines(modified_lines)
 
-
 def remove_insignificant_lines(file_path):
     with open(file_path, 'r') as file:
         lines = file.readlines()
@@ -256,7 +216,7 @@ def remove_insignificant_lines(file_path):
                 previous_empty_line = False
 
             if ':' in stripped_line:
-                print("skipping the next line after line", line)
+                # print("skipping the next line after line", line)
                 modified_lines.append(line)
                 previous_colon = True
                 continue
@@ -300,7 +260,6 @@ def remove_insignificant_lines(file_path):
     with open(file_path, 'w') as file:
         file.writelines(current_lines)
 
-
 def redundant_line_removal():
     print("Running remove_comments...")
     remove_cluttered_code(filename)
@@ -323,46 +282,19 @@ def redundant_line_removal():
     run_clang_format()
     print(f"Processing completed for {filename}.")
 
-# New function to compile with clang and remove the line causing the first error
-def compile_and_remove_errors():
-    while True:
-        result = subprocess.run(["clang", "-w", filename], capture_output=True, text=True)
-        if result.returncode == 0:
-            print(f"{filename} compiled successfully without errors.")
-            break
-        else:
-            # Extract the first error line number
-            match = re.search(rf'{re.escape(filename)}:(\d+):', result.stderr)
-            if match:
-                line_number = int(match.group(1)) - 1
-                # print("Error: ", result.stderr)
-                print(f"Removing line {line_number} due to compilation error.")
-                with open(filename, "r") as file:
-                    lines = file.readlines()
-                if line_number <= len(lines):
-                    lines.pop(line_number - 1)
-                with open(filename, "w") as file:
-                    file.writelines(lines)
-            else:
-                print("No line number found in the error message. Exiting.")
-                break
-    pass
-
-# Main execution
-def main():
-    deadcode_elimination()
-    # compile_and_remove_errors()
-    redundant_line_removal()
-
-def get_clang_version():
-    result = subprocess.run(["clang-format", "--version"], capture_output=True, text=True)
-    print(result.stdout)
-
 def run_clang_format():
     subprocess.run(["clang-format", "-style={ColumnLimit: 300, AllowShortFunctionsOnASingleLine: All, AllowShortIfStatementsOnASingleLine: true}", "-i", filename], capture_output=True, text=True)
     
+def main():
+    run_clang_format()
+    deadcode_elimination()
+    redundant_line_removal()
 
 if __name__ == "__main__":
-    run_clang_format()
-    main()
-    # get_clang_version()
+    start = time.time()
+    main_thread = Thread(target=main)
+    main_thread.start()
+    while main_thread.is_alive():
+        print(f"Time elapsed: {time.time() - start:.2f} seconds", end="\r")
+        time.sleep(10)
+    print(f"Time elapsed: {time.time() - start:.2f} seconds")
