@@ -5,8 +5,8 @@ from threading import Thread
 import shutil
 
 # global variable
-filename = "/Blade_LLM/automated_runs/sort/gen/sort-util.c.blade.c"
-# filename = input("Enter the filename: ")
+# filename = "/Blade_LLM/automated_runs/sort/gen/sort-util.c.blade.c"
+filename = input("Enter the filename: ")
 
 # def compile_file():
 
