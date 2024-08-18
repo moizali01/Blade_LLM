@@ -2,10 +2,26 @@ import subprocess
 import re
 import time
 from threading import Thread
+import shutil
 
 # global variable
-# filename = "sort-llm.c"
-filename = input("Enter the filename: ")
+filename = "/Blade_LLM/automated_runs/sort/gen/sort-util.c.blade.c"
+# filename = input("Enter the filename: ")
+
+# def compile_file():
+
+#     subprocess.run(["clang-format", "-i", filename])
+#     compile_command = f"clang -w {filename} 2> compile_output.txt"
+
+#     result = subprocess.run(compile_command, shell=True) 
+#     subprocess.run(f"rm compile_output.txt", shell=True)
+#     if result.returncode != 0:
+#         shutil.copy(f"{filename}.bak", filename) 
+#         subprocess.run(f"rm {filename}.bak", shell=True)
+#         return False
+#     else:
+#         subprocess.run(f"rm {filename}.bak", shell=True)
+#         return True
 
 def run_cppcheck():
     cmd = rf'cppcheck --enable=unusedFunction --enable=style -D__attribute__\(x\)= {filename} 2>&1 | grep -v "constVariablePointer" | grep -v "variableScope" | grep -v "unreadVariable" | grep -v "uninitvar" | grep -v "missingReturn" | grep {filename} > cppcheck_output.txt'
@@ -165,6 +181,7 @@ def remove_cluttered_code(file_path):
                 previous_colon = False
 
         # if line == ';' or re.match(r'^\s*/\*.*\*/\s*$', line):
+
         if line == re.match(r'^\s*/\*.*\*/\s*$', line):
             i += 1
             continue
@@ -187,6 +204,15 @@ def remove_cluttered_code(file_path):
         file.writelines(modified_lines)
 
 def remove_insignificant_lines(file_path):
+    with open (file_path, 'r') as file:
+        lines = file.read()
+
+    lines, count_else = re.subn(
+        r'\}\s*else\s*\{\s*\}', '}', lines)
+    
+    with open (file_path, 'w') as file:
+        file.write(lines)
+
     with open(file_path, 'r') as file:
         lines = file.readlines()
 
@@ -279,8 +305,35 @@ def redundant_line_removal():
     print("Running remove_ifelse again...")
     remove_insignificant_lines(filename)
 
+    # print ("Running remove_semi_colons...")
+    # remove_semi_colons()
+
     run_clang_format()
     print(f"Processing completed for {filename}.")
+
+# def remove_semi_colons():
+#     with open(filename, "r") as file:
+#         lines = file.readlines()
+    
+
+#     i = 0
+#     while i < len(lines):
+#         if lines[i].strip() == ';':
+#             lines.pop(i)
+#             shutil.copy(filename, f"{filename}.bak")
+#             with open(filename, "w") as file:
+#                 file.writelines(lines)
+            
+#             # Compile the file after each modification
+#             if not compile_file():
+#                 with open(filename, "r") as file:
+#                     lines = file.readlines()
+#                 i += 1
+#         else:
+#             i += 1
+
+#     with open(filename, "w") as file:
+#         file.writelines(lines)
 
 def run_clang_format():
     subprocess.run(["clang-format", "-style={ColumnLimit: 300, AllowShortFunctionsOnASingleLine: All, AllowShortIfStatementsOnASingleLine: true}", "-i", filename], capture_output=True, text=True)
