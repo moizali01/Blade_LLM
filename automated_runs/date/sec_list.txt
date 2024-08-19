@@ -1,0 +1,20 @@
+- **Race conditions:**  The program interacts with the filesystem, which can be modified by other processes.  Ensure tests account for potential race conditions, especially when dealing with directory traversal and file creation/deletion.
+- **Symbolic link handling:**  Test cases should include scenarios with symbolic links, both valid and invalid, to verify the program's behavior with `--dereference` and `--no-dereference`.
+- **File system errors:**  Test the program's response to various file system errors, such as permission denied, file not found, and disk full.
+- **Resource exhaustion:**  Test the program's behavior when encountering resource limitations, such as memory exhaustion or open file limits.
+- **Input validation:**  Test the program's handling of invalid input, including malformed file paths, invalid user/group names, and incorrect numeric values.
+- **Privilege escalation:**  Ensure the program does not allow an unprivileged user to change the ownership of files owned by root or other privileged users.
+- **Directory traversal:**  Test the program's ability to traverse directories correctly, including scenarios with circular directory structures.
+- **File system corruption:**  Test the program's behavior when encountering a corrupted file system, ensuring it does not cause further damage.
+- **Security hardening:**  Verify that the program uses appropriate security measures, such as setting the close-on-exec flag for file descriptors and sanitizing user input.
+- **Buffer overflows:**  Test for potential buffer overflows in the program's input handling and string manipulation functions.
+- **Integer overflows:**  Test for potential integer overflows in the program's calculations, especially when dealing with file sizes and file system statistics.
+- **Time-of-check-to-time-of-use (TOCTOU) vulnerabilities:**  Test for TOCTOU vulnerabilities, where the program's assumptions about the file system state may be invalidated between checks and actions.
+- **Denial of service:**  Test for potential denial-of-service attacks, such as causing the program to consume excessive resources or crash.
+- **Cross-site scripting (XSS) vulnerabilities:**  While unlikely in a core utility, test for any potential XSS vulnerabilities if the program interacts with user-provided input that could be displayed on a web page.
+- **Command injection:**  Ensure the program does not allow command injection vulnerabilities, where user-provided input could be executed as a system command.
+- **Path traversal:**  Test for path traversal vulnerabilities, where user-provided input could be used to access files outside the intended directory.
+- **Unintentional data disclosure:**  Ensure the program does not unintentionally disclose sensitive information, such as file contents or system configuration details.
+- **Improper error handling:**  Test the program's error handling mechanisms, ensuring that errors are reported appropriately and that the program does not crash or behave unexpectedly.
+- **Sanitization of user input:**  Verify that the program properly sanitizes user input to prevent malicious code injection.
+- **Use of secure libraries:**  Ensure the program uses secure libraries and functions for file system operations, string manipulation, and other critical tasks. 
