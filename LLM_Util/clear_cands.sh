@@ -14,8 +14,5 @@ rm -rf *.txt
 cd ../context
 rm -rf *.c
 cd ..
-cd response_firstpass
-rm -rf *.txt
-cd ..
 cd fifty_text
 rm -rf *.c
