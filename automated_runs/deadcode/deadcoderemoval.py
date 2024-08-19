@@ -8,21 +8,6 @@ import shutil
 # filename = "/Blade_LLM/automated_runs/sort/gen/sort-util.c.blade.c"
 filename = input("Enter the filename: ")
 
-# def compile_file():
-
-#     subprocess.run(["clang-format", "-i", filename])
-#     compile_command = f"clang -w {filename} 2> compile_output.txt"
-
-#     result = subprocess.run(compile_command, shell=True) 
-#     subprocess.run(f"rm compile_output.txt", shell=True)
-#     if result.returncode != 0:
-#         shutil.copy(f"{filename}.bak", filename) 
-#         subprocess.run(f"rm {filename}.bak", shell=True)
-#         return False
-#     else:
-#         subprocess.run(f"rm {filename}.bak", shell=True)
-#         return True
-
 def run_cppcheck():
     cmd = rf'cppcheck --enable=unusedFunction --enable=style -D__attribute__\(x\)= {filename} 2>&1 | grep -v "constVariablePointer" | grep -v "variableScope" | grep -v "unreadVariable" | grep -v "uninitvar" | grep -v "missingReturn" | grep {filename} > cppcheck_output.txt'
     subprocess.run(cmd, shell=True, check=True)
@@ -65,7 +50,6 @@ def parse_unsused_warnings(lines):
     unused_lines = []
     patterns = [
         rf'{re.escape(filename)}:(\d+):\d+: style: Label .* is not used\. \[unusedLabel\]',
-        # rf'{re.escape(filename)}:(\d+):\d+: style: struct member .* is never used\. \[unusedStructMember\]',
         # rf'{re.escape(filename)}:(\d+):\d+: style: Unused variable: .* \[unusedVariable\]',
         # rf'{re.escape(filename)}:(\d+):\d+: style: Variable .* is reassigned a value before the old one has been used\. \[redundantAssignment\]',
         # rf'{re.escape(filename)}:(\d+):\d+: style: Variable .* is not assigned a value\. \[unassignedVariable\]'
@@ -181,7 +165,6 @@ def remove_cluttered_code(file_path):
                 previous_colon = False
 
         # if line == ';' or re.match(r'^\s*/\*.*\*/\s*$', line):
-
         if line == re.match(r'^\s*/\*.*\*/\s*$', line):
             i += 1
             continue
@@ -255,7 +238,6 @@ def remove_insignificant_lines(file_path):
                     previous_colon = False
 
                 
-
             # Check for empty if-else or while statements
             if re.match(r'^\s*(if|else|while)\s*(\(.*\))?\s*{?\s*$', line):
                 # Look ahead to see if the block is empty
@@ -267,9 +249,7 @@ def remove_insignificant_lines(file_path):
                         modified_lines.pop()
                     skip_current_block = True
                     continue
-
                 
-
             modified_lines.append(line)
 
         return modified_lines
@@ -311,29 +291,6 @@ def redundant_line_removal():
     run_clang_format()
     print(f"Processing completed for {filename}.")
 
-# def remove_semi_colons():
-#     with open(filename, "r") as file:
-#         lines = file.readlines()
-    
-
-#     i = 0
-#     while i < len(lines):
-#         if lines[i].strip() == ';':
-#             lines.pop(i)
-#             shutil.copy(filename, f"{filename}.bak")
-#             with open(filename, "w") as file:
-#                 file.writelines(lines)
-            
-#             # Compile the file after each modification
-#             if not compile_file():
-#                 with open(filename, "r") as file:
-#                     lines = file.readlines()
-#                 i += 1
-#         else:
-#             i += 1
-
-#     with open(filename, "w") as file:
-#         file.writelines(lines)
 
 def run_clang_format():
     subprocess.run(["clang-format", "-style={ColumnLimit: 300, AllowShortFunctionsOnASingleLine: All, AllowShortIfStatementsOnASingleLine: true}", "-i", filename], capture_output=True, text=True)

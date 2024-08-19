@@ -7,10 +7,13 @@ RUN apt-get update && apt-get install -y software-properties-common wget gnupg b
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     apt-add-repository "deb http://apt.llvm.org/buster/ llvm-toolchain-buster-14 main" && \
     apt-get update && \
-    apt-get install -y clang-14 libclang-14-dev llvm-14-dev cmake git wget clang-format
+    apt-get install -y clang-14 libclang-14-dev llvm-14-dev llvm-14-tools cmake git wget clang-format
 
 # Create symlinks for LLVM tools
-RUN ln -s /usr/bin/clang-14 /usr/bin/clang && ln -s /usr/bin/llvm-config-14 /usr/bin/llvm-config
+RUN ln -sf /usr/bin/clang-14 /usr/bin/clang && \
+    ln -sf /usr/bin/llvm-config-14 /usr/bin/llvm-config && \
+    ln -sf /usr/bin/llvm-profdata-14 /usr/bin/llvm-profdata && \
+    ln -sf /usr/bin/llvm-cov-14 /usr/bin/llvm-cov
 
 # Install other required packages
 RUN apt-get install -y libcurl4-openssl-dev astyle
