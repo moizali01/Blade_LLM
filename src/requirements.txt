@@ -1,4 +1,0 @@
-clang==14.0
-libclang==14.0.6
-numpy<2.0.0
-tqdm

@@ -10,9 +10,6 @@
 /build/
 /dist/
 
-# Ignore package manager directories
-/node_modules/
-/vendor/
 
 # Ignore log files
 *.log
@@ -28,12 +25,17 @@ Thumbs.db
 
 __pycache__/
 
+# Ignore temporary files
+LLM_Util/prompt*
+LLM_Util/sec_list.txt
+LLM_Util/coverage.txt
 LLM_Util/cands*/
 src/processing/
 src/target-program/
 src/*.blade.c
+src/original.txt
 
-# jaroori
+# Ignore environment files
 .env
 
 testing/

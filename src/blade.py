@@ -2,6 +2,7 @@
 import clang.cindex
 import time
 import argparse
+import subprocess
 import sys
 import os
 from make_dir_duplicates import copy_dir, rm_dir, copy_target_program, get_file_name

@@ -46,14 +46,4 @@ def exist(file_path):
     coverage, _ = check_coverage('../LLM_Util/coverage.txt', first_line, last_line)
     return coverage
     
-# file_path = 'context_time_17-08-08-322.blade.c'
 
-
-# Print the results
-# print(f"The first line of actual code is: {first_line}")
-# print(f"The last line of actual code is: {last_line}")
-# print(f"Code coverage: {'In coverage' if coverage else 'Not in coverage'}")
-
-# print("\nCode segment and execution counts:")
-# for exec_count, code_line in code_segment:
-#     print(f"{exec_count:3} & {code_line}")

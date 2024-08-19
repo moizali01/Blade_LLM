@@ -43,7 +43,7 @@ Navigate to `Blade_LLM/automated_runs` from the root directory and simply run an
 4) It will run all processes and generate the debloated code along with the generality results in the same directory.
 
 
-## Setup natively on linux (Without docker)
+<!-- ## Setup natively on linux (Without docker)
 
 ### Installation
 1. Clone this repository.
@@ -96,4 +96,4 @@ make -f test.mk test-4
 
 Note: You must install ollama on your system before running with Llama. If you do not have ollama setup, it is recommend changing to a different LLM from the available options. 
 
-
+ -->
