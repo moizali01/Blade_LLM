@@ -1,0 +1,486 @@
+#######################################################
+############### AUTOMATED TESTING #####################
+############## chown-8.2 testing ######################
+#######################################################
+
+starting...
+
+Testing command: chown -R user1 "testdir_shallow"
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_shallow:      
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 4 root root 4096 20 ..
+drwxr-xr-x 3 user1 root 4096 20 dir1
+-rw-r--r-- 1 user1 root 0 20 file1
+      
+testdir_shallow/dir1:      
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+drwxr-xr-x 3 user1 root 4096 20 dir2
+      
+testdir_shallow/dir1/dir2:      
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+drwxr-xr-x 2 user1 root 4096 20 dir3
+      
+testdir_shallow/dir1/dir2/dir3:      
+total 8     
+drwxr-xr-x 2 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_shallow:      
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 4 root root 4096 20 ..
+drwxr-xr-x 3 user1 root 4096 20 dir1
+-rw-r--r-- 1 user1 root 0 20 file1
+      
+testdir_shallow/dir1:      
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+drwxr-xr-x 3 user1 root 4096 20 dir2
+      
+testdir_shallow/dir1/dir2:      
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+drwxr-xr-x 2 user1 root 4096 20 dir3
+      
+testdir_shallow/dir1/dir2/dir3:      
+total 8     
+drwxr-xr-x 2 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+Testing command: chown -R user1 "testdir_deep/level1/level2/level3"
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_deep/level1/level2/level3:      
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 root root 4096 20 ..
+drwxr-xr-x 3 user1 root 4096 20 dir1
+-rw-r--r-- 1 user1 root 0 20 file1
+      
+testdir_deep/level1/level2/level3/dir1:      
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+drwxr-xr-x 3 user1 root 4096 20 dir2
+      
+testdir_deep/level1/level2/level3/dir1/dir2:      
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+drwxr-xr-x 2 user1 root 4096 20 dir3
+      
+testdir_deep/level1/level2/level3/dir1/dir2/dir3:      
+total 8     
+drwxr-xr-x 2 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_deep/level1/level2/level3:      
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 root root 4096 20 ..
+drwxr-xr-x 3 user1 root 4096 20 dir1
+-rw-r--r-- 1 user1 root 0 20 file1
+      
+testdir_deep/level1/level2/level3/dir1:      
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+drwxr-xr-x 3 user1 root 4096 20 dir2
+      
+testdir_deep/level1/level2/level3/dir1/dir2:      
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+drwxr-xr-x 2 user1 root 4096 20 dir3
+      
+testdir_deep/level1/level2/level3/dir1/dir2/dir3:      
+total 8     
+drwxr-xr-x 2 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+Testing command: chown -R user1 "testdir_mixed/level1/level2 with spaces/level3"
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_mixed/level1/level2 with spaces/level3:    
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 root root 4096 20 ..
+drwxr-xr-x 3 user1 root 4096 20 dir1
+-rw-r--r-- 1 user1 root 0 20 file1
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1:    
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+drwxr-xr-x 3 user1 root 4096 20 dir2
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1/dir2:    
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+drwxr-xr-x 2 user1 root 4096 20 dir3
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1/dir2/dir3:    
+total 8     
+drwxr-xr-x 2 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_mixed/level1/level2 with spaces/level3:    
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 root root 4096 20 ..
+drwxr-xr-x 3 user1 root 4096 20 dir1
+-rw-r--r-- 1 user1 root 0 20 file1
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1:    
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+drwxr-xr-x 3 user1 root 4096 20 dir2
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1/dir2:    
+total 12     
+drwxr-xr-x 3 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+drwxr-xr-x 2 user1 root 4096 20 dir3
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1/dir2/dir3:    
+total 8     
+drwxr-xr-x 2 user1 root 4096 20 .
+drwxr-xr-x 3 user1 root 4096 20 ..
+Testing command: chown -R :group1 "testdir_shallow"
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_shallow:      
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 6 root root 4096 20 ..
+drwxr-xr-x 3 root group1 4096 20 dir1
+-rw-r--r-- 1 root group1 0 20 file1
+      
+testdir_shallow/dir1:      
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+drwxr-xr-x 3 root group1 4096 20 dir2
+      
+testdir_shallow/dir1/dir2:      
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+drwxr-xr-x 2 root group1 4096 20 dir3
+      
+testdir_shallow/dir1/dir2/dir3:      
+total 8     
+drwxr-xr-x 2 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_shallow:      
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 6 root root 4096 20 ..
+drwxr-xr-x 3 root group1 4096 20 dir1
+-rw-r--r-- 1 root group1 0 20 file1
+      
+testdir_shallow/dir1:      
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+drwxr-xr-x 3 root group1 4096 20 dir2
+      
+testdir_shallow/dir1/dir2:      
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+drwxr-xr-x 2 root group1 4096 20 dir3
+      
+testdir_shallow/dir1/dir2/dir3:      
+total 8     
+drwxr-xr-x 2 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+Testing command: chown -R :group1 "testdir_deep/level1/level2/level3"
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_deep/level1/level2/level3:      
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root root 4096 20 ..
+drwxr-xr-x 3 root group1 4096 20 dir1
+-rw-r--r-- 1 root group1 0 20 file1
+      
+testdir_deep/level1/level2/level3/dir1:      
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+drwxr-xr-x 3 root group1 4096 20 dir2
+      
+testdir_deep/level1/level2/level3/dir1/dir2:      
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+drwxr-xr-x 2 root group1 4096 20 dir3
+      
+testdir_deep/level1/level2/level3/dir1/dir2/dir3:      
+total 8     
+drwxr-xr-x 2 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_deep/level1/level2/level3:      
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root root 4096 20 ..
+drwxr-xr-x 3 root group1 4096 20 dir1
+-rw-r--r-- 1 root group1 0 20 file1
+      
+testdir_deep/level1/level2/level3/dir1:      
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+drwxr-xr-x 3 root group1 4096 20 dir2
+      
+testdir_deep/level1/level2/level3/dir1/dir2:      
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+drwxr-xr-x 2 root group1 4096 20 dir3
+      
+testdir_deep/level1/level2/level3/dir1/dir2/dir3:      
+total 8     
+drwxr-xr-x 2 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+Testing command: chown -R :group1 "testdir_mixed/level1/level2 with spaces/level3"
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_mixed/level1/level2 with spaces/level3:    
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root root 4096 20 ..
+drwxr-xr-x 3 root group1 4096 20 dir1
+-rw-r--r-- 1 root group1 0 20 file1
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1:    
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+drwxr-xr-x 3 root group1 4096 20 dir2
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1/dir2:    
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+drwxr-xr-x 2 root group1 4096 20 dir3
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1/dir2/dir3:    
+total 8     
+drwxr-xr-x 2 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_mixed/level1/level2 with spaces/level3:    
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root root 4096 20 ..
+drwxr-xr-x 3 root group1 4096 20 dir1
+-rw-r--r-- 1 root group1 0 20 file1
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1:    
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+drwxr-xr-x 3 root group1 4096 20 dir2
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1/dir2:    
+total 12     
+drwxr-xr-x 3 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+drwxr-xr-x 2 root group1 4096 20 dir3
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1/dir2/dir3:    
+total 8     
+drwxr-xr-x 2 root group1 4096 20 .
+drwxr-xr-x 3 root group1 4096 20 ..
+Testing command: chown -R user1:group1 "testdir_shallow"
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_shallow:      
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 6 root root 4096 20 ..
+drwxr-xr-x 3 user1 group1 4096 20 dir1
+-rw-r--r-- 1 user1 group1 0 20 file1
+      
+testdir_shallow/dir1:      
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+drwxr-xr-x 3 user1 group1 4096 20 dir2
+      
+testdir_shallow/dir1/dir2:      
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+drwxr-xr-x 2 user1 group1 4096 20 dir3
+      
+testdir_shallow/dir1/dir2/dir3:      
+total 8     
+drwxr-xr-x 2 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_shallow:      
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 6 root root 4096 20 ..
+drwxr-xr-x 3 user1 group1 4096 20 dir1
+-rw-r--r-- 1 user1 group1 0 20 file1
+      
+testdir_shallow/dir1:      
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+drwxr-xr-x 3 user1 group1 4096 20 dir2
+      
+testdir_shallow/dir1/dir2:      
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+drwxr-xr-x 2 user1 group1 4096 20 dir3
+      
+testdir_shallow/dir1/dir2/dir3:      
+total 8     
+drwxr-xr-x 2 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+Testing command: chown -R user1:group1 "testdir_deep/level1/level2/level3"
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_deep/level1/level2/level3:      
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 root root 4096 20 ..
+drwxr-xr-x 3 user1 group1 4096 20 dir1
+-rw-r--r-- 1 user1 group1 0 20 file1
+      
+testdir_deep/level1/level2/level3/dir1:      
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+drwxr-xr-x 3 user1 group1 4096 20 dir2
+      
+testdir_deep/level1/level2/level3/dir1/dir2:      
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+drwxr-xr-x 2 user1 group1 4096 20 dir3
+      
+testdir_deep/level1/level2/level3/dir1/dir2/dir3:      
+total 8     
+drwxr-xr-x 2 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_deep/level1/level2/level3:      
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 root root 4096 20 ..
+drwxr-xr-x 3 user1 group1 4096 20 dir1
+-rw-r--r-- 1 user1 group1 0 20 file1
+      
+testdir_deep/level1/level2/level3/dir1:      
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+drwxr-xr-x 3 user1 group1 4096 20 dir2
+      
+testdir_deep/level1/level2/level3/dir1/dir2:      
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+drwxr-xr-x 2 user1 group1 4096 20 dir3
+      
+testdir_deep/level1/level2/level3/dir1/dir2/dir3:      
+total 8     
+drwxr-xr-x 2 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+Testing command: chown -R user1:group1 "testdir_mixed/level1/level2 with spaces/level3"
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_mixed/level1/level2 with spaces/level3:    
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 root root 4096 20 ..
+drwxr-xr-x 3 user1 group1 4096 20 dir1
+-rw-r--r-- 1 user1 group1 0 20 file1
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1:    
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+drwxr-xr-x 3 user1 group1 4096 20 dir2
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1/dir2:    
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+drwxr-xr-x 2 user1 group1 4096 20 dir3
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1/dir2/dir3:    
+total 8     
+drwxr-xr-x 2 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_mixed/level1/level2 with spaces/level3:    
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 root root 4096 20 ..
+drwxr-xr-x 3 user1 group1 4096 20 dir1
+-rw-r--r-- 1 user1 group1 0 20 file1
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1:    
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+drwxr-xr-x 3 user1 group1 4096 20 dir2
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1/dir2:    
+total 12     
+drwxr-xr-x 3 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+drwxr-xr-x 2 user1 group1 4096 20 dir3
+      
+testdir_mixed/level1/level2 with spaces/level3/dir1/dir2/dir3:    
+total 8     
+drwxr-xr-x 2 user1 group1 4096 20 .
+drwxr-xr-x 3 user1 group1 4096 20 ..
+
+test run completed!

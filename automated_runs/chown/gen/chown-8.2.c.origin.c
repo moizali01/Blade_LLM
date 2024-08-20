@@ -7017,42 +7017,23 @@ int main(int argc, char **argv) {
   struct Chown_option chopt;
   _Bool ok;
   int optc;
-  char *u_dummy;
-  char *g_dummy;
-  char const *e;
-  char const *tmp;
-  char const *tmp___0;
-  char *tmp___1;
-  char *tmp___2;
-  char const *tmp___3;
-  char *tmp___4;
-  int tmp___5;
+
   struct stat ref_stats;
-  char const *tmp___6;
-  char *tmp___7;
-  int *tmp___8;
+
   int tmp___9;
   char const *e___0;
   char const *tmp___10;
-  char const *tmp___11;
-  char const *tmp___12;
-  char *tmp___13;
-  int *tmp___14;
+
   int tmp___15;
 
   {
-    preserve_root = (_Bool)0;
+
     uid = (uid_t)-1;
     gid = (gid_t)-1;
     required_uid = (uid_t)-1;
-    required_gid = (gid_t)-1;
+
     bit_flags = 16;
-    dereference = -1;
-    set_program_name((char const *)*(argv + 0));
-    setlocale(6, "");
-    bindtextdomain("coreutils", "/usr/local/share/locale");
-    textdomain("coreutils");
-    atexit(&close_stdout);
+
     chopt_init(&chopt);
     while (1) {
       optc = getopt_long(argc, (char *const *)argv, "HLPRcfhv",
@@ -7060,182 +7041,65 @@ int main(int argc, char **argv) {
       if (!(optc != -1)) {
         goto while_break;
       }
-      if (optc == 72) {
-        goto case_72;
-      }
-      if (optc == 76) {
-        goto case_76;
-      }
-      if (optc == 80) {
-        goto case_80;
-      }
-      if (optc == 104) {
-        goto case_104;
-      }
-      if (optc == 128) {
-        goto case_128;
-      }
-      if (optc == 130) {
-        goto case_130;
-      }
+
       if (optc == 131) {
-        goto case_131;
       }
-      if (optc == 132) {
-        goto case_132;
-      }
-      if (optc == 129) {
-        goto case_129;
-      }
+
       if (optc == 82) {
         goto case_82;
       }
-      if (optc == 99) {
-        goto case_99;
-      }
-      if (optc == 102) {
-        goto case_102;
-      }
-      if (optc == 118) {
-        goto case_118;
-      }
-      if (optc == -130) {
-        goto case_neg_130;
-      }
-      if (optc == -131) {
-        goto case_neg_131;
-      }
+
       goto switch_default;
-    case_72:
-      bit_flags = 17;
+
       goto switch_break;
-    case_76:
-      bit_flags = 2;
-      goto switch_break;
-    case_80:
+
       bit_flags = 16;
       goto switch_break;
-    case_104:
-      dereference = 0;
+
       goto switch_break;
-    case_128:
-      dereference = 1;
+
       goto switch_break;
-    case_130:
-      preserve_root = (_Bool)0;
-      goto switch_break;
+
     case_131:
-      preserve_root = (_Bool)1;
+
       goto switch_break;
-    case_132:
-      reference_file = optarg;
-      goto switch_break;
-    case_129:
-      tmp = parse_user_spec((char const *)optarg, &required_uid, &required_gid,
-                            &u_dummy, &g_dummy);
-      e = tmp;
-      if (e) {
-        tmp___0 = quote((char const *)optarg);
-        error(1, 0, "%s: %s", e, tmp___0);
-      }
-      goto switch_break;
+
     case_82:
-      chopt.recurse = (_Bool)1;
+
       goto switch_break;
-    case_99:
-      chopt.verbosity = (enum Verbosity)1;
-      goto switch_break;
-    case_102:
-      chopt.force_silent = (_Bool)1;
-      goto switch_break;
-    case_118:
-      chopt.verbosity = (enum Verbosity)0;
-      goto switch_break;
-    case_neg_130:
-      usage(0);
-      goto switch_break;
-    case_neg_131:
-      version_etc(stdout, "chown", "GNU coreutils", Version, "David MacKenzie",
-                  "Jim Meyering", (char *)((void *)0));
-      exit(0);
+
       goto switch_break;
     switch_default:
       usage(1);
     switch_break:;
     }
   while_break:;
-    if (chopt.recurse) {
-      if (bit_flags == 16) {
-        if (dereference == 1) {
-          tmp___1 = gettext("-R --dereference requires either -H or -L");
-          error(1, 0, (char const *)tmp___1);
-        }
-        dereference = 0;
-      }
-    } else {
-      bit_flags = 16;
-    }
+
     chopt.affect_symlink_referent = (_Bool)(dereference != 0);
     if (reference_file) {
-      tmp___5 = 1;
+
     } else {
-      tmp___5 = 2;
     }
-    if (argc - optind < tmp___5) {
-      if (argc <= optind) {
-        tmp___2 = gettext("missing operand");
-        error(0, 0, (char const *)tmp___2);
-      } else {
-        tmp___3 = quote((char const *)*(argv + (argc - 1)));
-        tmp___4 = gettext("missing operand after %s");
-        error(0, 0, (char const *)tmp___4, tmp___3);
-      }
-      usage(1);
-    }
+
     if (reference_file) {
-      tmp___9 = stat((char const *)reference_file, &ref_stats);
+
       if (tmp___9) {
-        tmp___6 = quote((char const *)reference_file);
-        tmp___7 = gettext("failed to get attributes of %s");
-        tmp___8 = __errno_location();
-        error(1, *tmp___8, (char const *)tmp___7, tmp___6);
       }
-      uid = ref_stats.st_uid;
-      gid = ref_stats.st_gid;
-      chopt.user_name = uid_to_name(ref_stats.st_uid);
-      chopt.group_name = gid_to_name(ref_stats.st_gid);
+
     } else {
       tmp___10 = parse_user_spec((char const *)*(argv + optind), &uid, &gid,
                                  &chopt.user_name, &chopt.group_name);
       e___0 = tmp___10;
-      if (e___0) {
-        tmp___11 = quote((char const *)*(argv + optind));
-        error(1, 0, "%s: %s", e___0, tmp___11);
-      }
-      if (!chopt.user_name) {
-        if (chopt.group_name) {
-          chopt.user_name = bad_cast("");
-        }
-      }
+
       optind++;
     }
-    if (chopt.recurse) {
-      if (preserve_root) {
-        chopt.root_dev_ino = get_root_dev_ino(&dev_ino_buf);
-        if ((unsigned long)chopt.root_dev_ino == (unsigned long)((void *)0)) {
-          tmp___12 = quote("/");
-          tmp___13 = gettext("failed to get attributes of %s");
-          tmp___14 = __errno_location();
-          error(1, *tmp___14, (char const *)tmp___13, tmp___12);
-        }
-      }
-    }
+
     bit_flags |= 1024;
     ok = chown_files(argv + optind, bit_flags, uid, gid, required_uid,
                      required_gid, (struct Chown_option const *)(&chopt));
-    chopt_free(&chopt);
+
     if (ok) {
-      tmp___15 = 0;
+
     } else {
       tmp___15 = 1;
     }

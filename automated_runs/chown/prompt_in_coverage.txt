@@ -23,10 +23,9 @@ Final Verdict: <assigned class> (1-4)
 
 Required Functionality:
 
-The given code belongs to the chown core utility and is used only with the -R flag which operate on files and directories recursively. For this task we only want to change the ownership of an entire directory and its contents using the -R flag. Any other functionality is not considered relevant.
+The given code belongs to the chown core utility and is used only with the -R flag, which operates on files and directories recursively. For this task, we only want to change the ownership of an entire directory and its contents using the -R flag. Everything concerning the proper functionality of the -R flag is considered important. We must cater to all edge cases ONLY related to the -R flag's functionality, including the safe and accurate traversal of directories, particularly when moving between parent and child directories or handling symbolic links. Any other functionality apart from the -R flag is not considered relevant.
 
-
-To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing:
+To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list of vulnerabilities that the code may be preventing. Please give emphasis to analyzing whether the provided snippet is important for preventing any of the given mentioned vulnerabilities:
 
 #########
 
@@ -60,4 +59,4 @@ Query:
 
 Make sure to evaluate only on the basis of the functionality and the possibility of security vulnerabilities mentioned above about the -R flag to create a directory with specific permissions. We are not concerned with any other functionalities such as verbose or symbolic link functionalities. 
 
-Make sure you do not add any information on your own. Consider all four snippets in the provided context to explain the queried code. If you do not know the answer, simply state that you do not know. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.
+Make sure you do not add any information on your own. Consider all context snippets in the provided context to explain the queried code. If you do not know the answer, simply state that you do not know. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.

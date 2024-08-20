@@ -43,7 +43,7 @@ clear
 # run the program
 cd ../../src
 python3 blade.py -p target-program/chown-debloated.c -t target-program/chown_train.sh -u 1 -d 1
-cp chown-debloated.c ../automated_runs/chown/chown-debloated.c.blade.c
+cp chown-debloated.c.blade.c ../automated_runs/chown/chown-debloated.c.blade.c
 # clear
 
 # # run generality cases

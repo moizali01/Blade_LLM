@@ -12,11 +12,11 @@ fi
 
 clean_env() {
     # Remove the generated files
-    rm -rf "$chown_executable" *.profraw merged.profdata test_chown* coverage.txt
+    rm -rf "$chown_executable" *.profraw merged.profdata test_chown* d1
 }
 
 # Compile the source code with LLVM profiling
-clang-18 -fprofile-instr-generate -fcoverage-mapping -o "$chown_executable" "$chown_source"
+clang -fprofile-instr-generate -fcoverage-mapping -o "$chown_executable" "$chown_source"
 
 # Create a function to run the chown command with the -R flag and generate profile
 run_chown_and_profile() {
@@ -29,7 +29,9 @@ run_chown_and_profile() {
     
     # Create the directory structure
     mkdir -p "$dir_name"
-    
+    touch d1/d2/file1
+    # touch d1/d2/
+
     # Set the LLVM profile file environment variable
     export LLVM_PROFILE_FILE="$profile_name"
 
@@ -40,9 +42,9 @@ run_chown_and_profile() {
 }
 
 # Run the tasks and generate LLVM profiles for the specified -R flag test cases
-run_chown_and_profile "test_chown_1" "user1" "chown_1.profraw"
-run_chown_and_profile "test_chown_2" "user1:group1" "chown_2.profraw"
-run_chown_and_profile "test_chown_3" ":group1" "chown_3.profraw"
+run_chown_and_profile "d1/d2/d3" "user1" "chown_1.profraw"
+run_chown_and_profile "d1/d2/d3" "user1:group1" "chown_2.profraw"
+run_chown_and_profile "d1/d2/d3" ":group1" "chown_3.profraw"
 
 echo "All profiles generated."
 

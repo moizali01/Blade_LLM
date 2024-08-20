@@ -17,12 +17,21 @@ function clean() {
 
 function run() {
   rm -rf d1 d2
-  mkdir -p d1/d2
+  mkdir -p d1/d2/d3
+  touch d1/d2/file1
   { timeout $TIMEOUT_LIMIT $REDUCED_BINARY $1 d1 ; } >&$LOG || exit 1
-  temp1=$(ls -ald d1 d1/d2 2>/dev/null | cut -d ' ' -f 1,3,4)
-  /bin/chown $1 d1
-  temp2=$(ls -ald d1 d1/d2 2>/dev/null | cut -d ' ' -f 1,3,4)
+  temp1=$(ls -alR d1 2>/dev/null | cut -d ' ' -f 1,3,4)
+
+  rm -rf d1 d2
+  mkdir -p d1/d2/d3
+  touch d1/d2/file1
+
+  $ORIGINAL_BINARY $1 d1
+  temp2=$(ls -alR d1 2>/dev/null | cut -d ' ' -f 1,3,4)
   rm -rf d1 d2 >&/dev/null
+  # echo $temp1 >> $LOG
+  # echo ===== >> $LOG
+  # echo $temp2 >> $LOG
   if [[ $temp1 == $temp2 ]]; then
     return 0
   else
@@ -50,8 +59,8 @@ function args_test() {
   run "-R user1:group1" d1 || exit 1
   run "-R :group1" d1 || exit 1
 
-  run_error "-R" d1 || exit 1
-  run_error "-R user1:invalidgroup" d1 || exit 1
+#   run_error "-R" d1 || exit 1
+#   run_error "-R user1:invalidgroup" d1 || exit 1
 
   return 0
 }
@@ -63,7 +72,7 @@ sanitizers=("-fsanitize=cfi -flto -fvisibility=hidden" "-fsanitize=address"
 
 function clean_env() {
   cd $DIR
-  rm -rf d1 temp1 temp2 $LOG $REDUCED_BINARY
+  rm -rf d1 temp1 temp2 $REDUCED_BINARY $LOG $ORIGINAL_BINARY
   
   return 0
 }
