@@ -13,7 +13,7 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
     if len(cand) == 1:
         if cand[0] == " }" or cand[0] == " {" or cand[0] == "}" or cand[0] == "{":
             return 0
-        if "if (" in cand[0] or "else " in cand[0] or "while (" in cand[0] or cand[0].strip().beginswith("case_"):
+        if "if (" in cand[0] or "else " in cand[0] or "while (" in cand[0] or cand[0].strip().startswith("case_"):
             return 10
     
 

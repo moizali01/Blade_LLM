@@ -24,7 +24,7 @@ Final Verdict: <assigned class> (1-4)
 
 Required Functionality:
 
-The given code belongs to the chown core utility and is used only with the -R flag, which operates on files and directories recursively. For this task, we only want to change the ownership of an entire directory and its contents using the -R flag. Everything concerning the proper functionality of the -R flag is considered important. We must cater to all edge cases ONLY related to the -R flag's functionality, including the safe and accurate traversal of directories, particularly when moving between parent and child directories or handling symbolic links. Any other functionality apart from the -R flag is not considered relevant.
+The given code belongs to the chown core utility and is used only with the -R flag, which operates on files and directories recursively. For this task, we only want to change the ownership of an entire directory and all its contents such as files using the -R flag. Everything concerning the proper functionality of the -R flag is considered important. We must cater to all edge cases ONLY related to the -R flag's functionality, including the safe and accurate traversal of directories, particularly when moving between parent and child directories or handling symbolic links. Any other functionality apart from the -R flag is not considered relevant.
 
 This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for the functionality mentioned or security of the program. 
 
