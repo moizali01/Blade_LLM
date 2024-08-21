@@ -359,37 +359,37 @@
   359|       |DIR *rpl_fdopendir(int fd);
   360|       |extern __attribute__((__nothrow__)) int(__attribute__((
   361|       |    __nonnull__(2), __leaf__)) fstat)(int __fd, struct stat *__buf);
-  362|      3|DIR *rpl_fdopendir(int fd) {
-  363|      3|  struct stat st;
-  364|      3|  int tmp;
-  365|      3|  int *tmp___0;
-  366|      3|  DIR *tmp___1;
+  362|      2|DIR *rpl_fdopendir(int fd) {
+  363|      2|  struct stat st;
+  364|      2|  int tmp;
+  365|      2|  int *tmp___0;
+  366|      2|  DIR *tmp___1;
   367|       |
-  368|      3|  {
-  369|      3|    tmp = fstat(fd, &st);
-  370|      3|    if (tmp) {
+  368|      2|  {
+  369|      2|    tmp = fstat(fd, &st);
+  370|      2|    if (tmp) {
   371|      0|      return ((DIR *)((void *)0));
   372|      0|    }
-  373|      3|    if (!((st.st_mode & 61440U) == 16384U)) {
+  373|      2|    if (!((st.st_mode & 61440U) == 16384U)) {
   374|      0|      tmp___0 = __errno_location();
   375|      0|      *tmp___0 = 20;
   376|      0|      return ((DIR *)((void *)0));
   377|      0|    }
-  378|      3|    tmp___1 = fdopendir(fd);
-  379|      3|    return (tmp___1);
-  380|      3|  }
-  381|      3|}
+  378|      2|    tmp___1 = fdopendir(fd);
+  379|      2|    return (tmp___1);
+  380|      2|  }
+  381|      2|}
   382|       |int fd_safer(int fd);
-  383|      3|int fd_safer(int fd) {
-  384|      3|  int f;
-  385|      3|  int tmp;
-  386|      3|  int e;
-  387|      3|  int *tmp___0;
-  388|      3|  int *tmp___1;
+  383|      2|int fd_safer(int fd) {
+  384|      2|  int f;
+  385|      2|  int tmp;
+  386|      2|  int e;
+  387|      2|  int *tmp___0;
+  388|      2|  int *tmp___1;
   389|       |
-  390|      3|  {
-  391|      3|    if (0 <= fd) {
-  392|      3|      if (fd <= 2) {
+  390|      2|  {
+  391|      2|    if (0 <= fd) {
+  392|      2|      if (fd <= 2) {
   393|      0|        tmp = dup_safer(fd);
   394|      0|        f = tmp;
   395|      0|        tmp___0 = __errno_location();
@@ -399,10 +399,10 @@
   399|      0|        *tmp___1 = e;
   400|      0|        fd = f;
   401|      0|      }
-  402|      3|    }
-  403|      3|    return (fd);
-  404|      3|  }
-  405|      3|}
+  402|      2|    }
+  403|      2|    return (fd);
+  404|      2|  }
+  405|      2|}
   406|       |int volatile exit_failure;
   407|       |int volatile exit_failure = (int volatile)1;
   408|       |extern __attribute__((__nothrow__)) unsigned short const **(
@@ -522,14 +522,14 @@
   522|      0|}
   523|       |void *xrealloc(void *p, size_t n);
   524|       |extern int fcntl(int __fd, int __cmd, ...);
-  525|      3|int dup_safer(int fd) {
-  526|      3|  int tmp;
+  525|      2|int dup_safer(int fd) {
+  526|      2|  int tmp;
   527|       |
-  528|      3|  {
-  529|      3|    tmp = fcntl(fd, 0, 3);
-  530|      3|    return (tmp);
-  531|      3|  }
-  532|      3|}
+  528|      2|  {
+  529|      2|    tmp = fcntl(fd, 0, 3);
+  530|      2|    return (tmp);
+  531|      2|  }
+  532|      2|}
   533|       |extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1, 2),
   534|       |                                                          __leaf__)) memcpy)(
   535|       |    void *__restrict __dest, void const *__restrict __src, size_t __n);
@@ -660,47 +660,47 @@
   660|       |    (char const)0};
   661|       |void cycle_check_init(struct cycle_check_state *state);
   662|       |_Bool cycle_check(struct cycle_check_state *state, struct stat const *sb);
-  663|      3|__inline static _Bool is_zero_or_power_of_two(uintmax_t i) {
+  663|      2|__inline static _Bool is_zero_or_power_of_two(uintmax_t i) {
   664|       |
-  665|      3|  { return ((_Bool)((i & (i - 1UL)) == 0UL)); }
-  666|      3|}
-  667|      6|void cycle_check_init(struct cycle_check_state *state) {
+  665|      2|  { return ((_Bool)((i & (i - 1UL)) == 0UL)); }
+  666|      2|}
+  667|      4|void cycle_check_init(struct cycle_check_state *state) {
   668|       |
-  669|      6|  {
-  670|      6|    state->chdir_counter = (uintmax_t)0;
-  671|      6|    state->magic = 9827862;
-  672|      6|    return;
-  673|      6|  }
-  674|      6|}
-  675|      3|_Bool cycle_check(struct cycle_check_state *state, struct stat const *sb) {
-  676|      3|  _Bool tmp;
+  669|      4|  {
+  670|      4|    state->chdir_counter = (uintmax_t)0;
+  671|      4|    state->magic = 9827862;
+  672|      4|    return;
+  673|      4|  }
+  674|      4|}
+  675|      2|_Bool cycle_check(struct cycle_check_state *state, struct stat const *sb) {
+  676|      2|  _Bool tmp;
   677|       |
-  678|      3|  {
-  679|      3|    if (!(state->magic == 9827862)) {
+  678|      2|  {
+  679|      2|    if (!(state->magic == 9827862)) {
   680|      0|      __assert_fail("state->magic == 9827862",
   681|      0|                    "/home/khheo/project/program-reduce/benchmark/"
   682|      0|                    "coreutils-8.2/lib/cycle-check.c",
   683|      0|                    60U, "cycle_check");
   684|      0|    }
-  685|      3|    if (state->chdir_counter) {
+  685|      2|    if (state->chdir_counter) {
   686|      0|      if (sb->st_ino == (__ino_t const)state->dev_ino.st_ino) {
   687|      0|        if (sb->st_dev == (__dev_t const)state->dev_ino.st_dev) {
   688|      0|          return ((_Bool)1);
   689|      0|        }
   690|      0|      }
   691|      0|    }
-  692|      3|    (state->chdir_counter)++;
-  693|      3|    tmp = is_zero_or_power_of_two(state->chdir_counter);
-  694|      3|    if (tmp) {
-  695|      3|      if (state->chdir_counter == 0UL) {
+  692|      2|    (state->chdir_counter)++;
+  693|      2|    tmp = is_zero_or_power_of_two(state->chdir_counter);
+  694|      2|    if (tmp) {
+  695|      2|      if (state->chdir_counter == 0UL) {
   696|      0|        return ((_Bool)1);
   697|      0|      }
-  698|      3|      state->dev_ino.st_dev = (dev_t)sb->st_dev;
-  699|      3|      state->dev_ino.st_ino = (ino_t)sb->st_ino;
-  700|      3|    }
-  701|      3|    return ((_Bool)0);
-  702|      3|  }
-  703|      3|}
+  698|      2|      state->dev_ino.st_dev = (dev_t)sb->st_dev;
+  699|      2|      state->dev_ino.st_ino = (ino_t)sb->st_ino;
+  700|      2|    }
+  701|      2|    return ((_Bool)0);
+  702|      2|  }
+  703|      2|}
   704|       |extern void error(int __status, int __errnum, char const *__format, ...);
   705|       |char const *quote(char const *name);
   706|       |void close_stdout(void);
@@ -711,19 +711,19 @@
   711|       |char *quotearg_colon(char const *arg);
   712|       |static char const *file_name;
   713|       |static _Bool ignore_EPIPE;
-  714|      3|void close_stdout(void) {
-  715|      3|  char const *write_error;
-  716|      3|  char const *tmp;
-  717|      3|  char *tmp___0;
-  718|      3|  int *tmp___1;
-  719|      3|  int *tmp___2;
-  720|      3|  int tmp___3;
-  721|      3|  int *tmp___4;
-  722|      3|  int tmp___5;
+  714|      2|void close_stdout(void) {
+  715|      2|  char const *write_error;
+  716|      2|  char const *tmp;
+  717|      2|  char *tmp___0;
+  718|      2|  int *tmp___1;
+  719|      2|  int *tmp___2;
+  720|      2|  int tmp___3;
+  721|      2|  int *tmp___4;
+  722|      2|  int tmp___5;
   723|       |
-  724|      3|  {
-  725|      3|    tmp___3 = close_stream(stdout);
-  726|      3|    if (tmp___3 != 0) {
+  724|      2|  {
+  725|      2|    tmp___3 = close_stream(stdout);
+  726|      2|    if (tmp___3 != 0) {
   727|      0|      if (ignore_EPIPE) {
   728|      0|        tmp___4 = __errno_location();
   729|      0|        if (!(*tmp___4 == 32)) {
@@ -744,36 +744,36 @@
   744|      0|        _exit((int)exit_failure);
   745|      0|      }
   746|      0|    }
-  747|      3|    tmp___5 = close_stream(stderr);
-  748|      3|    if (tmp___5 != 0) {
+  747|      2|    tmp___5 = close_stream(stderr);
+  748|      2|    if (tmp___5 != 0) {
   749|      0|      _exit((int)exit_failure);
   750|      0|    }
-  751|      3|    return;
-  752|      3|  }
-  753|      3|}
+  751|      2|    return;
+  752|      2|  }
+  753|      2|}
   754|       |extern __attribute__((__nothrow__))
   755|       |size_t(__attribute__((__leaf__)) __fpending)(FILE *__fp);
-  756|      6|int close_stream(FILE *stream) {
-  757|      6|  _Bool some_pending;
-  758|      6|  size_t tmp;
-  759|      6|  _Bool prev_fail;
-  760|      6|  int tmp___0;
-  761|      6|  _Bool fclose_fail;
-  762|      6|  int tmp___1;
-  763|      6|  int *tmp___2;
-  764|      6|  int *tmp___3;
+  756|      4|int close_stream(FILE *stream) {
+  757|      4|  _Bool some_pending;
+  758|      4|  size_t tmp;
+  759|      4|  _Bool prev_fail;
+  760|      4|  int tmp___0;
+  761|      4|  _Bool fclose_fail;
+  762|      4|  int tmp___1;
+  763|      4|  int *tmp___2;
+  764|      4|  int *tmp___3;
   765|       |
-  766|      6|  {
-  767|      6|    tmp = __fpending(stream);
-  768|      6|    some_pending = (_Bool)(tmp != 0UL);
-  769|      6|    tmp___0 = ferror_unlocked(stream);
-  770|      6|    prev_fail = (_Bool)(tmp___0 != 0);
-  771|      6|    tmp___1 = fclose(stream);
-  772|      6|    fclose_fail = (_Bool)(tmp___1 != 0);
-  773|      6|    if (prev_fail) {
+  766|      4|  {
+  767|      4|    tmp = __fpending(stream);
+  768|      4|    some_pending = (_Bool)(tmp != 0UL);
+  769|      4|    tmp___0 = ferror_unlocked(stream);
+  770|      4|    prev_fail = (_Bool)(tmp___0 != 0);
+  771|      4|    tmp___1 = fclose(stream);
+  772|      4|    fclose_fail = (_Bool)(tmp___1 != 0);
+  773|      4|    if (prev_fail) {
   774|      0|      goto _L___0;
-  775|      6|    } else {
-  776|      6|      if (fclose_fail) {
+  775|      4|    } else {
+  776|      4|      if (fclose_fail) {
   777|      0|        if (some_pending) {
   778|      0|          goto _L___0;
   779|      0|        } else {
@@ -788,40 +788,40 @@
   788|      0|          }
   789|      0|        }
   790|      0|      }
-  791|      6|    }
-  792|      6|    return (0);
-  793|      6|  }
-  794|      6|}
+  791|      4|    }
+  792|      4|    return (0);
+  793|      4|  }
+  794|      4|}
   795|       |int set_cloexec_flag(int desc, _Bool value);
-  796|      6|int set_cloexec_flag(int desc, _Bool value) {
-  797|      6|  int flags;
-  798|      6|  int tmp;
-  799|      6|  int newflags;
-  800|      6|  int tmp___0;
-  801|      6|  int tmp___1;
+  796|      4|int set_cloexec_flag(int desc, _Bool value) {
+  797|      4|  int flags;
+  798|      4|  int tmp;
+  799|      4|  int newflags;
+  800|      4|  int tmp___0;
+  801|      4|  int tmp___1;
   802|       |
-  803|      6|  {
-  804|      6|    tmp = fcntl(desc, 1, 0);
-  805|      6|    flags = tmp;
-  806|      6|    if (0 <= flags) {
-  807|      6|      if (value) {
-  808|      6|        tmp___0 = flags | 1;
-  809|      6|      } else {
+  803|      4|  {
+  804|      4|    tmp = fcntl(desc, 1, 0);
+  805|      4|    flags = tmp;
+  806|      4|    if (0 <= flags) {
+  807|      4|      if (value) {
+  808|      4|        tmp___0 = flags | 1;
+  809|      4|      } else {
   810|      0|        tmp___0 = flags & -2;
   811|      0|      }
-  812|      6|      newflags = tmp___0;
-  813|      6|      if (flags == newflags) {
+  812|      4|      newflags = tmp___0;
+  813|      4|      if (flags == newflags) {
   814|      0|        return (0);
-  815|      6|      } else {
-  816|      6|        tmp___1 = fcntl(desc, 2, newflags);
-  817|      6|        if (tmp___1 != -1) {
-  818|      6|          return (0);
-  819|      6|        }
-  820|      6|      }
-  821|      6|    }
+  815|      4|      } else {
+  816|      4|        tmp___1 = fcntl(desc, 2, newflags);
+  817|      4|        if (tmp___1 != -1) {
+  818|      4|          return (0);
+  819|      4|        }
+  820|      4|      }
+  821|      4|    }
   822|      0|    return (-1);
-  823|      6|  }
-  824|      6|}
+  823|      4|  }
+  824|      4|}
   825|       |extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fchdir)(
   826|       |    int __fd);
   827|       |extern int(__attribute__((__nonnull__(2))) openat)(int __fd, char const *__file,
@@ -1164,21 +1164,21 @@
  1164|       |extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) calloc)(
  1165|       |    size_t __nmemb, size_t __size) __attribute__((__malloc__));
  1166|       |void *xmalloc(size_t n) __attribute__((__malloc__));
- 1167|      4|void *xmalloc(size_t n) {
- 1168|      4|  void *p;
- 1169|      4|  void *tmp;
+ 1167|      2|void *xmalloc(size_t n) {
+ 1168|      2|  void *p;
+ 1169|      2|  void *tmp;
  1170|       |
- 1171|      4|  {
- 1172|      4|    tmp = malloc(n);
- 1173|      4|    p = tmp;
- 1174|      4|    if (!p) {
+ 1171|      2|  {
+ 1172|      2|    tmp = malloc(n);
+ 1173|      2|    p = tmp;
+ 1174|      2|    if (!p) {
  1175|      0|      if (n != 0UL) {
  1176|      0|        xalloc_die();
  1177|      0|      }
  1178|      0|    }
- 1179|      4|    return (p);
- 1180|      4|  }
- 1181|      4|}
+ 1179|      2|    return (p);
+ 1180|      2|  }
+ 1181|      2|}
  1182|      0|void *xrealloc(void *p, size_t n) {
  1183|       |
  1184|      0|  {
@@ -1192,27 +1192,27 @@
  1192|      0|  }
  1193|      0|}
  1194|       |void *xmemdup(void const *p, size_t s) __attribute__((__malloc__));
- 1195|      4|void *xmemdup(void const *p, size_t s) {
- 1196|      4|  void *tmp;
- 1197|      4|  void *tmp___0;
+ 1195|      2|void *xmemdup(void const *p, size_t s) {
+ 1196|      2|  void *tmp;
+ 1197|      2|  void *tmp___0;
  1198|       |
- 1199|      4|  {
- 1200|      4|    tmp = xmalloc(s);
- 1201|      4|    tmp___0 = memcpy(tmp, p, s);
- 1202|      4|    return (tmp___0);
- 1203|      4|  }
- 1204|      4|}
+ 1199|      2|  {
+ 1200|      2|    tmp = xmalloc(s);
+ 1201|      2|    tmp___0 = memcpy(tmp, p, s);
+ 1202|      2|    return (tmp___0);
+ 1203|      2|  }
+ 1204|      2|}
  1205|       |char *xstrdup(char const *string) __attribute__((__malloc__));
- 1206|      3|char *xstrdup(char const *string) {
- 1207|      3|  size_t tmp;
- 1208|      3|  char *tmp___0;
+ 1206|      2|char *xstrdup(char const *string) {
+ 1207|      2|  size_t tmp;
+ 1208|      2|  char *tmp___0;
  1209|       |
- 1210|      3|  {
- 1211|      3|    tmp = strlen(string);
- 1212|      3|    tmp___0 = (char *)xmemdup((void const *)string, tmp + 1UL);
- 1213|      3|    return (tmp___0);
- 1214|      3|  }
- 1215|      3|}
+ 1210|      2|  {
+ 1211|      2|    tmp = strlen(string);
+ 1212|      2|    tmp___0 = (char *)xmemdup((void const *)string, tmp + 1UL);
+ 1213|      2|    return (tmp___0);
+ 1214|      2|  }
+ 1215|      2|}
  1216|       |__attribute__((__nothrow__))
  1217|       |FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
  1218|       |    char *const *argv, int options,
@@ -1221,15 +1221,15 @@
  1221|       |               int (*compar)(FTSENT const **, FTSENT const **));
  1222|       |_Bool cycle_warning_required(FTS const *fts, FTSENT const *ent);
  1223|       |FTS *xfts_open(char *const *argv, int options,
- 1224|      3|               int (*compar)(FTSENT const **, FTSENT const **)) {
- 1225|      3|  FTS *fts;
- 1226|      3|  FTS *tmp;
- 1227|      3|  int *tmp___0;
+ 1224|      2|               int (*compar)(FTSENT const **, FTSENT const **)) {
+ 1225|      2|  FTS *fts;
+ 1226|      2|  FTS *tmp;
+ 1227|      2|  int *tmp___0;
  1228|       |
- 1229|      3|  {
- 1230|      3|    tmp = fts_open(argv, options | 512, compar);
- 1231|      3|    fts = tmp;
- 1232|      3|    if ((unsigned long)fts == (unsigned long)((void *)0)) {
+ 1229|      2|  {
+ 1230|      2|    tmp = fts_open(argv, options | 512, compar);
+ 1231|      2|    fts = tmp;
+ 1232|      2|    if ((unsigned long)fts == (unsigned long)((void *)0)) {
  1233|      0|      tmp___0 = __errno_location();
  1234|      0|      if (!(*tmp___0 != 22)) {
  1235|      0|        __assert_fail("(*__errno_location ()) != 22",
@@ -1239,9 +1239,9 @@
  1239|      0|      }
  1240|      0|      xalloc_die();
  1241|      0|    }
- 1242|      3|    return (fts);
- 1243|      3|  }
- 1244|      3|}
+ 1242|      2|    return (fts);
+ 1243|      2|  }
+ 1244|      2|}
  1245|      0|_Bool cycle_warning_required(FTS const *fts, FTSENT const *ent) {
  1246|      0|  int tmp;
  1247|       |
@@ -1482,67 +1482,67 @@
  1482|       |static char const *E_bad_spec = "invalid spec";
  1483|       |static char const *parse_with_separator(char const *spec, char const *separator,
  1484|       |                                        uid_t *uid, gid_t *gid, char **username,
- 1485|      3|                                        char **groupname) {
- 1486|      3|  char const *error_msg;
- 1487|      3|  struct passwd *pwd;
- 1488|      3|  struct group *grp;
- 1489|      3|  char *u;
- 1490|      3|  char const *g;
- 1491|      3|  char *gname;
- 1492|      3|  uid_t unum;
- 1493|      3|  gid_t gnum;
- 1494|      3|  char *tmp;
- 1495|      3|  size_t ulen;
- 1496|      3|  struct passwd *tmp___0;
- 1497|      3|  _Bool use_login_group;
- 1498|      3|  int tmp___1;
- 1499|      3|  unsigned long tmp___2;
- 1500|      3|  strtol_error tmp___3;
- 1501|      3|  char buf___1[(((sizeof(uintmax_t) * 8UL) * 146UL) / 485UL + 1UL) + 1UL];
- 1502|      3|  char *tmp___4;
- 1503|      3|  char *tmp___5;
- 1504|      3|  struct group *tmp___6;
- 1505|      3|  unsigned long tmp___7;
- 1506|      3|  strtol_error tmp___8;
- 1507|      3|  char const *tmp___9;
+ 1485|      2|                                        char **groupname) {
+ 1486|      2|  char const *error_msg;
+ 1487|      2|  struct passwd *pwd;
+ 1488|      2|  struct group *grp;
+ 1489|      2|  char *u;
+ 1490|      2|  char const *g;
+ 1491|      2|  char *gname;
+ 1492|      2|  uid_t unum;
+ 1493|      2|  gid_t gnum;
+ 1494|      2|  char *tmp;
+ 1495|      2|  size_t ulen;
+ 1496|      2|  struct passwd *tmp___0;
+ 1497|      2|  _Bool use_login_group;
+ 1498|      2|  int tmp___1;
+ 1499|      2|  unsigned long tmp___2;
+ 1500|      2|  strtol_error tmp___3;
+ 1501|      2|  char buf___1[(((sizeof(uintmax_t) * 8UL) * 146UL) / 485UL + 1UL) + 1UL];
+ 1502|      2|  char *tmp___4;
+ 1503|      2|  char *tmp___5;
+ 1504|      2|  struct group *tmp___6;
+ 1505|      2|  unsigned long tmp___7;
+ 1506|      2|  strtol_error tmp___8;
+ 1507|      2|  char const *tmp___9;
  1508|       |
- 1509|      3|  {
- 1510|      3|    gname = (char *)((void *)0);
- 1511|      3|    unum = *uid;
- 1512|      3|    gnum = *gid;
- 1513|      3|    error_msg = (char const *)((void *)0);
- 1514|      3|    tmp = (char *)((void *)0);
- 1515|      3|    *groupname = tmp;
- 1516|      3|    *username = tmp;
- 1517|      3|    u = (char *)((void *)0);
- 1518|      3|    if ((unsigned long)separator == (unsigned long)((void *)0)) {
+ 1509|      2|  {
+ 1510|      2|    gname = (char *)((void *)0);
+ 1511|      2|    unum = *uid;
+ 1512|      2|    gnum = *gid;
+ 1513|      2|    error_msg = (char const *)((void *)0);
+ 1514|      2|    tmp = (char *)((void *)0);
+ 1515|      2|    *groupname = tmp;
+ 1516|      2|    *username = tmp;
+ 1517|      2|    u = (char *)((void *)0);
+ 1518|      2|    if ((unsigned long)separator == (unsigned long)((void *)0)) {
  1519|      1|      if (*spec) {
  1520|      1|        u = xstrdup(spec);
  1521|      1|      }
- 1522|      2|    } else {
- 1523|      2|      ulen = (size_t)(separator - spec);
- 1524|      2|      if (ulen != 0UL) {
- 1525|      1|        u = (char *)xmemdup((void const *)spec, ulen + 1UL);
- 1526|      1|        *(u + ulen) = (char)'\000';
- 1527|      1|      }
- 1528|      2|    }
- 1529|      3|    if ((unsigned long)separator == (unsigned long)((void *)0)) {
+ 1522|      1|    } else {
+ 1523|      1|      ulen = (size_t)(separator - spec);
+ 1524|      1|      if (ulen != 0UL) {
+ 1525|      0|        u = (char *)xmemdup((void const *)spec, ulen + 1UL);
+ 1526|      0|        *(u + ulen) = (char)'\000';
+ 1527|      0|      }
+ 1528|      1|    }
+ 1529|      2|    if ((unsigned long)separator == (unsigned long)((void *)0)) {
  1530|      1|      g = (char const *)((void *)0);
- 1531|      2|    } else {
- 1532|      2|      if ((int const) * (separator + 1) == 0) {
+ 1531|      1|    } else {
+ 1532|      1|      if ((int const) * (separator + 1) == 0) {
  1533|      0|        g = (char const *)((void *)0);
- 1534|      2|      } else {
- 1535|      2|        g = separator + 1;
- 1536|      2|      }
- 1537|      2|    }
- 1538|      3|    if ((unsigned long)u != (unsigned long)((void *)0)) {
- 1539|      2|      if ((int)*u == 43) {
+ 1534|      1|      } else {
+ 1535|      1|        g = separator + 1;
+ 1536|      1|      }
+ 1537|      1|    }
+ 1538|      2|    if ((unsigned long)u != (unsigned long)((void *)0)) {
+ 1539|      1|      if ((int)*u == 43) {
  1540|      0|        pwd = (struct passwd *)((void *)0);
- 1541|      2|      } else {
- 1542|      2|        tmp___0 = getpwnam((char const *)u);
- 1543|      2|        pwd = tmp___0;
- 1544|      2|      }
- 1545|      2|      if ((unsigned long)pwd == (unsigned long)((void *)0)) {
+ 1541|      1|      } else {
+ 1542|      1|        tmp___0 = getpwnam((char const *)u);
+ 1543|      1|        pwd = tmp___0;
+ 1544|      1|      }
+ 1545|      1|      if ((unsigned long)pwd == (unsigned long)((void *)0)) {
  1546|      0|        if ((unsigned long)separator != (unsigned long)((void *)0)) {
  1547|      0|          if ((unsigned long)g == (unsigned long)((void *)0)) {
  1548|      0|            tmp___1 = 1;
@@ -1572,9 +1572,9 @@
  1572|      0|            error_msg = E_invalid_user;
  1573|      0|          }
  1574|      0|        }
- 1575|      2|      } else {
- 1576|      2|        unum = pwd->pw_uid;
- 1577|      2|        if ((unsigned long)g == (unsigned long)((void *)0)) {
+ 1575|      1|      } else {
+ 1576|      1|        unum = pwd->pw_uid;
+ 1577|      1|        if ((unsigned long)g == (unsigned long)((void *)0)) {
  1578|      1|          if ((unsigned long)separator != (unsigned long)((void *)0)) {
  1579|      0|            gnum = pwd->pw_gid;
  1580|      0|            grp = getgrgid(gnum);
@@ -1588,18 +1588,18 @@
  1588|      0|            endgrent();
  1589|      0|          }
  1590|      1|        }
- 1591|      2|      }
- 1592|      2|      endpwent();
- 1593|      2|    }
- 1594|      3|    if ((unsigned long)g != (unsigned long)((void *)0)) {
- 1595|      2|      if ((unsigned long)error_msg == (unsigned long)((void *)0)) {
- 1596|      2|        if ((int const) * g == 43) {
+ 1591|      1|      }
+ 1592|      1|      endpwent();
+ 1593|      1|    }
+ 1594|      2|    if ((unsigned long)g != (unsigned long)((void *)0)) {
+ 1595|      1|      if ((unsigned long)error_msg == (unsigned long)((void *)0)) {
+ 1596|      1|        if ((int const) * g == 43) {
  1597|      0|          grp = (struct group *)((void *)0);
- 1598|      2|        } else {
- 1599|      2|          tmp___6 = getgrnam(g);
- 1600|      2|          grp = tmp___6;
- 1601|      2|        }
- 1602|      2|        if ((unsigned long)grp == (unsigned long)((void *)0)) {
+ 1598|      1|        } else {
+ 1599|      1|          tmp___6 = getgrnam(g);
+ 1600|      1|          grp = tmp___6;
+ 1601|      1|        }
+ 1602|      1|        if ((unsigned long)grp == (unsigned long)((void *)0)) {
  1603|      0|          tmp___8 = xstrtoul(g, (char **)((void *)0), 10, &tmp___7, "");
  1604|      0|          if ((unsigned int)tmp___8 == 0U) {
  1605|      0|            if (tmp___7 <= 4294967295UL) {
@@ -1614,43 +1614,43 @@
  1614|      0|          } else {
  1615|      0|            error_msg = E_invalid_group;
  1616|      0|          }
- 1617|      2|        } else {
- 1618|      2|          gnum = grp->gr_gid;
- 1619|      2|        }
- 1620|      2|        endgrent();
- 1621|      2|        gname = xstrdup(g);
- 1622|      2|      }
- 1623|      2|    }
- 1624|      3|    if ((unsigned long)error_msg == (unsigned long)((void *)0)) {
- 1625|      3|      *uid = unum;
- 1626|      3|      *gid = gnum;
- 1627|      3|      *username = u;
- 1628|      3|      *groupname = gname;
- 1629|      3|      u = (char *)((void *)0);
- 1630|      3|    } else {
+ 1617|      1|        } else {
+ 1618|      1|          gnum = grp->gr_gid;
+ 1619|      1|        }
+ 1620|      1|        endgrent();
+ 1621|      1|        gname = xstrdup(g);
+ 1622|      1|      }
+ 1623|      1|    }
+ 1624|      2|    if ((unsigned long)error_msg == (unsigned long)((void *)0)) {
+ 1625|      2|      *uid = unum;
+ 1626|      2|      *gid = gnum;
+ 1627|      2|      *username = u;
+ 1628|      2|      *groupname = gname;
+ 1629|      2|      u = (char *)((void *)0);
+ 1630|      2|    } else {
  1631|      0|      free((void *)gname);
  1632|      0|    }
- 1633|      3|    free((void *)u);
- 1634|      3|    tmp___9 = (char const *)gettext(error_msg);
- 1635|      3|    return (tmp___9);
- 1636|      3|  }
- 1637|      3|}
+ 1633|      2|    free((void *)u);
+ 1634|      2|    tmp___9 = (char const *)gettext(error_msg);
+ 1635|      2|    return (tmp___9);
+ 1636|      2|  }
+ 1637|      2|}
  1638|       |char const *parse_user_spec(char const *spec, uid_t *uid, gid_t *gid,
- 1639|      3|                            char **username, char **groupname) {
- 1640|      3|  char const *colon;
- 1641|      3|  char const *tmp;
- 1642|      3|  char const *error_msg;
- 1643|      3|  char const *tmp___0;
- 1644|      3|  char const *dot;
- 1645|      3|  char const *tmp___1;
- 1646|      3|  char const *tmp___2;
+ 1639|      2|                            char **username, char **groupname) {
+ 1640|      2|  char const *colon;
+ 1641|      2|  char const *tmp;
+ 1642|      2|  char const *error_msg;
+ 1643|      2|  char const *tmp___0;
+ 1644|      2|  char const *dot;
+ 1645|      2|  char const *tmp___1;
+ 1646|      2|  char const *tmp___2;
  1647|       |
- 1648|      3|  {
- 1649|      3|    tmp = (char const *)strchr(spec, ':');
- 1650|      3|    colon = tmp;
- 1651|      3|    tmp___0 = parse_with_separator(spec, colon, uid, gid, username, groupname);
- 1652|      3|    error_msg = tmp___0;
- 1653|      3|    if (!colon) {
+ 1648|      2|  {
+ 1649|      2|    tmp = (char const *)strchr(spec, ':');
+ 1650|      2|    colon = tmp;
+ 1651|      2|    tmp___0 = parse_with_separator(spec, colon, uid, gid, username, groupname);
+ 1652|      2|    error_msg = tmp___0;
+ 1653|      2|    if (!colon) {
  1654|      1|      if (error_msg) {
  1655|      0|        tmp___1 = (char const *)strchr(spec, '.');
  1656|      0|        dot = tmp___1;
@@ -1663,9 +1663,9 @@
  1663|      0|        }
  1664|      0|      }
  1665|      1|    }
- 1666|      3|    return (error_msg);
- 1667|      3|  }
- 1668|      3|}
+ 1666|      2|    return (error_msg);
+ 1667|      2|  }
+ 1668|      2|}
  1669|       |char *(__attribute__((__warn_unused_result__)) umaxtostr)(uintmax_t i,
  1670|      0|                                                          char *buf___1) {
  1671|      0|  char *p;
@@ -2921,24 +2921,24 @@
  2921|       |extern char *program_invocation_short_name;
  2922|       |extern int fputs(char const *__restrict __s, FILE *__restrict __stream);
  2923|       |char const *program_name = (char const *)((void *)0);
- 2924|      3|void set_program_name(char const *argv0) {
- 2925|      3|  char const *slash;
- 2926|      3|  char const *base;
- 2927|      3|  int tmp;
- 2928|      3|  int tmp___0;
+ 2924|      2|void set_program_name(char const *argv0) {
+ 2925|      2|  char const *slash;
+ 2926|      2|  char const *base;
+ 2927|      2|  int tmp;
+ 2928|      2|  int tmp___0;
  2929|       |
- 2930|      3|  {
- 2931|      3|    if ((unsigned long)argv0 == (unsigned long)((void *)0)) {
+ 2930|      2|  {
+ 2931|      2|    if ((unsigned long)argv0 == (unsigned long)((void *)0)) {
  2932|      0|      fputs("A NULL argv[0] was passed through an exec system call.\n", stderr);
  2933|      0|      abort();
  2934|      0|    }
- 2935|      3|    slash = (char const *)strrchr(argv0, '/');
- 2936|      3|    if ((unsigned long)slash != (unsigned long)((void *)0)) {
- 2937|      3|      base = slash + 1;
- 2938|      3|    } else {
+ 2935|      2|    slash = (char const *)strrchr(argv0, '/');
+ 2936|      2|    if ((unsigned long)slash != (unsigned long)((void *)0)) {
+ 2937|      2|      base = slash + 1;
+ 2938|      2|    } else {
  2939|      0|      base = argv0;
  2940|      0|    }
- 2941|      3|    if (base - argv0 >= 7L) {
+ 2941|      2|    if (base - argv0 >= 7L) {
  2942|      0|      tmp___0 = strncmp(base - 7, "/.libs/", (size_t)7);
  2943|      0|      if (tmp___0 == 0) {
  2944|      0|        argv0 = base;
@@ -2949,11 +2949,11 @@
  2949|      0|        }
  2950|      0|      }
  2951|      0|    }
- 2952|      3|    program_name = argv0;
- 2953|      3|    program_invocation_name = (char *)argv0;
- 2954|      3|    return;
- 2955|      3|  }
- 2956|      3|}
+ 2952|      2|    program_name = argv0;
+ 2953|      2|    program_invocation_name = (char *)argv0;
+ 2954|      2|    return;
+ 2955|      2|  }
+ 2956|      2|}
  2957|       |extern __attribute__((__nothrow__)) char *(__attribute__((
  2958|       |    __nonnull__(1, 2), __leaf__)) stpcpy)(char *__restrict __dest,
  2959|       |                                          char const *__restrict __src);
@@ -2999,24 +2999,24 @@
  2999|      0|  }
  3000|      0|}
  3001|       |int openat_safer(int fd, char const *file, int flags, ...);
- 3002|      3|int openat_safer(int fd, char const *file, int flags, ...) {
- 3003|      3|  mode_t mode;
- 3004|      3|  va_list ap;
- 3005|      3|  int tmp;
- 3006|      3|  int tmp___0;
+ 3002|      2|int openat_safer(int fd, char const *file, int flags, ...) {
+ 3003|      2|  mode_t mode;
+ 3004|      2|  va_list ap;
+ 3005|      2|  int tmp;
+ 3006|      2|  int tmp___0;
  3007|       |
- 3008|      3|  {
- 3009|      3|    mode = (mode_t)0;
- 3010|      3|    if (flags & 64) {
+ 3008|      2|  {
+ 3009|      2|    mode = (mode_t)0;
+ 3010|      2|    if (flags & 64) {
  3011|      0|      __builtin_va_start(ap, flags);
  3012|      0|      mode = __builtin_va_arg(ap, mode_t);
  3013|      0|      __builtin_va_end(ap);
  3014|      0|    }
- 3015|      3|    tmp = openat(fd, file, flags, mode);
- 3016|      3|    tmp___0 = fd_safer(tmp);
- 3017|      3|    return (tmp___0);
- 3018|      3|  }
- 3019|      3|}
+ 3015|      2|    tmp = openat(fd, file, flags, mode);
+ 3016|      2|    tmp___0 = fd_safer(tmp);
+ 3017|      2|    return (tmp___0);
+ 3018|      2|  }
+ 3019|      2|}
  3020|      0|int open_safer(char const *file, int flags, ...) {
  3021|      0|  mode_t mode;
  3022|      0|  va_list ap;
@@ -3253,66 +3253,66 @@
  3253|       |int i_ring_push(I_ring *ir, int val);
  3254|       |int i_ring_pop(I_ring *ir);
  3255|       |_Bool i_ring_empty(I_ring const *ir);
- 3256|      3|void i_ring_init(I_ring *ir, int default_val) {
- 3257|      3|  int i;
+ 3256|      2|void i_ring_init(I_ring *ir, int default_val) {
+ 3257|      2|  int i;
  3258|       |
- 3259|      3|  {
- 3260|      3|    ir->ir_empty = (_Bool)1;
- 3261|      3|    ir->ir_front = 0U;
- 3262|      3|    ir->ir_back = 0U;
- 3263|      3|    i = 0;
- 3264|     15|    while (1) {
+ 3259|      2|  {
+ 3260|      2|    ir->ir_empty = (_Bool)1;
+ 3261|      2|    ir->ir_front = 0U;
+ 3262|      2|    ir->ir_back = 0U;
+ 3263|      2|    i = 0;
+ 3264|     10|    while (1) {
  3265|       |
- 3266|     15|      if (!(i < 4)) {
- 3267|      3|        goto while_break;
- 3268|      3|      }
- 3269|     12|      ir->ir_data[i] = default_val;
- 3270|     12|      i++;
- 3271|     12|    }
- 3272|      3|  while_break:
- 3273|      3|    ir->ir_default_val = default_val;
- 3274|      3|    return;
- 3275|      3|  }
- 3276|      3|}
- 3277|     27|_Bool i_ring_empty(I_ring const *ir) {
+ 3266|     10|      if (!(i < 4)) {
+ 3267|      2|        goto while_break;
+ 3268|      2|      }
+ 3269|      8|      ir->ir_data[i] = default_val;
+ 3270|      8|      i++;
+ 3271|      8|    }
+ 3272|      2|  while_break:
+ 3273|      2|    ir->ir_default_val = default_val;
+ 3274|      2|    return;
+ 3275|      2|  }
+ 3276|      2|}
+ 3277|     18|_Bool i_ring_empty(I_ring const *ir) {
  3278|       |
- 3279|     27|  { return ((_Bool)ir->ir_empty); }
- 3280|     27|}
- 3281|      9|int i_ring_push(I_ring *ir, int val) {
- 3282|      9|  unsigned int dest_idx;
- 3283|      9|  int old_val;
+ 3279|     18|  { return ((_Bool)ir->ir_empty); }
+ 3280|     18|}
+ 3281|      6|int i_ring_push(I_ring *ir, int val) {
+ 3282|      6|  unsigned int dest_idx;
+ 3283|      6|  int old_val;
  3284|       |
- 3285|      9|  {
- 3286|      9|    dest_idx = (ir->ir_front + (unsigned int)(!ir->ir_empty)) % 4U;
- 3287|      9|    old_val = ir->ir_data[dest_idx];
- 3288|      9|    ir->ir_data[dest_idx] = val;
- 3289|      9|    ir->ir_front = dest_idx;
- 3290|      9|    if (dest_idx == ir->ir_back) {
- 3291|      6|      ir->ir_back = (ir->ir_back + (unsigned int)(!ir->ir_empty)) % 4U;
- 3292|      6|    }
- 3293|      9|    ir->ir_empty = (_Bool)0;
- 3294|      9|    return (old_val);
- 3295|      9|  }
- 3296|      9|}
- 3297|      9|int i_ring_pop(I_ring *ir) {
- 3298|      9|  int top_val;
- 3299|      9|  _Bool tmp;
+ 3285|      6|  {
+ 3286|      6|    dest_idx = (ir->ir_front + (unsigned int)(!ir->ir_empty)) % 4U;
+ 3287|      6|    old_val = ir->ir_data[dest_idx];
+ 3288|      6|    ir->ir_data[dest_idx] = val;
+ 3289|      6|    ir->ir_front = dest_idx;
+ 3290|      6|    if (dest_idx == ir->ir_back) {
+ 3291|      4|      ir->ir_back = (ir->ir_back + (unsigned int)(!ir->ir_empty)) % 4U;
+ 3292|      4|    }
+ 3293|      6|    ir->ir_empty = (_Bool)0;
+ 3294|      6|    return (old_val);
+ 3295|      6|  }
+ 3296|      6|}
+ 3297|      6|int i_ring_pop(I_ring *ir) {
+ 3298|      6|  int top_val;
+ 3299|      6|  _Bool tmp;
  3300|       |
- 3301|      9|  {
- 3302|      9|    tmp = i_ring_empty((I_ring const *)ir);
- 3303|      9|    if (tmp) {
+ 3301|      6|  {
+ 3302|      6|    tmp = i_ring_empty((I_ring const *)ir);
+ 3303|      6|    if (tmp) {
  3304|      0|      abort();
  3305|      0|    }
- 3306|      9|    top_val = ir->ir_data[ir->ir_front];
- 3307|      9|    ir->ir_data[ir->ir_front] = ir->ir_default_val;
- 3308|      9|    if (ir->ir_front == ir->ir_back) {
- 3309|      6|      ir->ir_empty = (_Bool)1;
- 3310|      6|    } else {
- 3311|      3|      ir->ir_front = ((ir->ir_front + 4U) - 1U) % 4U;
- 3312|      3|    }
- 3313|      9|    return (top_val);
- 3314|      9|  }
- 3315|      9|}
+ 3306|      6|    top_val = ir->ir_data[ir->ir_front];
+ 3307|      6|    ir->ir_data[ir->ir_front] = ir->ir_default_val;
+ 3308|      6|    if (ir->ir_front == ir->ir_back) {
+ 3309|      4|      ir->ir_empty = (_Bool)1;
+ 3310|      4|    } else {
+ 3311|      2|      ir->ir_front = ((ir->ir_front + 4U) - 1U) % 4U;
+ 3312|      2|    }
+ 3313|      6|    return (top_val);
+ 3314|      6|  }
+ 3315|      6|}
  3316|       |_Bool(__attribute__((__warn_unused_result__)) hash_rehash)(
  3317|       |    Hash_table *table___0, size_t candidate);
  3318|       |void *hash_delete(Hash_table *table___0, void const *entry);
@@ -4091,36 +4091,36 @@
  4091|      0|    return ((uintmax_t)ax->ino % table_size);
  4092|      0|  }
  4093|      0|}
- 4094|      6|static _Bool setup_dir(FTS *fts) {
+ 4094|      4|static _Bool setup_dir(FTS *fts) {
  4095|       |
- 4096|      6|  {
- 4097|      6|    if (fts->fts_options & 258) {
+ 4096|      4|  {
+ 4097|      4|    if (fts->fts_options & 258) {
  4098|      0|      fts->fts_cycle.ht =
  4099|      0|          hash_initialize((size_t)31, (Hash_tuning const *)((void *)0),
  4100|      0|                          &AD_hash, &AD_compare, (void (*)(void *))(&free));
  4101|      0|      if (!fts->fts_cycle.ht) {
  4102|      0|        return ((_Bool)0);
  4103|      0|      }
- 4104|      6|    } else {
- 4105|      6|      fts->fts_cycle.state =
- 4106|      6|          (struct cycle_check_state *)malloc(sizeof(*(fts->fts_cycle.state)));
- 4107|      6|      if (!fts->fts_cycle.state) {
+ 4104|      4|    } else {
+ 4105|      4|      fts->fts_cycle.state =
+ 4106|      4|          (struct cycle_check_state *)malloc(sizeof(*(fts->fts_cycle.state)));
+ 4107|      4|      if (!fts->fts_cycle.state) {
  4108|      0|        return ((_Bool)0);
  4109|      0|      }
- 4110|      6|      cycle_check_init(fts->fts_cycle.state);
- 4111|      6|    }
- 4112|      6|    return ((_Bool)1);
- 4113|      6|  }
- 4114|      6|}
- 4115|      3|static _Bool enter_dir(FTS *fts, FTSENT *ent) {
- 4116|      3|  struct stat const *st;
- 4117|      3|  struct Active_dir *ad;
- 4118|      3|  struct Active_dir *tmp;
- 4119|      3|  struct Active_dir *ad_from_table;
- 4120|      3|  _Bool tmp___0;
+ 4110|      4|      cycle_check_init(fts->fts_cycle.state);
+ 4111|      4|    }
+ 4112|      4|    return ((_Bool)1);
+ 4113|      4|  }
+ 4114|      4|}
+ 4115|      2|static _Bool enter_dir(FTS *fts, FTSENT *ent) {
+ 4116|      2|  struct stat const *st;
+ 4117|      2|  struct Active_dir *ad;
+ 4118|      2|  struct Active_dir *tmp;
+ 4119|      2|  struct Active_dir *ad_from_table;
+ 4120|      2|  _Bool tmp___0;
  4121|       |
- 4122|      3|  {
- 4123|      3|    if (fts->fts_options & 258) {
+ 4122|      2|  {
+ 4123|      2|    if (fts->fts_options & 258) {
  4124|      0|      st = (struct stat const *)(ent->fts_statp);
  4125|      0|      tmp = (struct Active_dir *)malloc(sizeof(*ad));
  4126|      0|      ad = tmp;
@@ -4140,26 +4140,26 @@
  4140|      0|        ent->fts_cycle = ad_from_table->fts_ent;
  4141|      0|        ent->fts_info = (unsigned short)2;
  4142|      0|      }
- 4143|      3|    } else {
- 4144|      3|      tmp___0 = cycle_check(fts->fts_cycle.state,
- 4145|      3|                            (struct stat const *)(ent->fts_statp));
- 4146|      3|      if (tmp___0) {
+ 4143|      2|    } else {
+ 4144|      2|      tmp___0 = cycle_check(fts->fts_cycle.state,
+ 4145|      2|                            (struct stat const *)(ent->fts_statp));
+ 4146|      2|      if (tmp___0) {
  4147|      0|        ent->fts_cycle = ent;
  4148|      0|        ent->fts_info = (unsigned short)2;
  4149|      0|      }
- 4150|      3|    }
- 4151|      3|    return ((_Bool)1);
- 4152|      3|  }
- 4153|      3|}
- 4154|      3|static void leave_dir(FTS *fts, FTSENT *ent) {
- 4155|      3|  struct stat const *st;
- 4156|      3|  struct Active_dir obj;
- 4157|      3|  void *found;
- 4158|      3|  FTSENT *parent;
+ 4150|      2|    }
+ 4151|      2|    return ((_Bool)1);
+ 4152|      2|  }
+ 4153|      2|}
+ 4154|      2|static void leave_dir(FTS *fts, FTSENT *ent) {
+ 4155|      2|  struct stat const *st;
+ 4156|      2|  struct Active_dir obj;
+ 4157|      2|  void *found;
+ 4158|      2|  FTSENT *parent;
  4159|       |
- 4160|      3|  {
- 4161|      3|    st = (struct stat const *)(ent->fts_statp);
- 4162|      3|    if (fts->fts_options & 258) {
+ 4160|      2|  {
+ 4161|      2|    st = (struct stat const *)(ent->fts_statp);
+ 4162|      2|    if (fts->fts_options & 258) {
  4163|      0|      obj.dev = (dev_t)st->st_dev;
  4164|      0|      obj.ino = (ino_t)st->st_ino;
  4165|      0|      found = hash_delete(fts->fts_cycle.ht, (void const *)(&obj));
@@ -4167,10 +4167,10 @@
  4167|      0|        abort();
  4168|      0|      }
  4169|      0|      free(found);
- 4170|      3|    } else {
- 4171|      3|      parent = ent->fts_parent;
- 4172|      3|      if ((unsigned long)parent != (unsigned long)((void *)0)) {
- 4173|      3|        if (0L <= parent->fts_level) {
+ 4170|      2|    } else {
+ 4171|      2|      parent = ent->fts_parent;
+ 4172|      2|      if ((unsigned long)parent != (unsigned long)((void *)0)) {
+ 4173|      2|        if (0L <= parent->fts_level) {
  4174|      0|          while (1) {
  4175|       |
  4176|      0|            if ((fts->fts_cycle.state)->chdir_counter == 0UL) {
@@ -4188,124 +4188,124 @@
  4188|      0|          }
  4189|      0|        while_break:;
  4190|      0|        }
- 4191|      3|      }
- 4192|      3|    }
- 4193|      3|    return;
- 4194|      3|  }
- 4195|      3|}
- 4196|      6|static void free_dir(FTS *sp) {
+ 4191|      2|      }
+ 4192|      2|    }
+ 4193|      2|    return;
+ 4194|      2|  }
+ 4195|      2|}
+ 4196|      4|static void free_dir(FTS *sp) {
  4197|       |
- 4198|      6|  {
- 4199|      6|    if (sp->fts_options & 258) {
+ 4198|      4|  {
+ 4199|      4|    if (sp->fts_options & 258) {
  4200|      0|      if (sp->fts_cycle.ht) {
  4201|      0|        hash_free(sp->fts_cycle.ht);
  4202|      0|      }
- 4203|      6|    } else {
- 4204|      6|      free((void *)sp->fts_cycle.state);
- 4205|      6|    }
- 4206|      6|    return;
- 4207|      6|  }
- 4208|      6|}
- 4209|      9|static void fd_ring_clear(I_ring *fd_ring) {
- 4210|      9|  int fd;
- 4211|      9|  int tmp;
- 4212|      9|  _Bool tmp___0;
+ 4203|      4|    } else {
+ 4204|      4|      free((void *)sp->fts_cycle.state);
+ 4205|      4|    }
+ 4206|      4|    return;
+ 4207|      4|  }
+ 4208|      4|}
+ 4209|      6|static void fd_ring_clear(I_ring *fd_ring) {
+ 4210|      6|  int fd;
+ 4211|      6|  int tmp;
+ 4212|      6|  _Bool tmp___0;
  4213|       |
- 4214|      9|  {
- 4215|     18|    while (1) {
- 4216|     18|      tmp___0 = i_ring_empty((I_ring const *)fd_ring);
- 4217|     18|      if (tmp___0) {
- 4218|      9|        goto while_break;
- 4219|      9|      }
- 4220|      9|      tmp = i_ring_pop(fd_ring);
- 4221|      9|      fd = tmp;
- 4222|      9|      if (0 <= fd) {
- 4223|      3|        close(fd);
- 4224|      3|      }
- 4225|      9|    }
- 4226|      9|  while_break:;
- 4227|      9|    return;
- 4228|      9|  }
- 4229|      9|}
- 4230|      0|static void fts_set_stat_required(FTSENT *p, _Bool required) {
+ 4214|      6|  {
+ 4215|     12|    while (1) {
+ 4216|     12|      tmp___0 = i_ring_empty((I_ring const *)fd_ring);
+ 4217|     12|      if (tmp___0) {
+ 4218|      6|        goto while_break;
+ 4219|      6|      }
+ 4220|      6|      tmp = i_ring_pop(fd_ring);
+ 4221|      6|      fd = tmp;
+ 4222|      6|      if (0 <= fd) {
+ 4223|      2|        close(fd);
+ 4224|      2|      }
+ 4225|      6|    }
+ 4226|      6|  while_break:;
+ 4227|      6|    return;
+ 4228|      6|  }
+ 4229|      6|}
+ 4230|      2|static void fts_set_stat_required(FTSENT *p, _Bool required) {
  4231|       |
- 4232|      0|  {
- 4233|      0|    while (1) {
+ 4232|      2|  {
+ 4233|      2|    while (1) {
  4234|       |
- 4235|      0|      if (!((int)p->fts_info == 11)) {
+ 4235|      2|      if (!((int)p->fts_info == 11)) {
  4236|      0|        abort();
  4237|      0|      }
- 4238|      0|      goto while_break;
- 4239|      0|    }
- 4240|      0|  while_break:;
- 4241|      0|    if (required) {
+ 4238|      2|      goto while_break;
+ 4239|      2|    }
+ 4240|      2|  while_break:;
+ 4241|      2|    if (required) {
  4242|      0|      p->fts_statp[0].st_size = (__off_t)2;
- 4243|      0|    } else {
- 4244|      0|      p->fts_statp[0].st_size = (__off_t)1;
- 4245|      0|    }
- 4246|      0|    return;
- 4247|      0|  }
- 4248|      0|}
- 4249|      3|__inline static DIR *opendirat(int fd, char const *dir) {
- 4250|      3|  int new_fd;
- 4251|      3|  int tmp;
- 4252|      3|  DIR *dirp;
- 4253|      3|  int saved_errno;
- 4254|      3|  int *tmp___0;
- 4255|      3|  int *tmp___1;
+ 4243|      2|    } else {
+ 4244|      2|      p->fts_statp[0].st_size = (__off_t)1;
+ 4245|      2|    }
+ 4246|      2|    return;
+ 4247|      2|  }
+ 4248|      2|}
+ 4249|      2|__inline static DIR *opendirat(int fd, char const *dir) {
+ 4250|      2|  int new_fd;
+ 4251|      2|  int tmp;
+ 4252|      2|  DIR *dirp;
+ 4253|      2|  int saved_errno;
+ 4254|      2|  int *tmp___0;
+ 4255|      2|  int *tmp___1;
  4256|       |
- 4257|      3|  {
- 4258|      3|    tmp = openat_safer(fd, dir, 67840);
- 4259|      3|    new_fd = tmp;
- 4260|      3|    if (new_fd < 0) {
+ 4257|      2|  {
+ 4258|      2|    tmp = openat_safer(fd, dir, 67840);
+ 4259|      2|    new_fd = tmp;
+ 4260|      2|    if (new_fd < 0) {
  4261|      0|      return ((DIR *)((void *)0));
  4262|      0|    }
- 4263|      3|    set_cloexec_flag(new_fd, (_Bool)1);
- 4264|      3|    dirp = rpl_fdopendir(new_fd);
- 4265|      3|    if ((unsigned long)dirp == (unsigned long)((void *)0)) {
+ 4263|      2|    set_cloexec_flag(new_fd, (_Bool)1);
+ 4264|      2|    dirp = rpl_fdopendir(new_fd);
+ 4265|      2|    if ((unsigned long)dirp == (unsigned long)((void *)0)) {
  4266|      0|      tmp___0 = __errno_location();
  4267|      0|      saved_errno = *tmp___0;
  4268|      0|      close(new_fd);
  4269|      0|      tmp___1 = __errno_location();
  4270|      0|      *tmp___1 = saved_errno;
  4271|      0|    }
- 4272|      3|    return (dirp);
- 4273|      3|  }
- 4274|      3|}
- 4275|      9|static void cwd_advance_fd(FTS *sp, int fd, _Bool chdir_down_one) {
- 4276|      9|  int old;
- 4277|      9|  int prev_fd_in_slot;
- 4278|      9|  int tmp;
+ 4272|      2|    return (dirp);
+ 4273|      2|  }
+ 4274|      2|}
+ 4275|      6|static void cwd_advance_fd(FTS *sp, int fd, _Bool chdir_down_one) {
+ 4276|      6|  int old;
+ 4277|      6|  int prev_fd_in_slot;
+ 4278|      6|  int tmp;
  4279|       |
- 4280|      9|  {
- 4281|      9|    old = sp->fts_cwd_fd;
- 4282|      9|    while (1) {
+ 4280|      6|  {
+ 4281|      6|    old = sp->fts_cwd_fd;
+ 4282|      6|    while (1) {
  4283|       |
- 4284|      9|      if (!(old != fd)) {
- 4285|      3|        if (!(old == -100)) {
+ 4284|      6|      if (!(old != fd)) {
+ 4285|      2|        if (!(old == -100)) {
  4286|      0|          abort();
  4287|      0|        }
- 4288|      3|      }
- 4289|      9|      goto while_break;
- 4290|      9|    }
- 4291|      9|  while_break:;
- 4292|      9|    if (chdir_down_one) {
- 4293|      9|      tmp = i_ring_push(&sp->fts_fd_ring, old);
- 4294|      9|      prev_fd_in_slot = tmp;
- 4295|      9|      if (0 <= prev_fd_in_slot) {
+ 4288|      2|      }
+ 4289|      6|      goto while_break;
+ 4290|      6|    }
+ 4291|      6|  while_break:;
+ 4292|      6|    if (chdir_down_one) {
+ 4293|      6|      tmp = i_ring_push(&sp->fts_fd_ring, old);
+ 4294|      6|      prev_fd_in_slot = tmp;
+ 4295|      6|      if (0 <= prev_fd_in_slot) {
  4296|      0|        close(prev_fd_in_slot);
  4297|      0|      }
- 4298|      9|    } else {
+ 4298|      6|    } else {
  4299|      0|      if (!(sp->fts_options & 4)) {
  4300|      0|        if (0 <= old) {
  4301|      0|          close(old);
  4302|      0|        }
  4303|      0|      }
  4304|      0|    }
- 4305|      9|    sp->fts_cwd_fd = fd;
- 4306|      9|    return;
- 4307|      9|  }
- 4308|      9|}
+ 4305|      6|    sp->fts_cwd_fd = fd;
+ 4306|      6|    return;
+ 4307|      6|  }
+ 4308|      6|}
  4309|      0|__inline static int diropen(FTS const *sp, char const *dir) {
  4310|      0|  int open_flags;
  4311|      0|  int tmp;
@@ -4341,158 +4341,158 @@
  4341|       |    int (*compar)(FTSENT const **, FTSENT const **));
  4342|       |FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
  4343|       |    char *const *argv, int options,
- 4344|      3|    int (*compar)(FTSENT const **, FTSENT const **)) {
- 4345|      3|  FTS *sp;
- 4346|      3|  FTSENT *p;
- 4347|      3|  FTSENT *root;
- 4348|      3|  size_t nitems;
- 4349|      3|  FTSENT *parent;
- 4350|      3|  FTSENT *tmp;
- 4351|      3|  _Bool defer_stat;
- 4352|      3|  int *tmp___0;
- 4353|      3|  int *tmp___1;
- 4354|      3|  int *tmp___2;
- 4355|      3|  size_t maxarglen;
- 4356|      3|  size_t tmp___4;
- 4357|      3|  size_t tmp___5;
- 4358|      3|  _Bool tmp___6;
- 4359|      3|  int tmp___7;
- 4360|      3|  size_t len;
- 4361|      3|  size_t tmp___8;
- 4362|      3|  struct _ftsent *tmp___9;
- 4363|      3|  _Bool tmp___10;
- 4364|      3|  int tmp___11;
+ 4344|      2|    int (*compar)(FTSENT const **, FTSENT const **)) {
+ 4345|      2|  FTS *sp;
+ 4346|      2|  FTSENT *p;
+ 4347|      2|  FTSENT *root;
+ 4348|      2|  size_t nitems;
+ 4349|      2|  FTSENT *parent;
+ 4350|      2|  FTSENT *tmp;
+ 4351|      2|  _Bool defer_stat;
+ 4352|      2|  int *tmp___0;
+ 4353|      2|  int *tmp___1;
+ 4354|      2|  int *tmp___2;
+ 4355|      2|  size_t maxarglen;
+ 4356|      2|  size_t tmp___4;
+ 4357|      2|  size_t tmp___5;
+ 4358|      2|  _Bool tmp___6;
+ 4359|      2|  int tmp___7;
+ 4360|      2|  size_t len;
+ 4361|      2|  size_t tmp___8;
+ 4362|      2|  struct _ftsent *tmp___9;
+ 4363|      2|  _Bool tmp___10;
+ 4364|      2|  int tmp___11;
  4365|       |
- 4366|      3|  {
- 4367|      3|    parent = (FTSENT *)((void *)0);
- 4368|      3|    tmp = (FTSENT *)((void *)0);
- 4369|      3|    if (options & -2048) {
+ 4366|      2|  {
+ 4367|      2|    parent = (FTSENT *)((void *)0);
+ 4368|      2|    tmp = (FTSENT *)((void *)0);
+ 4369|      2|    if (options & -2048) {
  4370|      0|      tmp___0 = __errno_location();
  4371|      0|      *tmp___0 = 22;
  4372|      0|      return ((FTS *)((void *)0));
  4373|      0|    }
- 4374|      3|    if (options & 4) {
+ 4374|      2|    if (options & 4) {
  4375|      0|      if (options & 512) {
  4376|      0|        tmp___1 = __errno_location();
  4377|      0|        *tmp___1 = 22;
  4378|      0|        return ((FTS *)((void *)0));
  4379|      0|      }
  4380|      0|    }
- 4381|      3|    if (!(options & 18)) {
+ 4381|      2|    if (!(options & 18)) {
  4382|      0|      tmp___2 = __errno_location();
  4383|      0|      *tmp___2 = 22;
  4384|      0|      return ((FTS *)((void *)0));
  4385|      0|    }
- 4386|      3|    sp = (FTS *)malloc(sizeof(FTS));
- 4387|      3|    if ((unsigned long)sp == (unsigned long)((void *)0)) {
+ 4386|      2|    sp = (FTS *)malloc(sizeof(FTS));
+ 4387|      2|    if ((unsigned long)sp == (unsigned long)((void *)0)) {
  4388|      0|      return ((FTS *)((void *)0));
  4389|      0|    }
- 4390|      3|    memset((void *)sp, 0, sizeof(FTS));
- 4391|      3|    sp->fts_compar = compar;
- 4392|      3|    sp->fts_options = options;
- 4393|      3|    if (sp->fts_options & 2) {
+ 4390|      2|    memset((void *)sp, 0, sizeof(FTS));
+ 4391|      2|    sp->fts_compar = compar;
+ 4392|      2|    sp->fts_options = options;
+ 4393|      2|    if (sp->fts_options & 2) {
  4394|      0|      sp->fts_options |= 4;
  4395|      0|      sp->fts_options &= -513;
  4396|      0|    }
- 4397|      3|    sp->fts_cwd_fd = -100;
- 4398|      3|    tmp___4 = fts_maxarglen(argv);
- 4399|      3|    maxarglen = tmp___4;
- 4400|      3|    if (maxarglen > 4096UL) {
+ 4397|      2|    sp->fts_cwd_fd = -100;
+ 4398|      2|    tmp___4 = fts_maxarglen(argv);
+ 4399|      2|    maxarglen = tmp___4;
+ 4400|      2|    if (maxarglen > 4096UL) {
  4401|      0|      tmp___5 = maxarglen;
- 4402|      3|    } else {
- 4403|      3|      tmp___5 = (size_t)4096;
- 4404|      3|    }
- 4405|      3|    tmp___6 = fts_palloc(sp, tmp___5);
- 4406|      3|    if (!tmp___6) {
+ 4402|      2|    } else {
+ 4403|      2|      tmp___5 = (size_t)4096;
+ 4404|      2|    }
+ 4405|      2|    tmp___6 = fts_palloc(sp, tmp___5);
+ 4406|      2|    if (!tmp___6) {
  4407|      0|      goto mem1;
  4408|      0|    }
- 4409|      3|    if ((unsigned long)*argv != (unsigned long)((void *)0)) {
- 4410|      3|      parent = fts_alloc(sp, "", (size_t)0);
- 4411|      3|      if ((unsigned long)parent == (unsigned long)((void *)0)) {
+ 4409|      2|    if ((unsigned long)*argv != (unsigned long)((void *)0)) {
+ 4410|      2|      parent = fts_alloc(sp, "", (size_t)0);
+ 4411|      2|      if ((unsigned long)parent == (unsigned long)((void *)0)) {
  4412|      0|        goto mem2;
  4413|      0|      }
- 4414|      3|      parent->fts_level = (ptrdiff_t)-1;
- 4415|      3|    }
- 4416|      3|    if ((unsigned long)compar == (unsigned long)((void *)0)) {
- 4417|      3|      tmp___7 = 1;
- 4418|      3|    } else {
+ 4414|      2|      parent->fts_level = (ptrdiff_t)-1;
+ 4415|      2|    }
+ 4416|      2|    if ((unsigned long)compar == (unsigned long)((void *)0)) {
+ 4417|      2|      tmp___7 = 1;
+ 4418|      2|    } else {
  4419|      0|      if (sp->fts_options & 1024) {
  4420|      0|        tmp___7 = 1;
  4421|      0|      } else {
  4422|      0|        tmp___7 = 0;
  4423|      0|      }
  4424|      0|    }
- 4425|      3|    defer_stat = (_Bool)tmp___7;
- 4426|      3|    root = (FTSENT *)((void *)0);
- 4427|      3|    nitems = (size_t)0;
- 4428|      6|    while (1) {
+ 4425|      2|    defer_stat = (_Bool)tmp___7;
+ 4426|      2|    root = (FTSENT *)((void *)0);
+ 4427|      2|    nitems = (size_t)0;
+ 4428|      4|    while (1) {
  4429|       |
- 4430|      6|      if (!((unsigned long)*argv != (unsigned long)((void *)0))) {
- 4431|      3|        goto while_break;
- 4432|      3|      }
- 4433|      3|      tmp___8 = strlen((char const *)*argv);
- 4434|      3|      len = tmp___8;
- 4435|      3|      p = fts_alloc(sp, (char const *)*argv, len);
- 4436|      3|      if ((unsigned long)p == (unsigned long)((void *)0)) {
+ 4430|      4|      if (!((unsigned long)*argv != (unsigned long)((void *)0))) {
+ 4431|      2|        goto while_break;
+ 4432|      2|      }
+ 4433|      2|      tmp___8 = strlen((char const *)*argv);
+ 4434|      2|      len = tmp___8;
+ 4435|      2|      p = fts_alloc(sp, (char const *)*argv, len);
+ 4436|      2|      if ((unsigned long)p == (unsigned long)((void *)0)) {
  4437|      0|        goto mem3;
  4438|      0|      }
- 4439|      3|      p->fts_level = (ptrdiff_t)0;
- 4440|      3|      p->fts_parent = parent;
- 4441|      3|      p->fts_accpath = p->fts_name;
- 4442|      3|      if (defer_stat) {
- 4443|      3|        if ((unsigned long)root != (unsigned long)((void *)0)) {
+ 4439|      2|      p->fts_level = (ptrdiff_t)0;
+ 4440|      2|      p->fts_parent = parent;
+ 4441|      2|      p->fts_accpath = p->fts_name;
+ 4442|      2|      if (defer_stat) {
+ 4443|      2|        if ((unsigned long)root != (unsigned long)((void *)0)) {
  4444|      0|          p->fts_info = (unsigned short)11;
  4445|      0|          fts_set_stat_required(p, (_Bool)1);
- 4446|      3|        } else {
- 4447|      3|          p->fts_info = fts_stat(sp, p, (_Bool)0);
- 4448|      3|        }
- 4449|      3|      } else {
+ 4446|      2|        } else {
+ 4447|      2|          p->fts_info = fts_stat(sp, p, (_Bool)0);
+ 4448|      2|        }
+ 4449|      2|      } else {
  4450|      0|        p->fts_info = fts_stat(sp, p, (_Bool)0);
  4451|      0|      }
- 4452|      3|      if (compar) {
+ 4452|      2|      if (compar) {
  4453|      0|        p->fts_link = root;
  4454|      0|        root = p;
- 4455|      3|      } else {
- 4456|      3|        p->fts_link = (struct _ftsent *)((void *)0);
- 4457|      3|        if ((unsigned long)root == (unsigned long)((void *)0)) {
- 4458|      3|          root = p;
- 4459|      3|          tmp = root;
- 4460|      3|        } else {
+ 4455|      2|      } else {
+ 4456|      2|        p->fts_link = (struct _ftsent *)((void *)0);
+ 4457|      2|        if ((unsigned long)root == (unsigned long)((void *)0)) {
+ 4458|      2|          root = p;
+ 4459|      2|          tmp = root;
+ 4460|      2|        } else {
  4461|      0|          tmp->fts_link = p;
  4462|      0|          tmp = p;
  4463|      0|        }
- 4464|      3|      }
- 4465|      3|      argv++;
- 4466|      3|      nitems++;
- 4467|      3|    }
- 4468|      3|  while_break:;
- 4469|      3|    if (compar) {
+ 4464|      2|      }
+ 4465|      2|      argv++;
+ 4466|      2|      nitems++;
+ 4467|      2|    }
+ 4468|      2|  while_break:;
+ 4469|      2|    if (compar) {
  4470|      0|      if (nitems > 1UL) {
  4471|      0|        root = fts_sort(sp, root, nitems);
  4472|      0|      }
  4473|      0|    }
- 4474|      3|    tmp___9 = fts_alloc(sp, "", (size_t)0);
- 4475|      3|    sp->fts_cur = tmp___9;
- 4476|      3|    if ((unsigned long)tmp___9 == (unsigned long)((void *)0)) {
+ 4474|      2|    tmp___9 = fts_alloc(sp, "", (size_t)0);
+ 4475|      2|    sp->fts_cur = tmp___9;
+ 4476|      2|    if ((unsigned long)tmp___9 == (unsigned long)((void *)0)) {
  4477|      0|      goto mem3;
  4478|      0|    }
- 4479|      3|    (sp->fts_cur)->fts_link = root;
- 4480|      3|    (sp->fts_cur)->fts_info = (unsigned short)9;
- 4481|      3|    tmp___10 = setup_dir(sp);
- 4482|      3|    if (!tmp___10) {
+ 4479|      2|    (sp->fts_cur)->fts_link = root;
+ 4480|      2|    (sp->fts_cur)->fts_info = (unsigned short)9;
+ 4481|      2|    tmp___10 = setup_dir(sp);
+ 4482|      2|    if (!tmp___10) {
  4483|      0|      goto mem3;
  4484|      0|    }
- 4485|      3|    if (!(sp->fts_options & 4)) {
- 4486|      3|      if (!(sp->fts_options & 512)) {
+ 4485|      2|    if (!(sp->fts_options & 4)) {
+ 4486|      2|      if (!(sp->fts_options & 512)) {
  4487|      0|        tmp___11 = diropen((FTS const *)sp, ".");
  4488|      0|        sp->fts_rfd = tmp___11;
  4489|      0|        if (tmp___11 < 0) {
  4490|      0|          sp->fts_options |= 4;
  4491|      0|        }
  4492|      0|      }
- 4493|      3|    }
- 4494|      3|    i_ring_init(&sp->fts_fd_ring, -1);
- 4495|      3|    return (sp);
+ 4493|      2|    }
+ 4494|      2|    i_ring_init(&sp->fts_fd_ring, -1);
+ 4495|      2|    return (sp);
  4496|      0|  mem3:
  4497|      0|    fts_lfree(root);
  4498|      0|    free((void *)parent);
@@ -4503,25 +4503,25 @@
  4503|      0|    return ((FTS *)((void *)0));
  4504|      0|  }
  4505|      0|}
- 4506|      3|static void fts_load(FTS *sp, FTSENT *p) {
- 4507|      3|  size_t len;
- 4508|      3|  char *cp;
- 4509|      3|  size_t tmp;
- 4510|      3|  char *tmp___0;
+ 4506|      2|static void fts_load(FTS *sp, FTSENT *p) {
+ 4507|      2|  size_t len;
+ 4508|      2|  char *cp;
+ 4509|      2|  size_t tmp;
+ 4510|      2|  char *tmp___0;
  4511|       |
- 4512|      3|  {
- 4513|      3|    tmp = p->fts_namelen;
- 4514|      3|    p->fts_pathlen = tmp;
- 4515|      3|    len = tmp;
- 4516|      3|    memmove((void *)sp->fts_path, (void const *)(p->fts_name), len + 1UL);
- 4517|      3|    cp = strrchr((char const *)(p->fts_name), '/');
- 4518|      3|    if (cp) {
- 4519|      3|      if ((unsigned long)cp != (unsigned long)(p->fts_name)) {
- 4520|      3|        cp++;
- 4521|      3|        len = strlen((char const *)cp);
- 4522|      3|        memmove((void *)(p->fts_name), (void const *)cp, len + 1UL);
- 4523|      3|        p->fts_namelen = len;
- 4524|      3|      } else {
+ 4512|      2|  {
+ 4513|      2|    tmp = p->fts_namelen;
+ 4514|      2|    p->fts_pathlen = tmp;
+ 4515|      2|    len = tmp;
+ 4516|      2|    memmove((void *)sp->fts_path, (void const *)(p->fts_name), len + 1UL);
+ 4517|      2|    cp = strrchr((char const *)(p->fts_name), '/');
+ 4518|      2|    if (cp) {
+ 4519|      2|      if ((unsigned long)cp != (unsigned long)(p->fts_name)) {
+ 4520|      2|        cp++;
+ 4521|      2|        len = strlen((char const *)cp);
+ 4522|      2|        memmove((void *)(p->fts_name), (void const *)cp, len + 1UL);
+ 4523|      2|        p->fts_namelen = len;
+ 4524|      2|      } else {
  4525|      0|        if (*(cp + 1)) {
  4526|      0|          cp++;
  4527|      0|          len = strlen((char const *)cp);
@@ -4529,30 +4529,30 @@
  4529|      0|          p->fts_namelen = len;
  4530|      0|        }
  4531|      0|      }
- 4532|      3|    }
- 4533|      3|    tmp___0 = sp->fts_path;
- 4534|      3|    p->fts_path = tmp___0;
- 4535|      3|    p->fts_accpath = tmp___0;
- 4536|      3|    return;
- 4537|      3|  }
- 4538|      3|}
+ 4532|      2|    }
+ 4533|      2|    tmp___0 = sp->fts_path;
+ 4534|      2|    p->fts_path = tmp___0;
+ 4535|      2|    p->fts_accpath = tmp___0;
+ 4536|      2|    return;
+ 4537|      2|  }
+ 4538|      2|}
  4539|       |__attribute__((__nothrow__)) int(__attribute__((__warn_unused_result__,
  4540|       |                                                __leaf__)) fts_close)(FTS *sp);
- 4541|      3|int(__attribute__((__warn_unused_result__, __leaf__)) fts_close)(FTS *sp) {
- 4542|      3|  FTSENT *freep;
- 4543|      3|  FTSENT *p;
- 4544|      3|  int saved_errno;
- 4545|      3|  int *tmp;
- 4546|      3|  int tmp___0;
- 4547|      3|  int *tmp___1;
- 4548|      3|  int tmp___2;
- 4549|      3|  int *tmp___3;
- 4550|      3|  int tmp___4;
- 4551|      3|  int *tmp___5;
+ 4541|      2|int(__attribute__((__warn_unused_result__, __leaf__)) fts_close)(FTS *sp) {
+ 4542|      2|  FTSENT *freep;
+ 4543|      2|  FTSENT *p;
+ 4544|      2|  int saved_errno;
+ 4545|      2|  int *tmp;
+ 4546|      2|  int tmp___0;
+ 4547|      2|  int *tmp___1;
+ 4548|      2|  int tmp___2;
+ 4549|      2|  int *tmp___3;
+ 4550|      2|  int tmp___4;
+ 4551|      2|  int *tmp___5;
  4552|       |
- 4553|      3|  {
- 4554|      3|    saved_errno = 0;
- 4555|      3|    if (sp->fts_cur) {
+ 4553|      2|  {
+ 4554|      2|    saved_errno = 0;
+ 4555|      2|    if (sp->fts_cur) {
  4556|      0|      p = sp->fts_cur;
  4557|      0|      while (1) {
  4558|       |
@@ -4570,20 +4570,20 @@
  4570|      0|    while_break:
  4571|      0|      free((void *)p);
  4572|      0|    }
- 4573|      3|    if (sp->fts_child) {
+ 4573|      2|    if (sp->fts_child) {
  4574|      0|      fts_lfree(sp->fts_child);
  4575|      0|    }
- 4576|      3|    free((void *)sp->fts_array);
- 4577|      3|    free((void *)sp->fts_path);
- 4578|      3|    if (sp->fts_options & 512) {
- 4579|      3|      if (0 <= sp->fts_cwd_fd) {
+ 4576|      2|    free((void *)sp->fts_array);
+ 4577|      2|    free((void *)sp->fts_path);
+ 4578|      2|    if (sp->fts_options & 512) {
+ 4579|      2|      if (0 <= sp->fts_cwd_fd) {
  4580|      0|        tmp___0 = close(sp->fts_cwd_fd);
  4581|      0|        if (tmp___0) {
  4582|      0|          tmp = __errno_location();
  4583|      0|          saved_errno = *tmp;
  4584|      0|        }
  4585|      0|      }
- 4586|      3|    } else {
+ 4586|      2|    } else {
  4587|      0|      if (!(sp->fts_options & 4)) {
  4588|      0|        tmp___2 = fchdir(sp->fts_rfd);
  4589|      0|        if (tmp___2) {
@@ -4599,20 +4599,20 @@
  4599|      0|        }
  4600|      0|      }
  4601|      0|    }
- 4602|      3|    fd_ring_clear(&sp->fts_fd_ring);
- 4603|      3|    if (sp->fts_leaf_optimization_works_ht) {
+ 4602|      2|    fd_ring_clear(&sp->fts_fd_ring);
+ 4603|      2|    if (sp->fts_leaf_optimization_works_ht) {
  4604|      0|      hash_free(sp->fts_leaf_optimization_works_ht);
  4605|      0|    }
- 4606|      3|    free_dir(sp);
- 4607|      3|    free((void *)sp);
- 4608|      3|    if (saved_errno) {
+ 4606|      2|    free_dir(sp);
+ 4607|      2|    free((void *)sp);
+ 4608|      2|    if (saved_errno) {
  4609|      0|      tmp___5 = __errno_location();
  4610|      0|      *tmp___5 = saved_errno;
  4611|      0|      return (-1);
  4612|      0|    }
- 4613|      3|    return (0);
- 4614|      3|  }
- 4615|      3|}
+ 4613|      2|    return (0);
+ 4614|      2|  }
+ 4615|      2|}
  4616|       |extern __attribute__((__nothrow__)) int(__attribute__((
  4617|       |    __nonnull__(2), __leaf__)) fstatfs)(int __fildes, struct statfs *__buf);
  4618|      0|static _Bool dirent_inode_sort_may_be_useful(int dir_fd) {
@@ -4734,63 +4734,63 @@
  4734|      0|}
  4735|       |__attribute__((__nothrow__))
  4736|       |FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp);
- 4737|      9|FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp) {
- 4738|      9|  FTSENT *p;
- 4739|      9|  FTSENT *tmp;
- 4740|      9|  unsigned short instr;
- 4741|      9|  char *t;
- 4742|      9|  int *tmp___0;
- 4743|      9|  int tmp___1;
- 4744|      9|  int *tmp___2;
- 4745|      9|  int tmp___3;
- 4746|      9|  struct _ftsent *tmp___4;
- 4747|      9|  int tmp___5;
- 4748|      9|  int tmp___6;
- 4749|      9|  int tmp___7;
- 4750|      9|  int tmp___8;
- 4751|      9|  int tmp___9;
- 4752|      9|  int *tmp___10;
- 4753|      9|  int tmp___11;
- 4754|      9|  size_t tmp___12;
- 4755|      9|  char *tmp___13;
- 4756|      9|  FTSENT *parent;
- 4757|      9|  _Bool tmp___14;
- 4758|      9|  int *tmp___15;
- 4759|      9|  _Bool tmp___16;
- 4760|      9|  int *tmp___17;
- 4761|      9|  struct _ftsent *tmp___18;
- 4762|      9|  int *tmp___19;
- 4763|      9|  int tmp___20;
- 4764|      9|  int tmp___21;
- 4765|      9|  int tmp___22;
- 4766|      9|  int tmp___23;
- 4767|      9|  int tmp___24;
- 4768|      9|  int saved_errno;
- 4769|      9|  int *tmp___25;
- 4770|      9|  int *tmp___26;
- 4771|      9|  int *tmp___27;
- 4772|      9|  int tmp___28;
- 4773|      9|  int tmp___29;
- 4774|      9|  int *tmp___30;
- 4775|      9|  int tmp___31;
- 4776|      9|  FTSENT *tmp___32;
+ 4737|      8|FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp) {
+ 4738|      8|  FTSENT *p;
+ 4739|      8|  FTSENT *tmp;
+ 4740|      8|  unsigned short instr;
+ 4741|      8|  char *t;
+ 4742|      8|  int *tmp___0;
+ 4743|      8|  int tmp___1;
+ 4744|      8|  int *tmp___2;
+ 4745|      8|  int tmp___3;
+ 4746|      8|  struct _ftsent *tmp___4;
+ 4747|      8|  int tmp___5;
+ 4748|      8|  int tmp___6;
+ 4749|      8|  int tmp___7;
+ 4750|      8|  int tmp___8;
+ 4751|      8|  int tmp___9;
+ 4752|      8|  int *tmp___10;
+ 4753|      8|  int tmp___11;
+ 4754|      8|  size_t tmp___12;
+ 4755|      8|  char *tmp___13;
+ 4756|      8|  FTSENT *parent;
+ 4757|      8|  _Bool tmp___14;
+ 4758|      8|  int *tmp___15;
+ 4759|      8|  _Bool tmp___16;
+ 4760|      8|  int *tmp___17;
+ 4761|      8|  struct _ftsent *tmp___18;
+ 4762|      8|  int *tmp___19;
+ 4763|      8|  int tmp___20;
+ 4764|      8|  int tmp___21;
+ 4765|      8|  int tmp___22;
+ 4766|      8|  int tmp___23;
+ 4767|      8|  int tmp___24;
+ 4768|      8|  int saved_errno;
+ 4769|      8|  int *tmp___25;
+ 4770|      8|  int *tmp___26;
+ 4771|      8|  int *tmp___27;
+ 4772|      8|  int tmp___28;
+ 4773|      8|  int tmp___29;
+ 4774|      8|  int *tmp___30;
+ 4775|      8|  int tmp___31;
+ 4776|      8|  FTSENT *tmp___32;
  4777|       |
- 4778|      9|  {
- 4779|      9|    if ((unsigned long)sp->fts_cur == (unsigned long)((void *)0)) {
+ 4778|      8|  {
+ 4779|      8|    if ((unsigned long)sp->fts_cur == (unsigned long)((void *)0)) {
  4780|      0|      return ((FTSENT *)((void *)0));
- 4781|      9|    } else {
- 4782|      9|      if (sp->fts_options & 8192) {
+ 4781|      8|    } else {
+ 4782|      8|      if (sp->fts_options & 8192) {
  4783|      0|        return ((FTSENT *)((void *)0));
  4784|      0|      }
- 4785|      9|    }
- 4786|      9|    p = sp->fts_cur;
- 4787|      9|    instr = p->fts_instr;
- 4788|      9|    p->fts_instr = (unsigned short)3;
- 4789|      9|    if ((int)instr == 1) {
+ 4785|      8|    }
+ 4786|      8|    p = sp->fts_cur;
+ 4787|      8|    instr = p->fts_instr;
+ 4788|      8|    p->fts_instr = (unsigned short)3;
+ 4789|      8|    if ((int)instr == 1) {
  4790|      0|      p->fts_info = fts_stat(sp, p, (_Bool)0);
  4791|      0|      return (p);
  4792|      0|    }
- 4793|      9|    if ((int)instr == 2) {
+ 4793|      8|    if ((int)instr == 2) {
  4794|      0|      if ((int)p->fts_info == 12) {
  4795|      0|        goto _L;
  4796|      0|      } else {
@@ -4814,11 +4814,11 @@
  4814|      0|        }
  4815|      0|      }
  4816|      0|    }
- 4817|      9|    if ((int)p->fts_info == 1) {
- 4818|      3|      if ((int)instr == 4) {
+ 4817|      8|    if ((int)p->fts_info == 1) {
+ 4818|      2|      if ((int)instr == 4) {
  4819|      0|        goto _L___0;
- 4820|      3|      } else {
- 4821|      3|        if (sp->fts_options & 64) {
+ 4820|      2|      } else {
+ 4821|      2|        if (sp->fts_options & 64) {
  4822|      0|          if (p->fts_statp[0].st_dev != sp->fts_dev) {
  4823|      0|          _L___0:
  4824|      0|            if ((int)p->fts_flags & 2) {
@@ -4837,15 +4837,15 @@
  4837|      0|            return (p);
  4838|      0|          }
  4839|      0|        }
- 4840|      3|      }
- 4841|      3|      if ((unsigned long)sp->fts_child != (unsigned long)((void *)0)) {
+ 4840|      2|      }
+ 4841|      2|      if ((unsigned long)sp->fts_child != (unsigned long)((void *)0)) {
  4842|      0|        if (sp->fts_options & 4096) {
  4843|      0|          sp->fts_options &= -4097;
  4844|      0|          fts_lfree(sp->fts_child);
  4845|      0|          sp->fts_child = (struct _ftsent *)((void *)0);
  4846|      0|        }
  4847|      0|      }
- 4848|      3|      if ((unsigned long)sp->fts_child != (unsigned long)((void *)0)) {
+ 4848|      2|      if ((unsigned long)sp->fts_child != (unsigned long)((void *)0)) {
  4849|      0|        tmp___3 = fts_safe_changedir(sp, p, -1, (char const *)p->fts_accpath);
  4850|      0|        if (tmp___3) {
  4851|      0|          tmp___2 = __errno_location();
@@ -4862,48 +4862,48 @@
  4862|      0|          }
  4863|      0|        while_break___0:;
  4864|      0|        }
- 4865|      3|      } else {
- 4866|      3|        tmp___4 = fts_build(sp, 3);
- 4867|      3|        sp->fts_child = tmp___4;
- 4868|      3|        if ((unsigned long)tmp___4 == (unsigned long)((void *)0)) {
- 4869|      3|          if (sp->fts_options & 8192) {
+ 4865|      2|      } else {
+ 4866|      2|        tmp___4 = fts_build(sp, 3);
+ 4867|      2|        sp->fts_child = tmp___4;
+ 4868|      2|        if ((unsigned long)tmp___4 == (unsigned long)((void *)0)) {
+ 4869|      0|          if (sp->fts_options & 8192) {
  4870|      0|            return ((FTSENT *)((void *)0));
  4871|      0|          }
- 4872|      3|          if (p->fts_errno) {
+ 4872|      0|          if (p->fts_errno) {
  4873|      0|            if ((int)p->fts_info != 4) {
  4874|      0|              p->fts_info = (unsigned short)7;
  4875|      0|            }
  4876|      0|          }
- 4877|      3|          while (1) {
- 4878|      3|            leave_dir(sp, p);
- 4879|      3|            goto while_break___1;
- 4880|      3|          }
- 4881|      3|        while_break___1:;
- 4882|      3|          return (p);
- 4883|      3|        }
- 4884|      3|      }
- 4885|      0|      p = sp->fts_child;
- 4886|      0|      sp->fts_child = (struct _ftsent *)((void *)0);
- 4887|      0|      goto name;
- 4888|      3|    }
+ 4877|      0|          while (1) {
+ 4878|      0|            leave_dir(sp, p);
+ 4879|      0|            goto while_break___1;
+ 4880|      0|          }
+ 4881|      0|        while_break___1:;
+ 4882|      0|          return (p);
+ 4883|      0|        }
+ 4884|      2|      }
+ 4885|      2|      p = sp->fts_child;
+ 4886|      2|      sp->fts_child = (struct _ftsent *)((void *)0);
+ 4887|      2|      goto name;
+ 4888|      2|    }
  4889|      6|  next:
  4890|      6|    tmp = p;
  4891|      6|    p = p->fts_link;
  4892|      6|    if ((unsigned long)p != (unsigned long)((void *)0)) {
- 4893|      3|      sp->fts_cur = p;
- 4894|      3|      free((void *)tmp);
- 4895|      3|      if (p->fts_level == 0L) {
- 4896|      3|        fd_ring_clear(&sp->fts_fd_ring);
- 4897|      3|        if (!(sp->fts_options & 4)) {
- 4898|      3|          if (sp->fts_options & 512) {
- 4899|      3|            if (sp->fts_options & 512) {
- 4900|      3|              tmp___5 = -100;
- 4901|      3|            } else {
+ 4893|      2|      sp->fts_cur = p;
+ 4894|      2|      free((void *)tmp);
+ 4895|      2|      if (p->fts_level == 0L) {
+ 4896|      2|        fd_ring_clear(&sp->fts_fd_ring);
+ 4897|      2|        if (!(sp->fts_options & 4)) {
+ 4898|      2|          if (sp->fts_options & 512) {
+ 4899|      2|            if (sp->fts_options & 512) {
+ 4900|      2|              tmp___5 = -100;
+ 4901|      2|            } else {
  4902|      0|              tmp___5 = sp->fts_rfd;
  4903|      0|            }
- 4904|      3|            cwd_advance_fd(sp, tmp___5, (_Bool)1);
- 4905|      3|            tmp___8 = 0;
- 4906|      3|          } else {
+ 4904|      2|            cwd_advance_fd(sp, tmp___5, (_Bool)1);
+ 4905|      2|            tmp___8 = 0;
+ 4906|      2|          } else {
  4907|      0|            if (sp->fts_options & 512) {
  4908|      0|              tmp___6 = -100;
  4909|      0|            } else {
@@ -4912,23 +4912,23 @@
  4912|      0|            tmp___7 = fchdir(tmp___6);
  4913|      0|            tmp___8 = tmp___7;
  4914|      0|          }
- 4915|      3|          if (tmp___8) {
+ 4915|      2|          if (tmp___8) {
  4916|      0|            tmp___9 = 1;
- 4917|      3|          } else {
- 4918|      3|            tmp___9 = 0;
- 4919|      3|          }
- 4920|      3|        } else {
+ 4917|      2|          } else {
+ 4918|      2|            tmp___9 = 0;
+ 4919|      2|          }
+ 4920|      2|        } else {
  4921|      0|          tmp___9 = 0;
  4922|      0|        }
- 4923|      3|        if (tmp___9) {
+ 4923|      2|        if (tmp___9) {
  4924|      0|          sp->fts_options |= 8192;
  4925|      0|          return ((FTSENT *)((void *)0));
  4926|      0|        }
- 4927|      3|        free_dir(sp);
- 4928|      3|        fts_load(sp, p);
- 4929|      3|        setup_dir(sp);
- 4930|      3|        goto check_for_dir;
- 4931|      3|      }
+ 4927|      2|        free_dir(sp);
+ 4928|      2|        fts_load(sp, p);
+ 4929|      2|        setup_dir(sp);
+ 4930|      2|        goto check_for_dir;
+ 4931|      2|      }
  4932|      0|      if ((int)p->fts_instr == 4) {
  4933|      0|        goto next;
  4934|      0|      }
@@ -4949,22 +4949,22 @@
  4949|      0|        }
  4950|      0|        p->fts_instr = (unsigned short)3;
  4951|      0|      }
- 4952|      0|    name:
- 4953|      0|      if ((int)*((p->fts_parent)->fts_path +
- 4954|      0|                 ((p->fts_parent)->fts_pathlen - 1UL)) == 47) {
+ 4952|      2|    name:
+ 4953|      2|      if ((int)*((p->fts_parent)->fts_path +
+ 4954|      2|                 ((p->fts_parent)->fts_pathlen - 1UL)) == 47) {
  4955|      0|        tmp___12 = (p->fts_parent)->fts_pathlen - 1UL;
- 4956|      0|      } else {
- 4957|      0|        tmp___12 = (p->fts_parent)->fts_pathlen;
- 4958|      0|      }
- 4959|      0|      t = sp->fts_path + tmp___12;
- 4960|      0|      tmp___13 = t;
- 4961|      0|      t++;
- 4962|      0|      *tmp___13 = (char)'/';
- 4963|      0|      memmove((void *)t, (void const *)(p->fts_name), p->fts_namelen + 1UL);
- 4964|      3|    check_for_dir:
- 4965|      3|      sp->fts_cur = p;
- 4966|      3|      if ((int)p->fts_info == 11) {
- 4967|      0|        if (p->fts_statp[0].st_size == 2L) {
+ 4956|      2|      } else {
+ 4957|      2|        tmp___12 = (p->fts_parent)->fts_pathlen;
+ 4958|      2|      }
+ 4959|      2|      t = sp->fts_path + tmp___12;
+ 4960|      2|      tmp___13 = t;
+ 4961|      2|      t++;
+ 4962|      2|      *tmp___13 = (char)'/';
+ 4963|      2|      memmove((void *)t, (void const *)(p->fts_name), p->fts_namelen + 1UL);
+ 4964|      4|    check_for_dir:
+ 4965|      4|      sp->fts_cur = p;
+ 4966|      4|      if ((int)p->fts_info == 11) {
+ 4967|      2|        if (p->fts_statp[0].st_size == 2L) {
  4968|      0|          parent = p->fts_parent;
  4969|      0|          if (0L < p->fts_level) {
  4970|      0|            if (parent->fts_n_dirs_remaining == 0UL) {
@@ -4994,62 +4994,62 @@
  4994|      0|              }
  4995|      0|            }
  4996|      0|          }
- 4997|      0|        } else {
- 4998|      0|          while (1) {
+ 4997|      2|        } else {
+ 4998|      2|          while (1) {
  4999|       |
- 5000|      0|            if (!(p->fts_statp[0].st_size == 1L)) {
+ 5000|      2|            if (!(p->fts_statp[0].st_size == 1L)) {
  5001|      0|              abort();
  5002|      0|            }
- 5003|      0|            goto while_break___2;
- 5004|      0|          }
- 5005|      0|        while_break___2:;
- 5006|      0|        }
- 5007|      0|      }
- 5008|      3|      if ((int)p->fts_info == 1) {
- 5009|      3|        if (p->fts_level == 0L) {
- 5010|      3|          sp->fts_dev = p->fts_statp[0].st_dev;
- 5011|      3|        }
- 5012|      3|        tmp___16 = enter_dir(sp, p);
- 5013|      3|        if (!tmp___16) {
+ 5003|      2|            goto while_break___2;
+ 5004|      2|          }
+ 5005|      2|        while_break___2:;
+ 5006|      2|        }
+ 5007|      2|      }
+ 5008|      4|      if ((int)p->fts_info == 1) {
+ 5009|      2|        if (p->fts_level == 0L) {
+ 5010|      2|          sp->fts_dev = p->fts_statp[0].st_dev;
+ 5011|      2|        }
+ 5012|      2|        tmp___16 = enter_dir(sp, p);
+ 5013|      2|        if (!tmp___16) {
  5014|      0|          tmp___15 = __errno_location();
  5015|      0|          *tmp___15 = 12;
  5016|      0|          return ((FTSENT *)((void *)0));
  5017|      0|        }
- 5018|      3|      }
- 5019|      3|      return (p);
- 5020|      3|    }
- 5021|      3|    p = tmp->fts_parent;
- 5022|      3|    sp->fts_cur = p;
- 5023|      3|    free((void *)tmp);
- 5024|      3|    if (p->fts_level == -1L) {
- 5025|      3|      free((void *)p);
- 5026|      3|      tmp___17 = __errno_location();
- 5027|      3|      *tmp___17 = 0;
- 5028|      3|      tmp___18 = (struct _ftsent *)((void *)0);
- 5029|      3|      sp->fts_cur = tmp___18;
- 5030|      3|      return (tmp___18);
- 5031|      3|    }
- 5032|      0|    while (1) {
+ 5018|      2|      }
+ 5019|      4|      return (p);
+ 5020|      4|    }
+ 5021|      4|    p = tmp->fts_parent;
+ 5022|      4|    sp->fts_cur = p;
+ 5023|      4|    free((void *)tmp);
+ 5024|      4|    if (p->fts_level == -1L) {
+ 5025|      2|      free((void *)p);
+ 5026|      2|      tmp___17 = __errno_location();
+ 5027|      2|      *tmp___17 = 0;
+ 5028|      2|      tmp___18 = (struct _ftsent *)((void *)0);
+ 5029|      2|      sp->fts_cur = tmp___18;
+ 5030|      2|      return (tmp___18);
+ 5031|      2|    }
+ 5032|      2|    while (1) {
  5033|       |
- 5034|      0|      if (!((int)p->fts_info != 11)) {
+ 5034|      2|      if (!((int)p->fts_info != 11)) {
  5035|      0|        abort();
  5036|      0|      }
- 5037|      0|      goto while_break___3;
- 5038|      0|    }
- 5039|      0|  while_break___3:
- 5040|      0|    *(sp->fts_path + p->fts_pathlen) = (char)'\000';
- 5041|      0|    if (p->fts_level == 0L) {
- 5042|      0|      fd_ring_clear(&sp->fts_fd_ring);
- 5043|      0|      if (!(sp->fts_options & 4)) {
- 5044|      0|        if (sp->fts_options & 512) {
- 5045|      0|          if (sp->fts_options & 512) {
- 5046|      0|            tmp___20 = -100;
- 5047|      0|          } else {
+ 5037|      2|      goto while_break___3;
+ 5038|      2|    }
+ 5039|      2|  while_break___3:
+ 5040|      2|    *(sp->fts_path + p->fts_pathlen) = (char)'\000';
+ 5041|      2|    if (p->fts_level == 0L) {
+ 5042|      2|      fd_ring_clear(&sp->fts_fd_ring);
+ 5043|      2|      if (!(sp->fts_options & 4)) {
+ 5044|      2|        if (sp->fts_options & 512) {
+ 5045|      2|          if (sp->fts_options & 512) {
+ 5046|      2|            tmp___20 = -100;
+ 5047|      2|          } else {
  5048|      0|            tmp___20 = sp->fts_rfd;
  5049|      0|          }
- 5050|      0|          cwd_advance_fd(sp, tmp___20, (_Bool)1);
- 5051|      0|          tmp___23 = 0;
- 5052|      0|        } else {
+ 5050|      2|          cwd_advance_fd(sp, tmp___20, (_Bool)1);
+ 5051|      2|          tmp___23 = 0;
+ 5052|      2|        } else {
  5053|      0|          if (sp->fts_options & 512) {
  5054|      0|            tmp___21 = -100;
  5055|      0|          } else {
@@ -5058,20 +5058,20 @@
  5058|      0|          tmp___22 = fchdir(tmp___21);
  5059|      0|          tmp___23 = tmp___22;
  5060|      0|        }
- 5061|      0|        if (tmp___23) {
+ 5061|      2|        if (tmp___23) {
  5062|      0|          tmp___24 = 1;
- 5063|      0|        } else {
- 5064|      0|          tmp___24 = 0;
- 5065|      0|        }
- 5066|      0|      } else {
+ 5063|      2|        } else {
+ 5064|      2|          tmp___24 = 0;
+ 5065|      2|        }
+ 5066|      2|      } else {
  5067|      0|        tmp___24 = 0;
  5068|      0|      }
- 5069|      0|      if (tmp___24) {
+ 5069|      2|      if (tmp___24) {
  5070|      0|        tmp___19 = __errno_location();
  5071|      0|        p->fts_errno = *tmp___19;
  5072|      0|        sp->fts_options |= 8192;
  5073|      0|      }
- 5074|      0|    } else {
+ 5074|      2|    } else {
  5075|      0|      if ((int)p->fts_flags & 2) {
  5076|      0|        if (!(sp->fts_options & 4)) {
  5077|      0|          if (sp->fts_options & 512) {
@@ -5104,26 +5104,26 @@
  5104|      0|        }
  5105|      0|      }
  5106|      0|    }
- 5107|      0|    if (p->fts_errno) {
+ 5107|      2|    if (p->fts_errno) {
  5108|      0|      p->fts_info = (unsigned short)7;
- 5109|      0|    } else {
- 5110|      0|      p->fts_info = (unsigned short)6;
- 5111|      0|    }
- 5112|      0|    if (p->fts_errno == 0) {
- 5113|      0|      while (1) {
- 5114|      0|        leave_dir(sp, p);
- 5115|      0|        goto while_break___4;
- 5116|      0|      }
- 5117|      0|    while_break___4:;
- 5118|      0|    }
- 5119|      0|    if (sp->fts_options & 8192) {
+ 5109|      2|    } else {
+ 5110|      2|      p->fts_info = (unsigned short)6;
+ 5111|      2|    }
+ 5112|      2|    if (p->fts_errno == 0) {
+ 5113|      2|      while (1) {
+ 5114|      2|        leave_dir(sp, p);
+ 5115|      2|        goto while_break___4;
+ 5116|      2|      }
+ 5117|      2|    while_break___4:;
+ 5118|      2|    }
+ 5119|      2|    if (sp->fts_options & 8192) {
  5120|      0|      tmp___32 = (FTSENT *)((void *)0);
- 5121|      0|    } else {
- 5122|      0|      tmp___32 = p;
- 5123|      0|    }
- 5124|      0|    return (tmp___32);
- 5125|      0|  }
- 5126|      0|}
+ 5121|      2|    } else {
+ 5122|      2|      tmp___32 = p;
+ 5123|      2|    }
+ 5124|      2|    return (tmp___32);
+ 5125|      2|  }
+ 5126|      2|}
  5127|       |__attribute__((__nothrow__)) int(__attribute__((__leaf__)) fts_set)(
  5128|       |    FTS *sp __attribute__((__unused__)), FTSENT *p, int instr);
  5129|       |int(__attribute__((__leaf__)) fts_set)(FTS *sp __attribute__((__unused__)),
@@ -5166,28 +5166,28 @@
  5166|      0|    return (tmp___0);
  5167|      0|  }
  5168|      0|}
- 5169|      0|static void set_stat_type(struct stat *st, unsigned int dtype) {
- 5170|      0|  mode_t type;
+ 5169|      2|static void set_stat_type(struct stat *st, unsigned int dtype) {
+ 5170|      2|  mode_t type;
  5171|       |
- 5172|      0|  {
- 5173|      0|    if (dtype == 6U) {
+ 5172|      2|  {
+ 5173|      2|    if (dtype == 6U) {
  5174|      0|      goto case_6;
  5175|      0|    }
- 5176|      0|    if (dtype == 2U) {
+ 5176|      2|    if (dtype == 2U) {
  5177|      0|      goto case_2;
  5178|      0|    }
- 5179|      0|    if (dtype == 4U) {
+ 5179|      2|    if (dtype == 4U) {
  5180|      0|      goto case_4;
  5181|      0|    }
- 5182|      0|    if (dtype == 1U) {
+ 5182|      2|    if (dtype == 1U) {
  5183|      0|      goto case_1;
  5184|      0|    }
- 5185|      0|    if (dtype == 10U) {
+ 5185|      2|    if (dtype == 10U) {
  5186|      0|      goto case_10;
  5187|      0|    }
- 5188|      0|    if (dtype == 8U) {
- 5189|      0|      goto case_8;
- 5190|      0|    }
+ 5188|      2|    if (dtype == 8U) {
+ 5189|      2|      goto case_8;
+ 5190|      2|    }
  5191|      0|    if (dtype == 12U) {
  5192|      0|      goto case_12;
  5193|      0|    }
@@ -5207,86 +5207,86 @@
  5207|      0|  case_10:
  5208|      0|    type = (mode_t)40960;
  5209|      0|    goto switch_break;
- 5210|      0|  case_8:
- 5211|      0|    type = (mode_t)32768;
- 5212|      0|    goto switch_break;
+ 5210|      2|  case_8:
+ 5211|      2|    type = (mode_t)32768;
+ 5212|      2|    goto switch_break;
  5213|      0|  case_12:
  5214|      0|    type = (mode_t)49152;
  5215|      0|    goto switch_break;
  5216|      0|  switch_default:
  5217|      0|    type = (mode_t)0;
- 5218|      0|  switch_break:
- 5219|      0|    st->st_mode = type;
- 5220|      0|    return;
+ 5218|      2|  switch_break:
+ 5219|      2|    st->st_mode = type;
+ 5220|      2|    return;
  5221|      0|  }
  5222|      0|}
- 5223|      3|static FTSENT *fts_build(FTS *sp, int type) {
- 5224|      3|  struct dirent *dp;
- 5225|      3|  FTSENT *p;
- 5226|      3|  FTSENT *head;
- 5227|      3|  size_t nitems;
- 5228|      3|  FTSENT *cur;
- 5229|      3|  FTSENT *tail;
- 5230|      3|  DIR *dirp;
- 5231|      3|  void *oldaddr;
- 5232|      3|  int saved_errno;
- 5233|      3|  _Bool descend;
- 5234|      3|  _Bool doadjust;
- 5235|      3|  ptrdiff_t level;
- 5236|      3|  nlink_t nlinks;
- 5237|      3|  _Bool nostat;
- 5238|      3|  size_t len;
- 5239|      3|  size_t maxlen;
- 5240|      3|  size_t new_len;
- 5241|      3|  char *cp;
- 5242|      3|  int *tmp;
- 5243|      3|  DIR *tmp___0;
- 5244|      3|  DIR *tmp___1;
- 5245|      3|  int *tmp___2;
- 5246|      3|  _Bool tmp___3;
- 5247|      3|  int tmp___4;
- 5248|      3|  int dir_fd;
- 5249|      3|  int tmp___5;
- 5250|      3|  int *tmp___6;
- 5251|      3|  int tmp___7;
- 5252|      3|  char *tmp___8;
- 5253|      3|  _Bool is_dir;
- 5254|      3|  size_t tmp___9;
- 5255|      3|  int *tmp___10;
- 5256|      3|  int *tmp___11;
- 5257|      3|  size_t tmp___12;
- 5258|      3|  _Bool tmp___13;
- 5259|      3|  size_t tmp___14;
- 5260|      3|  size_t tmp___15;
- 5261|      3|  int *tmp___16;
- 5262|      3|  _Bool skip_stat;
- 5263|      3|  int tmp___17;
- 5264|      3|  int tmp___18;
- 5265|      3|  int tmp___19;
- 5266|      3|  int tmp___20;
- 5267|      3|  int tmp___21;
- 5268|      3|  int tmp___22;
- 5269|      3|  int tmp___23;
- 5270|      3|  int tmp___24;
- 5271|      3|  int tmp___25;
- 5272|      3|  int tmp___26;
- 5273|      3|  _Bool tmp___27;
+ 5223|      2|static FTSENT *fts_build(FTS *sp, int type) {
+ 5224|      2|  struct dirent *dp;
+ 5225|      2|  FTSENT *p;
+ 5226|      2|  FTSENT *head;
+ 5227|      2|  size_t nitems;
+ 5228|      2|  FTSENT *cur;
+ 5229|      2|  FTSENT *tail;
+ 5230|      2|  DIR *dirp;
+ 5231|      2|  void *oldaddr;
+ 5232|      2|  int saved_errno;
+ 5233|      2|  _Bool descend;
+ 5234|      2|  _Bool doadjust;
+ 5235|      2|  ptrdiff_t level;
+ 5236|      2|  nlink_t nlinks;
+ 5237|      2|  _Bool nostat;
+ 5238|      2|  size_t len;
+ 5239|      2|  size_t maxlen;
+ 5240|      2|  size_t new_len;
+ 5241|      2|  char *cp;
+ 5242|      2|  int *tmp;
+ 5243|      2|  DIR *tmp___0;
+ 5244|      2|  DIR *tmp___1;
+ 5245|      2|  int *tmp___2;
+ 5246|      2|  _Bool tmp___3;
+ 5247|      2|  int tmp___4;
+ 5248|      2|  int dir_fd;
+ 5249|      2|  int tmp___5;
+ 5250|      2|  int *tmp___6;
+ 5251|      2|  int tmp___7;
+ 5252|      2|  char *tmp___8;
+ 5253|      2|  _Bool is_dir;
+ 5254|      2|  size_t tmp___9;
+ 5255|      2|  int *tmp___10;
+ 5256|      2|  int *tmp___11;
+ 5257|      2|  size_t tmp___12;
+ 5258|      2|  _Bool tmp___13;
+ 5259|      2|  size_t tmp___14;
+ 5260|      2|  size_t tmp___15;
+ 5261|      2|  int *tmp___16;
+ 5262|      2|  _Bool skip_stat;
+ 5263|      2|  int tmp___17;
+ 5264|      2|  int tmp___18;
+ 5265|      2|  int tmp___19;
+ 5266|      2|  int tmp___20;
+ 5267|      2|  int tmp___21;
+ 5268|      2|  int tmp___22;
+ 5269|      2|  int tmp___23;
+ 5270|      2|  int tmp___24;
+ 5271|      2|  int tmp___25;
+ 5272|      2|  int tmp___26;
+ 5273|      2|  _Bool tmp___27;
  5274|       |
- 5275|      3|  {
- 5276|      3|    cur = sp->fts_cur;
- 5277|      3|    if (!(sp->fts_options & 4)) {
- 5278|      3|      if (sp->fts_options & 512) {
- 5279|      3|        tmp___0 = opendirat(sp->fts_cwd_fd, (char const *)cur->fts_accpath);
- 5280|      3|        dirp = tmp___0;
- 5281|      3|      } else {
+ 5275|      2|  {
+ 5276|      2|    cur = sp->fts_cur;
+ 5277|      2|    if (!(sp->fts_options & 4)) {
+ 5278|      2|      if (sp->fts_options & 512) {
+ 5279|      2|        tmp___0 = opendirat(sp->fts_cwd_fd, (char const *)cur->fts_accpath);
+ 5280|      2|        dirp = tmp___0;
+ 5281|      2|      } else {
  5282|      0|        tmp___1 = opendir_safer((char const *)cur->fts_accpath);
  5283|      0|        dirp = tmp___1;
  5284|      0|      }
- 5285|      3|    } else {
+ 5285|      2|    } else {
  5286|      0|      tmp___1 = opendir_safer((char const *)cur->fts_accpath);
  5287|      0|      dirp = tmp___1;
  5288|      0|    }
- 5289|      3|    if ((unsigned long)dirp == (unsigned long)((void *)0)) {
+ 5289|      2|    if ((unsigned long)dirp == (unsigned long)((void *)0)) {
  5290|      0|      if (type == 3) {
  5291|      0|        cur->fts_info = (unsigned short)4;
  5292|      0|        tmp = __errno_location();
@@ -5294,10 +5294,10 @@
  5294|      0|      }
  5295|      0|      return ((FTSENT *)((void *)0));
  5296|      0|    }
- 5297|      3|    if ((int)cur->fts_info == 11) {
+ 5297|      2|    if ((int)cur->fts_info == 11) {
  5298|      0|      cur->fts_info = fts_stat(sp, cur, (_Bool)0);
- 5299|      3|    } else {
- 5300|      3|      if (sp->fts_options & 256) {
+ 5299|      2|    } else {
+ 5300|      2|      if (sp->fts_options & 256) {
  5301|      0|        while (1) {
  5302|      0|          leave_dir(sp, cur);
  5303|      0|          goto while_break;
@@ -5311,48 +5311,48 @@
  5311|      0|          return ((FTSENT *)((void *)0));
  5312|      0|        }
  5313|      0|      }
- 5314|      3|    }
- 5315|      3|    if (type == 2) {
+ 5314|      2|    }
+ 5315|      2|    if (type == 2) {
  5316|      0|      nlinks = (nlink_t)0;
  5317|      0|      nostat = (_Bool)0;
- 5318|      3|    } else {
- 5319|      3|      if (sp->fts_options & 8) {
- 5320|      3|        if (sp->fts_options & 16) {
- 5321|      3|          if (sp->fts_options & 32) {
+ 5318|      2|    } else {
+ 5319|      2|      if (sp->fts_options & 8) {
+ 5320|      2|        if (sp->fts_options & 16) {
+ 5321|      2|          if (sp->fts_options & 32) {
  5322|      0|            tmp___4 = 0;
- 5323|      3|          } else {
- 5324|      3|            tmp___4 = 2;
- 5325|      3|          }
- 5326|      3|          nlinks = cur->fts_statp[0].st_nlink - (__nlink_t)tmp___4;
- 5327|      3|          nostat = (_Bool)1;
- 5328|      3|        } else {
+ 5323|      2|          } else {
+ 5324|      2|            tmp___4 = 2;
+ 5325|      2|          }
+ 5326|      2|          nlinks = cur->fts_statp[0].st_nlink - (__nlink_t)tmp___4;
+ 5327|      2|          nostat = (_Bool)1;
+ 5328|      2|        } else {
  5329|      0|          nlinks = (nlink_t)-1;
  5330|      0|          nostat = (_Bool)0;
  5331|      0|        }
- 5332|      3|      } else {
+ 5332|      2|      } else {
  5333|      0|        nlinks = (nlink_t)-1;
  5334|      0|        nostat = (_Bool)0;
  5335|      0|      }
- 5336|      3|    }
- 5337|      3|    if (nlinks) {
+ 5336|      2|    }
+ 5337|      2|    if (nlinks) {
  5338|      0|      goto _L___0;
- 5339|      3|    } else {
- 5340|      3|      if (type == 3) {
- 5341|      3|      _L___0:
- 5342|      3|        tmp___5 = dirfd(dirp);
- 5343|      3|        dir_fd = tmp___5;
- 5344|      3|        if (sp->fts_options & 512) {
- 5345|      3|          if (0 <= dir_fd) {
- 5346|      3|            dir_fd = dup_safer(dir_fd);
- 5347|      3|            set_cloexec_flag(dir_fd, (_Bool)1);
- 5348|      3|          }
- 5349|      3|        }
- 5350|      3|        if (dir_fd < 0) {
+ 5339|      2|    } else {
+ 5340|      2|      if (type == 3) {
+ 5341|      2|      _L___0:
+ 5342|      2|        tmp___5 = dirfd(dirp);
+ 5343|      2|        dir_fd = tmp___5;
+ 5344|      2|        if (sp->fts_options & 512) {
+ 5345|      2|          if (0 <= dir_fd) {
+ 5346|      2|            dir_fd = dup_safer(dir_fd);
+ 5347|      2|            set_cloexec_flag(dir_fd, (_Bool)1);
+ 5348|      2|          }
+ 5349|      2|        }
+ 5350|      2|        if (dir_fd < 0) {
  5351|      0|          goto _L;
- 5352|      3|        } else {
- 5353|      3|          tmp___7 =
- 5354|      3|              fts_safe_changedir(sp, cur, dir_fd, (char const *)((void *)0));
- 5355|      3|          if (tmp___7) {
+ 5352|      2|        } else {
+ 5353|      2|          tmp___7 =
+ 5354|      2|              fts_safe_changedir(sp, cur, dir_fd, (char const *)((void *)0));
+ 5355|      2|          if (tmp___7) {
  5356|      0|          _L:
  5357|      0|            if (nlinks) {
  5358|      0|              if (type == 3) {
@@ -5369,64 +5369,64 @@
  5369|      0|              }
  5370|      0|            }
  5371|      0|            dirp = (DIR *)((void *)0);
- 5372|      3|          } else {
- 5373|      3|            descend = (_Bool)1;
- 5374|      3|          }
- 5375|      3|        }
- 5376|      3|      } else {
+ 5372|      2|          } else {
+ 5373|      2|            descend = (_Bool)1;
+ 5374|      2|          }
+ 5375|      2|        }
+ 5376|      2|      } else {
  5377|      0|        descend = (_Bool)0;
  5378|      0|      }
- 5379|      3|    }
- 5380|      3|    if ((int)*(cur->fts_path + (cur->fts_pathlen - 1UL)) == 47) {
+ 5379|      2|    }
+ 5380|      2|    if ((int)*(cur->fts_path + (cur->fts_pathlen - 1UL)) == 47) {
  5381|      0|      len = cur->fts_pathlen - 1UL;
- 5382|      3|    } else {
- 5383|      3|      len = cur->fts_pathlen;
- 5384|      3|    }
- 5385|      3|    if (sp->fts_options & 4) {
+ 5382|      2|    } else {
+ 5383|      2|      len = cur->fts_pathlen;
+ 5384|      2|    }
+ 5385|      2|    if (sp->fts_options & 4) {
  5386|      0|      cp = sp->fts_path + len;
  5387|      0|      tmp___8 = cp;
  5388|      0|      cp++;
  5389|      0|      *tmp___8 = (char)'/';
- 5390|      3|    } else {
- 5391|      3|      cp = (char *)((void *)0);
- 5392|      3|    }
- 5393|      3|    len++;
- 5394|      3|    maxlen = sp->fts_pathlen - len;
- 5395|      3|    level = cur->fts_level + 1L;
- 5396|      3|    doadjust = (_Bool)0;
- 5397|      3|    tail = (FTSENT *)((void *)0);
- 5398|      3|    head = tail;
- 5399|      3|    nitems = (size_t)0;
- 5400|      9|    while (1) {
+ 5390|      2|    } else {
+ 5391|      2|      cp = (char *)((void *)0);
+ 5392|      2|    }
+ 5393|      2|    len++;
+ 5394|      2|    maxlen = sp->fts_pathlen - len;
+ 5395|      2|    level = cur->fts_level + 1L;
+ 5396|      2|    doadjust = (_Bool)0;
+ 5397|      2|    tail = (FTSENT *)((void *)0);
+ 5398|      2|    head = tail;
+ 5399|      2|    nitems = (size_t)0;
+ 5400|      8|    while (1) {
  5401|       |
- 5402|      9|      if (dirp) {
- 5403|      9|        dp = readdir(dirp);
- 5404|      9|        if (!dp) {
- 5405|      3|          goto while_break___0;
- 5406|      3|        }
- 5407|      9|      } else {
+ 5402|      8|      if (dirp) {
+ 5403|      8|        dp = readdir(dirp);
+ 5404|      8|        if (!dp) {
+ 5405|      2|          goto while_break___0;
+ 5406|      2|        }
+ 5407|      8|      } else {
  5408|      0|        goto while_break___0;
  5409|      0|      }
  5410|      6|      if (!(sp->fts_options & 32)) {
  5411|      6|        if ((int)dp->d_name[0] == 46) {
- 5412|      6|          if (!dp->d_name[1]) {
- 5413|      3|            goto __Cont;
- 5414|      3|          } else {
- 5415|      3|            if ((int)dp->d_name[1] == 46) {
- 5416|      3|              if (!dp->d_name[2]) {
- 5417|      3|                goto __Cont;
- 5418|      3|              }
- 5419|      3|            }
- 5420|      3|          }
- 5421|      6|        }
+ 5412|      4|          if (!dp->d_name[1]) {
+ 5413|      2|            goto __Cont;
+ 5414|      2|          } else {
+ 5415|      2|            if ((int)dp->d_name[1] == 46) {
+ 5416|      2|              if (!dp->d_name[2]) {
+ 5417|      2|                goto __Cont;
+ 5418|      2|              }
+ 5419|      2|            }
+ 5420|      2|          }
+ 5421|      4|        }
  5422|      6|      }
- 5423|      0|      tmp___9 = strlen((char const *)(dp->d_name));
- 5424|      0|      p = fts_alloc(sp, (char const *)(dp->d_name), tmp___9);
- 5425|      0|      if ((unsigned long)p == (unsigned long)((void *)0)) {
+ 5423|      2|      tmp___9 = strlen((char const *)(dp->d_name));
+ 5424|      2|      p = fts_alloc(sp, (char const *)(dp->d_name), tmp___9);
+ 5425|      2|      if ((unsigned long)p == (unsigned long)((void *)0)) {
  5426|      0|        goto mem1;
  5427|      0|      }
- 5428|      0|      tmp___14 = strlen((char const *)(dp->d_name));
- 5429|      0|      if (tmp___14 >= maxlen) {
+ 5428|      2|      tmp___14 = strlen((char const *)(dp->d_name));
+ 5429|      2|      if (tmp___14 >= maxlen) {
  5430|      0|        oldaddr = (void *)sp->fts_path;
  5431|      0|        tmp___12 = strlen((char const *)(dp->d_name));
  5432|      0|        tmp___13 = fts_palloc(sp, (tmp___12 + len) + 1UL);
@@ -5451,9 +5451,9 @@
  5451|      0|        }
  5452|      0|        maxlen = sp->fts_pathlen - len;
  5453|      0|      }
- 5454|      0|      tmp___15 = strlen((char const *)(dp->d_name));
- 5455|      0|      new_len = len + tmp___15;
- 5456|      0|      if (new_len < len) {
+ 5454|      2|      tmp___15 = strlen((char const *)(dp->d_name));
+ 5455|      2|      new_len = len + tmp___15;
+ 5456|      2|      if (new_len < len) {
  5457|      0|        free((void *)p);
  5458|      0|        fts_lfree(head);
  5459|      0|        closedir(dirp);
@@ -5463,50 +5463,50 @@
  5463|      0|        *tmp___16 = 36;
  5464|      0|        return ((FTSENT *)((void *)0));
  5465|      0|      }
- 5466|      0|      p->fts_level = level;
- 5467|      0|      p->fts_parent = sp->fts_cur;
- 5468|      0|      p->fts_pathlen = new_len;
- 5469|      0|      p->fts_statp[0].st_ino = dp->d_ino;
- 5470|      0|      if (sp->fts_options & 4) {
+ 5466|      2|      p->fts_level = level;
+ 5467|      2|      p->fts_parent = sp->fts_cur;
+ 5468|      2|      p->fts_pathlen = new_len;
+ 5469|      2|      p->fts_statp[0].st_ino = dp->d_ino;
+ 5470|      2|      if (sp->fts_options & 4) {
  5471|      0|        p->fts_accpath = p->fts_path;
  5472|      0|        memmove((void *)cp, (void const *)(p->fts_name), p->fts_namelen + 1UL);
- 5473|      0|      } else {
- 5474|      0|        p->fts_accpath = p->fts_name;
- 5475|      0|      }
- 5476|      0|      if ((unsigned long)sp->fts_compar == (unsigned long)((void *)0) ||
- 5477|      0|          sp->fts_options & 1024) {
- 5478|      0|        if (sp->fts_options & 16) {
- 5479|      0|          if (sp->fts_options & 8) {
- 5480|      0|            if ((int)dp->d_type != 0) {
- 5481|      0|              if (!((int)dp->d_type == 4)) {
- 5482|      0|                tmp___17 = 1;
- 5483|      0|              } else {
+ 5473|      2|      } else {
+ 5474|      2|        p->fts_accpath = p->fts_name;
+ 5475|      2|      }
+ 5476|      2|      if ((unsigned long)sp->fts_compar == (unsigned long)((void *)0) ||
+ 5477|      2|          sp->fts_options & 1024) {
+ 5478|      2|        if (sp->fts_options & 16) {
+ 5479|      2|          if (sp->fts_options & 8) {
+ 5480|      2|            if ((int)dp->d_type != 0) {
+ 5481|      2|              if (!((int)dp->d_type == 4)) {
+ 5482|      2|                tmp___17 = 1;
+ 5483|      2|              } else {
  5484|      0|                tmp___17 = 0;
  5485|      0|              }
- 5486|      0|            } else {
+ 5486|      2|            } else {
  5487|      0|              tmp___17 = 0;
  5488|      0|            }
- 5489|      0|          } else {
+ 5489|      2|          } else {
  5490|      0|            tmp___17 = 0;
  5491|      0|          }
- 5492|      0|        } else {
+ 5492|      2|        } else {
  5493|      0|          tmp___17 = 0;
  5494|      0|        }
- 5495|      0|        skip_stat = (_Bool)tmp___17;
- 5496|      0|        p->fts_info = (unsigned short)11;
- 5497|      0|        set_stat_type(p->fts_statp, (unsigned int)dp->d_type);
- 5498|      0|        fts_set_stat_required(p, (_Bool)(!skip_stat));
- 5499|      0|        if (sp->fts_options & 16) {
- 5500|      0|          if ((int)dp->d_type == 4) {
+ 5495|      2|        skip_stat = (_Bool)tmp___17;
+ 5496|      2|        p->fts_info = (unsigned short)11;
+ 5497|      2|        set_stat_type(p->fts_statp, (unsigned int)dp->d_type);
+ 5498|      2|        fts_set_stat_required(p, (_Bool)(!skip_stat));
+ 5499|      2|        if (sp->fts_options & 16) {
+ 5500|      2|          if ((int)dp->d_type == 4) {
  5501|      0|            tmp___18 = 1;
- 5502|      0|          } else {
- 5503|      0|            tmp___18 = 0;
- 5504|      0|          }
- 5505|      0|        } else {
+ 5502|      2|          } else {
+ 5503|      2|            tmp___18 = 0;
+ 5504|      2|          }
+ 5505|      2|        } else {
  5506|      0|          tmp___18 = 0;
  5507|      0|        }
- 5508|      0|        is_dir = (_Bool)tmp___18;
- 5509|      0|      } else {
+ 5508|      2|        is_dir = (_Bool)tmp___18;
+ 5509|      2|      } else {
  5510|      0|        p->fts_info = fts_stat(sp, p, (_Bool)0);
  5511|      0|        if ((int)p->fts_info == 1) {
  5512|      0|          tmp___19 = 1;
@@ -5523,30 +5523,30 @@
  5523|      0|        }
  5524|      0|        is_dir = (_Bool)tmp___19;
  5525|      0|      }
- 5526|      0|      if (nlinks > 0UL) {
+ 5526|      2|      if (nlinks > 0UL) {
  5527|      0|        if (is_dir) {
  5528|      0|          nlinks -= (nlink_t)nostat;
  5529|      0|        }
  5530|      0|      }
- 5531|      0|      p->fts_link = (struct _ftsent *)((void *)0);
- 5532|      0|      if ((unsigned long)head == (unsigned long)((void *)0)) {
- 5533|      0|        tail = p;
- 5534|      0|        head = tail;
- 5535|      0|      } else {
+ 5531|      2|      p->fts_link = (struct _ftsent *)((void *)0);
+ 5532|      2|      if ((unsigned long)head == (unsigned long)((void *)0)) {
+ 5533|      2|        tail = p;
+ 5534|      2|        head = tail;
+ 5535|      2|      } else {
  5536|      0|        tail->fts_link = p;
  5537|      0|        tail = p;
  5538|      0|      }
- 5539|      0|      nitems++;
+ 5539|      2|      nitems++;
  5540|      6|    __Cont:;
  5541|      6|    }
- 5542|      3|  while_break___0:;
- 5543|      3|    if (dirp) {
- 5544|      3|      closedir(dirp);
- 5545|      3|    }
- 5546|      3|    if (doadjust) {
+ 5542|      2|  while_break___0:;
+ 5543|      2|    if (dirp) {
+ 5544|      2|      closedir(dirp);
+ 5545|      2|    }
+ 5546|      2|    if (doadjust) {
  5547|      0|      fts_padjust(sp, head);
  5548|      0|    }
- 5549|      3|    if (sp->fts_options & 4) {
+ 5549|      2|    if (sp->fts_options & 4) {
  5550|      0|      if (len == sp->fts_pathlen) {
  5551|      0|        cp--;
  5552|      0|      } else {
@@ -5556,20 +5556,20 @@
  5556|      0|      }
  5557|      0|      *cp = (char)'\000';
  5558|      0|    }
- 5559|      3|    if (descend) {
- 5560|      3|      if (type == 1 || !nitems) {
- 5561|      3|        if (cur->fts_level == 0L) {
- 5562|      3|          fd_ring_clear(&sp->fts_fd_ring);
- 5563|      3|          if (!(sp->fts_options & 4)) {
- 5564|      3|            if (sp->fts_options & 512) {
- 5565|      3|              if (sp->fts_options & 512) {
- 5566|      3|                tmp___20 = -100;
- 5567|      3|              } else {
+ 5559|      2|    if (descend) {
+ 5560|      2|      if (type == 1 || !nitems) {
+ 5561|      0|        if (cur->fts_level == 0L) {
+ 5562|      0|          fd_ring_clear(&sp->fts_fd_ring);
+ 5563|      0|          if (!(sp->fts_options & 4)) {
+ 5564|      0|            if (sp->fts_options & 512) {
+ 5565|      0|              if (sp->fts_options & 512) {
+ 5566|      0|                tmp___20 = -100;
+ 5567|      0|              } else {
  5568|      0|                tmp___20 = sp->fts_rfd;
  5569|      0|              }
- 5570|      3|              cwd_advance_fd(sp, tmp___20, (_Bool)1);
- 5571|      3|              tmp___23 = 0;
- 5572|      3|            } else {
+ 5570|      0|              cwd_advance_fd(sp, tmp___20, (_Bool)1);
+ 5571|      0|              tmp___23 = 0;
+ 5572|      0|            } else {
  5573|      0|              if (sp->fts_options & 512) {
  5574|      0|                tmp___21 = -100;
  5575|      0|              } else {
@@ -5578,35 +5578,35 @@
  5578|      0|              tmp___22 = fchdir(tmp___21);
  5579|      0|              tmp___23 = tmp___22;
  5580|      0|            }
- 5581|      3|            if (tmp___23) {
+ 5581|      0|            if (tmp___23) {
  5582|      0|              tmp___24 = 1;
- 5583|      3|            } else {
- 5584|      3|              tmp___24 = 0;
- 5585|      3|            }
- 5586|      3|          } else {
+ 5583|      0|            } else {
+ 5584|      0|              tmp___24 = 0;
+ 5585|      0|            }
+ 5586|      0|          } else {
  5587|      0|            tmp___24 = 0;
  5588|      0|          }
- 5589|      3|          tmp___26 = tmp___24;
- 5590|      3|        } else {
+ 5589|      0|          tmp___26 = tmp___24;
+ 5590|      0|        } else {
  5591|      0|          tmp___25 = fts_safe_changedir(sp, cur->fts_parent, -1, "..");
  5592|      0|          tmp___26 = tmp___25;
  5593|      0|        }
- 5594|      3|        if (tmp___26) {
+ 5594|      0|        if (tmp___26) {
  5595|      0|          cur->fts_info = (unsigned short)7;
  5596|      0|          sp->fts_options |= 8192;
  5597|      0|          fts_lfree(head);
  5598|      0|          return ((FTSENT *)((void *)0));
  5599|      0|        }
- 5600|      3|      }
- 5601|      3|    }
- 5602|      3|    if (!nitems) {
- 5603|      3|      if (type == 3) {
- 5604|      3|        cur->fts_info = (unsigned short)6;
- 5605|      3|      }
- 5606|      3|      fts_lfree(head);
- 5607|      3|      return ((FTSENT *)((void *)0));
- 5608|      3|    }
- 5609|      0|    if (nitems > 10000UL) {
+ 5600|      0|      }
+ 5601|      2|    }
+ 5602|      2|    if (!nitems) {
+ 5603|      0|      if (type == 3) {
+ 5604|      0|        cur->fts_info = (unsigned short)6;
+ 5605|      0|      }
+ 5606|      0|      fts_lfree(head);
+ 5607|      0|      return ((FTSENT *)((void *)0));
+ 5608|      0|    }
+ 5609|      2|    if (nitems > 10000UL) {
  5610|      0|      if (!sp->fts_compar) {
  5611|      0|        if (sp->fts_options & 512) {
  5612|      0|          tmp___27 = dirent_inode_sort_may_be_useful(sp->fts_cwd_fd);
@@ -5619,38 +5619,38 @@
  5619|      0|        }
  5620|      0|      }
  5621|      0|    }
- 5622|      0|    if (sp->fts_compar) {
+ 5622|      2|    if (sp->fts_compar) {
  5623|      0|      if (nitems > 1UL) {
  5624|      0|        head = fts_sort(sp, head, nitems);
  5625|      0|      }
  5626|      0|    }
- 5627|      0|    return (head);
- 5628|      3|  }
- 5629|      3|}
- 5630|      3|static unsigned short fts_stat(FTS *sp, FTSENT *p, _Bool follow) {
- 5631|      3|  struct stat *sbp;
- 5632|      3|  int saved_errno;
- 5633|      3|  int *tmp;
- 5634|      3|  int *tmp___0;
- 5635|      3|  int *tmp___1;
- 5636|      3|  int tmp___2;
- 5637|      3|  int tmp___3;
- 5638|      3|  int *tmp___4;
- 5639|      3|  int tmp___5;
- 5640|      3|  int tmp___6;
- 5641|      3|  int tmp___7;
+ 5627|      2|    return (head);
+ 5628|      2|  }
+ 5629|      2|}
+ 5630|      2|static unsigned short fts_stat(FTS *sp, FTSENT *p, _Bool follow) {
+ 5631|      2|  struct stat *sbp;
+ 5632|      2|  int saved_errno;
+ 5633|      2|  int *tmp;
+ 5634|      2|  int *tmp___0;
+ 5635|      2|  int *tmp___1;
+ 5636|      2|  int tmp___2;
+ 5637|      2|  int tmp___3;
+ 5638|      2|  int *tmp___4;
+ 5639|      2|  int tmp___5;
+ 5640|      2|  int tmp___6;
+ 5641|      2|  int tmp___7;
  5642|       |
- 5643|      3|  {
- 5644|      3|    sbp = p->fts_statp;
- 5645|      3|    if (p->fts_level == 0L) {
- 5646|      3|      if (sp->fts_options & 1) {
+ 5643|      2|  {
+ 5644|      2|    sbp = p->fts_statp;
+ 5645|      2|    if (p->fts_level == 0L) {
+ 5646|      2|      if (sp->fts_options & 1) {
  5647|      0|        follow = (_Bool)1;
  5648|      0|      }
- 5649|      3|    }
- 5650|      3|    if (sp->fts_options & 2) {
+ 5649|      2|    }
+ 5650|      2|    if (sp->fts_options & 2) {
  5651|      0|      goto _L;
- 5652|      3|    } else {
- 5653|      3|      if (follow) {
+ 5652|      2|    } else {
+ 5653|      2|      if (follow) {
  5654|      0|      _L:
  5655|      0|        tmp___3 = stat((char const *)p->fts_accpath, sbp);
  5656|      0|        if (tmp___3) {
@@ -5668,26 +5668,26 @@
  5668|      0|          p->fts_errno = saved_errno;
  5669|      0|          goto err;
  5670|      0|        }
- 5671|      3|      } else {
- 5672|      3|        tmp___5 =
- 5673|      3|            fstatat(sp->fts_cwd_fd, (char const *)p->fts_accpath, sbp, 256);
- 5674|      3|        if (tmp___5) {
+ 5671|      2|      } else {
+ 5672|      2|        tmp___5 =
+ 5673|      2|            fstatat(sp->fts_cwd_fd, (char const *)p->fts_accpath, sbp, 256);
+ 5674|      2|        if (tmp___5) {
  5675|      0|          tmp___4 = __errno_location();
  5676|      0|          p->fts_errno = *tmp___4;
  5677|      0|        err:
  5678|      0|          memset((void *)sbp, 0, sizeof(struct stat));
  5679|      0|          return ((unsigned short)10);
  5680|      0|        }
- 5681|      3|      }
- 5682|      3|    }
- 5683|      3|    if ((sbp->st_mode & 61440U) == 16384U) {
- 5684|      3|      if (sp->fts_options & 32) {
+ 5681|      2|      }
+ 5682|      2|    }
+ 5683|      2|    if ((sbp->st_mode & 61440U) == 16384U) {
+ 5684|      2|      if (sp->fts_options & 32) {
  5685|      0|        tmp___6 = 0;
- 5686|      3|      } else {
- 5687|      3|        tmp___6 = 2;
- 5688|      3|      }
- 5689|      3|      p->fts_n_dirs_remaining = sbp->st_nlink - (__nlink_t)tmp___6;
- 5690|      3|      if ((int)p->fts_name[0] == 46) {
+ 5686|      2|      } else {
+ 5687|      2|        tmp___6 = 2;
+ 5688|      2|      }
+ 5689|      2|      p->fts_n_dirs_remaining = sbp->st_nlink - (__nlink_t)tmp___6;
+ 5690|      2|      if ((int)p->fts_name[0] == 46) {
  5691|      0|        if (!p->fts_name[1]) {
  5692|      0|          goto _L___0;
  5693|      0|        } else {
@@ -5704,8 +5704,8 @@
  5704|      0|          }
  5705|      0|        }
  5706|      0|      }
- 5707|      3|      return ((unsigned short)1);
- 5708|      3|    }
+ 5707|      2|      return ((unsigned short)1);
+ 5708|      2|    }
  5709|      0|    if ((sbp->st_mode & 61440U) == 40960U) {
  5710|      0|      return ((unsigned short)12);
  5711|      0|    }
@@ -5795,70 +5795,70 @@
  5795|      0|    return (head);
  5796|      0|  }
  5797|      0|}
- 5798|      9|static FTSENT *fts_alloc(FTS *sp, char const *name, size_t namelen) {
- 5799|      9|  FTSENT *p;
- 5800|      9|  size_t len;
+ 5798|      8|static FTSENT *fts_alloc(FTS *sp, char const *name, size_t namelen) {
+ 5799|      8|  FTSENT *p;
+ 5800|      8|  size_t len;
  5801|       |
- 5802|      9|  {
- 5803|      9|    len = sizeof(FTSENT) + namelen;
- 5804|      9|    p = (FTSENT *)malloc(len);
- 5805|      9|    if ((unsigned long)p == (unsigned long)((void *)0)) {
+ 5802|      8|  {
+ 5803|      8|    len = sizeof(FTSENT) + namelen;
+ 5804|      8|    p = (FTSENT *)malloc(len);
+ 5805|      8|    if ((unsigned long)p == (unsigned long)((void *)0)) {
  5806|      0|      return ((FTSENT *)((void *)0));
  5807|      0|    }
- 5808|      9|    memmove((void *)(p->fts_name), (void const *)name, namelen);
- 5809|      9|    p->fts_name[namelen] = (char)'\000';
- 5810|      9|    p->fts_namelen = namelen;
- 5811|      9|    p->fts_fts = sp;
- 5812|      9|    p->fts_path = sp->fts_path;
- 5813|      9|    p->fts_errno = 0;
- 5814|      9|    p->fts_flags = (unsigned short)0;
- 5815|      9|    p->fts_instr = (unsigned short)3;
- 5816|      9|    p->fts_number = 0L;
- 5817|      9|    p->fts_pointer = (void *)0;
- 5818|      9|    return (p);
- 5819|      9|  }
- 5820|      9|}
- 5821|      3|static void fts_lfree(FTSENT *head) {
- 5822|      3|  FTSENT *p;
+ 5808|      8|    memmove((void *)(p->fts_name), (void const *)name, namelen);
+ 5809|      8|    p->fts_name[namelen] = (char)'\000';
+ 5810|      8|    p->fts_namelen = namelen;
+ 5811|      8|    p->fts_fts = sp;
+ 5812|      8|    p->fts_path = sp->fts_path;
+ 5813|      8|    p->fts_errno = 0;
+ 5814|      8|    p->fts_flags = (unsigned short)0;
+ 5815|      8|    p->fts_instr = (unsigned short)3;
+ 5816|      8|    p->fts_number = 0L;
+ 5817|      8|    p->fts_pointer = (void *)0;
+ 5818|      8|    return (p);
+ 5819|      8|  }
+ 5820|      8|}
+ 5821|      0|static void fts_lfree(FTSENT *head) {
+ 5822|      0|  FTSENT *p;
  5823|       |
- 5824|      3|  {
- 5825|      3|    while (1) {
- 5826|      3|      p = head;
- 5827|      3|      if (!p) {
- 5828|      3|        goto while_break;
- 5829|      3|      }
+ 5824|      0|  {
+ 5825|      0|    while (1) {
+ 5826|      0|      p = head;
+ 5827|      0|      if (!p) {
+ 5828|      0|        goto while_break;
+ 5829|      0|      }
  5830|      0|      head = head->fts_link;
  5831|      0|      free((void *)p);
  5832|      0|    }
- 5833|      3|  while_break:;
- 5834|      3|    return;
- 5835|      3|  }
- 5836|      3|}
- 5837|      3|static _Bool fts_palloc(FTS *sp, size_t more) {
- 5838|      3|  char *p;
- 5839|      3|  size_t new_len;
- 5840|      3|  int *tmp;
+ 5833|      0|  while_break:;
+ 5834|      0|    return;
+ 5835|      0|  }
+ 5836|      0|}
+ 5837|      2|static _Bool fts_palloc(FTS *sp, size_t more) {
+ 5838|      2|  char *p;
+ 5839|      2|  size_t new_len;
+ 5840|      2|  int *tmp;
  5841|       |
- 5842|      3|  {
- 5843|      3|    new_len = (sp->fts_pathlen + more) + 256UL;
- 5844|      3|    if (new_len < sp->fts_pathlen) {
+ 5842|      2|  {
+ 5843|      2|    new_len = (sp->fts_pathlen + more) + 256UL;
+ 5844|      2|    if (new_len < sp->fts_pathlen) {
  5845|      0|      free((void *)sp->fts_path);
  5846|      0|      sp->fts_path = (char *)((void *)0);
  5847|      0|      tmp = __errno_location();
  5848|      0|      *tmp = 36;
  5849|      0|      return ((_Bool)0);
  5850|      0|    }
- 5851|      3|    sp->fts_pathlen = new_len;
- 5852|      3|    p = (char *)realloc((void *)sp->fts_path, sp->fts_pathlen);
- 5853|      3|    if ((unsigned long)p == (unsigned long)((void *)0)) {
+ 5851|      2|    sp->fts_pathlen = new_len;
+ 5852|      2|    p = (char *)realloc((void *)sp->fts_path, sp->fts_pathlen);
+ 5853|      2|    if ((unsigned long)p == (unsigned long)((void *)0)) {
  5854|      0|      free((void *)sp->fts_path);
  5855|      0|      sp->fts_path = (char *)((void *)0);
  5856|      0|      return ((_Bool)0);
  5857|      0|    }
- 5858|      3|    sp->fts_path = p;
- 5859|      3|    return ((_Bool)1);
- 5860|      3|  }
- 5861|      3|}
+ 5858|      2|    sp->fts_path = p;
+ 5859|      2|    return ((_Bool)1);
+ 5860|      2|  }
+ 5861|      2|}
  5862|      0|static void fts_padjust(FTS *sp, FTSENT *head) {
  5863|      0|  FTSENT *p;
  5864|      0|  char *addr;
@@ -5908,56 +5908,56 @@
  5908|      0|    return;
  5909|      0|  }
  5910|      0|}
- 5911|      3|static size_t fts_maxarglen(char *const *argv) {
- 5912|      3|  size_t len;
- 5913|      3|  size_t max;
+ 5911|      2|static size_t fts_maxarglen(char *const *argv) {
+ 5912|      2|  size_t len;
+ 5913|      2|  size_t max;
  5914|       |
- 5915|      3|  {
- 5916|      3|    max = (size_t)0;
- 5917|      6|    while (1) {
+ 5915|      2|  {
+ 5916|      2|    max = (size_t)0;
+ 5917|      4|    while (1) {
  5918|       |
- 5919|      6|      if (!*argv) {
- 5920|      3|        goto while_break;
- 5921|      3|      }
- 5922|      3|      len = strlen((char const *)*argv);
- 5923|      3|      if (len > max) {
- 5924|      3|        max = len;
- 5925|      3|      }
- 5926|      3|      argv++;
- 5927|      3|    }
- 5928|      3|  while_break:;
- 5929|      3|    return (max + 1UL);
- 5930|      3|  }
- 5931|      3|}
- 5932|      3|static int fts_safe_changedir(FTS *sp, FTSENT *p, int fd, char const *dir) {
- 5933|      3|  int ret;
- 5934|      3|  _Bool is_dotdot;
- 5935|      3|  int tmp;
- 5936|      3|  int tmp___0;
- 5937|      3|  int newfd;
- 5938|      3|  int parent_fd;
- 5939|      3|  _Bool tmp___1;
- 5940|      3|  struct stat sb;
- 5941|      3|  int tmp___2;
- 5942|      3|  int *tmp___3;
- 5943|      3|  int tmp___4;
- 5944|      3|  int oerrno;
- 5945|      3|  int *tmp___5;
- 5946|      3|  int *tmp___6;
+ 5919|      4|      if (!*argv) {
+ 5920|      2|        goto while_break;
+ 5921|      2|      }
+ 5922|      2|      len = strlen((char const *)*argv);
+ 5923|      2|      if (len > max) {
+ 5924|      2|        max = len;
+ 5925|      2|      }
+ 5926|      2|      argv++;
+ 5927|      2|    }
+ 5928|      2|  while_break:;
+ 5929|      2|    return (max + 1UL);
+ 5930|      2|  }
+ 5931|      2|}
+ 5932|      2|static int fts_safe_changedir(FTS *sp, FTSENT *p, int fd, char const *dir) {
+ 5933|      2|  int ret;
+ 5934|      2|  _Bool is_dotdot;
+ 5935|      2|  int tmp;
+ 5936|      2|  int tmp___0;
+ 5937|      2|  int newfd;
+ 5938|      2|  int parent_fd;
+ 5939|      2|  _Bool tmp___1;
+ 5940|      2|  struct stat sb;
+ 5941|      2|  int tmp___2;
+ 5942|      2|  int *tmp___3;
+ 5943|      2|  int tmp___4;
+ 5944|      2|  int oerrno;
+ 5945|      2|  int *tmp___5;
+ 5946|      2|  int *tmp___6;
  5947|       |
- 5948|      3|  {
- 5949|      3|    if (dir) {
+ 5948|      2|  {
+ 5949|      2|    if (dir) {
  5950|      0|      tmp = strcmp(dir, "..");
  5951|      0|      if (tmp == 0) {
  5952|      0|        tmp___0 = 1;
  5953|      0|      } else {
  5954|      0|        tmp___0 = 0;
  5955|      0|      }
- 5956|      3|    } else {
- 5957|      3|      tmp___0 = 0;
- 5958|      3|    }
- 5959|      3|    is_dotdot = (_Bool)tmp___0;
- 5960|      3|    if (sp->fts_options & 4) {
+ 5956|      2|    } else {
+ 5957|      2|      tmp___0 = 0;
+ 5958|      2|    }
+ 5959|      2|    is_dotdot = (_Bool)tmp___0;
+ 5960|      2|    if (sp->fts_options & 4) {
  5961|      0|      if (sp->fts_options & 512) {
  5962|      0|        if (0 <= fd) {
  5963|      0|          close(fd);
@@ -5965,7 +5965,7 @@
  5965|      0|      }
  5966|      0|      return (0);
  5967|      0|    }
- 5968|      3|    if (fd < 0) {
+ 5968|      2|    if (fd < 0) {
  5969|      0|      if (is_dotdot) {
  5970|      0|        if (sp->fts_options & 512) {
  5971|      0|          tmp___1 = i_ring_empty((I_ring const *)(&sp->fts_fd_ring));
@@ -5980,17 +5980,17 @@
  5980|      0|        }
  5981|      0|      }
  5982|      0|    }
- 5983|      3|    newfd = fd;
- 5984|      3|    if (fd < 0) {
+ 5983|      2|    newfd = fd;
+ 5984|      2|    if (fd < 0) {
  5985|      0|      newfd = diropen((FTS const *)sp, dir);
  5986|      0|      if (newfd < 0) {
  5987|      0|        return (-1);
  5988|      0|      }
  5989|      0|    }
- 5990|      3|    if (sp->fts_options & 2) {
+ 5990|      2|    if (sp->fts_options & 2) {
  5991|      0|      goto _L;
- 5992|      3|    } else {
- 5993|      3|      if (dir) {
+ 5992|      2|    } else {
+ 5993|      2|      if (dir) {
  5994|      0|        tmp___4 = strcmp(dir, "..");
  5995|      0|        if (tmp___4 == 0) {
  5996|      0|        _L:
@@ -6014,11 +6014,11 @@
  6014|      0|          }
  6015|      0|        }
  6016|      0|      }
- 6017|      3|    }
- 6018|      3|    if (sp->fts_options & 512) {
- 6019|      3|      cwd_advance_fd(sp, newfd, (_Bool)(!is_dotdot));
- 6020|      3|      return (0);
- 6021|      3|    }
+ 6017|      2|    }
+ 6018|      2|    if (sp->fts_options & 512) {
+ 6019|      2|      cwd_advance_fd(sp, newfd, (_Bool)(!is_dotdot));
+ 6020|      2|      return (0);
+ 6021|      2|    }
  6022|      0|    ret = fchdir(newfd);
  6023|      0|  bail:
  6024|      0|    if (fd < 0) {
@@ -6071,14 +6071,14 @@
  6071|      0|  }
  6072|      0|}
  6073|       |__inline static int lchownat(int fd, char const *file, uid_t owner,
- 6074|      3|                             gid_t group) {
- 6075|      3|  int tmp;
+ 6074|      4|                             gid_t group) {
+ 6075|      4|  int tmp;
  6076|       |
- 6077|      3|  {
- 6078|      3|    tmp = fchownat(fd, file, owner, group, 256);
- 6079|      3|    return (tmp);
- 6080|      3|  }
- 6081|      3|}
+ 6077|      4|  {
+ 6078|      4|    tmp = fchownat(fd, file, owner, group, 256);
+ 6079|      4|    return (tmp);
+ 6080|      4|  }
+ 6081|      4|}
  6082|       |extern void chopt_init(struct Chown_option *chopt);
  6083|       |extern void chopt_free(struct Chown_option *chopt __attribute__((__unused__)));
  6084|       |extern char *gid_to_name(gid_t gid);
@@ -6090,25 +6090,25 @@
  6090|       |
  6091|      0|  { return; }
  6092|      0|}
- 6093|      3|extern void chopt_init(struct Chown_option *chopt) {
+ 6093|      2|extern void chopt_init(struct Chown_option *chopt) {
  6094|       |
- 6095|      3|  {
- 6096|      3|    chopt->verbosity = (enum Verbosity)2;
- 6097|      3|    chopt->root_dev_ino = (struct dev_ino *)((void *)0);
- 6098|      3|    chopt->affect_symlink_referent = (_Bool)1;
- 6099|      3|    chopt->recurse = (_Bool)0;
- 6100|      3|    chopt->force_silent = (_Bool)0;
- 6101|      3|    chopt->user_name = (char *)((void *)0);
- 6102|      3|    chopt->group_name = (char *)((void *)0);
- 6103|      3|    return;
- 6104|      3|  }
- 6105|      3|}
- 6106|      3|extern void chopt_free(struct Chown_option *chopt __attribute__((__unused__))) {
+ 6095|      2|  {
+ 6096|      2|    chopt->verbosity = (enum Verbosity)2;
+ 6097|      2|    chopt->root_dev_ino = (struct dev_ino *)((void *)0);
+ 6098|      2|    chopt->affect_symlink_referent = (_Bool)1;
+ 6099|      2|    chopt->recurse = (_Bool)0;
+ 6100|      2|    chopt->force_silent = (_Bool)0;
+ 6101|      2|    chopt->user_name = (char *)((void *)0);
+ 6102|      2|    chopt->group_name = (char *)((void *)0);
+ 6103|      2|    return;
+ 6104|      2|  }
+ 6105|      2|}
+ 6106|      2|extern void chopt_free(struct Chown_option *chopt __attribute__((__unused__))) {
  6107|       |
- 6108|      3|  {
- 6109|      3|    return;
- 6110|      3|  }
- 6111|      3|}
+ 6108|      2|  {
+ 6109|      2|    return;
+ 6110|      2|  }
+ 6111|      2|}
  6112|      0|extern char *gid_to_name(gid_t gid) {
  6113|      0|  char
  6114|      0|      buf___1[((((sizeof(intmax_t) * 8UL - 1UL) * 146UL) / 485UL + 1UL) + 1UL) +
@@ -6433,27 +6433,27 @@
  6433|      6|    ok = (_Bool)1;
  6434|      6|    symlink_changed = (_Bool)1;
  6435|      6|    if ((int)ent->fts_info == 1) {
- 6436|      3|      goto case_1;
- 6437|      3|    }
- 6438|      3|    if ((int)ent->fts_info == 6) {
- 6439|      3|      goto case_6;
- 6440|      3|    }
- 6441|      0|    if ((int)ent->fts_info == 10) {
+ 6436|      2|      goto case_1;
+ 6437|      2|    }
+ 6438|      4|    if ((int)ent->fts_info == 6) {
+ 6439|      2|      goto case_6;
+ 6440|      2|    }
+ 6441|      2|    if ((int)ent->fts_info == 10) {
  6442|      0|      goto case_10;
  6443|      0|    }
- 6444|      0|    if ((int)ent->fts_info == 7) {
+ 6444|      2|    if ((int)ent->fts_info == 7) {
  6445|      0|      goto case_7;
  6446|      0|    }
- 6447|      0|    if ((int)ent->fts_info == 4) {
+ 6447|      2|    if ((int)ent->fts_info == 4) {
  6448|      0|      goto case_4;
  6449|      0|    }
- 6450|      0|    if ((int)ent->fts_info == 2) {
+ 6450|      2|    if ((int)ent->fts_info == 2) {
  6451|      0|      goto case_2;
  6452|      0|    }
- 6453|      0|    goto switch_default;
- 6454|      3|  case_1:
- 6455|      3|    if (chopt->recurse) {
- 6456|      3|      if (chopt->root_dev_ino) {
+ 6453|      2|    goto switch_default;
+ 6454|      2|  case_1:
+ 6455|      2|    if (chopt->recurse) {
+ 6456|      2|      if (chopt->root_dev_ino) {
  6457|      0|        if (ent->fts_statp[0].st_ino == (chopt->root_dev_ino)->st_ino) {
  6458|      0|          if (ent->fts_statp[0].st_dev == (chopt->root_dev_ino)->st_dev) {
  6459|      0|            while (1) {
@@ -6483,15 +6483,15 @@
  6483|      0|          }
  6484|      0|        }
  6485|      0|      }
- 6486|      3|      return ((_Bool)1);
- 6487|      3|    }
+ 6486|      2|      return ((_Bool)1);
+ 6487|      2|    }
  6488|      0|    goto switch_break;
- 6489|      3|  case_6:
- 6490|      3|    if (!chopt->recurse) {
+ 6489|      2|  case_6:
+ 6490|      2|    if (!chopt->recurse) {
  6491|      0|      return ((_Bool)1);
  6492|      0|    }
- 6493|      3|    goto switch_break;
- 6494|      3|  case_10:
+ 6493|      2|    goto switch_break;
+ 6494|      2|  case_10:
  6495|      0|    if (ent->fts_level == 0L) {
  6496|      0|      if (ent->fts_number == 0L) {
  6497|      0|        ent->fts_number = 1L;
@@ -6538,33 +6538,33 @@
  6538|      0|      return ((_Bool)0);
  6539|      0|    }
  6540|      0|    goto switch_break;
- 6541|      0|  switch_default:
- 6542|      0|    goto switch_break;
- 6543|      3|  switch_break:;
- 6544|      3|    if (!ok) {
+ 6541|      2|  switch_default:
+ 6542|      2|    goto switch_break;
+ 6543|      4|  switch_break:;
+ 6544|      4|    if (!ok) {
  6545|      0|      do_chown = (_Bool)0;
  6546|      0|      file_stats = (struct stat const *)((void *)0);
- 6547|      3|    } else {
- 6548|      3|      if (required_uid == 4294967295U) {
- 6549|      3|        if (required_gid == 4294967295U) {
- 6550|      3|          if ((unsigned int const)chopt->verbosity == 2U) {
- 6551|      3|            if (!chopt->root_dev_ino) {
- 6552|      3|              if (!chopt->affect_symlink_referent) {
- 6553|      3|                do_chown = (_Bool)1;
- 6554|      3|                file_stats = (struct stat const *)(ent->fts_statp);
- 6555|      3|              } else {
+ 6547|      4|    } else {
+ 6548|      4|      if (required_uid == 4294967295U) {
+ 6549|      4|        if (required_gid == 4294967295U) {
+ 6550|      4|          if ((unsigned int const)chopt->verbosity == 2U) {
+ 6551|      4|            if (!chopt->root_dev_ino) {
+ 6552|      4|              if (!chopt->affect_symlink_referent) {
+ 6553|      4|                do_chown = (_Bool)1;
+ 6554|      4|                file_stats = (struct stat const *)(ent->fts_statp);
+ 6555|      4|              } else {
  6556|      0|                goto _L___3;
  6557|      0|              }
- 6558|      3|            } else {
+ 6558|      4|            } else {
  6559|      0|              goto _L___3;
  6560|      0|            }
- 6561|      3|          } else {
+ 6561|      4|          } else {
  6562|      0|            goto _L___3;
  6563|      0|          }
- 6564|      3|        } else {
+ 6564|      4|        } else {
  6565|      0|          goto _L___3;
  6566|      0|        }
- 6567|      3|      } else {
+ 6567|      4|      } else {
  6568|      0|      _L___3:
  6569|      0|        file_stats = (struct stat const *)(ent->fts_statp);
  6570|      0|        if (chopt->affect_symlink_referent) {
@@ -6606,20 +6606,20 @@
  6606|      0|        }
  6607|      0|        do_chown = (_Bool)tmp___20;
  6608|      0|      }
- 6609|      3|    }
- 6610|      3|    if (ok) {
- 6611|      3|      if ((int)ent->fts_info == 1) {
+ 6609|      4|    }
+ 6610|      4|    if (ok) {
+ 6611|      4|      if ((int)ent->fts_info == 1) {
  6612|      0|        goto _L___4;
- 6613|      3|      } else {
- 6614|      3|        if ((int)ent->fts_info == 2) {
+ 6613|      4|      } else {
+ 6614|      4|        if ((int)ent->fts_info == 2) {
  6615|      0|          goto _L___4;
- 6616|      3|        } else {
- 6617|      3|          if ((int)ent->fts_info == 6) {
- 6618|      3|            goto _L___4;
- 6619|      3|          } else {
- 6620|      0|            if ((int)ent->fts_info == 4) {
- 6621|      3|            _L___4:
- 6622|      3|              if (chopt->root_dev_ino) {
+ 6616|      4|        } else {
+ 6617|      4|          if ((int)ent->fts_info == 6) {
+ 6618|      2|            goto _L___4;
+ 6619|      2|          } else {
+ 6620|      2|            if ((int)ent->fts_info == 4) {
+ 6621|      2|            _L___4:
+ 6622|      2|              if (chopt->root_dev_ino) {
  6623|      0|                if (file_stats->st_ino ==
  6624|      0|                    (__ino_t const)(chopt->root_dev_ino)->st_ino) {
  6625|      0|                  if (file_stats->st_dev ==
@@ -6648,23 +6648,23 @@
  6648|      0|                  }
  6649|      0|                }
  6650|      0|              }
- 6651|      3|            }
- 6652|      0|          }
- 6653|      3|        }
- 6654|      3|      }
- 6655|      3|    }
- 6656|      3|    if (do_chown) {
- 6657|      3|      if (!chopt->affect_symlink_referent) {
- 6658|      3|        tmp___28 = lchownat(fts->fts_cwd_fd, file, uid, gid);
- 6659|      3|        ok = (_Bool)(tmp___28 == 0);
- 6660|      3|        if (!ok) {
+ 6651|      2|            }
+ 6652|      2|          }
+ 6653|      4|        }
+ 6654|      4|      }
+ 6655|      4|    }
+ 6656|      4|    if (do_chown) {
+ 6657|      4|      if (!chopt->affect_symlink_referent) {
+ 6658|      4|        tmp___28 = lchownat(fts->fts_cwd_fd, file, uid, gid);
+ 6659|      4|        ok = (_Bool)(tmp___28 == 0);
+ 6660|      4|        if (!ok) {
  6661|      0|          tmp___29 = __errno_location();
  6662|      0|          if (*tmp___29 == 95) {
  6663|      0|            ok = (_Bool)1;
  6664|      0|            symlink_changed = (_Bool)0;
  6665|      0|          }
  6666|      0|        }
- 6667|      3|      } else {
+ 6667|      4|      } else {
  6668|      0|        tmp___30 = restricted_chown(fts->fts_cwd_fd, file, file_stats, uid, gid,
  6669|      0|                                    required_uid, required_gid);
  6670|      0|        err = tmp___30;
@@ -6701,8 +6701,8 @@
  6701|      0|        abort();
  6702|      0|      switch_break___0:;
  6703|      0|      }
- 6704|      3|      if (do_chown) {
- 6705|      3|        if (!ok) {
+ 6704|      4|      if (do_chown) {
+ 6705|      4|        if (!ok) {
  6706|      0|          if (!chopt->force_silent) {
  6707|      0|            tmp___32 = quote(file_full_name);
  6708|      0|            if (uid != 4294967295U) {
@@ -6716,9 +6716,9 @@
  6716|      0|            error(0, *tmp___36, (char const *)tmp___35, tmp___32);
  6717|      0|          }
  6718|      0|        }
- 6719|      3|      }
- 6720|      3|    }
- 6721|      3|    if ((unsigned int const)chopt->verbosity != 2U) {
+ 6719|      4|      }
+ 6720|      4|    }
+ 6721|      4|    if ((unsigned int const)chopt->verbosity != 2U) {
  6722|      0|      if (do_chown) {
  6723|      0|        if (ok) {
  6724|      0|          if (symlink_changed) {
@@ -6777,57 +6777,57 @@
  6777|      0|        }
  6778|      0|      }
  6779|      0|    }
- 6780|      3|    if (!chopt->recurse) {
+ 6780|      4|    if (!chopt->recurse) {
  6781|      0|      fts_set(fts, ent, 4);
  6782|      0|    }
- 6783|      3|    return (ok);
- 6784|      3|  }
- 6785|      3|}
+ 6783|      4|    return (ok);
+ 6784|      4|  }
+ 6785|      4|}
  6786|       |extern _Bool chown_files(char **files, int bit_flags, uid_t uid, gid_t gid,
  6787|       |                         uid_t required_uid, gid_t required_gid,
- 6788|      3|                         struct Chown_option const *chopt) {
- 6789|      3|  _Bool ok;
- 6790|      3|  int stat_flags;
- 6791|      3|  int tmp;
- 6792|      3|  FTS *fts;
- 6793|      3|  FTS *tmp___0;
- 6794|      3|  FTSENT *ent;
- 6795|      3|  char *tmp___1;
- 6796|      3|  int *tmp___2;
- 6797|      3|  int *tmp___3;
- 6798|      3|  _Bool tmp___4;
- 6799|      3|  char *tmp___5;
- 6800|      3|  int *tmp___6;
- 6801|      3|  int tmp___7;
+ 6788|      2|                         struct Chown_option const *chopt) {
+ 6789|      2|  _Bool ok;
+ 6790|      2|  int stat_flags;
+ 6791|      2|  int tmp;
+ 6792|      2|  FTS *fts;
+ 6793|      2|  FTS *tmp___0;
+ 6794|      2|  FTSENT *ent;
+ 6795|      2|  char *tmp___1;
+ 6796|      2|  int *tmp___2;
+ 6797|      2|  int *tmp___3;
+ 6798|      2|  _Bool tmp___4;
+ 6799|      2|  char *tmp___5;
+ 6800|      2|  int *tmp___6;
+ 6801|      2|  int tmp___7;
  6802|       |
- 6803|      3|  {
- 6804|      3|    ok = (_Bool)1;
- 6805|      3|    if (required_uid != 4294967295U) {
+ 6803|      2|  {
+ 6804|      2|    ok = (_Bool)1;
+ 6805|      2|    if (required_uid != 4294967295U) {
  6806|      0|      tmp = 0;
- 6807|      3|    } else {
- 6808|      3|      if (required_gid != 4294967295U) {
+ 6807|      2|    } else {
+ 6808|      2|      if (required_gid != 4294967295U) {
  6809|      0|        tmp = 0;
- 6810|      3|      } else {
- 6811|      3|        if (chopt->affect_symlink_referent) {
+ 6810|      2|      } else {
+ 6811|      2|        if (chopt->affect_symlink_referent) {
  6812|      0|          tmp = 0;
- 6813|      3|        } else {
- 6814|      3|          if ((unsigned int const)chopt->verbosity != 2U) {
+ 6813|      2|        } else {
+ 6814|      2|          if ((unsigned int const)chopt->verbosity != 2U) {
  6815|      0|            tmp = 0;
- 6816|      3|          } else {
- 6817|      3|            tmp = 8;
- 6818|      3|          }
- 6819|      3|        }
- 6820|      3|      }
- 6821|      3|    }
- 6822|      3|    stat_flags = tmp;
- 6823|      3|    tmp___0 = xfts_open((char *const *)files, bit_flags | stat_flags,
- 6824|      3|                        (int (*)(FTSENT const **, FTSENT const **))((void *)0));
- 6825|      3|    fts = tmp___0;
- 6826|      9|    while (1) {
- 6827|      9|      ent = fts_read(fts);
- 6828|      9|      if ((unsigned long)ent == (unsigned long)((void *)0)) {
- 6829|      3|        tmp___3 = __errno_location();
- 6830|      3|        if (*tmp___3 != 0) {
+ 6816|      2|          } else {
+ 6817|      2|            tmp = 8;
+ 6818|      2|          }
+ 6819|      2|        }
+ 6820|      2|      }
+ 6821|      2|    }
+ 6822|      2|    stat_flags = tmp;
+ 6823|      2|    tmp___0 = xfts_open((char *const *)files, bit_flags | stat_flags,
+ 6824|      2|                        (int (*)(FTSENT const **, FTSENT const **))((void *)0));
+ 6825|      2|    fts = tmp___0;
+ 6826|      8|    while (1) {
+ 6827|      8|      ent = fts_read(fts);
+ 6828|      8|      if ((unsigned long)ent == (unsigned long)((void *)0)) {
+ 6829|      2|        tmp___3 = __errno_location();
+ 6830|      2|        if (*tmp___3 != 0) {
  6831|      0|          if (!chopt->force_silent) {
  6832|      0|            tmp___1 = gettext("fts_read failed");
  6833|      0|            tmp___2 = __errno_location();
@@ -6835,23 +6835,23 @@
  6835|      0|          }
  6836|      0|          ok = (_Bool)0;
  6837|      0|        }
- 6838|      3|        goto while_break;
- 6839|      3|      }
+ 6838|      2|        goto while_break;
+ 6839|      2|      }
  6840|      6|      tmp___4 = change_file_owner(fts, ent, uid, gid, required_uid,
  6841|      6|                                  required_gid, chopt);
  6842|      6|      ok = (_Bool)((int)ok & (int)tmp___4);
  6843|      6|    }
- 6844|      3|  while_break:
- 6845|      3|    tmp___7 = fts_close(fts);
- 6846|      3|    if (tmp___7 != 0) {
+ 6844|      2|  while_break:
+ 6845|      2|    tmp___7 = fts_close(fts);
+ 6846|      2|    if (tmp___7 != 0) {
  6847|      0|      tmp___5 = gettext("fts_close failed");
  6848|      0|      tmp___6 = __errno_location();
  6849|      0|      error(0, *tmp___6, (char const *)tmp___5);
  6850|      0|      ok = (_Bool)0;
  6851|      0|    }
- 6852|      3|    return (ok);
- 6853|      3|  }
- 6854|      3|}
+ 6852|      2|    return (ok);
+ 6853|      2|  }
+ 6854|      2|}
  6855|       |extern char *optarg;
  6856|       |extern __attribute__((__nothrow__)) int(
  6857|       |    __attribute__((__nonnull__(1), __leaf__)) atexit)(void (*__func)(void));
@@ -7006,90 +7006,90 @@
  7006|      0|  }
  7007|      0|}
  7008|       |static struct dev_ino dev_ino_buf;
- 7009|      3|int main(int argc, char **argv) {
- 7010|      3|  _Bool preserve_root;
- 7011|      3|  uid_t uid;
- 7012|      3|  gid_t gid;
- 7013|      3|  uid_t required_uid;
- 7014|      3|  gid_t required_gid;
- 7015|      3|  int bit_flags;
- 7016|      3|  int dereference;
- 7017|      3|  struct Chown_option chopt;
- 7018|      3|  _Bool ok;
- 7019|      3|  int optc;
- 7020|      3|  char *u_dummy;
- 7021|      3|  char *g_dummy;
- 7022|      3|  char const *e;
- 7023|      3|  char const *tmp;
- 7024|      3|  char const *tmp___0;
- 7025|      3|  char *tmp___1;
- 7026|      3|  char *tmp___2;
- 7027|      3|  char const *tmp___3;
- 7028|      3|  char *tmp___4;
- 7029|      3|  int tmp___5;
- 7030|      3|  struct stat ref_stats;
- 7031|      3|  char const *tmp___6;
- 7032|      3|  char *tmp___7;
- 7033|      3|  int *tmp___8;
- 7034|      3|  int tmp___9;
- 7035|      3|  char const *e___0;
- 7036|      3|  char const *tmp___10;
- 7037|      3|  char const *tmp___11;
- 7038|      3|  char const *tmp___12;
- 7039|      3|  char *tmp___13;
- 7040|      3|  int *tmp___14;
- 7041|      3|  int tmp___15;
+ 7009|      2|int main(int argc, char **argv) {
+ 7010|      2|  _Bool preserve_root;
+ 7011|      2|  uid_t uid;
+ 7012|      2|  gid_t gid;
+ 7013|      2|  uid_t required_uid;
+ 7014|      2|  gid_t required_gid;
+ 7015|      2|  int bit_flags;
+ 7016|      2|  int dereference;
+ 7017|      2|  struct Chown_option chopt;
+ 7018|      2|  _Bool ok;
+ 7019|      2|  int optc;
+ 7020|      2|  char *u_dummy;
+ 7021|      2|  char *g_dummy;
+ 7022|      2|  char const *e;
+ 7023|      2|  char const *tmp;
+ 7024|      2|  char const *tmp___0;
+ 7025|      2|  char *tmp___1;
+ 7026|      2|  char *tmp___2;
+ 7027|      2|  char const *tmp___3;
+ 7028|      2|  char *tmp___4;
+ 7029|      2|  int tmp___5;
+ 7030|      2|  struct stat ref_stats;
+ 7031|      2|  char const *tmp___6;
+ 7032|      2|  char *tmp___7;
+ 7033|      2|  int *tmp___8;
+ 7034|      2|  int tmp___9;
+ 7035|      2|  char const *e___0;
+ 7036|      2|  char const *tmp___10;
+ 7037|      2|  char const *tmp___11;
+ 7038|      2|  char const *tmp___12;
+ 7039|      2|  char *tmp___13;
+ 7040|      2|  int *tmp___14;
+ 7041|      2|  int tmp___15;
  7042|       |
- 7043|      3|  {
- 7044|      3|    preserve_root = (_Bool)0;
- 7045|      3|    uid = (uid_t)-1;
- 7046|      3|    gid = (gid_t)-1;
- 7047|      3|    required_uid = (uid_t)-1;
- 7048|      3|    required_gid = (gid_t)-1;
- 7049|      3|    bit_flags = 16;
- 7050|      3|    dereference = -1;
- 7051|      3|    set_program_name((char const *)*(argv + 0));
- 7052|      3|    setlocale(6, "");
- 7053|      3|    bindtextdomain("coreutils", "/usr/local/share/locale");
- 7054|      3|    textdomain("coreutils");
- 7055|      3|    atexit(&close_stdout);
- 7056|      3|    chopt_init(&chopt);
- 7057|      6|    while (1) {
- 7058|      6|      optc = getopt_long(argc, (char *const *)argv, "HLPRcfhv",
- 7059|      6|                         long_options___1, (int *)((void *)0));
- 7060|      6|      if (!(optc != -1)) {
- 7061|      3|        goto while_break;
- 7062|      3|      }
- 7063|      3|      if (optc == 72) {
+ 7043|      2|  {
+ 7044|      2|    preserve_root = (_Bool)0;
+ 7045|      2|    uid = (uid_t)-1;
+ 7046|      2|    gid = (gid_t)-1;
+ 7047|      2|    required_uid = (uid_t)-1;
+ 7048|      2|    required_gid = (gid_t)-1;
+ 7049|      2|    bit_flags = 16;
+ 7050|      2|    dereference = -1;
+ 7051|      2|    set_program_name((char const *)*(argv + 0));
+ 7052|      2|    setlocale(6, "");
+ 7053|      2|    bindtextdomain("coreutils", "/usr/local/share/locale");
+ 7054|      2|    textdomain("coreutils");
+ 7055|      2|    atexit(&close_stdout);
+ 7056|      2|    chopt_init(&chopt);
+ 7057|      4|    while (1) {
+ 7058|      4|      optc = getopt_long(argc, (char *const *)argv, "HLPRcfhv",
+ 7059|      4|                         long_options___1, (int *)((void *)0));
+ 7060|      4|      if (!(optc != -1)) {
+ 7061|      2|        goto while_break;
+ 7062|      2|      }
+ 7063|      2|      if (optc == 72) {
  7064|      0|        goto case_72;
  7065|      0|      }
- 7066|      3|      if (optc == 76) {
+ 7066|      2|      if (optc == 76) {
  7067|      0|        goto case_76;
  7068|      0|      }
- 7069|      3|      if (optc == 80) {
+ 7069|      2|      if (optc == 80) {
  7070|      0|        goto case_80;
  7071|      0|      }
- 7072|      3|      if (optc == 104) {
+ 7072|      2|      if (optc == 104) {
  7073|      0|        goto case_104;
  7074|      0|      }
- 7075|      3|      if (optc == 128) {
+ 7075|      2|      if (optc == 128) {
  7076|      0|        goto case_128;
  7077|      0|      }
- 7078|      3|      if (optc == 130) {
+ 7078|      2|      if (optc == 130) {
  7079|      0|        goto case_130;
  7080|      0|      }
- 7081|      3|      if (optc == 131) {
+ 7081|      2|      if (optc == 131) {
  7082|      0|        goto case_131;
  7083|      0|      }
- 7084|      3|      if (optc == 132) {
+ 7084|      2|      if (optc == 132) {
  7085|      0|        goto case_132;
  7086|      0|      }
- 7087|      3|      if (optc == 129) {
+ 7087|      2|      if (optc == 129) {
  7088|      0|        goto case_129;
  7089|      0|      }
- 7090|      3|      if (optc == 82) {
- 7091|      3|        goto case_82;
- 7092|      3|      }
+ 7090|      2|      if (optc == 82) {
+ 7091|      2|        goto case_82;
+ 7092|      2|      }
  7093|      0|      if (optc == 99) {
  7094|      0|        goto case_99;
  7095|      0|      }
@@ -7139,9 +7139,9 @@
  7139|      0|        error(1, 0, "%s: %s", e, tmp___0);
  7140|      0|      }
  7141|      0|      goto switch_break;
- 7142|      3|    case_82:
- 7143|      3|      chopt.recurse = (_Bool)1;
- 7144|      3|      goto switch_break;
+ 7142|      2|    case_82:
+ 7143|      2|      chopt.recurse = (_Bool)1;
+ 7144|      2|      goto switch_break;
  7145|      0|    case_99:
  7146|      0|      chopt.verbosity = (enum Verbosity)1;
  7147|      0|      goto switch_break;
@@ -7161,27 +7161,27 @@
  7161|      0|      goto switch_break;
  7162|      0|    switch_default:
  7163|      0|      usage(1);
- 7164|      3|    switch_break:;
- 7165|      3|    }
- 7166|      3|  while_break:;
- 7167|      3|    if (chopt.recurse) {
- 7168|      3|      if (bit_flags == 16) {
- 7169|      3|        if (dereference == 1) {
+ 7164|      2|    switch_break:;
+ 7165|      2|    }
+ 7166|      2|  while_break:;
+ 7167|      2|    if (chopt.recurse) {
+ 7168|      2|      if (bit_flags == 16) {
+ 7169|      2|        if (dereference == 1) {
  7170|      0|          tmp___1 = gettext("-R --dereference requires either -H or -L");
  7171|      0|          error(1, 0, (char const *)tmp___1);
  7172|      0|        }
- 7173|      3|        dereference = 0;
- 7174|      3|      }
- 7175|      3|    } else {
+ 7173|      2|        dereference = 0;
+ 7174|      2|      }
+ 7175|      2|    } else {
  7176|      0|      bit_flags = 16;
  7177|      0|    }
- 7178|      3|    chopt.affect_symlink_referent = (_Bool)(dereference != 0);
- 7179|      3|    if (reference_file) {
+ 7178|      2|    chopt.affect_symlink_referent = (_Bool)(dereference != 0);
+ 7179|      2|    if (reference_file) {
  7180|      0|      tmp___5 = 1;
- 7181|      3|    } else {
- 7182|      3|      tmp___5 = 2;
- 7183|      3|    }
- 7184|      3|    if (argc - optind < tmp___5) {
+ 7181|      2|    } else {
+ 7182|      2|      tmp___5 = 2;
+ 7183|      2|    }
+ 7184|      2|    if (argc - optind < tmp___5) {
  7185|      0|      if (argc <= optind) {
  7186|      0|        tmp___2 = gettext("missing operand");
  7187|      0|        error(0, 0, (char const *)tmp___2);
@@ -7192,7 +7192,7 @@
  7192|      0|      }
  7193|      0|      usage(1);
  7194|      0|    }
- 7195|      3|    if (reference_file) {
+ 7195|      2|    if (reference_file) {
  7196|      0|      tmp___9 = stat((char const *)reference_file, &ref_stats);
  7197|      0|      if (tmp___9) {
  7198|      0|        tmp___6 = quote((char const *)reference_file);
@@ -7204,23 +7204,23 @@
  7204|      0|      gid = ref_stats.st_gid;
  7205|      0|      chopt.user_name = uid_to_name(ref_stats.st_uid);
  7206|      0|      chopt.group_name = gid_to_name(ref_stats.st_gid);
- 7207|      3|    } else {
- 7208|      3|      tmp___10 = parse_user_spec((char const *)*(argv + optind), &uid, &gid,
- 7209|      3|                                 &chopt.user_name, &chopt.group_name);
- 7210|      3|      e___0 = tmp___10;
- 7211|      3|      if (e___0) {
+ 7207|      2|    } else {
+ 7208|      2|      tmp___10 = parse_user_spec((char const *)*(argv + optind), &uid, &gid,
+ 7209|      2|                                 &chopt.user_name, &chopt.group_name);
+ 7210|      2|      e___0 = tmp___10;
+ 7211|      2|      if (e___0) {
  7212|      0|        tmp___11 = quote((char const *)*(argv + optind));
  7213|      0|        error(1, 0, "%s: %s", e___0, tmp___11);
  7214|      0|      }
- 7215|      3|      if (!chopt.user_name) {
+ 7215|      2|      if (!chopt.user_name) {
  7216|      1|        if (chopt.group_name) {
  7217|      1|          chopt.user_name = bad_cast("");
  7218|      1|        }
  7219|      1|      }
- 7220|      3|      optind++;
- 7221|      3|    }
- 7222|      3|    if (chopt.recurse) {
- 7223|      3|      if (preserve_root) {
+ 7220|      2|      optind++;
+ 7221|      2|    }
+ 7222|      2|    if (chopt.recurse) {
+ 7223|      2|      if (preserve_root) {
  7224|      0|        chopt.root_dev_ino = get_root_dev_ino(&dev_ino_buf);
  7225|      0|        if ((unsigned long)chopt.root_dev_ino == (unsigned long)((void *)0)) {
  7226|      0|          tmp___12 = quote("/");
@@ -7229,17 +7229,17 @@
  7229|      0|          error(1, *tmp___14, (char const *)tmp___13, tmp___12);
  7230|      0|        }
  7231|      0|      }
- 7232|      3|    }
- 7233|      3|    bit_flags |= 1024;
- 7234|      3|    ok = chown_files(argv + optind, bit_flags, uid, gid, required_uid,
- 7235|      3|                     required_gid, (struct Chown_option const *)(&chopt));
- 7236|      3|    chopt_free(&chopt);
- 7237|      3|    if (ok) {
- 7238|      3|      tmp___15 = 0;
- 7239|      3|    } else {
+ 7232|      2|    }
+ 7233|      2|    bit_flags |= 1024;
+ 7234|      2|    ok = chown_files(argv + optind, bit_flags, uid, gid, required_uid,
+ 7235|      2|                     required_gid, (struct Chown_option const *)(&chopt));
+ 7236|      2|    chopt_free(&chopt);
+ 7237|      2|    if (ok) {
+ 7238|      2|      tmp___15 = 0;
+ 7239|      2|    } else {
  7240|      0|      tmp___15 = 1;
  7241|      0|    }
- 7242|      3|    exit(tmp___15);
- 7243|      3|  }
- 7244|      3|}
+ 7242|      2|    exit(tmp___15);
+ 7243|      2|  }
+ 7244|      2|}
 

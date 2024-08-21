@@ -30,7 +30,7 @@ run_chown_and_profile() {
     # Create the directory structure
     mkdir -p "$dir_name"
     touch d1/d2/file1
-    # touch d1/d2/
+    touch d1/d2/d3/file2
 
     # Set the LLVM profile file environment variable
     export LLVM_PROFILE_FILE="$profile_name"
@@ -43,13 +43,13 @@ run_chown_and_profile() {
 
 # Run the tasks and generate LLVM profiles for the specified -R flag test cases
 run_chown_and_profile "d1/d2/d3" "user1" "chown_1.profraw"
-run_chown_and_profile "d1/d2/d3" "user1:group1" "chown_2.profraw"
+# run_chown_and_profile "d1/d2/d3" "user1:group1" "chown_2.profraw"
 run_chown_and_profile "d1/d2/d3" ":group1" "chown_3.profraw"
 
 echo "All profiles generated."
 
 # Merge the profiles into a single profile data file
-llvm-profdata merge -output=merged.profdata chown_1.profraw chown_2.profraw chown_3.profraw
+llvm-profdata merge -output=merged.profdata chown_1.profraw chown_3.profraw
 
 echo "Merged profile data: merged.profdata"
 

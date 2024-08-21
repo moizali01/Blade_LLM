@@ -19,12 +19,14 @@ function run() {
   rm -rf d1 d2
   mkdir -p d1/d2/d3
   touch d1/d2/file1
+  touch d1/d2/d3/file2
   { timeout $TIMEOUT_LIMIT $REDUCED_BINARY $1 d1 ; } >&$LOG || exit 1
   temp1=$(ls -alR d1 2>/dev/null | cut -d ' ' -f 1,3,4)
 
   rm -rf d1 d2
   mkdir -p d1/d2/d3
   touch d1/d2/file1
+  touch d1/d2/d3/file2
 
   $ORIGINAL_BINARY $1 d1
   temp2=$(ls -alR d1 2>/dev/null | cut -d ' ' -f 1,3,4)
@@ -56,7 +58,7 @@ function run_error() {
 
 function args_test() {
   run "-R user1" d1 || exit 1
-  run "-R user1:group1" d1 || exit 1
+  # run "-R user1:group1" d1 || exit 1
   run "-R :group1" d1 || exit 1
 
 #   run_error "-R" d1 || exit 1

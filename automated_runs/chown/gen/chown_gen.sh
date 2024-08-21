@@ -1,7 +1,7 @@
 #!/bin/bash
 BINARY_DIR="bins"
 LOG="log.txt"
-# C_FILE=chown-debloated.c.blade.c
+C_FILE=chown-debloated.c.blade.c
 # C_FILE=chown-8.2.c.origin.c
 
 # Compile the binary once

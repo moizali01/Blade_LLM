@@ -6415,105 +6415,43 @@ static _Bool change_file_owner(FTS *fts, FTSENT *ent, uid_t uid, gid_t gid,
   enum RCH_status err;
   enum RCH_status tmp___30;
   int tmp___31;
-  char const *tmp___32;
-  char *tmp___33;
-  char *tmp___34;
-  char *tmp___35;
-  int *tmp___36;
-  _Bool changed;
-  int tmp___37;
-  enum Change_status ch_status;
-  int tmp___38;
-  int tmp___39;
-  int tmp___40;
+
 
   {
     file_full_name = (char const *)ent->fts_path;
     file = (char const *)ent->fts_accpath;
     ok = (_Bool)1;
-    symlink_changed = (_Bool)1;
     if ((int)ent->fts_info == 1) {
       goto case_1;
     }
     if ((int)ent->fts_info == 6) {
-      goto case_6;
     }
     if ((int)ent->fts_info == 10) {
       goto case_10;
     }
-    if ((int)ent->fts_info == 7) {
-      goto case_7;
-    }
+
     if ((int)ent->fts_info == 4) {
-      goto case_4;
     }
-    if ((int)ent->fts_info == 2) {
-      goto case_2;
-    }
+
     goto switch_default;
   case_1:
-    if (chopt->recurse) {
-      if (chopt->root_dev_ino) {
-        if (ent->fts_statp[0].st_ino == (chopt->root_dev_ino)->st_ino) {
-          if (ent->fts_statp[0].st_dev == (chopt->root_dev_ino)->st_dev) {
-            while (1) {
-              tmp___4 = strcmp(file_full_name, "/");
-              if (tmp___4 == 0) {
-                tmp = quote(file_full_name);
-                tmp___0 =
-                    gettext("it is dangerous to operate recursively on %s");
-                error(0, 0, (char const *)tmp___0, tmp);
-              } else {
-                tmp___1 = quote_n(1, "/");
-                tmp___2 = quote_n(0, file_full_name);
-                tmp___3 = gettext("it is dangerous to operate recursively on "
-                                  "%s (same as %s)");
-                error(0, 0, (char const *)tmp___3, tmp___2, tmp___1);
-              }
-              tmp___5 =
-                  gettext("use --no-preserve-root to override this failsafe");
-              error(0, 0, (char const *)tmp___5);
-              goto while_break;
-            }
-          while_break:
-            fts_set(fts, ent, 4);
-            tmp___6 = fts_read(fts);
-            ignore_ptr((void *)tmp___6);
-            return ((_Bool)0);
-          }
-        }
-      }
-      return ((_Bool)1);
-    }
+
     goto switch_break;
   case_6:
-    if (!chopt->recurse) {
-      return ((_Bool)1);
-    }
+
     goto switch_break;
   case_10:
     if (ent->fts_level == 0L) {
-      if (ent->fts_number == 0L) {
-        ent->fts_number = 1L;
-        fts_set(fts, ent, 1);
-        return ((_Bool)1);
-      }
+
     }
     if (!chopt->force_silent) {
-      tmp___7 = quote(file_full_name);
-      tmp___8 = gettext("cannot access %s");
-      error(0, ent->fts_errno, (char const *)tmp___8, tmp___7);
+
     }
     ok = (_Bool)0;
     goto switch_break;
   case_7:
-    if (!chopt->force_silent) {
-      tmp___9 = quote(file_full_name);
-      tmp___10 = gettext("%s");
-      error(0, ent->fts_errno, (char const *)tmp___10, tmp___9);
-    }
+
     ok = (_Bool)0;
-    goto switch_break;
   case_4:
     if (!chopt->force_silent) {
       tmp___11 = quote(file_full_name);
@@ -6521,89 +6459,23 @@ static _Bool change_file_owner(FTS *fts, FTSENT *ent, uid_t uid, gid_t gid,
       error(0, ent->fts_errno, (char const *)tmp___12, tmp___11);
     }
     ok = (_Bool)0;
-    goto switch_break;
   case_2:
-    tmp___15 = cycle_warning_required((FTS const *)fts, (FTSENT const *)ent);
-    if (tmp___15) {
-      while (1) {
-        tmp___13 = quote(file_full_name);
-        tmp___14 = gettext(
-            "WARNING: Circular directory structure.\nThis almost certainly "
-            "means that you have a corrupted file system.\nNOTIFY YOUR SYSTEM "
-            "MANAGER.\nThe following directory is part of the cycle:\n  %s\n");
-        error(0, 0, (char const *)tmp___14, tmp___13);
-        goto while_break___0;
-      }
-    while_break___0:;
-      return ((_Bool)0);
-    }
-    goto switch_break;
+
   switch_default:
-    goto switch_break;
   switch_break:;
     if (!ok) {
       do_chown = (_Bool)0;
-      file_stats = (struct stat const *)((void *)0);
     } else {
       if (required_uid == 4294967295U) {
         if (required_gid == 4294967295U) {
-          if ((unsigned int const)chopt->verbosity == 2U) {
-            if (!chopt->root_dev_ino) {
-              if (!chopt->affect_symlink_referent) {
-                do_chown = (_Bool)1;
-                file_stats = (struct stat const *)(ent->fts_statp);
-              } else {
-                goto _L___3;
-              }
-            } else {
-              goto _L___3;
-            }
-          } else {
-            goto _L___3;
-          }
+          
         } else {
           goto _L___3;
         }
       } else {
       _L___3:
         file_stats = (struct stat const *)(ent->fts_statp);
-        if (chopt->affect_symlink_referent) {
-          if ((file_stats->st_mode & 61440U) == 40960U) {
-            tmp___19 = fstatat(fts->fts_cwd_fd, file, &stat_buf, 0);
-            if (tmp___19 != 0) {
-              if (!chopt->force_silent) {
-                tmp___16 = quote(file_full_name);
-                tmp___17 = gettext("cannot dereference %s");
-                tmp___18 = __errno_location();
-                error(0, *tmp___18, (char const *)tmp___17, tmp___16);
-              }
-              ok = (_Bool)0;
-            }
-            file_stats = (struct stat const *)(&stat_buf);
-          }
-        }
-        if (ok) {
-          if (required_uid == 4294967295U) {
-            goto _L;
-          } else {
-            if (required_uid == (uid_t)file_stats->st_uid) {
-            _L:
-              if (required_gid == 4294967295U) {
-                tmp___20 = 1;
-              } else {
-                if (required_gid == (gid_t)file_stats->st_gid) {
-                  tmp___20 = 1;
-                } else {
-                  tmp___20 = 0;
-                }
-              }
-            } else {
-              tmp___20 = 0;
-            }
-          }
-        } else {
-          tmp___20 = 0;
-        }
+        
         do_chown = (_Bool)tmp___20;
       }
     }
@@ -6615,37 +6487,12 @@ static _Bool change_file_owner(FTS *fts, FTSENT *ent, uid_t uid, gid_t gid,
           goto _L___4;
         } else {
           if ((int)ent->fts_info == 6) {
-            goto _L___4;
           } else {
             if ((int)ent->fts_info == 4) {
             _L___4:
               if (chopt->root_dev_ino) {
                 if (file_stats->st_ino ==
-                    (__ino_t const)(chopt->root_dev_ino)->st_ino) {
-                  if (file_stats->st_dev ==
-                      (__dev_t const)(chopt->root_dev_ino)->st_dev) {
-                    while (1) {
-                      tmp___26 = strcmp(file_full_name, "/");
-                      if (tmp___26 == 0) {
-                        tmp___21 = quote(file_full_name);
-                        tmp___22 = gettext(
-                            "it is dangerous to operate recursively on %s");
-                        error(0, 0, (char const *)tmp___22, tmp___21);
-                      } else {
-                        tmp___23 = quote_n(1, "/");
-                        tmp___24 = quote_n(0, file_full_name);
-                        tmp___25 = gettext("it is dangerous to operate "
-                                           "recursively on %s (same as %s)");
-                        error(0, 0, (char const *)tmp___25, tmp___24, tmp___23);
-                      }
-                      tmp___27 = gettext(
-                          "use --no-preserve-root to override this failsafe");
-                      error(0, 0, (char const *)tmp___27);
-                      goto while_break___1;
-                    }
-                  while_break___1:;
-                    return ((_Bool)0);
-                  }
+                    (__ino_t const)(chopt->root_dev_ino)->st_ino) {  
                 }
               }
             }
@@ -6657,129 +6504,28 @@ static _Bool change_file_owner(FTS *fts, FTSENT *ent, uid_t uid, gid_t gid,
       if (!chopt->affect_symlink_referent) {
         tmp___28 = lchownat(fts->fts_cwd_fd, file, uid, gid);
         ok = (_Bool)(tmp___28 == 0);
-        if (!ok) {
-          tmp___29 = __errno_location();
-          if (*tmp___29 == 95) {
-            ok = (_Bool)1;
-            symlink_changed = (_Bool)0;
-          }
-        }
+        
       } else {
-        tmp___30 = restricted_chown(fts->fts_cwd_fd, file, file_stats, uid, gid,
-                                    required_uid, required_gid);
-        err = tmp___30;
-        if ((unsigned int)err == 2U) {
-          goto case_2___0;
-        }
-        if ((unsigned int)err == 5U) {
-          goto case_5;
-        }
-        if ((unsigned int)err == 6U) {
-          goto case_6___0;
-        }
-        if ((unsigned int)err == 4U) {
-          goto case_4___0;
-        }
-        if ((unsigned int)err == 3U) {
-          goto case_4___0;
-        }
+        // tmp___30 = restricted_chown(fts->fts_cwd_fd, file, file_stats, uid, gid,
+        //                             required_uid, required_gid);
+
         goto switch_default___0;
       case_2___0:
-        goto switch_break___0;
       case_5:
-        tmp___31 = chownat(fts->fts_cwd_fd, file, uid, gid);
+
         ok = (_Bool)(tmp___31 == 0);
-        goto switch_break___0;
       case_6___0:
         ok = (_Bool)0;
-        goto switch_break___0;
       case_4___0:
         do_chown = (_Bool)0;
         ok = (_Bool)0;
-        goto switch_break___0;
       switch_default___0:
-        abort();
       switch_break___0:;
       }
-      if (do_chown) {
-        if (!ok) {
-          if (!chopt->force_silent) {
-            tmp___32 = quote(file_full_name);
-            if (uid != 4294967295U) {
-              tmp___33 = gettext("changing ownership of %s");
-              tmp___35 = tmp___33;
-            } else {
-              tmp___34 = gettext("changing group of %s");
-              tmp___35 = tmp___34;
-            }
-            tmp___36 = __errno_location();
-            error(0, *tmp___36, (char const *)tmp___35, tmp___32);
-          }
-        }
-      }
+      
     }
-    if ((unsigned int const)chopt->verbosity != 2U) {
-      if (do_chown) {
-        if (ok) {
-          if (symlink_changed) {
-            if (uid == 4294967295U) {
-              goto _L___5;
-            } else {
-              if (uid == (uid_t)file_stats->st_uid) {
-              _L___5:
-                if (gid == 4294967295U) {
-                  tmp___37 = 0;
-                } else {
-                  if (gid == (gid_t)file_stats->st_gid) {
-                    tmp___37 = 0;
-                  } else {
-                    tmp___37 = 1;
-                  }
-                }
-              } else {
-                tmp___37 = 1;
-              }
-            }
-          } else {
-            tmp___37 = 0;
-          }
-        } else {
-          tmp___37 = 0;
-        }
-      } else {
-        tmp___37 = 0;
-      }
-      changed = (_Bool)tmp___37;
-      if (changed) {
-        goto _L___6;
-      } else {
-        if ((unsigned int const)chopt->verbosity == 0U) {
-        _L___6:
-          if (!ok) {
-            tmp___40 = 3;
-          } else {
-            if (!symlink_changed) {
-              tmp___39 = 1;
-            } else {
-              if (!changed) {
-                tmp___38 = 4;
-              } else {
-                tmp___38 = 2;
-              }
-              tmp___39 = tmp___38;
-            }
-            tmp___40 = tmp___39;
-          }
-          ch_status = (enum Change_status)tmp___40;
-          describe_change(file_full_name, ch_status,
-                          (char const *)chopt->user_name,
-                          (char const *)chopt->group_name);
-        }
-      }
-    }
-    if (!chopt->recurse) {
-      fts_set(fts, ent, 4);
-    }
+
+
     return (ok);
   }
 }
@@ -6793,29 +6539,21 @@ extern _Bool chown_files(char **files, int bit_flags, uid_t uid, gid_t gid,
   FTS *tmp___0;
   FTSENT *ent;
   char *tmp___1;
-  int *tmp___2;
   int *tmp___3;
   _Bool tmp___4;
-  char *tmp___5;
   int *tmp___6;
   int tmp___7;
 
   {
     ok = (_Bool)1;
     if (required_uid != 4294967295U) {
-      tmp = 0;
     } else {
       if (required_gid != 4294967295U) {
         tmp = 0;
       } else {
         if (chopt->affect_symlink_referent) {
-          tmp = 0;
         } else {
-          if ((unsigned int const)chopt->verbosity != 2U) {
-            tmp = 0;
-          } else {
-            tmp = 8;
-          }
+
         }
       }
     }
@@ -6826,14 +6564,7 @@ extern _Bool chown_files(char **files, int bit_flags, uid_t uid, gid_t gid,
     while (1) {
       ent = fts_read(fts);
       if ((unsigned long)ent == (unsigned long)((void *)0)) {
-        tmp___3 = __errno_location();
         if (*tmp___3 != 0) {
-          if (!chopt->force_silent) {
-            tmp___1 = gettext("fts_read failed");
-            tmp___2 = __errno_location();
-            error(0, *tmp___2, (char const *)tmp___1);
-          }
-          ok = (_Bool)0;
         }
         goto while_break;
       }
@@ -6844,65 +6575,13 @@ extern _Bool chown_files(char **files, int bit_flags, uid_t uid, gid_t gid,
   while_break:
     tmp___7 = fts_close(fts);
     if (tmp___7 != 0) {
-      tmp___5 = gettext("fts_close failed");
       tmp___6 = __errno_location();
-      error(0, *tmp___6, (char const *)tmp___5);
       ok = (_Bool)0;
     }
     return (ok);
   }
 }
-extern char *optarg;
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__nonnull__(1), __leaf__)) atexit)(void (*__func)(void));
-extern __attribute__((__nothrow__)) char *(
-    __attribute__((__leaf__)) textdomain)(char const *__domainname);
-extern __attribute__((__nothrow__)) char *(__attribute__((
-    __leaf__)) bindtextdomain)(char const *__domainname, char const *__dirname);
-__inline static void emit_ancillary_info(void) {
-  char *tmp;
-  char *tmp___0;
-  char *tmp___1;
-  char *tmp___2;
-  char const *lc_messages;
-  char const *tmp___3;
-  char *tmp___4;
-  char *tmp___5;
-  int tmp___6;
-  char *tmp___7;
-  char *tmp___8;
 
-  {
-    tmp = last_component(program_name);
-    tmp___0 = gettext("\nReport %s bugs to %s\n");
-    printf((char const *)tmp___0, tmp, "bug-coreutils@gnu.org");
-    tmp___1 = gettext("%s home page: <http://www.gnu.org/software/%s/>\n");
-    printf((char const *)tmp___1, "GNU coreutils", "coreutils");
-    tmp___2 = gettext(
-        "General help using GNU software: <http://www.gnu.org/gethelp/>\n");
-    fputs_unlocked((char const *)tmp___2, stdout);
-    tmp___3 = (char const *)setlocale(5, (char const *)((void *)0));
-    lc_messages = tmp___3;
-    if (lc_messages) {
-      tmp___6 = strncmp(lc_messages, "en_", (size_t)3);
-      if (tmp___6) {
-        tmp___4 = last_component(program_name);
-        tmp___5 = gettext("Report %s translation bugs to "
-                          "<http://translationproject.org/team/>\n");
-        printf((char const *)tmp___5, tmp___4);
-      }
-    }
-    tmp___7 = last_component(program_name);
-    tmp___8 = gettext(
-        "For complete documentation, run: info coreutils \'%s invocation\'\n");
-    printf((char const *)tmp___8, tmp___7);
-    return;
-  }
-}
-__inline static char *bad_cast(char const *s) {
-
-  { return ((char *)s); }
-}
 static char *reference_file;
 static struct option const long_options___1[14] = {
     {"recursive", 0, (int *)((void *)0), 'R'},
@@ -6919,92 +6598,7 @@ static struct option const long_options___1[14] = {
     {"help", 0, (int *)((void *)0), -130},
     {"version", 0, (int *)((void *)0), -131},
     {(char const *)((void *)0), 0, (int *)((void *)0), 0}};
-__attribute__((__noreturn__)) void usage(int status);
-void usage(int status) {
-  char *tmp;
-  char *tmp___0;
-  char *tmp___1;
-  char *tmp___2;
-  char *tmp___3;
-  char *tmp___4;
-  char *tmp___5;
-  char *tmp___6;
-  char *tmp___7;
-  char *tmp___8;
-  char *tmp___9;
-  char *tmp___10;
 
-  {
-    if (status != 0) {
-      tmp = gettext("Try `%s --help\' for more information.\n");
-      fprintf(stderr, (char const *)tmp, program_name);
-    } else {
-      tmp___0 = gettext("Usage: %s [OPTION]... [OWNER][:[GROUP]] FILE...\n  "
-                        "or:  %s [OPTION]... --reference=RFILE FILE...\n");
-      printf((char const *)tmp___0, program_name, program_name);
-      tmp___1 = gettext(
-          "Change the owner and/or group of each FILE to OWNER and/or "
-          "GROUP.\nWith --reference, change the owner and group of each FILE "
-          "to those of RFILE.\n\n  -c, --changes          like verbose but "
-          "report only when a change is made\n      --dereference      affect "
-          "the referent of each symbolic link (this is\n                       "
-          "  the default), rather than the symbolic link itself\n");
-      fputs_unlocked((char const *)tmp___1, stdout);
-      tmp___2 = gettext("  -h, --no-dereference   affect each symbolic link "
-                        "instead of any referenced\n                         "
-                        "file (useful only on systems that can change the\n    "
-                        "                     ownership of a symlink)\n");
-      fputs_unlocked((char const *)tmp___2, stdout);
-      tmp___3 =
-          gettext("      --from=CURRENT_OWNER:CURRENT_GROUP\n                  "
-                  "       change the owner and/or group of each file only if\n "
-                  "                        its current owner and/or group "
-                  "match those specified\n                         here.  "
-                  "Either may be omitted, in which case a match\n              "
-                  "           is not required for the omitted attribute.\n");
-      fputs_unlocked((char const *)tmp___3, stdout);
-      tmp___4 = gettext("      --no-preserve-root  do not treat `/\' specially "
-                        "(the default)\n      --preserve-root    fail to "
-                        "operate recursively on `/\'\n");
-      fputs_unlocked((char const *)tmp___4, stdout);
-      tmp___5 = gettext(
-          "  -f, --silent, --quiet  suppress most error messages\n      "
-          "--reference=RFILE  use RFILE\'s owner and group rather than\n       "
-          "                  specifying OWNER:GROUP values\n  -R, --recursive  "
-          "      operate on files and directories recursively\n  -v, --verbose "
-          "         output a diagnostic for every file processed\n\n");
-      fputs_unlocked((char const *)tmp___5, stdout);
-      tmp___6 = gettext(
-          "The following options modify how a hierarchy is traversed when the "
-          "-R\noption is also specified.  If more than one is specified, only "
-          "the final\none takes effect.\n\n  -H                     if a "
-          "command line argument is a symbolic link\n                         "
-          "to a directory, traverse it\n  -L                     traverse "
-          "every symbolic link to a directory\n                         "
-          "encountered\n  -P                     do not traverse any symbolic "
-          "links (default)\n\n");
-      fputs_unlocked((char const *)tmp___6, stdout);
-      tmp___7 = gettext("      --help     display this help and exit\n");
-      fputs_unlocked((char const *)tmp___7, stdout);
-      tmp___8 =
-          gettext("      --version  output version information and exit\n");
-      fputs_unlocked((char const *)tmp___8, stdout);
-      tmp___9 = gettext("\nOwner is unchanged if missing.  Group is unchanged "
-                        "if missing, but changed\nto login group if implied by "
-                        "a `:\' following a symbolic OWNER.\nOWNER and GROUP "
-                        "may be numeric as well as symbolic.\n");
-      fputs_unlocked((char const *)tmp___9, stdout);
-      tmp___10 =
-          gettext("\nExamples:\n  %s root /u        Change the owner of /u to "
-                  "\"root\".\n  %s root:staff /u  Likewise, but also change "
-                  "its group to \"staff\".\n  %s -hR root /u    Change the "
-                  "owner of /u and subfiles to \"root\".\n");
-      printf((char const *)tmp___10, program_name, program_name, program_name);
-      emit_ancillary_info();
-    }
-    exit(status);
-  }
-}
 static struct dev_ino dev_ino_buf;
 int main(int argc, char **argv) {
   _Bool preserve_root;
@@ -7018,20 +6612,20 @@ int main(int argc, char **argv) {
   _Bool ok;
   int optc;
 
-  struct stat ref_stats;
 
+  struct stat ref_stats;
+  char const *tmp___6;
+  char *tmp___7;
+  int *tmp___8;
   int tmp___9;
-  char const *e___0;
   char const *tmp___10;
 
   int tmp___15;
 
   {
-
     uid = (uid_t)-1;
     gid = (gid_t)-1;
     required_uid = (uid_t)-1;
-
     bit_flags = 16;
 
     chopt_init(&chopt);
@@ -7043,34 +6637,45 @@ int main(int argc, char **argv) {
       }
 
       if (optc == 131) {
+        goto case_131;
+      }
+      if (optc == 132) {
       }
 
       if (optc == 82) {
         goto case_82;
       }
 
-      goto switch_default;
+    case_72:
 
-      goto switch_break;
+    case_76:
 
+    case_80:
       bit_flags = 16;
       goto switch_break;
-
+    case_104:
       goto switch_break;
-
+    case_128:
+    case_130:
       goto switch_break;
-
     case_131:
-
+    case_132:
       goto switch_break;
+    case_129:
 
     case_82:
+      chopt.recurse = (_Bool)1;
+    case_99:
 
-      goto switch_break;
+    case_102:
 
+    case_118:
+
+    case_neg_130:
       goto switch_break;
+    case_neg_131:
+
     switch_default:
-      usage(1);
     switch_break:;
     }
   while_break:;
@@ -7078,30 +6683,24 @@ int main(int argc, char **argv) {
     chopt.affect_symlink_referent = (_Bool)(dereference != 0);
     if (reference_file) {
 
-    } else {
-    }
-
-    if (reference_file) {
-
       if (tmp___9) {
+
+        error(1, *tmp___8, (char const *)tmp___7, tmp___6);
       }
 
     } else {
       tmp___10 = parse_user_spec((char const *)*(argv + optind), &uid, &gid,
                                  &chopt.user_name, &chopt.group_name);
-      e___0 = tmp___10;
 
       optind++;
     }
+    if (chopt.recurse) {
 
-    bit_flags |= 1024;
+    }
     ok = chown_files(argv + optind, bit_flags, uid, gid, required_uid,
                      required_gid, (struct Chown_option const *)(&chopt));
-
     if (ok) {
-
     } else {
-      tmp___15 = 1;
     }
     exit(tmp___15);
   }
