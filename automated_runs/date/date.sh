@@ -12,40 +12,62 @@ LOG=$DIR/log.txt
 
 function run() {
 
-    # Test case 1: Using -f flag to read dates from a file and display them
-    echo "2024-07-01" > $DIR/date_input.txt
-    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY -f $DIR/date_input.txt > $DIR/temp_output.txt; }
+    # Test case 1: Formatting the current date in YYYY-MM-DD format
+    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY "+%Y-%m-%d" > $DIR/temp_output.txt; }
     r=$?
     if [[ $r -ne 0 ]]; then
         return 1
     fi
-    { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -f $DIR/date_input.txt > $DIR/expected_output.txt; }
+    { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY "+%Y-%m-%d" > $DIR/expected_output.txt; }
     diff $DIR/temp_output.txt $DIR/expected_output.txt || return 1
 
-    # # Test case 2: Using the -f flag to read dates from a file and display them
-    echo "2024-06-01" > $DIR/date_input.txt
-    echo "2024-07-02" >> $DIR/date_input.txt
-    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY -f $DIR/date_input.txt > $DIR/temp_output.txt; }
+    # Test case 2: Formatting the current time in HH:MM:SS format
+    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY "+%H:%M:%S" > $DIR/temp_output.txt; }
     r=$?
     if [[ $r -ne 0 ]]; then
         return 1
     fi
-    { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -f $DIR/date_input.txt > $DIR/expected_output.txt; }
+    { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY "+%H:%M:%S" > $DIR/expected_output.txt; }
     diff $DIR/temp_output.txt $DIR/expected_output.txt || return 1
 
-    # Test case 3: Using the -f flag to read dates from a file and display them
-    echo "2021-02-07" > $DIR/date_input.txt
-    echo "2021-02-08" >> $DIR/date_input.txt
-    echo "2021-02-09" >> $DIR/date_input.txt
-    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY -f $DIR/date_input.txt > $DIR/temp_output.txt; }
+    # Test case 3: Displaying the Unix timestamp
+    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY "+%s" > $DIR/temp_output.txt; }
     r=$?
     if [[ $r -ne 0 ]]; then
         return 1
     fi
-    { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -f $DIR/date_input.txt > $DIR/expected_output.txt; }
+    { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY "+%s" > $DIR/expected_output.txt; }
+    diff $DIR/temp_output.txt $DIR/expected_output.txt || return 1
+
+    # Test case 4: Date calculation for "yesterday"
+    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY -d "yesterday" "+%Y-%m-%d" > $DIR/temp_output.txt; }
+    r=$?
+    if [[ $r -ne 0 ]]; then
+        return 1
+    fi
+    { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -d "yesterday" "+%Y-%m-%d" > $DIR/expected_output.txt; }
+    diff $DIR/temp_output.txt $DIR/expected_output.txt || return 1
+
+    # Test case 5: Date calculation for "next Monday"
+    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY -d "next Monday" "+%Y-%m-%d" > $DIR/temp_output.txt; }
+    r=$?
+    if [[ $r -ne 0 ]]; then
+        return 1
+    fi
+    { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -d "next Monday" "+%Y-%m-%d" > $DIR/expected_output.txt; }
+    diff $DIR/temp_output.txt $DIR/expected_output.txt || return 1
+
+    # Test case 6: Date calculation for "last year"
+    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY -d "last year" "+%Y-%m-%d" > $DIR/temp_output.txt; }
+    r=$?
+    if [[ $r -ne 0 ]]; then
+        return 1
+    fi
+    { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -d "last year" "+%Y-%m-%d" > $DIR/expected_output.txt; }
     diff $DIR/temp_output.txt $DIR/expected_output.txt || return 1
 
     return 0
+
 }
 
 function args_test() {
@@ -55,7 +77,7 @@ function args_test() {
 
 function clean_env() {
     cd $DIR
-    rm -rf $LOG $REDUCED_BINARY $DIR/temp_output.txt $DIR/expected_output.txt $DIR/date_input.txt $ORIGINAL_BINARY
+    rm -rf $LOG $REDUCED_BINARY $DIR/temp_output.txt $DIR/expected_output.txt $ORIGINAL_BINARY
     return 0
 }
 

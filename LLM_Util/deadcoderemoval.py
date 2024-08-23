@@ -102,8 +102,6 @@ def deadcode_elimination():
     previous_total_lines = 0
     iterations = 0
     while True:
-        print(f"Iteration: {iterations}")
-        print("Removing the syntax errors due to extern statements...")
         iterations += 1
         with open(filename, "r") as file:
             lines = file.readlines()
@@ -112,6 +110,7 @@ def deadcode_elimination():
                 print("All dead code eliminated!")
                 break
             previous_total_lines = total_lines
+        print(f"Iteration: {iterations}")
         
         print("Starting the dead code elimination process...")
         run_cppcheck()
@@ -121,18 +120,6 @@ def deadcode_elimination():
         if unused_lines:
             # print("No more unused labels, struct members, and variables found.")
             modify_file_to_remove_unused_lines(unused_lines, action="remove")
-
-
-        # uncomment the lines we commented out before
-        print("Uncommenting out the lines we commented out before...")
-        with open(filename, "r") as file:
-            lines = file.readlines()
-            for i, line in enumerate(lines):
-                if line.startswith("//") and "----- this is a temporary automated comment." in line:
-                    lines[i] = line[3:]
-                    lines[i] = lines[i].replace("----- this is a temporary automated comment.", "")
-        with open(filename, "w") as file:
-            file.writelines(lines)
 
     # finally delete the cppcheck output file and run the test script
     subprocess.run("rm cppcheck_output.txt", shell=True)
