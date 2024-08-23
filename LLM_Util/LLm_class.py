@@ -232,7 +232,7 @@ class QAClass:
         if os.path.exists("../LLM_Util/sec_list.txt"):
             with open("../LLM_Util/sec_list.txt", 'r') as file:
                 sec_list = file.read()
-            print("sec_list found and read")
+            # print("sec_list found and read")
         else:
             sec_list = self.get_security_checks()
             print(sec_list)

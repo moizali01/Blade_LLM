@@ -5,6 +5,7 @@
 *.exe
 *.dll
 *.so
+a.out
 
 # Ignore build artifacts
 /build/

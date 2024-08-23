@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROGRAM_NAME=chown-8.2
+PROGRAM_NAME=chown-flagless
 DIR=$(pwd)
 C_FILE=$DIR/chown-debloated.c
 C_OG_FILE=$DIR/chown-8.2.c.origin.c
@@ -10,92 +10,87 @@ CC=clang
 TIMEOUT_LIMIT="-k 1.2 1.2"
 LOG=$DIR/log.txt
 
-function clean() {
-  rm -rf d1 d* temp1 temp2 $LOG $REDUCED_BINARY
-  return 0
-}
-
 function run() {
-  rm -rf d1 d2
-  mkdir -p d1/d2/d3
-  touch d1/d2/file1
-  touch d1/d2/d3/file2
-  { timeout $TIMEOUT_LIMIT $REDUCED_BINARY $1 d1 ; } >&$LOG || exit 1
-  temp1=$(ls -alR d1 2>/dev/null | cut -d ' ' -f 1,3,4)
+    # Cleanup and setup
+    rm -rf testdir
+    mkdir -p testdir
+    touch testdir/file1
+    touch testdir/file2
 
-  rm -rf d1 d2
-  mkdir -p d1/d2/d3
-  touch d1/d2/file1
-  touch d1/d2/d3/file2
+    # Run the reduced binary and capture output, error, and directory listing
+    reduced_output=$(mktemp)
+    reduced_error=$(mktemp)
+    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY $1 testdir/file1 >"$reduced_output" 2>"$reduced_error"; } >&$LOG || exit 1
+    r=$?
+    if [[ $r -ne 0 ]]; then
+        return 1
+    fi
+    temp1=$(ls -al testdir 2>/dev/null | cut -d ' ' -f 1,3,4)
 
-  $ORIGINAL_BINARY $1 d1
-  temp2=$(ls -alR d1 2>/dev/null | cut -d ' ' -f 1,3,4)
-  rm -rf d1 d2 >&/dev/null
-  # echo $temp1 >> $LOG
-  # echo ===== >> $LOG
-  # echo $temp2 >> $LOG
-  if [[ $temp1 == $temp2 ]]; then
+    # Cleanup and setup again
+    rm -rf testdir
+    mkdir -p testdir
+    touch testdir/file1
+    touch testdir/file2
+
+    # Run the original binary and capture output, error, and directory listing
+    original_output=$(mktemp)
+    original_error=$(mktemp)
+    $ORIGINAL_BINARY $1 testdir/file1 >"$original_output" 2>"$original_error"
+    temp2=$(ls -al testdir 2>/dev/null | cut -d ' ' -f 1,3,4)
+
+    # Cleanup directory
+    rm -rf testdir >&/dev/null
+
+    # Compare directory listings
+    if [[ $temp1 != $temp2 ]]; then
+        echo "Directory listings do not match"
+        return 1
+    fi
+
+    # Compare stdout
+    if ! diff -q "$reduced_output" "$original_output" >& /dev/null; then
+        echo "Stdout does not match"
+        return 1
+    fi
+
+    # Compare stderr
+    if ! diff -q "$reduced_error" "$original_error" >& /dev/null; then
+        echo "Stderr does not match"
+        return 1
+    fi
+
+    # Clean up temporary files
+    rm -f "$reduced_output" "$reduced_error" "$original_output" "$original_error"
     return 0
-  else
-    return 1
-  fi
-}
-
-function run_error() {
-  rm -rf d1 >&/dev/null
-  mkdir d1
-  { timeout $TIMEOUT_LIMIT $REDUCED_BINARY $1 d1 ; } >&temp1 && exit 1
-  { $ORIGINAL_BINARY $1 d1; } >&temp2
-  temp1=$(head -n 1 temp1 | cut -d ' ' -f 2,3)
-  temp2=$(head -n 1 temp2 | cut -d ' ' -f 2,3)
-  rm -rf d1 >&/dev/null
-  if [[ $temp1 == $temp2 ]]; then
-    return 0
-  else
-    return 1
-  fi
 }
 
 function args_test() {
-  run "-R user1" d1 || exit 1
-  # run "-R user1:group1" d1 || exit 1
-  run "-R :group1" d1 || exit 1
-
-#   run_error "-R" d1 || exit 1
-#   run_error "-R user1:invalidgroup" d1 || exit 1
-
-  return 0
+    # run "user1" || exit 1
+    run "user1:group1" || exit 1    
+    # run ":group1" || exit 1
+    return 0
 }
 
-sanitizers=("-fsanitize=cfi -flto -fvisibility=hidden" "-fsanitize=address"
-  "-fsanitize=memory -fsanitize-memory-use-after-dtor"
-  "-fno-sanitize-recover=undefined,nullability"
-  "-fsanitize=leak")
-
 function clean_env() {
-  cd $DIR
-  rm -rf d1 temp1 temp2 $REDUCED_BINARY $LOG $ORIGINAL_BINARY
-  
-  return 0
+    cd $DIR
+    rm -rf testdir temp1 temp2 $REDUCED_BINARY $ORIGINAL_BINARY $LOG
+    return 0
 }
 
 function compile() {
-  cd $DIR
-  case $COV in
-  1) CFLAGS="-w -fprofile-arcs -ftest-coverage --coverage $BIN_CFLAGS" ;;
-  *) CFLAGS="-w $1 $BIN_CFLAGS" ;;
-  esac
-  $CC $C_FILE -w -o $REDUCED_BINARY >&$LOG || exit 1
-  $CC $C_OG_FILE -w -o $ORIGINAL_BINARY >&$LOG || exit 1
-  return 0
+    cd $DIR
+    $CC $C_FILE -w -o $REDUCED_BINARY >&$LOG || exit 1
+    $CC $C_OG_FILE -w -o $ORIGINAL_BINARY >&$LOG || exit 1
+    return 0
 }
 
 function main() {
-  cd $DIR
-  clean_env
-  compile || exit 1
-  args_test || exit 1
-  clean_env
+    cd $DIR
+    clean_env
+    compile || exit 1
+    args_test || exit 1
+    clean_env
 }
 
 main

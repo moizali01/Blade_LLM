@@ -12,7 +12,7 @@ typedef unsigned long __ino_t;
 typedef unsigned int __mode_t;
 typedef unsigned long __nlink_t;
 typedef long __blksize_t;
-typedef long __blkcnt_t;
+
 typedef long __syscall_slong_t;
 typedef __mode_t mode_t;
 struct timespec {
@@ -30,7 +30,7 @@ struct stat {
   __dev_t st_rdev;
   __off_t st_size;
   __blksize_t st_blksize;
-  __blkcnt_t st_blocks;
+
   struct timespec st_atim;
   struct timespec st_mtim;
   struct timespec st_ctim;
@@ -72,7 +72,6 @@ struct __anonstruct_FTS_28 {
   int fts_cwd_fd;
   size_t fts_pathlen;
 
-  int (*fts_compar)(struct _ftsent const **, struct _ftsent const **);
   int fts_options;
 };
 typedef struct __anonstruct_FTS_28 FTS;
@@ -83,6 +82,8 @@ struct _ftsent {
 
   char *fts_accpath;
   char *fts_path;
+
+  size_t fts_pathlen;
 
   ptrdiff_t fts_level;
   size_t fts_namelen;
@@ -334,7 +335,7 @@ static _Bool fts_palloc(FTS *sp, size_t more);
 static unsigned short fts_stat(FTS *sp, FTSENT *p, _Bool follow);
 static int fts_safe_changedir(FTS *sp, FTSENT *p, int fd, char const *dir);
 
-static _Bool enter_dir(FTS *fts, FTSENT *ent) {
+static _Bool setup_dir(FTS *fts) {
 
   {}
 }
@@ -380,9 +381,8 @@ FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
   FTSENT *root;
   size_t nitems;
   FTSENT *parent;
-  FTSENT *tmp;
+
   _Bool defer_stat;
-  int *tmp___0;
 
   size_t tmp___5;
   _Bool tmp___6;
@@ -401,6 +401,8 @@ FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
 
     tmp___6 = fts_palloc(sp, tmp___5);
 
+    parent = fts_alloc(sp, "", (size_t)0);
+
     defer_stat = (_Bool)tmp___7;
     root = (FTSENT *)((void *)0);
     nitems = (size_t)0;
@@ -413,7 +415,10 @@ FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
       len = tmp___8;
       p = fts_alloc(sp, (char const *)*argv, len);
 
+      p->fts_parent = parent;
       p->fts_accpath = p->fts_name;
+
+      p->fts_info = fts_stat(sp, p, (_Bool)0);
 
       root = p;
 
@@ -428,7 +433,6 @@ FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
     (sp->fts_cur)->fts_link = root;
 
     return (sp);
-  mem3:
 
     free((void *)sp);
   }
@@ -436,46 +440,21 @@ FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
 
 FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp) {
   FTSENT *p;
-  FTSENT *tmp;
-  unsigned short instr;
+
   char *t;
-  int *tmp___0;
-  int tmp___1;
-  int *tmp___2;
-  int tmp___3;
+
   struct _ftsent *tmp___4;
-  int tmp___5;
-  int tmp___6;
-  int tmp___7;
-  int tmp___8;
-  int tmp___9;
-  int *tmp___10;
 
   size_t tmp___12;
   char *tmp___13;
 
-  _Bool tmp___16;
-  int *tmp___17;
   struct _ftsent *tmp___18;
-  int *tmp___19;
-  int tmp___20;
-  int tmp___21;
-  int tmp___22;
-  int tmp___23;
-  int tmp___24;
 
-  int *tmp___25;
-  int *tmp___26;
-  int *tmp___27;
-  int tmp___28;
-
-  int *tmp___30;
-  int tmp___31;
   FTSENT *tmp___32;
 
   {
     if ((unsigned long)sp->fts_cur == (unsigned long)((void *)0)) {
-      return ((FTSENT *)((void *)0));
+
     } else {
     }
     p = sp->fts_cur;
@@ -498,7 +477,11 @@ FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp) {
     p = p->fts_link;
     if ((unsigned long)p != (unsigned long)((void *)0)) {
 
+      setup_dir(sp);
+
     name:
+
+      tmp___12 = (p->fts_parent)->fts_pathlen;
 
       t = sp->fts_path + tmp___12;
       tmp___13 = t;
@@ -507,21 +490,21 @@ FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp) {
       memmove((void *)t, (void const *)(p->fts_name), p->fts_namelen + 1UL);
     check_for_dir:
       sp->fts_cur = p;
+      if ((int)p->fts_info == 11) {
 
-      goto _L___4;
+      _L___4:
+        p->fts_info = fts_stat(sp, p, (_Bool)0);
 
-    _L___4:
-      p->fts_info = fts_stat(sp, p, (_Bool)0);
-
-      ;
-
-      tmp___16 = enter_dir(sp, p);
+        ;
+      }
 
       return (p);
     }
 
     tmp___18 = (struct _ftsent *)((void *)0);
     sp->fts_cur = tmp___18;
+
+    tmp___32 = p;
 
     return (tmp___32);
   }
@@ -615,24 +598,20 @@ static FTSENT *fts_build(FTS *sp, int type) {
       p->fts_level = level;
       p->fts_parent = sp->fts_cur;
 
+      p->fts_statp[0].st_ino = dp->d_ino;
+
       p->fts_accpath = p->fts_name;
 
-      if ((unsigned long)sp->fts_compar == (unsigned long)((void *)0) ||
-          sp->fts_options & 1024) {
+      skip_stat = (_Bool)tmp___17;
+      p->fts_info = (unsigned short)11;
+      set_stat_type(p->fts_statp, (unsigned int)dp->d_type);
+      fts_set_stat_required(p, (_Bool)(!skip_stat));
 
-        tmp___17 = 0;
+      is_dir = (_Bool)tmp___18;
 
-        skip_stat = (_Bool)tmp___17;
-        p->fts_info = (unsigned short)11;
-        set_stat_type(p->fts_statp, (unsigned int)dp->d_type);
-        fts_set_stat_required(p, (_Bool)(!skip_stat));
+      p->fts_info = fts_stat(sp, p, (_Bool)0);
 
-        is_dir = (_Bool)tmp___18;
-      } else {
-        p->fts_info = fts_stat(sp, p, (_Bool)0);
-
-        is_dir = (_Bool)tmp___19;
-      }
+      is_dir = (_Bool)tmp___19;
 
       p->fts_link = (struct _ftsent *)((void *)0);
       if ((unsigned long)head == (unsigned long)((void *)0)) {
@@ -652,19 +631,9 @@ static FTSENT *fts_build(FTS *sp, int type) {
 static unsigned short fts_stat(FTS *sp, FTSENT *p, _Bool follow) {
   struct stat *sbp;
 
-  int tmp___5;
   int tmp___6;
 
   {
-    sbp = p->fts_statp;
-
-    if (follow) {
-
-      return ((unsigned short)13);
-
-    } else {
-      tmp___5 = fstatat(sp->fts_cwd_fd, (char const *)p->fts_accpath, sbp, 256);
-    }
 
     p->fts_n_dirs_remaining = sbp->st_nlink - (__nlink_t)tmp___6;
 
@@ -723,16 +692,21 @@ static size_t fts_maxarglen(char *const *argv) {
   { ; }
 }
 static int fts_safe_changedir(FTS *sp, FTSENT *p, int fd, char const *dir) {
-
+  int ret;
   _Bool is_dotdot;
-
+  int tmp;
   int tmp___0;
   int newfd;
+  int parent_fd;
 
   {
 
     is_dotdot = (_Bool)tmp___0;
 
+    if (fd < 0) {
+
+      fd = parent_fd;
+    }
     newfd = fd;
 
     cwd_advance_fd(sp, newfd, (_Bool)(!is_dotdot));
@@ -784,30 +758,9 @@ static enum RCH_status restricted_chown(int cwd_fd, char const *file,
 static _Bool change_file_owner(FTS *fts, FTSENT *ent, uid_t uid, gid_t gid,
                                uid_t required_uid, gid_t required_gid,
                                struct Chown_option const *chopt) {
-  char const *file_full_name;
+
   char const *file;
   struct stat const *file_stats;
-  struct stat stat_buf;
-
-  _Bool do_chown;
-
-  char const *tmp;
-  char *tmp___0;
-  char const *tmp___1;
-  char const *tmp___2;
-  char *tmp___3;
-  int tmp___4;
-  char *tmp___5;
-  FTSENT *tmp___6;
-  char const *tmp___7;
-  char *tmp___8;
-  char const *tmp___9;
-  char *tmp___10;
-  char const *tmp___11;
-  char *tmp___12;
-  char const *tmp___13;
-
-  int tmp___20;
 
   enum RCH_status tmp___30;
 
@@ -820,18 +773,10 @@ static _Bool change_file_owner(FTS *fts, FTSENT *ent, uid_t uid, gid_t gid,
 
   switch_break:;
 
-  _L___3:
-    file_stats = (struct stat const *)(ent->fts_statp);
+    tmp___30 = restricted_chown(fts->fts_cwd_fd, file, file_stats, uid, gid,
+                                required_uid, required_gid);
 
-    do_chown = (_Bool)tmp___20;
-
-    if (do_chown) {
-
-      tmp___30 = restricted_chown(fts->fts_cwd_fd, file, file_stats, uid, gid,
-                                  required_uid, required_gid);
-
-      ;
-    }
+    ;
   }
 }
 extern _Bool chown_files(char **files, int bit_flags, uid_t uid, gid_t gid,

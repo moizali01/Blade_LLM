@@ -23,7 +23,7 @@ Final Verdict: <assigned class> (1-4)
 
 Required Functionality:
 
-The given code belongs to the chown core utility and is used only with the -R flag, which operates on files and directories recursively. For this task, we only want to change the ownership of an entire directory and all its contents such as files using the -R flag. Everything concerning the proper functionality of the -R flag is considered important. We must cater to all edge cases ONLY related to the -R flag's functionality, including the safe and accurate traversal of directories, particularly when moving between parent and child directories or handling symbolic links. Any other functionality apart from the -R flag is not considered relevant.
+The given code belongs to the chown core utility and is used only to change the ownership and group (user and/or group) of a single directory without affecting its contents. For this task, we only want to change the ownership of the specified directory itself, not its contents such as files or subdirectories. We must cater to all edge cases ONLY related to the above mentioned functionality, including scenarios where only the user, only the group, or both user and group need to be changed. Any other functionality such as recursive directory traversal, handling multiple arguments, and verbose options are not needed. The utility should maintain proper error handling and permission checks for this specific operation. The code must handle various edge cases and error conditions robustly. Consider how the snippet might contribute to error handling or state management throughout the function.
 
 To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list of vulnerabilities that the code may be preventing. Please give emphasis to analyzing whether the provided snippet is important for preventing any of the given mentioned vulnerabilities:
 
@@ -39,7 +39,11 @@ Contextual Information:
 
 #########
 
-Context:
+Carefully analyze all the context snippets from the program before evaluating the target query snippet. Consider how the snippet interacts with other parts of the function and its role in the overall program flow. Do not evaluate the snippet in isolation.
+
+When evaluating initilizations, remeber that initializing variables at the beginning of a function is a common and important practice, even if the values are modified later. Creating local copies of parameters allows for safer manipulation of values within a function and helps maintain the original state in case of errors.
+
+Context Snippets:
 
 {formatted_context}
 
@@ -56,7 +60,10 @@ Query:
 
 #########
 
+Make sure to evaluate only on the basis of the functionality and the possibility of security vulnerabilities mentioned above about changing the owner and group of a directory and the files it contains. We are not concerned with any other functionalities such as verbose or symbolic link functionalities. Since we can not change the structure of code, even if a piece of code can be improved somehow, we do not care. We must make sure the program functions correctly in its given configuration in the larger picture. Simply comment on the importance of the piece of code give the structure of code provided to you in the context snippets.
 
-Make sure to evaluate only on the basis of the functionality and the possibility of security vulnerabilities mentioned above about the -R flag to create a directory with specific permissions. We are not concerned with any other functionalities such as verbose or symbolic link functionalities. 
+"Caution: Avoid classifying code as unnecessary without fully understanding its purpose in the broader context of the program. Some code may seem redundant but serve important purposes for maintainability, error handling, or edge cases." Evaluate the importance of the code snippet not just for its immediate effect, but also for its role in the overall function and program structure. Consider how removing or modifying the snippet might affect the program's behavior in various scenarios.
+
+When evaluating initilizations, remeber that initializing variables at the beginning of a function is a common and important practice, even if the values are modified later. Creating local copies of parameters allows for safer manipulation of values within a function and helps maintain the original state in case of errors. If you are not completely sure about their usage in the program, make sure to give variable initializations a higher importance.
 
 Make sure you do not add any information on your own. Consider all context snippets in the provided context to explain the queried code. If you do not know the answer, simply state that you do not know. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.
