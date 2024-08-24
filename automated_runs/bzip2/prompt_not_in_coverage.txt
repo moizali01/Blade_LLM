@@ -24,7 +24,7 @@ Final Verdict: <assigned class> (1-4)
 
 Required Functionality:
 
-The given code belongs to the bzip2 core utility and is used only without any flag to compress all kind of files with varying extensions. For this task we only want to compress all types of files with varying extensions without any flag. We are NOT interested in any other functionlity. Any other functionality such as decompression or compression with other flags in not needed. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements which are important for keeping the workflow structure.
+The given code belongs to the bzip2 core utility and is used only without any flag to compress all kind of files with varying extensions. For this task we only want to compress all types of files with varying extensions without any flag. We are NOT interested in any other functionlity. Any other functionality such as decompression or compression with other flags in not needed.
 
 This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for the functionality mentioned or security of the program. 
 

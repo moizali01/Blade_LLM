@@ -16,13 +16,13 @@ cp bzip2-org.c ../../src/target-program/bzip2-org.c
 cp bzip2_train.sh ../../src/target-program/bzip2_train.sh
 cp original.txt ../../src/original.txt
 cp coverage.txt ../../LLM_Util/coverage.txt
-clear
+# clear
 
 # copy prompts to LLM_UTIL
 cd $DIR
 cp prompt_in_coverage.txt ../../LLM_Util/prompt_in_coverage.txt
 cp prompt_not_in_coverage.txt ../../LLM_Util/prompt_not_in_coverage.txt
-clear
+# clear
 
 # clear cands
 cd ../../LLM_Util
@@ -33,12 +33,13 @@ mkdir -p context
 mkdir -p pretext_code
 mkdir -p removed_code
 mkdir -p llm_response
+mkdir -p fifty_text
 
 cd ..
 chmod +x clear_cands.sh
 ./clear_cands.sh
 cd $DIR
-clear
+# clear
 
 # run the program
 cd ../../src
@@ -47,13 +48,13 @@ cp bzip2-util.c.blade.c ../automated_runs/rm/bzip2-util.c.blade.c
 # clear
 
 # run generality cases
-cd $DIR
-chmod +x generality.sh
+# cd $DIR
+# chmod +x generality.sh
 
-./generality.sh > generality_results.txt
-# clear
+# ./generality.sh > generality_results.txt
+# # clear
 
-echo "Results saved in generality_results.txt"
+# echo "Results saved in generality_results.txt"
 
 exit 0
 

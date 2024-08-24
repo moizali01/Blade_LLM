@@ -23,7 +23,7 @@ Final Verdict: <assigned class> (1-4)
 
 Required Functionality:
 
-The given code belongs to the bzip2 core utility and is used only without any flag to compress all kind of files with varying extensions. For this task we only want to co of files with varying extensions without any flag. We are NOT interested in any other functionlity. Any other functionality such as decompression or compression with other flags in not needed. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements which are important for keeping the workflow structure.
+The given code belongs to the bzip2 core utility and is used only without any flag to compress all kind of files with varying extensions. For this task we only want to co of files with varying extensions without any flag. We are NOT interested in any other functionlity. Any other functionality such as decompression or compression with other flags in not needed. 
 The given code snippet lies in the code execution path.
 
 To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing. Please give emphasis to analysing whether the provided snippet is important for preventing any of the given security vulnerabilities:

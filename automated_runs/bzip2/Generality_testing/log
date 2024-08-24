@@ -1,0 +1,220 @@
+Case: 1 Byte File Test
+Error: Compression failed
+Test failed: 1 Byte File
+Case: Single Word File Test
+Error: Compression failed
+Test failed: Single Word File
+Case: 10 Byte File Test
+Error: Compression failed
+Test failed: 10 Byte File
+Case: Short Sentence File Test
+Error: Compression failed
+Test failed: Short Sentence File
+Case: 100 Byte File Test
+Error: Compression failed
+Test failed: 100 Byte File
+Case: Small 1KB Text File Test
+Error: Compression failed
+Test failed: 1KB Text File
+Case: Small 2KB Text File Test
+Error: Compression failed
+Test failed: 2KB Text File
+Case: Small 5KB Text File Test
+Error: Compression failed
+Test failed: 5KB Text File
+Case: Small 10KB Text File Test
+Error: Compression failed
+Test failed: 10KB Text File
+Case: Small 20KB Text File Test
+Error: Compression failed
+Test failed: 20KB Text File
+Case: Small 1KB JPEG File Test
+Error: Compression failed
+Test failed: 1KB JPEG File
+Case: Small 2KB PNG File Test
+Error: Compression failed
+Test failed: 2KB PNG File
+Case: Small 5KB MP3 File Test
+Error: Compression failed
+Test failed: 5KB MP3 File
+Case: Small 10KB WAV File Test
+Error: Compression failed
+Test failed: 10KB WAV File
+Case: Small 1KB CSV File Test
+Error: Compression failed
+Test failed: 1KB CSV File
+Case: Small 2KB JSON File Test
+Error: Compression failed
+Test failed: 2KB JSON File
+Case: Small 5KB Binary File Test
+Error: Compression failed
+Test failed: 5KB Binary File
+Case: Small 10KB Binary File Test
+Error: Compression failed
+Test failed: 10KB Binary File
+Case: Small 20KB Binary File Test
+Error: Compression failed
+Test failed: 20KB Binary File
+Case: Medium 1MB Text File Test
+Error: Compression failed
+Test failed: 1MB Text File
+Case: Medium 2MB Text File Test
+Error: Compression failed
+Test failed: 2MB Text File
+Case: Medium 5MB Text File Test
+Error: Compression failed
+Test failed: 5MB Text File
+Case: Medium 10MB Text File Test
+Error: Compression failed
+Test failed: 10MB Text File
+Case: Medium 1MB PNG File Test
+Error: Compression failed
+Test failed: 1MB PNG File
+Case: Medium 2MB JPEG File Test
+Error: Compression failed
+Test failed: 2MB JPEG File
+Case: Medium 5MB GIF File Test
+Error: Compression failed
+Test failed: 5MB GIF File
+Case: Medium 10MB BMP File Test
+Error: Compression failed
+Test failed: 10MB BMP File
+Case: Medium 1MB WAV File Test
+Error: Compression failed
+Test failed: 1MB WAV File
+Case: Medium 2MB MP3 File Test
+Error: Compression failed
+Test failed: 2MB MP3 File
+Case: Medium 5MB OGG File Test
+Error: Compression failed
+Test failed: 5MB OGG File
+Case: Medium 10MB FLAC File Test
+Error: Compression failed
+Test failed: 10MB FLAC File
+Case: Medium 1MB ZIP File Test
+Error: Compression failed
+Test failed: 1MB ZIP File
+Case: Medium 2MB TAR.GZ File Test
+Error: Compression failed
+Test failed: 2MB TAR.GZ File
+Case: Medium 5MB PDF File Test
+Error: Compression failed
+Test failed: 5MB PDF File
+Case: Medium 1MB Binary File Test
+Error: Compression failed
+Test failed: 1MB Binary File
+Case: Medium 2MB Binary File Test
+Error: Compression failed
+Test failed: 2MB Binary File
+Case: Medium 5MB Binary File Test
+Error: Compression failed
+Test failed: 5MB Binary File
+Case: English Text File Test
+Error: Compression failed
+Test failed: English Text File
+Case: C Code File Test
+Error: Compression failed
+Test failed: C Code File
+Case: Python Code File Test
+Error: Compression failed
+Test failed: Python Code File
+Case: JavaScript Code File Test
+Error: Compression failed
+Test failed: JavaScript Code File
+Case: HTML Code File Test
+Error: Compression failed
+Test failed: HTML Code File
+Case: English Text with Lots of Spaces Test
+Error: Compression failed
+Test failed: English Text with Lots of Spaces
+Case: English Text with Lots of Line Breaks Test
+Error: Compression failed
+Test failed: English Text with Lots of Line Breaks
+Case: English Text with Lots of Punctuation Test
+Error: Compression failed
+Test failed: English Text with Lots of Punctuation
+Case: English Text with Lots of Numbers Test
+Error: Compression failed
+Test failed: English Text with Lots of Numbers
+Case: 1KB Random Text File Test
+Error: Compression failed
+Test failed: 1KB Random Text File
+Case: 2KB Random Text File Test
+Error: Compression failed
+Test failed: 2KB Random Text File
+Case: JPEG Image File Test
+Error: Compression failed
+Test failed: JPEG Image File
+Case: PNG Image File Test
+Error: Compression failed
+Test failed: PNG Image File
+Case: MP3 Audio File Test
+Error: Compression failed
+Test failed: MP3 Audio File
+Case: WAV Audio File Test
+Error: Compression failed
+Test failed: WAV Audio File
+Case: Executable File Test
+Error: Compression failed
+Test failed: Executable File
+Case: Empty File Test
+Success
+Case: File with Special Characters Test
+Success
+Case: Read-Only File Test
+Error: Compression failed
+Test failed: Read-Only File
+Case: Executable File Test
+Error: Compression failed
+Test failed: Executable File
+Case: Unix Line Endings File Test
+Error: Compression failed
+Test failed: Unix Line Endings File
+Case: Windows Line Endings File Test
+Error: Compression failed
+Test failed: Windows Line Endings File
+Case: Corrupted Data File Test
+Error: Compression failed
+Test failed: Corrupted Data File
+Processing file with only new lines:
+Error: Compression failed
+Test failed: File with only new lines
+Processing different encodings test:
+Error: Compression failed
+Test failed: Different encodings
+Processing very long lines in a file test:
+Error: Compression failed
+Test failed: Very long lines in a file
+Processing invalid data file:
+Error: Compression failed
+Test failed: Invalid data file
+Processing sparse file:
+Error: Compression failed
+Test failed: Sparse file
+Case 9
+Processing all files simultaneously:
+Error: Compression failed
+Test failed: Multiple files
+Processing single file:
+Error: Compression failed
+Test failed: Single file
+Processing multiple languages text file:
+Error: Compression failed
+Test failed: Multi-language text
+Processing simple Unicode text file:
+Error: Compression failed
+Test failed: Simple Unicode text
+Processing complex Unicode text file:
+Error: Compression failed
+Test failed: Complex Unicode text
+Processing empty file:
+Success
+Processing multiple empty files:
+All files not compressed
+Test failed: Multiple empty files
+Processing filename with special characters:
+Error: Compression failed
+Test failed: Filename with special characters
+Processing filename with non-ASCII characters:
+Error: Compression failed
+Test failed: Filename with non-ASCII characters
