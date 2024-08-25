@@ -2,21 +2,57 @@ typedef int Int32;
 typedef unsigned char Bool;
 typedef unsigned char UChar;
 typedef unsigned long size_t;
-
+typedef long __off_t;
+typedef long __off64_t;
 struct _IO_FILE;
-
+struct _IO_FILE;
 typedef struct _IO_FILE FILE;
 typedef void _IO_lock_t;
-
+struct _IO_marker {
+  struct _IO_marker *_next;
+  struct _IO_FILE *_sbuf;
+  int _pos;
+};
+struct _IO_FILE {
+  int _flags;
+  char *_IO_read_ptr;
+  char *_IO_read_end;
+  char *_IO_read_base;
+  char *_IO_write_base;
+  char *_IO_write_ptr;
+  char *_IO_write_end;
+  char *_IO_buf_base;
+  char *_IO_buf_end;
+  char *_IO_save_base;
+  char *_IO_backup_base;
+  char *_IO_save_end;
+  struct _IO_marker *_markers;
+  struct _IO_FILE *_chain;
+  int _fileno;
+  int _flags2;
+  __off_t _old_offset;
+  unsigned short _cur_column;
+  signed char _vtable_offset;
+  char _shortbuf[1];
+  _IO_lock_t *_lock;
+  __off64_t _offset;
+  void *__pad1;
+  void *__pad2;
+  void *__pad3;
+  void *__pad4;
+  size_t __pad5;
+  int _mode;
+  char _unused2[(15UL * sizeof(int) - 4UL * sizeof(void *)) - sizeof(size_t)];
+};
 struct __anonstruct_bz_stream_26 {
   char *next_in;
   unsigned int avail_in;
   unsigned int total_in_lo32;
-
+  unsigned int total_in_hi32;
   char *next_out;
   unsigned int avail_out;
   unsigned int total_out_lo32;
-
+  unsigned int total_out_hi32;
   void *state;
   void *(*bzalloc)(void *, int, int);
   void (*bzfree)(void *, void *);
@@ -31,32 +67,64 @@ struct __anonstruct_DState_28 {
   UChar state_out_ch;
   Int32 state_out_len;
   Bool blockRandomised;
-
+  Int32 rNToGo;
+  Int32 rTPos;
+  UInt32 bsBuff;
   Int32 bsLive;
   Int32 blockSize100k;
-
+  Bool smallDecompress;
+  Int32 currBlockNo;
+  Int32 verbosity;
+  Int32 origPtr;
   UInt32 tPos;
   Int32 k0;
-
+  Int32 unzftab[256];
   Int32 nblock_used;
-
+  Int32 cftab[257];
+  Int32 cftabCopy[257];
   UInt32 *tt;
   UInt16 *ll16;
-
+  UChar *ll4;
   UInt32 storedBlockCRC;
-
+  UInt32 storedCombinedCRC;
   UInt32 calculatedBlockCRC;
   UInt32 calculatedCombinedCRC;
-
+  Int32 nInUse;
   Bool inUse[256];
-
+  Bool inUse16[16];
+  UChar seqToUnseq[256];
   UChar mtfa[4096];
-
+  Int32 mtfbase[16];
   UChar selector[18002];
   UChar selectorMtf[18002];
-
+  UChar len[6][258];
+  Int32 limit[6][258];
+  Int32 base[6][258];
+  Int32 perm[6][258];
+  Int32 minLens[6];
+  Int32 save_i;
+  Int32 save_j;
+  Int32 save_t;
+  Int32 save_alphaSize;
+  Int32 save_nGroups;
+  Int32 save_nSelectors;
+  Int32 save_EOB;
+  Int32 save_groupNo;
+  Int32 save_groupPos;
+  Int32 save_nextSym;
+  Int32 save_nblockMAX;
   Int32 save_nblock;
-
+  Int32 save_es;
+  Int32 save_N;
+  Int32 save_curr;
+  Int32 save_zt;
+  Int32 save_zn;
+  Int32 save_zvec;
+  Int32 save_zj;
+  Int32 save_gSel;
+  Int32 save_gMinlen;
+  Int32 *save_gLimit;
+  Int32 *save_gBase;
   Int32 *save_gPerm;
 };
 typedef struct __anonstruct_DState_28 DState;
@@ -76,7 +144,8 @@ struct __anonstruct_EState_27 {
   Int32 workFactor;
   UInt32 state_in_ch;
   Int32 state_in_len;
-
+  Int32 rNToGo;
+  Int32 rTPos;
   Int32 nblock;
   Int32 nblockMAX;
   Int32 numZ;
@@ -88,7 +157,7 @@ struct __anonstruct_EState_27 {
   Int32 bsLive;
   UInt32 blockCRC;
   UInt32 combinedCRC;
-
+  Int32 verbosity;
   Int32 blockNo;
   Int32 blockSize100k;
   Int32 nMTF;
@@ -113,14 +182,43 @@ struct __anonstruct_bzFile_29 {
   Bool initialisedOk;
 };
 typedef struct __anonstruct_bzFile_29 bzFile;
-
+typedef unsigned long __dev_t;
+typedef unsigned int __uid_t;
+typedef unsigned int __gid_t;
+typedef unsigned long __ino_t;
 typedef unsigned int __mode_t;
-
-struct stat {
-
-  __mode_t st_mode;
+typedef unsigned long __nlink_t;
+typedef long __time_t;
+typedef long __blksize_t;
+typedef long __blkcnt_t;
+typedef long __syscall_slong_t;
+struct timespec {
+  __time_t tv_sec;
+  __syscall_slong_t tv_nsec;
 };
-
+typedef void (*__sighandler_t)(int);
+struct stat {
+  __dev_t st_dev;
+  __ino_t st_ino;
+  __nlink_t st_nlink;
+  __mode_t st_mode;
+  __uid_t st_uid;
+  __gid_t st_gid;
+  int __pad0;
+  __dev_t st_rdev;
+  __off_t st_size;
+  __blksize_t st_blksize;
+  __blkcnt_t st_blocks;
+  struct timespec st_atim;
+  struct timespec st_mtim;
+  struct timespec st_ctim;
+  __syscall_slong_t __glibc_reserved[3];
+};
+struct utimbuf {
+  __time_t actime;
+  __time_t modtime;
+};
+ 
 typedef int IntNative;
 struct __anonstruct_UInt64_56 {
   UChar b[8];
@@ -169,7 +267,7 @@ Int32 BZ2_rNums[512] = {
     265, 203, 50,  668, 108, 645, 990, 626, 197, 510, 357, 358, 850, 858, 364,
     936, 638};
 void BZ2_bz__AssertH__fail(int errcode);
-
+ 
 void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
                            Int32 maxLen) {
   Int32 nNodes;
@@ -201,8 +299,8 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
     i = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      /* CIL Label */
+          ;
         if (!(i < alphaSize)) {
           goto while_break;
         }
@@ -223,14 +321,14 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
           ;
         nNodes = alphaSize;
         nHeap = 0;
-
+        heap[0] = 0;
         weight[0] = 0;
         parent[0] = -2;
         i = 1;
         {
           while (1) {
-            /* CIL Label */
-            ;
+          /* CIL Label */
+              ;
             if (!(i <= alphaSize)) {
               goto while_break___1;
             }
@@ -265,8 +363,8 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
         }
         {
           while (1) {
-            /* CIL Label */
-            ;
+           /* CIL Label */
+              ;
             if (!(nHeap > 1)) {
               goto while_break___3;
             }
@@ -331,7 +429,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
             parent[n2] = tmp___3;
             parent[n1] = tmp___3;
             if ((weight[n1] & 255) > (weight[n2] & 255)) {
-
+             
             } else {
               tmp___4 = weight[n2] & 255;
             }
@@ -381,7 +479,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
             {
               while (1) {
                 /* CIL Label */
-                ;
+                  ;
                 if (!(parent[k] >= 0)) {
                   goto while_break___8;
                 }
@@ -407,10 +505,10 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
         {
           while (1) {
             /* CIL Label */
-            ;
+              ;
 
             j = weight[i] >> 8;
-
+ 
             i++;
           }
         while_break___9: /* CIL Label */
@@ -1920,9 +2018,9 @@ void BZ2_compressBlock(EState *s, Bool is_last_block) {
   {
     if (s->nblock > 0) {
       s->blockCRC = ~s->blockCRC;
-
+      s->combinedCRC = (s->combinedCRC << 1) | (s->combinedCRC >> 31);
       s->combinedCRC ^= s->blockCRC;
-
+   
       { BZ2_blockSort(s); }
     }
     s->zbits = (UChar *)s->arr2 + s->nblock;
@@ -1960,13 +2058,13 @@ void BZ2_compressBlock(EState *s, Bool is_last_block) {
         bsPutUChar(s, (UChar)144);
         bsPutUInt32(s, s->combinedCRC);
       }
-
+      
       { bsFinishWrite(s); }
     }
     return;
   }
 }
-
+ 
 extern struct _IO_FILE *stdin;
 extern struct _IO_FILE *stdout;
 extern int fclose(FILE *__stream);
@@ -1980,7 +2078,7 @@ extern size_t fwrite(void const *__restrict __ptr, size_t __size, size_t __n,
 int BZ2_bzCompressInit(bz_stream *strm, int blockSize100k___0,
                        int verbosity___0, int workFactor___0);
 int BZ2_bzCompress(bz_stream *strm, int action);
-
+ 
 BZFILE *BZ2_bzReadOpen(int *bzerror, FILE *f, int verbosity___0, int small,
                        void *unused, int nUnused);
 
@@ -2008,7 +2106,14 @@ static void *default_bzalloc(void *opaque, Int32 items, Int32 size) {
 }
 static void default_bzfree(void *opaque, void *addr) {
 
-  { return; }
+  {
+    if ((unsigned long)addr != (unsigned long)((void *)0)) {
+      {
+        free(addr);
+      }
+    }
+    return;
+  }
 }
 static void prepare_new_block(EState *s) {
   Int32 i;
@@ -2016,13 +2121,13 @@ static void prepare_new_block(EState *s) {
   {
     s->nblock = 0;
     s->numZ = 0;
-
+    s->state_out_pos = 0;
     s->blockCRC = (UInt32)4294967295L;
-
+    
     {
 
       /* CIL Label */
-      ;
+        ;
     }
     (s->blockNo)++;
     return;
@@ -2147,7 +2252,7 @@ int BZ2_bzCompressInit(bz_stream *strm, int blockSize100k___0,
     return (0);
   }
 }
-static void add_pair_to_block(EState *s) {
+static void add_pair_to_block(EState *s) { 
   Int32 i;
   UChar ch;
 
@@ -2156,8 +2261,8 @@ static void add_pair_to_block(EState *s) {
     i = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      /* CIL Label */
+          ;
         if (!(i < s->state_in_len)) {
           goto while_break;
         }
@@ -2168,7 +2273,7 @@ static void add_pair_to_block(EState *s) {
     while_break: /* CIL Label */
         ;
     }
-
+    s->inUse[s->state_in_ch] = (Bool)1;
     {
       if (s->state_in_len == 1) {
         goto case_1;
@@ -2181,9 +2286,9 @@ static void add_pair_to_block(EState *s) {
       }
       goto switch_default;
     case_1: /* CIL Label */
-
+      *(s->block + s->nblock) = ch;
       (s->nblock)++;
-
+      goto switch_break;
     case_2: /* CIL Label */
       *(s->block + s->nblock) = ch;
       (s->nblock)++;
@@ -2199,7 +2304,7 @@ static void add_pair_to_block(EState *s) {
       (s->nblock)++;
       goto switch_break;
     switch_default: /* CIL Label */
-
+      s->inUse[s->state_in_len - 4] = (Bool)1;
       *(s->block + s->nblock) = ch;
       (s->nblock)++;
       *(s->block + s->nblock) = ch;
@@ -2340,20 +2445,21 @@ static Bool copy_input_until_stop(EState *s) {
   }
 }
 static Bool copy_output_until_stop(EState *s) {
+  Bool progress_out;
 
   {
-
+    progress_out = (Bool)0;
     {
       while (1) {
         /* CIL Label */
-        ;
+          ;
         if (!(!((s->strm)->avail_out == 0U))) {
           goto while_break;
         }
         if (s->state_out_pos >= s->numZ) {
           goto while_break;
         }
-
+        progress_out = (Bool)1;
         *((s->strm)->next_out) = (char)*(s->zbits + s->state_out_pos);
         (s->state_out_pos)++;
         ((s->strm)->avail_out)--;
@@ -2363,6 +2469,7 @@ static Bool copy_output_until_stop(EState *s) {
     while_break: /* CIL Label */
         ;
     }
+    return (progress_out);
   }
 }
 static Bool handle_compress(bz_stream *strm) {
@@ -2381,8 +2488,8 @@ static Bool handle_compress(bz_stream *strm) {
     s = (EState *)strm->state;
     {
       while (1) {
-        /* CIL Label */
-        ;
+       /* CIL Label */
+          ;
         if (s->state == 1) {
           {
             tmp = copy_output_until_stop(s);
@@ -2401,7 +2508,11 @@ static Bool handle_compress(bz_stream *strm) {
               }
             }
           }
-          { s->state = 2; }
+          {
+            prepare_new_block(s);
+            s->state = 2;
+          }
+        
         }
         if (s->state == 2) {
           {
@@ -2807,7 +2918,6 @@ BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0,
   int tmp;
 
   {
-
     if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
       *bzerror = 0;
     }
@@ -2815,10 +2925,8 @@ BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0,
       bzf->lastErr = 0;
     }
     if ((unsigned long)f == (unsigned long)((void *)0)) {
-
     } else {
       if (blockSize100k___0 < 1) {
-
       } else {
         if (blockSize100k___0 > 9) {
           goto _L___0;
@@ -2834,7 +2942,6 @@ BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0,
               } else {
                 if (verbosity___0 > 4) {
                 _L___0:
-
                   return ((void *)0);
                 }
               }
@@ -2848,11 +2955,9 @@ BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0,
       if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
         *bzerror = -6;
       }
-
       return ((void *)0);
     }
     { bzf = (bzFile *)malloc(sizeof(bzFile)); }
-
     if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
       *bzerror = 0;
     }
@@ -2863,13 +2968,11 @@ BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0,
     bzf->bufN = 0;
     bzf->handle = f;
     bzf->writing = (Bool)1;
-
     {
       ret = BZ2_bzCompressInit(&bzf->strm, blockSize100k___0, verbosity___0,
                                workFactor___0);
     }
     if (ret != 0) {
-
       if ((unsigned long)bzf != (unsigned long)((void *)0)) {
         bzf->lastErr = ret;
       }
@@ -2877,7 +2980,6 @@ BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0,
       return ((void *)0);
     }
     bzf->strm.avail_in = 0U;
-
     return ((BZFILE *)bzf);
   }
 }
@@ -3270,7 +3372,7 @@ static char const *bzerrorstrings[16] = {"OK",           "SEQUENCE_ERROR",
 extern int(__attribute__((__nonnull__(1))) open)(char const *__file,
                                                  int __oflag,
                                                  ...) __asm__("open64");
-
+ 
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2),
                                                        __leaf__)) stat)(
     char const *__restrict __file,
@@ -3867,7 +3969,7 @@ static void copyFileName(Char *to, Char *from) {
 
   {
     { tmp = strlen((char const *)from); }
-
+  
     {
       strncpy((char * /* __restrict  */)to,
               (char const * /* __restrict  */)from, (size_t)1024);
@@ -3885,10 +3987,10 @@ static Bool fileExists(Char *name) {
     {
       tmp___0 = fopen((char const * /* __restrict  */)name,
                       (char const * /* __restrict  */) "rb");
-
+      
       exists = (Bool)((unsigned long)tmp != (unsigned long)((void *)0));
     }
-
+    
     return (exists);
   }
 }
@@ -3955,7 +4057,7 @@ static void compress(Char *name) {
   IntNative tmp___17;
 
   {
-
+    
     if ((unsigned long)name == (unsigned long)((void *)0)) {
     }
     {
@@ -3994,10 +4096,10 @@ static void compress(Char *name) {
         tmp = containsDubiousChars(inName);
       }
       if (tmp) {
-
-        {
-          setExit(1);
-        }
+       
+        { 
+          setExit(1); 
+          }
         return;
       }
     }
@@ -4008,18 +4110,18 @@ static void compress(Char *name) {
     }
 
     {
-
-      /* CIL Label */
-      ;
+    
+    /* CIL Label */
+        ;
     }
     if (srcMode == 3) {
 
     } else {
       if (srcMode == 2) {
-        {
-          stat((char const * /* __restrict  */)(inName),
-               (struct stat * /* __restrict  */)(&statBuf));
-        }
+      {
+        stat((char const * /* __restrict  */)(inName),
+             (struct stat * /* __restrict  */)(&statBuf));
+      }
         if ((statBuf.st_mode & 61440U) == 16384U) {
           {
             fprintf(
@@ -4044,8 +4146,8 @@ static void compress(Char *name) {
     }
 
     if (srcMode == 3) {
-      {
-      }
+    {    
+    }
     }
     {
       if (srcMode == 1) {
@@ -4064,7 +4166,7 @@ static void compress(Char *name) {
       tmp___7 = fileno(stdout);
       tmp___8 = isatty(tmp___7);
     }
-
+   
       goto switch_break___0;
     case_2___0: { /* CIL Label */
       inStr = fopen((char const * /* __restrict  */)(inName),
@@ -4073,7 +4175,7 @@ static void compress(Char *name) {
       tmp___9 = fileno(stdout);
       tmp___10 = isatty(tmp___9);
     }
-
+    
       if ((unsigned long)inStr == (unsigned long)((void *)0)) {
         {
           tmp___11 = __errno_location();
@@ -4135,7 +4237,7 @@ static void compress(Char *name) {
     switch_break___0: /* CIL Label */
         ;
     }
-
+ 
     { compressStream(inStr, outStr); }
     if (srcMode == 3) {
       {
@@ -4876,7 +4978,8 @@ static void fallbackQSort3(UInt32 *fmap, UInt32 *eclass, Int32 loSt,
           }
           goto while_continue;
         }
-
+        r = (r * 7621U + 1U) % 32768U;
+        r3 = r % 3U;
         if (r3 == 0U) {
           med = *(eclass + *(fmap + lo));
         } else {
@@ -4948,7 +5051,7 @@ static void fallbackQSort3(UInt32 *fmap, UInt32 *eclass, Int32 loSt,
             zztmp___1 = (Int32) * (fmap + unLo);
             *(fmap + unLo) = *(fmap + unHi);
             *(fmap + unHi) = (UInt32)zztmp___1;
-
+            
             unHi--;
           }
         while_break___0: /* CIL Label */
@@ -4967,8 +5070,8 @@ static void fallbackQSort3(UInt32 *fmap, UInt32 *eclass, Int32 loSt,
         yyn = n;
         {
           while (1) {
-            /* CIL Label */
-            ;
+          /* CIL Label */
+              ;
             if (!(yyn > 0)) {
               goto while_break___3;
             }
@@ -5010,7 +5113,7 @@ static void fallbackQSort3(UInt32 *fmap, UInt32 *eclass, Int32 loSt,
         n = ((lo + unLo) - ltLo) - 1;
         m = (hi - (gtHi - unHi)) + 1;
         if (n - lo > hi - m) {
-
+          
           stackHi[sp] = n;
           sp++;
           stackLo[sp] = m;
@@ -5049,11 +5152,12 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
 
   {
     eclass8 = (UChar *)eclass;
-
+   
+    i = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+       /* CIL Label */
+          ;
         if (!(i < 257)) {
           goto while_break;
         }
@@ -5066,8 +5170,8 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
     i = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+       /* CIL Label */
+          ;
         if (!(i < nblock)) {
           goto while_break___0;
         }
@@ -5154,8 +5258,8 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
     i = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      /* CIL Label */
+          ;
         if (!(i < 32)) {
           goto while_break___6;
         }
@@ -5171,9 +5275,9 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
     H = 1;
     {
       while (1) {
-        /* CIL Label */
-        ;
-
+      /* CIL Label */
+          ;
+       
         j = 0;
         i = 0;
         {
@@ -5247,7 +5351,7 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
               while_continue___13: /* CIL Label */
                   ;
                 if (!(*(bhtab + (k >> 5)) & (unsigned int)(1 << (k & 31)))) {
-
+              
                 } else {
                   goto while_break___13;
                 }
@@ -5258,14 +5362,21 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
             }
             if (!(*(bhtab + (k >> 5)) & (unsigned int)(1 << (k & 31)))) {
               {
-
-                /* CIL Label */
-                ;
+                while (1) {
+                while_continue___14: /* CIL Label */
+                    ;
+                  if (!(*(bhtab + (k >> 5)) == 0U)) {
+                    goto while_break___14;
+                  }
+                  k += 32;
+                }
+              while_break___14: /* CIL Label */
+                  ;
               }
               {
                 while (1) {
-                  /* CIL Label */
-                  ;
+                while_continue___15: /* CIL Label */
+                    ;
                   if (!(!(*(bhtab + (k >> 5)) &
                           (unsigned int)(1 << (k & 31))))) {
                     goto while_break___15;
@@ -5289,8 +5400,8 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
               }
               {
                 while (1) {
-                  /* CIL Label */
-                  ;
+                while_continue___16: /* CIL Label */
+                    ;
                   if (!(i <= r)) {
                     goto while_break___16;
                   }
@@ -5309,7 +5420,14 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
         while_break___9: /* CIL Label */
             ;
         }
-
+        if (verb >= 4) {
+          {
+            fprintf((FILE * /* __restrict  */)stderr,
+                    (char const * /* __restrict  */) "%6d unresolved strings\n",
+                    nNotDone);
+          }
+        }
+        H *= 2;
         if (H > nblock) {
           goto while_break___7;
         } else {
@@ -5352,6 +5470,7 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
     }
     if (!(j < 256)) {
       {
+        BZ2_bz__AssertH__fail(1005);
       }
     }
     return;
@@ -5403,19 +5522,9 @@ __inline static Bool mainGtU(UInt32 i1, UInt32 i2, UChar *block,
     i2++;
     c1 = *(block + i1);
     c2 = *(block + i2);
-
-    i1++;
-    i2++;
-    c1 = *(block + i1);
-    c2 = *(block + i2);
     if ((int)c1 != (int)c2) {
       return ((Bool)((int)c1 > (int)c2));
     }
-    i1++;
-    i2++;
-    c1 = *(block + i1);
-    c2 = *(block + i2);
-
     i1++;
     i2++;
     c1 = *(block + i1);
@@ -5446,11 +5555,25 @@ __inline static Bool mainGtU(UInt32 i1, UInt32 i2, UChar *block,
     }
     i1++;
     i2++;
-
+    c1 = *(block + i1);
+    c2 = *(block + i2);
+    if ((int)c1 != (int)c2) {
+      return ((Bool)((int)c1 > (int)c2));
+    }
+    i1++;
+    i2++;
+    c1 = *(block + i1);
+    c2 = *(block + i2);
+    if ((int)c1 != (int)c2) {
+      return ((Bool)((int)c1 > (int)c2));
+    }
+    i1++;
+    i2++;
+    k = (Int32)(nblock + 8U);
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */
+          ;
         c1 = *(block + i1);
         c2 = *(block + i2);
         if ((int)c1 != (int)c2) {
@@ -5470,7 +5593,9 @@ __inline static Bool mainGtU(UInt32 i1, UInt32 i2, UChar *block,
         }
         s1 = *(quadrant + i1);
         s2 = *(quadrant + i2);
-
+        if ((int)s1 != (int)s2) {
+          return ((Bool)((int)s1 > (int)s2));
+        }
         i1++;
         i2++;
         c1 = *(block + i1);
@@ -5479,26 +5604,6 @@ __inline static Bool mainGtU(UInt32 i1, UInt32 i2, UChar *block,
           return ((Bool)((int)c1 > (int)c2));
         }
         s1 = *(quadrant + i1);
-        s2 = *(quadrant + i2);
-
-        i1++;
-        i2++;
-        c1 = *(block + i1);
-        c2 = *(block + i2);
-        if ((int)c1 != (int)c2) {
-          return ((Bool)((int)c1 > (int)c2));
-        }
-        s1 = *(quadrant + i1);
-        s2 = *(quadrant + i2);
-
-        i1++;
-        i2++;
-        c1 = *(block + i1);
-        c2 = *(block + i2);
-        if ((int)c1 != (int)c2) {
-          return ((Bool)((int)c1 > (int)c2));
-        }
-
         s2 = *(quadrant + i2);
         if ((int)s1 != (int)s2) {
           return ((Bool)((int)s1 > (int)s2));
@@ -5512,15 +5617,9 @@ __inline static Bool mainGtU(UInt32 i1, UInt32 i2, UChar *block,
         }
         s1 = *(quadrant + i1);
         s2 = *(quadrant + i2);
-
-        i1++;
-        i2++;
-        c1 = *(block + i1);
-        c2 = *(block + i2);
-
-        s1 = *(quadrant + i1);
-        s2 = *(quadrant + i2);
-
+        if ((int)s1 != (int)s2) {
+          return ((Bool)((int)s1 > (int)s2));
+        }
         i1++;
         i2++;
         c1 = *(block + i1);
@@ -5530,13 +5629,53 @@ __inline static Bool mainGtU(UInt32 i1, UInt32 i2, UChar *block,
         }
         s1 = *(quadrant + i1);
         s2 = *(quadrant + i2);
-
+        if ((int)s1 != (int)s2) {
+          return ((Bool)((int)s1 > (int)s2));
+        }
+        i1++;
+        i2++;
+        c1 = *(block + i1);
+        c2 = *(block + i2);
+        if ((int)c1 != (int)c2) {
+          return ((Bool)((int)c1 > (int)c2));
+        }
+        s1 = *(quadrant + i1);
+        s2 = *(quadrant + i2);
+        if ((int)s1 != (int)s2) {
+          return ((Bool)((int)s1 > (int)s2));
+        }
+        i1++;
+        i2++;
+        c1 = *(block + i1);
+        c2 = *(block + i2);
+        if ((int)c1 != (int)c2) {
+          return ((Bool)((int)c1 > (int)c2));
+        }
+        s1 = *(quadrant + i1);
+        s2 = *(quadrant + i2);
+        if ((int)s1 != (int)s2) {
+          return ((Bool)((int)s1 > (int)s2));
+        }
+        i1++;
+        i2++;
+        c1 = *(block + i1);
+        c2 = *(block + i2);
+        if ((int)c1 != (int)c2) {
+          return ((Bool)((int)c1 > (int)c2));
+        }
+        s1 = *(quadrant + i1);
+        s2 = *(quadrant + i2);
+        if ((int)s1 != (int)s2) {
+          return ((Bool)((int)s1 > (int)s2));
+        }
         i1++;
         i2++;
         if (i1 >= nblock) {
           i1 -= nblock;
         }
-
+        if (i2 >= nblock) {
+          i2 -= nblock;
+        }
         k -= 8;
         (*budget)--;
         if (!(k >= 0)) {
@@ -5546,6 +5685,7 @@ __inline static Bool mainGtU(UInt32 i1, UInt32 i2, UChar *block,
     while_break: /* CIL Label */
         ;
     }
+    return ((Bool)0);
   }
 }
 static Int32 incs[14] = {1,    4,    13,    40,    121,    364,    1093,
@@ -5565,12 +5705,12 @@ static void mainSimpleSort(UInt32 *ptr, UChar *block, UInt16 *quadrant,
 
   {
     bigN = (hi - lo) + 1;
-
+  
     hp = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */
+          ;
         if (!(incs[hp] < bigN)) {
           goto while_break;
         }
@@ -5582,15 +5722,17 @@ static void mainSimpleSort(UInt32 *ptr, UChar *block, UInt16 *quadrant,
     hp--;
     {
       while (1) {
-        /* CIL Label */
-        ;
-
+      while_continue___0: /* CIL Label */
+          ;
+        if (!(hp >= 0)) {
+          goto while_break___0;
+        }
         h = incs[hp];
         i = lo + h;
         {
           while (1) {
-            /* CIL Label */
-            ;
+          while_continue___1: /* CIL Label */
+              ;
             if (!(!(i > hi))) {
               goto while_break___1;
             }
@@ -5610,6 +5752,7 @@ static void mainSimpleSort(UInt32 *ptr, UChar *block, UInt16 *quadrant,
                 *(ptr + j) = *(ptr + (j - h));
                 j -= h;
                 if (j <= (lo + h) - 1) {
+                  goto while_break___2;
                 }
               }
             while_break___2: /* CIL Label */
@@ -5624,9 +5767,12 @@ static void mainSimpleSort(UInt32 *ptr, UChar *block, UInt16 *quadrant,
             j = i;
             {
               while (1) {
-                /* CIL Label */
-                ;
-                {}
+              while_continue___3: /* CIL Label */
+                  ;
+                {
+                  tmp___0 = mainGtU(*(ptr + (j - h)) + (UInt32)d, v + (UInt32)d,
+                                    block, quadrant, (UInt32)nblock, budget);
+                }
                 if (!tmp___0) {
                   goto while_break___3;
                 }
@@ -5650,7 +5796,10 @@ static void mainSimpleSort(UInt32 *ptr, UChar *block, UInt16 *quadrant,
               while (1) {
               while_continue___4: /* CIL Label */
                   ;
-                {}
+                {
+                  tmp___1 = mainGtU(*(ptr + (j - h)) + (UInt32)d, v + (UInt32)d,
+                                    block, quadrant, (UInt32)nblock, budget);
+                }
                 if (!tmp___1) {
                   goto while_break___4;
                 }
@@ -5672,10 +5821,10 @@ static void mainSimpleSort(UInt32 *ptr, UChar *block, UInt16 *quadrant,
         while_break___1: /* CIL Label */
             ;
         }
-
+        hp--;
       }
-      /* CIL Label */
-      ;
+    while_break___0: /* CIL Label */
+        ;
     }
     return;
   }
@@ -5683,7 +5832,7 @@ static void mainSimpleSort(UInt32 *ptr, UChar *block, UInt16 *quadrant,
 __inline static UChar mmed3(UChar a, UChar b, UChar c) {
 
   {
-
+    
     if ((int)b > (int)c) {
       b = c;
       if ((int)a > (int)b) {
@@ -5724,10 +5873,19 @@ static void mainQSort3(UInt32 *ptr, UChar *block, UInt16 *quadrant,
   Int32 yyp2___0;
   Int32 yyn___0;
   Int32 zztmp___3;
+  Int32 tz;
+  Int32 tz___0;
+  Int32 tz___1;
+  void *__cil_tmp41;
+  void *__cil_tmp42;
+  void *__cil_tmp43;
+  void *__cil_tmp44;
+  void *__cil_tmp45;
+  void *__cil_tmp46;
 
   {
     sp = 0;
-
+    stackLo[sp] = loSt;
     stackHi[sp] = hiSt;
     stackD[sp] = dSt;
     sp++;
@@ -5738,13 +5896,17 @@ static void mainQSort3(UInt32 *ptr, UChar *block, UInt16 *quadrant,
         if (!(sp > 0)) {
           goto while_break;
         }
-
+        if (!(sp < 98)) {
+          {
+            BZ2_bz__AssertH__fail(1001);
+          }
+        }
         sp--;
         lo = stackLo[sp];
         hi = stackHi[sp];
         d = stackD[sp];
         if (hi - lo < 20) {
-
+          goto _L;
         } else {
           if (d > 14) {
           _L: {
@@ -5803,7 +5965,7 @@ static void mainQSort3(UInt32 *ptr, UChar *block, UInt16 *quadrant,
                 }
                 n = (Int32) * (block + (*(ptr + unHi) + (UInt32)d)) - med;
                 if (n == 0) {
-
+                  zztmp___0 = (Int32) * (ptr + unHi);
                   *(ptr + unHi) = *(ptr + gtHi);
                   *(ptr + gtHi) = (UInt32)zztmp___0;
                   gtHi--;
@@ -5837,29 +5999,33 @@ static void mainQSort3(UInt32 *ptr, UChar *block, UInt16 *quadrant,
           sp++;
           goto while_continue;
         }
-
+        if (ltLo - lo < unLo - ltLo) {
+          n = ltLo - lo;
+        } else {
+          n = unLo - ltLo;
+        }
         yyp1 = lo;
         yyp2 = unLo - n;
         yyn = n;
         {
           while (1) {
-            /* CIL Label */
-            ;
+          while_continue___3: /* CIL Label */
+              ;
             if (!(yyn > 0)) {
               goto while_break___3;
             }
             zztmp___2 = (Int32) * (ptr + yyp1);
-
+            *(ptr + yyp1) = *(ptr + yyp2);
             *(ptr + yyp2) = (UInt32)zztmp___2;
             yyp1++;
-
+            yyp2++;
             yyn--;
           }
         while_break___3: /* CIL Label */
             ;
         }
         if (hi - gtHi < gtHi - unHi) {
-
+          m = hi - gtHi;
         } else {
           m = gtHi - unHi;
         }
@@ -5875,7 +6041,7 @@ static void mainQSort3(UInt32 *ptr, UChar *block, UInt16 *quadrant,
             }
             zztmp___3 = (Int32) * (ptr + yyp1___0);
             *(ptr + yyp1___0) = *(ptr + yyp2___0);
-
+            *(ptr + yyp2___0) = (UInt32)zztmp___3;
             yyp1___0++;
             yyp2___0++;
             yyn___0--;
@@ -5894,7 +6060,39 @@ static void mainQSort3(UInt32 *ptr, UChar *block, UInt16 *quadrant,
         nextLo[2] = n + 1;
         nextHi[2] = m - 1;
         nextD[2] = d + 1;
-
+        if (nextHi[0] - nextLo[0] < nextHi[1] - nextLo[1]) {
+          tz = nextLo[0];
+          nextLo[0] = nextLo[1];
+          nextLo[1] = tz;
+          tz = nextHi[0];
+          nextHi[0] = nextHi[1];
+          nextHi[1] = tz;
+          tz = nextD[0];
+          nextD[0] = nextD[1];
+          nextD[1] = tz;
+        }
+        if (nextHi[1] - nextLo[1] < nextHi[2] - nextLo[2]) {
+          tz___0 = nextLo[1];
+          nextLo[1] = nextLo[2];
+          nextLo[2] = tz___0;
+          tz___0 = nextHi[1];
+          nextHi[1] = nextHi[2];
+          nextHi[2] = tz___0;
+          tz___0 = nextD[1];
+          nextD[1] = nextD[2];
+          nextD[2] = tz___0;
+        }
+        if (nextHi[0] - nextLo[0] < nextHi[1] - nextLo[1]) {
+          tz___1 = nextLo[0];
+          nextLo[0] = nextLo[1];
+          nextLo[1] = tz___1;
+          tz___1 = nextHi[0];
+          nextHi[0] = nextHi[1];
+          nextHi[1] = tz___1;
+          tz___1 = nextD[0];
+          nextD[0] = nextD[1];
+          nextD[1] = tz___1;
+        }
         stackLo[sp] = nextLo[0];
         stackHi[sp] = nextHi[0];
         stackD[sp] = nextD[0];
@@ -5904,8 +6102,9 @@ static void mainQSort3(UInt32 *ptr, UChar *block, UInt16 *quadrant,
         stackD[sp] = nextD[1];
         sp++;
         stackLo[sp] = nextLo[2];
-
+        stackHi[sp] = nextHi[2];
         stackD[sp] = nextD[2];
+        sp++;
       }
     while_break: /* CIL Label */
         ;
@@ -5938,18 +6137,17 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
   Int32 shifts;
   Int32 a2update;
   UInt16 qVal;
-
   {
-
+    
     i = 65536;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */
+          ;
         if (!(i >= 0)) {
           goto while_break;
         }
-
+        *(ftab + i) = (UInt32)0;
         i--;
       }
     while_break: /* CIL Label */
@@ -5967,13 +6165,13 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
         *(quadrant + i) = (UInt16)0;
         j = (j >> 8) | ((int)((UInt16) * (block + i)) << 8);
         (*(ftab + j))++;
-
+        *(quadrant + (i - 1)) = (UInt16)0;
         j = (j >> 8) | ((int)((UInt16) * (block + (i - 1))) << 8);
         (*(ftab + j))++;
         *(quadrant + (i - 2)) = (UInt16)0;
         j = (j >> 8) | ((int)((UInt16) * (block + (i - 2))) << 8);
         (*(ftab + j))++;
-
+        *(quadrant + (i - 3)) = (UInt16)0;
         j = (j >> 8) | ((int)((UInt16) * (block + (i - 3))) << 8);
         (*(ftab + j))++;
         i -= 4;
@@ -5983,8 +6181,8 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
     }
     {
 
-      /* CIL Label */
-      ;
+    while_break___1: /* CIL Label */
+        ;
     }
     i = 0;
     {
@@ -5994,13 +6192,14 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
         if (!(i < 34)) {
           goto while_break___2;
         }
-
+        *(block + (nblock + i)) = *(block + i);
+        *(quadrant + (nblock + i)) = (UInt16)0;
         i++;
       }
     while_break___2: /* CIL Label */
         ;
     }
-
+    
     i = 1;
     {
       while (1) {
@@ -6035,7 +6234,7 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
         s = (UInt16)(((int)s >> 8) | ((int)*(block + (i - 2)) << 8));
         j = (Int32)(*(ftab + (int)s) - 1U);
         *(ftab + (int)s) = (UInt32)j;
-
+        *(ptr + j) = (UInt32)(i - 2);
         s = (UInt16)(((int)s >> 8) | ((int)*(block + (i - 3)) << 8));
         j = (Int32)(*(ftab + (int)s) - 1U);
         *(ftab + (int)s) = (UInt32)j;
@@ -6047,14 +6246,14 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
     }
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue___5: /* CIL Label */
+          ;
         if (!(i >= 0)) {
           goto while_break___5;
         }
         s = (UInt16)(((int)s >> 8) | ((int)*(block + i) << 8));
         j = (Int32)(*(ftab + (int)s) - 1U);
-
+        *(ftab + (int)s) = (UInt32)j;
         *(ptr + j) = (UInt32)i;
         i--;
       }
@@ -6064,19 +6263,19 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
     i = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue___6: /* CIL Label */
+          ;
         if (!(i <= 255)) {
           goto while_break___6;
         }
-
+        
         runningOrder[i] = i;
         i++;
       }
     while_break___6: /* CIL Label */
         ;
     }
-
+    h = 1;
     {
       while (1) {
       while_continue___7: /* CIL Label */
@@ -6091,14 +6290,14 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
     }
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue___8: /* CIL Label */
+          ;
         h /= 3;
         i = h;
         {
           while (1) {
-            /* CIL Label */
-            ;
+          while_continue___9: /* CIL Label */
+              ;
             if (!(i <= 255)) {
               goto while_break___9;
             }
@@ -6119,7 +6318,7 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
                 ;
             }
           zero:
-
+            runningOrder[j] = vv;
             i++;
           }
         while_break___9: /* CIL Label */
@@ -6136,8 +6335,8 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
     i = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue___11: /* CIL Label */
+          ;
         if (!(i <= 255)) {
           goto while_break___11;
         }
@@ -6157,7 +6356,7 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
                 hi = (Int32)((*(ftab + (sb + 1)) & (unsigned int)(~(1 << 21))) -
                              1U);
                 if (hi > lo) {
-
+                  
                   {
                     mainQSort3(ptr, block, quadrant, nblock, lo, hi, 2, budget);
                   }
@@ -6173,16 +6372,19 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
             ;
         }
 
+        j = 0;
         {
           while (1) {
-            /* CIL Label */
-            ;
+          /* CIL Label */
+              ;
             if (!(j <= 255)) {
               goto while_break___13;
             }
             copyStart[j] =
                 (Int32)(*(ftab + ((j << 8) + ss)) & (unsigned int)(~(1 << 21)));
-
+            copyEnd[j] = (Int32)((*(ftab + (((j << 8) + ss) + 1)) &
+                                  (unsigned int)(~(1 << 21))) -
+                                 1U); //failed 27 cases after this
             j++;
           }
         while_break___13: /* CIL Label */
@@ -6215,8 +6417,8 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
                     1U);
         {
           while (1) {
-            /* CIL Label */
-            ;
+          while_continue___15: /* CIL Label */
+              ;
             if (!(j > copyEnd[ss])) {
               goto while_break___15;
             }
@@ -6245,12 +6447,12 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
         j = 0;
         {
           while (1) {
-            /* CIL Label */
-            ;
+          while_continue___16: /* CIL Label */
+              ;
             if (!(j <= 255)) {
               goto while_break___16;
             }
-
+            
             j++;
           }
         while_break___16: /* CIL Label */
@@ -6262,7 +6464,7 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
           bbSize =
               (Int32)((*(ftab + ((ss + 1) << 8)) & (unsigned int)(~(1 << 21))) -
                       (unsigned int)bbStart);
-
+          
           {
             while (1) {
             while_continue___17: /* CIL Label */

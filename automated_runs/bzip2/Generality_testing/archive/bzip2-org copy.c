@@ -213,6 +213,8 @@ Int32 BZ2_rNums[512] = {619, 720, 127, 481, 931, 816, 813, 233, 566, 247, 985, 7
                         905, 644, 372, 567, 466, 434, 645, 210, 389, 550, 919, 135, 780, 773, 635, 389, 707, 100, 626, 958, 165, 504, 920, 176, 193, 713, 857, 265, 203, 50, 668, 108, 645, 990, 626, 197, 510, 357, 358, 850, 858, 364, 936, 638};
 void BZ2_bz__AssertH__fail(int errcode);
 void BZ2_hbAssignCodes(Int32 *code, UChar *length, Int32 minLen, Int32 maxLen, Int32 alphaSize);
+void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize, Int32 maxLen);
+void BZ2_hbCreateDecodeTables(Int32 *limit, Int32 *base, Int32 *perm, UChar *length, Int32 minLen, Int32 maxLen, Int32 alphaSize);
 void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize, Int32 maxLen)
 {
   Int32 nNodes;
@@ -245,8 +247,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize, Int32 maxLe
     {
       while (1)
       {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */;
         if (!(i < alphaSize))
         {
           goto while_break;
@@ -266,8 +267,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize, Int32 maxLe
     {
       while (1)
       {
-        /* CIL Label */
-        ;
+      while_continue___0: /* CIL Label */;
         nNodes = alphaSize;
         nHeap = 0;
 
@@ -277,8 +277,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize, Int32 maxLe
         {
           while (1)
           {
-            /* CIL Label */
-            ;
+          while_continue___1: /* CIL Label */;
             if (!(i <= alphaSize))
             {
               goto while_break___1;
@@ -328,8 +327,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize, Int32 maxLe
             {
               while (1)
               {
-                /* CIL Label */
-                ;
+              while_continue___4: /* CIL Label */;
                 yy = zz___0 << 1;
                 if (yy > nHeap)
                 {
@@ -360,8 +358,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize, Int32 maxLe
             {
               while (1)
               {
-                /* CIL Label */
-                ;
+
                 yy___0 = zz___1 << 1;
                 if (yy___0 > nHeap)
                 {
@@ -404,8 +401,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize, Int32 maxLe
             {
               while (1)
               {
-                /* CIL Label */
-                ;
+
                 if (!(weight[tmp___5] < weight[heap[zz___2 >> 1]]))
                 {
                   goto while_break___6;
@@ -415,15 +411,22 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize, Int32 maxLe
               }
             while_break___6: /* CIL Label */;
             }
+            heap[zz___2] = tmp___5;
           }
         while_break___3: /* CIL Label */;
+        }
+        if (!(nNodes < 516))
+        {
+          {
+            BZ2_bz__AssertH__fail(2002);
+          }
         }
         tooLong = (Bool)0;
         i = 1;
         {
           while (1)
           {
-          while_continue___7: /* CIL Label */;
+
             if (!(i <= alphaSize))
             {
               goto while_break___7;
@@ -433,8 +436,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize, Int32 maxLe
             {
               while (1)
               {
-                /* CIL Label */
-                ;
+
                 if (!(parent[k] >= 0))
                 {
                   goto while_break___8;
@@ -473,6 +475,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize, Int32 maxLe
       }
     while_break___0: /* CIL Label */;
     }
+    return;
   }
 }
 void BZ2_hbAssignCodes(Int32 *code, UChar *length, Int32 minLen, Int32 maxLen, Int32 alphaSize)
@@ -522,6 +525,7 @@ void BZ2_hbAssignCodes(Int32 *code, UChar *length, Int32 minLen, Int32 maxLen, I
 extern struct _IO_FILE *stderr;
 
 Int32 BZ2_decompress(DState *s);
+UInt32 BZ2_crc32Table[256];
 UInt32 BZ2_crc32Table[256] = {
     (UInt32)0L, (UInt32)79764919L, (UInt32)159529838L, (UInt32)222504665L, (UInt32)319059676L, (UInt32)398814059L, (UInt32)445009330L, (UInt32)507990021L, (UInt32)638119352L, (UInt32)583659535L, (UInt32)797628118L, (UInt32)726387553L, (UInt32)890018660L, (UInt32)835552979L,
     (UInt32)1015980042L, (UInt32)944750013L, (UInt32)1276238704L, (UInt32)1221641927L, (UInt32)1167319070L, (UInt32)1095957929L, (UInt32)1595256236L, (UInt32)1540665371L, (UInt32)1452775106L, (UInt32)1381403509L, (UInt32)1780037320L, (UInt32)1859660671L, (UInt32)1671105958L, (UInt32)1733955601L,
@@ -676,18 +680,13 @@ static void generateMTFValues(EState *s)
       EOB = s->nInUse + 1;
       i = 0;
     }
-    {
-
-    while_break: /* CIL Label */;
-    }
     wr = 0;
     zPend = 0;
     i = 0;
     {
       while (1)
       {
-        /* CIL Label */
-        ;
+      while_continue___0: /* CIL Label */;
         if (!(i < s->nInUse))
         {
           goto while_break___0;
@@ -701,8 +700,7 @@ static void generateMTFValues(EState *s)
     {
       while (1)
       {
-        /* CIL Label */
-        ;
+      while_continue___1: /* CIL Label */;
         if (!(i < s->nblock))
         {
           goto while_break___1;
@@ -755,8 +753,7 @@ static void generateMTFValues(EState *s)
           {
             while (1)
             {
-              /* CIL Label */
-              ;
+
               if (!((int)rll_i != (int)rtmp))
               {
                 goto while_break___3;
@@ -784,8 +781,7 @@ static void generateMTFValues(EState *s)
       {
         while (1)
         {
-          /* CIL Label */
-          ;
+
           if (zPend & 1)
           {
             *(mtfv + wr) = (UInt16)1;
@@ -822,6 +818,7 @@ static void sendMTFValues(EState *s)
   Int32 j;
   Int32 gs;
   Int32 ge;
+  Int32 totc;
   Int32 bt;
   Int32 bc;
   Int32 iter;
@@ -833,6 +830,7 @@ static void sendMTFValues(EState *s)
   Int32 nGroups;
   Int32 nBytes;
   UInt16 cost[6];
+  Int32 fave[6];
   UInt16 *mtfv;
   Int32 nPart;
   Int32 remF;
@@ -911,8 +909,7 @@ static void sendMTFValues(EState *s)
     {
       while (1)
       {
-        /* CIL Label */
-        ;
+      while_continue___1: /* CIL Label */;
         if (!(nPart > 0))
         {
           goto while_break___1;
@@ -920,16 +917,11 @@ static void sendMTFValues(EState *s)
         tFreq = remF / nPart;
         ge = gs - 1;
         aFreq = 0;
-        {
-
-        while_break___2: /* CIL Label */;
-        }
         v = 0;
         {
           while (1)
           {
-            /* CIL Label */
-            ;
+          while_continue___3: /* CIL Label */;
             if (!(v < alphaSize))
             {
               goto while_break___3;
@@ -972,12 +964,13 @@ static void sendMTFValues(EState *s)
         {
           while (1)
           {
-          while_continue___6: /* CIL Label */;
+
             if (!(t < nGroups))
             {
               goto while_break___6;
             }
             v = 0;
+
             t++;
           }
         while_break___6: /* CIL Label */;
@@ -1239,7 +1232,7 @@ static void sendMTFValues(EState *s)
               {
                 while (1)
                 {
-                while_continue___11: /* CIL Label */;
+
                   if (!(i <= ge))
                   {
                     goto while_break___11;
@@ -1249,8 +1242,7 @@ static void sendMTFValues(EState *s)
                   {
                     while (1)
                     {
-                      /* CIL Label */
-                      ;
+
                       if (!(t < nGroups))
                       {
                         goto while_break___12;
@@ -1271,8 +1263,7 @@ static void sendMTFValues(EState *s)
             {
               while (1)
               {
-                /* CIL Label */
-                ;
+              while_continue___13: /* CIL Label */;
                 if (!(t < nGroups))
                 {
                   goto while_break___13;
@@ -1286,6 +1277,8 @@ static void sendMTFValues(EState *s)
               }
             while_break___13: /* CIL Label */;
             }
+            totc += bc;
+            (fave[bt])++;
             s->selector[nSelectors] = (UChar)bt;
             nSelectors++;
             if (nGroups == 6)
@@ -1300,12 +1293,39 @@ static void sendMTFValues(EState *s)
           }
         while_break___9: /* CIL Label */;
         }
+        if (s->verbosity >= 3)
+        {
+          {
+            fprintf((FILE * /* __restrict  */)stderr,
+                    (char const * /* __restrict  */) "      pass %d: size is "
+                                                     "%d, grp uses are ",
+                    iter + 1, totc / 8);
+            t = 0;
+          }
+          {
+            while (1)
+            {
+            while_continue___15: /* CIL Label */;
+              if (!(t < nGroups))
+              {
+                goto while_break___15;
+              }
+              {
+                fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%d ", fave[t]);
+                t++;
+              }
+            }
+          while_break___15: /* CIL Label */;
+          }
+          {
+            fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "\n");
+          }
+        }
         t = 0;
         {
           while (1)
           {
-            /* CIL Label */
-            ;
+
             if (!(t < nGroups))
             {
               goto while_break___16;
@@ -1339,8 +1359,7 @@ static void sendMTFValues(EState *s)
     {
       while (1)
       {
-        /* CIL Label */
-        ;
+      while_continue___17: /* CIL Label */;
         if (!(i < nGroups))
         {
           goto while_break___17;
@@ -1354,8 +1373,7 @@ static void sendMTFValues(EState *s)
     {
       while (1)
       {
-        /* CIL Label */
-        ;
+
         if (!(i < nSelectors))
         {
           goto while_break___18;
@@ -1366,12 +1384,13 @@ static void sendMTFValues(EState *s)
         {
           while (1)
           {
-          while_continue___19: /* CIL Label */;
+
             if (!((int)ll_i != (int)tmp))
             {
               goto while_break___19;
             }
             j++;
+            tmp2 = tmp;
             tmp = pos[j];
             pos[j] = tmp2;
           }
@@ -1387,7 +1406,7 @@ static void sendMTFValues(EState *s)
     {
       while (1)
       {
-      while_continue___20: /* CIL Label */;
+
         if (!(t < nGroups))
         {
           goto while_break___20;
@@ -1398,7 +1417,7 @@ static void sendMTFValues(EState *s)
         {
           while (1)
           {
-          while_continue___21: /* CIL Label */;
+
             if (!(i < alphaSize))
             {
               goto while_break___21;
@@ -1438,7 +1457,7 @@ static void sendMTFValues(EState *s)
     {
       while (1)
       {
-      while_continue___22: /* CIL Label */;
+
         if (!(i < 16))
         {
           goto while_break___22;
@@ -1448,7 +1467,7 @@ static void sendMTFValues(EState *s)
         {
           while (1)
           {
-          while_continue___23: /* CIL Label */;
+
             if (!(j < 16))
             {
               goto while_break___23;
@@ -1470,7 +1489,7 @@ static void sendMTFValues(EState *s)
     {
       while (1)
       {
-      while_continue___24: /* CIL Label */;
+
         if (!(i < 16))
         {
           goto while_break___24;
@@ -1495,8 +1514,7 @@ static void sendMTFValues(EState *s)
     {
       while (1)
       {
-        /* CIL Label */
-        ;
+
         if (!(i < 16))
         {
           goto while_break___25;
@@ -1507,7 +1525,7 @@ static void sendMTFValues(EState *s)
           {
             while (1)
             {
-            while_continue___26: /* CIL Label */;
+
               if (!(j < 16))
               {
                 goto while_break___26;
@@ -1533,6 +1551,12 @@ static void sendMTFValues(EState *s)
       }
     while_break___25: /* CIL Label */;
     }
+    if (s->verbosity >= 3)
+    {
+      {
+        fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "      bytes: mapping %d, ", s->numZ - nBytes);
+      }
+    }
     {
       nBytes = s->numZ;
       bsW(s, 3, (UInt32)nGroups);
@@ -1542,21 +1566,22 @@ static void sendMTFValues(EState *s)
     {
       while (1)
       {
-      while_continue___27: /* CIL Label */;
+
         if (!(i < nSelectors))
         {
           goto while_break___27;
         }
+        j = 0;
         {
           while (1)
           {
-            /* CIL Label */
-            ;
+
             if (!(j < (Int32)s->selectorMtf[i]))
             {
               goto while_break___28;
             }
             {
+              bsW(s, 1, (UInt32)1);
               j++;
             }
           }
@@ -1569,13 +1594,18 @@ static void sendMTFValues(EState *s)
       }
     while_break___27: /* CIL Label */;
     }
+    if (s->verbosity >= 3)
+    {
+      {
+        fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "selectors %d, ", s->numZ - nBytes);
+      }
+    }
     nBytes = s->numZ;
     t = 0;
     {
       while (1)
       {
-        /* CIL Label */
-        ;
+
         if (!(t < nGroups))
         {
           goto while_break___29;
@@ -1588,7 +1618,7 @@ static void sendMTFValues(EState *s)
         {
           while (1)
           {
-          while_continue___30: /* CIL Label */;
+
             if (!(i < alphaSize))
             {
               goto while_break___30;
@@ -1596,7 +1626,7 @@ static void sendMTFValues(EState *s)
             {
               while (1)
               {
-              while_continue___31: /* CIL Label */;
+
                 if (!(curr < (Int32)s->len[t][i]))
                 {
                   goto while_break___31;
@@ -1611,7 +1641,7 @@ static void sendMTFValues(EState *s)
             {
               while (1)
               {
-              while_continue___32: /* CIL Label */;
+
                 if (!(curr > (Int32)s->len[t][i]))
                 {
                   goto while_break___32;
@@ -1634,17 +1664,24 @@ static void sendMTFValues(EState *s)
       }
     while_break___29: /* CIL Label */;
     }
+    if (s->verbosity >= 3)
+    {
+      {
+        fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "code lengths %d, ", s->numZ - nBytes);
+      }
+    }
     nBytes = s->numZ;
     selCtr = 0;
     gs = 0;
     {
       while (1)
       {
-      while_continue___33: /* CIL Label */;
+
         if (!(!(gs >= s->nMTF)))
         {
           goto while_break___33;
         }
+        ge = (gs + 50) - 1;
         if (ge >= s->nMTF)
         {
           ge = s->nMTF - 1;
@@ -1771,7 +1808,7 @@ static void sendMTFValues(EState *s)
           {
             while (1)
             {
-            while_continue___34: /* CIL Label */;
+
               if (!(i <= ge))
               {
                 goto while_break___34;
@@ -1872,11 +1909,80 @@ extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) ferror)(FILE *
 
 int BZ2_bzCompressInit(bz_stream *strm, int blockSize100k___0, int verbosity___0, int workFactor___0);
 int BZ2_bzCompress(bz_stream *strm, int action);
-
+int BZ2_bzCompressEnd(bz_stream *strm);
+int BZ2_bzDecompressInit(bz_stream *strm, int verbosity___0, int small);
+int BZ2_bzDecompress(bz_stream *strm);
+int BZ2_bzDecompressEnd(bz_stream *strm);
 BZFILE *BZ2_bzReadOpen(int *bzerror, FILE *f, int verbosity___0, int small, void *unused, int nUnused);
+void BZ2_bzReadClose(int *bzerror, BZFILE *b);
+void BZ2_bzReadGetUnused(int *bzerror, BZFILE *b, void **unused, int *nUnused);
+int BZ2_bzRead(int *bzerror, BZFILE *b, void *buf, int len);
+BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0, int verbosity___0, int workFactor___0);
+void BZ2_bzWrite(int *bzerror, BZFILE *b, void *buf, int len);
+void BZ2_bzWriteClose64(int *bzerror, BZFILE *b, int abandon, unsigned int *nbytes_in_lo32, unsigned int *nbytes_in_hi32, unsigned int *nbytes_out_lo32, unsigned int *nbytes_out_hi32);
+char const *BZ2_bzlibVersion(void);
+void BZ2_bz__AssertH__fail(int errcode)
+{
+  char const *tmp;
 
-void BZ2_bz__AssertH__fail(int errcode) { char const *tmp; }
-
+  {
+    {
+      tmp = BZ2_bzlibVersion();
+      fprintf((FILE * /* __restrict  */)stderr,
+              (char const * /* __restrict  */) "\n\nbzip2/libbzip2: internal error number "
+                                               "%d.\nThis is a bug in bzip2/libbzip2, "
+                                               "%s.\nPlease report it to me at: "
+                                               "jseward@bzip.org.  If this happened\nwhen "
+                                               "you were using some program which uses "
+                                               "libbzip2 as a\ncomponent, you should also "
+                                               "report this bug to the author(s)\nof that "
+                                               "program.  Please make an effort to report "
+                                               "this bug;\ntimely and accurate bug "
+                                               "reports eventually lead to "
+                                               "higher\nquality software.  Thanks.  "
+                                               "Julian Seward, 10 December 2007.\n\n",
+              errcode, tmp);
+    }
+    if (errcode == 1007)
+    {
+      {
+        fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "\n*** A special note about internal "
+                                                                                   "error number 1007 ***\n\nExperience "
+                                                                                   "suggests that a common cause of i.e. "
+                                                                                   "1007\nis unreliable memory or other "
+                                                                                   "hardware.  The 1007 assertion\njust "
+                                                                                   "happens to cross-check the results of "
+                                                                                   "huge numbers of\nmemory reads/writes, "
+                                                                                   "and so acts (unintendedly) as a "
+                                                                                   "stress\ntest of your memory "
+                                                                                   "system.\n\nI suggest the following: try "
+                                                                                   "compressing the file again,\npossibly "
+                                                                                   "monitoring progress in detail with the "
+                                                                                   "-vv flag.\n\n* If the error cannot be "
+                                                                                   "reproduced, and/or happens at "
+                                                                                   "different\n  points in compression, you "
+                                                                                   "may have a flaky memory system.\n  Try "
+                                                                                   "a memory-test program.  I have used "
+                                                                                   "Memtest86\n  (www.memtest86.com).  At "
+                                                                                   "the time of writing it is free "
+                                                                                   "(GPLd).\n  Memtest86 tests memory much "
+                                                                                   "more thorougly than your BIOSs\n  "
+                                                                                   "power-on test, and may find failures "
+                                                                                   "that the BIOS doesn\'t.\n\n* If the "
+                                                                                   "error can be repeatably reproduced, "
+                                                                                   "this is a bug in\n  bzip2, and I would "
+                                                                                   "very much like to hear about it.  "
+                                                                                   "Please\n  let me know, and, ideally, "
+                                                                                   "save a copy of the file causing the\n  "
+                                                                                   "problem -- without which I will be "
+                                                                                   "unable to investigate it.\n\n");
+      }
+    }
+    {
+      exit(3);
+    }
+  }
+}
 static void *default_bzalloc(void *opaque, Int32 items, Int32 size)
 {
   void *v;
@@ -1897,8 +2003,10 @@ static void default_bzfree(void *opaque, void *addr)
     if ((unsigned long)addr != (unsigned long)((void *)0))
     {
       {
+        free(addr);
       }
     }
+    return;
   }
 }
 static void prepare_new_block(EState *s)
@@ -1981,7 +2089,10 @@ int BZ2_bzCompressInit(bz_stream *strm, int blockSize100k___0, int verbosity___0
         }
       }
     }
-
+    // if (workFactor___0 == 0)
+    // {
+    //   workFactor___0 = 30;
+    // }
     if ((unsigned long)strm->bzalloc == (unsigned long)((void *)0))
     {
       strm->bzalloc = &default_bzalloc;
@@ -2036,8 +2147,10 @@ int BZ2_bzCompressInit(bz_stream *strm, int blockSize100k___0, int verbosity___0
           if ((unsigned long)s != (unsigned long)((void *)0))
           {
             {
+              // (*(strm->bzfree))(strm->opaque, (void *)s);
             }
           }
+          // return (-3);
         }
       }
     }
@@ -2128,9 +2241,10 @@ static void add_pair_to_block(EState *s)
       (s->nblock)++;
       *(s->block + s->nblock) = (UChar)(s->state_in_len - 4);
       (s->nblock)++;
-
+      // goto switch_break;
     switch_break: /* CIL Label */;
     }
+    // return;
   }
 }
 static void flush_RL(EState *s)
@@ -2221,6 +2335,10 @@ static Bool copy_input_until_stop(EState *s)
           ((s->strm)->next_in)++;
           ((s->strm)->avail_in)--;
           ((s->strm)->total_in_lo32)++;
+          // if ((s->strm)->total_in_lo32 == 0U)
+          // {
+          //   ((s->strm)->total_in_hi32)++;
+          // }
         }
       while_break: /* CIL Label */;
       }
@@ -2292,6 +2410,11 @@ static Bool copy_input_until_stop(EState *s)
           ((s->strm)->next_in)++;
           ((s->strm)->avail_in)--;
           ((s->strm)->total_in_lo32)++;
+          // if ((s->strm)->total_in_lo32 == 0U)
+          // {
+          //   ((s->strm)->total_in_hi32)++;
+          // }
+          // (s->avail_in_expect)--;
         }
       while_break___0: /* CIL Label */;
       }
@@ -2324,6 +2447,10 @@ static Bool copy_output_until_stop(EState *s)
         ((s->strm)->avail_out)--;
         ((s->strm)->next_out)++;
         ((s->strm)->total_out_lo32)++;
+        // if ((s->strm)->total_out_lo32 == 0U)
+        // {
+        //   ((s->strm)->total_out_hi32)++;
+        // }
       }
     while_break: /* CIL Label */;
     }
@@ -2521,8 +2648,12 @@ int BZ2_bzCompress(bz_stream *strm, int action)
   case_4: /* CIL Label */
     if (action != 2)
     {
+      // return (-1);
     }
-
+    // if (s->avail_in_expect != (s->strm)->avail_in)
+    // {
+    //   return (-1);
+    // }
     {
       progress = handle_compress(strm);
     }
@@ -2635,6 +2766,7 @@ BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0, int verbos
     }
     if ((unsigned long)bzf == (unsigned long)((void *)0))
     {
+
       if ((unsigned long)bzf != (unsigned long)((void *)0))
       {
         bzf->lastErr = -3;
@@ -2655,6 +2787,7 @@ BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0, int verbos
     }
     if (ret != 0)
     {
+
       if ((unsigned long)bzf != (unsigned long)((void *)0))
       {
         bzf->lastErr = ret;
@@ -2755,8 +2888,7 @@ void BZ2_bzWrite(int *bzerror, BZFILE *b, void *buf, int len)
     {
       while (1)
       {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */;
         {
           bzf->strm.avail_out = 5000U;
           bzf->strm.next_out = bzf->buf;
@@ -2764,6 +2896,7 @@ void BZ2_bzWrite(int *bzerror, BZFILE *b, void *buf, int len)
         }
         if (ret != 1)
         {
+
           if ((unsigned long)bzf != (unsigned long)((void *)0))
           {
             bzf->lastErr = ret;
@@ -2790,6 +2923,11 @@ void BZ2_bzWrite(int *bzerror, BZFILE *b, void *buf, int len)
             _L___0:
               if ((unsigned long)bzerror != (unsigned long)((void *)0))
               {
+                *bzerror = -6;
+              }
+              if ((unsigned long)bzf != (unsigned long)((void *)0))
+              {
+                bzf->lastErr = -6;
               }
               return;
             }
@@ -2808,8 +2946,7 @@ void BZ2_bzWrite(int *bzerror, BZFILE *b, void *buf, int len)
           return;
         }
       }
-      /* CIL Label */
-      ;
+    while_break: /* CIL Label */;
     }
   }
 }
@@ -2863,8 +3000,7 @@ void BZ2_bzWriteClose64(int *bzerror, BZFILE *b, int abandon, unsigned int *nbyt
         {
           while (1)
           {
-            /* CIL Label */
-            ;
+
             {
               bzf->strm.avail_out = 5000U;
               bzf->strm.next_out = bzf->buf;
@@ -2945,7 +3081,14 @@ void BZ2_bzWriteClose64(int *bzerror, BZFILE *b, int abandon, unsigned int *nbyt
     return;
   }
 }
+char const *BZ2_bzlibVersion(void)
+{
+  char *__cil_tmp1;
 
+  {
+    return ("1.0.5, 10-Dec-2007");
+  }
+}
 static char const *bzerrorstrings[16] = {"OK", "SEQUENCE_ERROR", "PARAM_ERROR", "MEM_ERROR", "DATA_ERROR", "DATA_ERROR_MAGIC", "IO_ERROR", "UNEXPECTED_EOF", "OUTBUFF_FULL", "CONFIG_ERROR", "???", "???", "???", "???", "???", "???"};
 
 extern int(__attribute__((__nonnull__(1))) open)(char const *__file, int __oflag, ...) __asm__("open64");
@@ -2955,11 +3098,11 @@ Bool keepInputFiles;
 Bool smallMode;
 Bool deleteOutputOnInterrupt;
 Bool forceOverwrite;
-
+Bool testFailsExist;
 Bool unzFailsExist;
 Bool noisy;
 Int32 numFileNames;
-
+Int32 numFilesProcessed;
 Int32 blockSize100k;
 Int32 exitValue;
 Int32 opMode;
@@ -2967,7 +3110,7 @@ Int32 srcMode;
 Int32 longestFileName;
 Char inName[1034];
 Char outName[1034];
-
+Char tmpName[1034];
 Char *progName;
 Char progNameReally[1034];
 FILE *outputHandleJustInCase;
@@ -4023,6 +4166,7 @@ IntNative main(IntNative argc, Char **argv)
             }
           }
         }
+        aa = aa->link;
       }
     while_break___2: /* CIL Label */;
     }
@@ -4030,35 +4174,74 @@ IntNative main(IntNative argc, Char **argv)
     {
       while (1)
       {
-        /* CIL Label */
-        ;
+      while_continue___4: /* CIL Label */;
         if (!((unsigned long)aa != (unsigned long)((void *)0)))
         {
           goto while_break___4;
         }
+
         if (tmp___10 == 0)
         {
           goto while_break___4;
         }
+
         if (tmp___28 == 0)
         {
           srcMode = 2;
         }
         else
         {
+
           if (tmp___27 == 0)
           {
-          }
-          else
-          {
-            if (tmp___26 == 0)
-            {
-            }
           }
         }
         aa = aa->link;
       }
     while_break___4: /* CIL Label */;
+    }
+    if (verbosity > 4)
+    {
+      verbosity = 4;
+    }
+    if (opMode == 1)
+    {
+      if (smallMode)
+      {
+        if (blockSize100k > 2)
+        {
+          blockSize100k = 2;
+        }
+      }
+    }
+    if (opMode == 3)
+    {
+      if (srcMode == 2)
+      {
+        {
+          fprintf((FILE * /* __restrict  */)stderr,
+                  (char const * /* __restrict  */) "%s: -c and -t cannot be "
+                                                   "used together.\n",
+                  progName);
+          exit(1);
+        }
+      }
+    }
+    if (srcMode == 2)
+    {
+      if (numFileNames == 0)
+      {
+        srcMode = 1;
+      }
+    }
+    if (opMode != 1)
+    {
+      blockSize100k = 0;
+    }
+    if (srcMode == 3)
+    {
+      {
+      }
     }
     if (opMode == 1)
     {

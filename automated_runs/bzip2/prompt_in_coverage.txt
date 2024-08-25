@@ -23,7 +23,8 @@ Final Verdict: <assigned class> (1-4)
 
 Required Functionality:
 
-The given code belongs to the bzip2 core utility and is used only without any flag to compress all kind of files with varying extensions. For this task we only want to co of files with varying extensions without any flag. We are NOT interested in any other functionlity. Any other functionality such as decompression or compression with other flags in not needed. 
+The given code belongs to the bzip2 core utility that uses sorting as part of its compression algorithm to group similar data together, which improves the overall compression ratio and is used only without any flag to compress all kind of files with varying extensions and retain the data integrity after compression. For this task we only want to keep the functionality of compressing files with varying extensions without any flag. We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. Any other functionality such as decompression in not needed. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements and loop or variable initialization which are important for keeping the workflow structure. 
+
 The given code snippet lies in the code execution path.
 
 To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing. Please give emphasis to analysing whether the provided snippet is important for preventing any of the given security vulnerabilities:
@@ -57,6 +58,6 @@ Query:
 #########
 
 
-Make sure to evaluate only on the basis of the functionality and the possibility of security vulnerabilities mentioned above about compression without any flags. We are not concerned with any other functionalities such as compression with flags or decompression. Since we can not change the structure of code, even if a piece of code can be improved somehow, we do not care. Simply comment on the importance of the piece of code give the structure of code provided to you in the context snippets.
+Make sure to evaluate only on the basis of the functionality and the possibility of security vulnerabilities mentioned above about compression without any flags and retaining data integrity. You must cater to all edge cases related to compression of files. We are not concerned with any other functionalities such as decompression. Since we can not change the structure of code, even if a piece of code can be improved somehow, we do not care. Simply comment on the importance of the piece of code give the structure of code provided to you in the context snippets.
 
 Make sure you do not add any information on your own. Consider all four snippets in the provided context to explain the queried code. If you do not know the answer, simply state that you do not know. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.

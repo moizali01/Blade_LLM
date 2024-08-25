@@ -1,0 +1,19 @@
+
+1. **Data Integrity Errors**: Test how the program responds to corrupted data or failures in integrity checks.
+2. **Buffer Overflows**: Include cases where input data exceeds expected buffer sizes to check for overflow vulnerabilities.
+3. **Memory Leaks**: Ensure that all allocated memory is properly freed, especially after failed operations.
+4. **File I/O Errors**: Test cases where file operations fail, such as reading non-existent files, writing to read-only files, or exceeding file system limits.
+5. **Invalid Input Data**: Assess the program's handling of invalid or corrupted compressed data, such as incorrect magic numbers, invalid block sizes, or corrupted CRC values.
+6. **Unexpected EOF**: Include scenarios where the input stream ends unexpectedly to test how the program handles these situations.
+7. **Input File Corruption**: Test the program's response to corrupted or incomplete input files.
+8. **Output File Corruption**: Assess how the program handles scenarios where the output file is corrupted or incomplete.
+9. **Memory Allocation Errors**: Test scenarios where memory allocation might fail, such as compressing extremely large files or exceeding available memory.
+10. **CRC Errors**: Include cases where CRC checksums are incorrect to ensure proper error handling.
+11. **Race Conditions**: For multi-threaded programs, test scenarios where multiple threads access shared resources like files simultaneously, potentially leading to race conditions.
+12. **Time-of-Check to Time-of-Use (TOCTOU) Errors**: Test for vulnerabilities where a resource's state changes between the check and use phases, such as file existence checks followed by access.
+13. **File Name Manipulation**: Include test cases with file names containing special characters, long names, or other potentially problematic elements.
+14. **Symbolic Links**: Assess how the program handles symbolic links in file paths, including edge cases where links point to unexpected or unauthorized locations.
+15. **File Permissions**: Test scenarios involving various file permissions, such as accessing files without proper permissions or performing operations in restricted directories.
+16. **Buffer Overflows**: Evaluate the risk of buffer overflows by testing with input data that could exceed buffer sizes, particularly in input/output functions.
+17. **Injection Attacks**: Assess the program's resilience against potential injection attacks, such as code injection via input data.
+18. **Signal Handling**: Include scenarios where the program receives signals like SIGINT or SIGSEGV, ensuring it handles these signals safely and cleanly.

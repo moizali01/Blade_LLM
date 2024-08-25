@@ -13,7 +13,7 @@ struct __anonstruct_bz_stream_26
   char *next_in;
   unsigned int avail_in;
   unsigned int total_in_lo32;
-  unsigned int total_in_hi32;
+
   char *next_out;
   unsigned int avail_out;
   unsigned int total_out_lo32;
@@ -38,59 +38,33 @@ struct __anonstruct_DState_28
   UInt32 bsBuff;
   Int32 bsLive;
   Int32 blockSize100k;
-  Bool smallDecompress;
+
   Int32 currBlockNo;
-  Int32 verbosity;
-  Int32 origPtr;
+
   UInt32 tPos;
   Int32 k0;
-  Int32 unzftab[256];
+
   Int32 nblock_used;
   Int32 cftab[257];
-  Int32 cftabCopy[257];
+
   UInt32 *tt;
   UInt16 *ll16;
   UChar *ll4;
-  UInt32 storedBlockCRC;
-  UInt32 storedCombinedCRC;
+
   UInt32 calculatedBlockCRC;
   UInt32 calculatedCombinedCRC;
-  Int32 nInUse;
-  Bool inUse[256];
-  Bool inUse16[16];
-  UChar seqToUnseq[256];
+
   UChar mtfa[4096];
   Int32 mtfbase[16];
-  UChar selector[18002];
-  UChar selectorMtf[18002];
-  UChar len[6][258];
+
   Int32 limit[6][258];
   Int32 base[6][258];
-  Int32 perm[6][258];
-  Int32 minLens[6];
-  Int32 save_i;
-  Int32 save_j;
-  Int32 save_t;
-  Int32 save_alphaSize;
-  Int32 save_nGroups;
-  Int32 save_nSelectors;
-  Int32 save_EOB;
-  Int32 save_groupNo;
-  Int32 save_groupPos;
-  Int32 save_nextSym;
+
   Int32 save_nblockMAX;
   Int32 save_nblock;
-  Int32 save_es;
+
   Int32 save_N;
-  Int32 save_curr;
-  Int32 save_zt;
-  Int32 save_zn;
-  Int32 save_zvec;
-  Int32 save_zj;
-  Int32 save_gSel;
-  Int32 save_gMinlen;
-  Int32 *save_gLimit;
-  Int32 *save_gBase;
+
   Int32 *save_gPerm;
 };
 typedef struct __anonstruct_DState_28 DState;
@@ -173,7 +147,7 @@ struct stat
   __mode_t st_mode;
   __uid_t st_uid;
   __gid_t st_gid;
-  int __pad0;
+
   __dev_t st_rdev;
   __off_t st_size;
   __blksize_t st_blksize;
@@ -182,12 +156,7 @@ struct stat
   struct timespec st_mtim;
   struct timespec st_ctim;
 };
-struct utimbuf
-{
-  __time_t actime;
-  __time_t modtime;
-};
-typedef short Int16;
+
 typedef int IntNative;
 struct __anonstruct_UInt64_56
 {
@@ -213,6 +182,7 @@ Int32 BZ2_rNums[512] = {619, 720, 127, 481, 931, 816, 813, 233, 566, 247, 985, 7
                         905, 644, 372, 567, 466, 434, 645, 210, 389, 550, 919, 135, 780, 773, 635, 389, 707, 100, 626, 958, 165, 504, 920, 176, 193, 713, 857, 265, 203, 50, 668, 108, 645, 990, 626, 197, 510, 357, 358, 850, 858, 364, 936, 638};
 void BZ2_bz__AssertH__fail(int errcode);
 void BZ2_hbAssignCodes(Int32 *code, UChar *length, Int32 minLen, Int32 maxLen, Int32 alphaSize);
+
 void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize, Int32 maxLen)
 {
   Int32 nNodes;
@@ -522,6 +492,7 @@ void BZ2_hbAssignCodes(Int32 *code, UChar *length, Int32 minLen, Int32 maxLen, I
 extern struct _IO_FILE *stderr;
 
 Int32 BZ2_decompress(DState *s);
+
 UInt32 BZ2_crc32Table[256] = {
     (UInt32)0L, (UInt32)79764919L, (UInt32)159529838L, (UInt32)222504665L, (UInt32)319059676L, (UInt32)398814059L, (UInt32)445009330L, (UInt32)507990021L, (UInt32)638119352L, (UInt32)583659535L, (UInt32)797628118L, (UInt32)726387553L, (UInt32)890018660L, (UInt32)835552979L,
     (UInt32)1015980042L, (UInt32)944750013L, (UInt32)1276238704L, (UInt32)1221641927L, (UInt32)1167319070L, (UInt32)1095957929L, (UInt32)1595256236L, (UInt32)1540665371L, (UInt32)1452775106L, (UInt32)1381403509L, (UInt32)1780037320L, (UInt32)1859660671L, (UInt32)1671105958L, (UInt32)1733955601L,
@@ -788,7 +759,6 @@ static void generateMTFValues(EState *s)
           ;
           if (zPend & 1)
           {
-            *(mtfv + wr) = (UInt16)1;
             wr++;
             (s->mtfFreq[1])++;
           }
@@ -811,7 +781,6 @@ static void generateMTFValues(EState *s)
     wr++;
     (s->mtfFreq[EOB])++;
     s->nMTF = wr;
-    return;
   }
 }
 static void sendMTFValues(EState *s)
@@ -1019,12 +988,10 @@ static void sendMTFValues(EState *s)
               if (50 == (ge - gs) + 1)
               {
                 cost45 = (UInt32)0;
-                cost23 = cost45;
-                cost01 = cost23;
-                icv = *(mtfv + gs);
+
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 1));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
@@ -1032,30 +999,29 @@ static void sendMTFValues(EState *s)
                 icv = *(mtfv + (gs + 2));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 3));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 4));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
+
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 5));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 6));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 7));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 8));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
+
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 9));
                 cost01 += s->len_pack[icv][0];
@@ -1067,8 +1033,7 @@ static void sendMTFValues(EState *s)
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 11));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 12));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
@@ -1078,9 +1043,9 @@ static void sendMTFValues(EState *s)
                 cost23 += s->len_pack[icv][1];
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 14));
-                cost01 += s->len_pack[icv][0];
+
                 cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 15));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
@@ -1088,59 +1053,54 @@ static void sendMTFValues(EState *s)
                 icv = *(mtfv + (gs + 16));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 17));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 18));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
+
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 19));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
+
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 20));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 21));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 22));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 23));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 24));
-                cost01 += s->len_pack[icv][0];
+
                 cost23 += s->len_pack[icv][1];
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 25));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
+
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 26));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
+
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 27));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
+
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 28));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 29));
                 cost01 += s->len_pack[icv][0];
-                cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 30));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
@@ -1154,7 +1114,7 @@ static void sendMTFValues(EState *s)
                 cost23 += s->len_pack[icv][1];
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 33));
-                cost01 += s->len_pack[icv][0];
+
                 cost23 += s->len_pack[icv][1];
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 34));
@@ -1164,7 +1124,7 @@ static void sendMTFValues(EState *s)
                 icv = *(mtfv + (gs + 35));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 36));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
@@ -1172,7 +1132,7 @@ static void sendMTFValues(EState *s)
                 icv = *(mtfv + (gs + 37));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 38));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
@@ -1188,36 +1148,37 @@ static void sendMTFValues(EState *s)
                 icv = *(mtfv + (gs + 41));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
-                cost45 += s->len_pack[icv][2];
+
                 icv = *(mtfv + (gs + 42));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 43));
-                cost01 += s->len_pack[icv][0];
+
                 cost23 += s->len_pack[icv][1];
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 44));
-                cost01 += s->len_pack[icv][0];
+
                 cost23 += s->len_pack[icv][1];
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 45));
-                cost01 += s->len_pack[icv][0];
+
                 cost23 += s->len_pack[icv][1];
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 46));
                 cost01 += s->len_pack[icv][0];
-
+                cost23 += s->len_pack[icv][1];
                 cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 47));
                 cost01 += s->len_pack[icv][0];
-
+                cost23 += s->len_pack[icv][1];
+                cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 48));
                 cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
-
+                cost45 += s->len_pack[icv][2];
                 icv = *(mtfv + (gs + 49));
-
+                cost01 += s->len_pack[icv][0];
                 cost23 += s->len_pack[icv][1];
                 cost45 += s->len_pack[icv][2];
                 cost[0] = (UInt16)(cost01 & 65535U);
@@ -1908,7 +1869,6 @@ static void prepare_new_block(EState *s)
   {
     s->nblock = 0;
     s->numZ = 0;
-    s->state_out_pos = 0;
     s->blockCRC = (UInt32)4294967295L;
 
     {
@@ -1919,8 +1879,6 @@ static void prepare_new_block(EState *s)
         {
           goto while_break;
         }
-        s->inUse[i] = (Bool)0;
-        i++;
       }
     while_break: /* CIL Label */;
     }
@@ -4815,7 +4773,6 @@ __inline static Bool mainGtU(UInt32 i1, UInt32 i2, UChar *block, UInt16 *quadran
 
   {
     c1 = *(block + i1);
-    c2 = *(block + i2);
     if ((int)c1 != (int)c2)
     {
       return ((Bool)((int)c1 > (int)c2));
@@ -5123,7 +5080,6 @@ static void mainSimpleSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, Int32 nb
               }
             while_break___3: /* CIL Label */;
             }
-            *(ptr + j) = v;
             i++;
             if (i > hi)
             {
@@ -5194,7 +5150,6 @@ static void mainQSort3(UInt32 *ptr, UChar *block, UInt16 *quadrant, Int32 nblock
   Int32 nextHi[3];
   Int32 nextD[3];
   Int32 zztmp;
-  Int32 zztmp___0;
   Int32 zztmp___1;
   Int32 yyp1;
   Int32 yyp2;
@@ -5258,10 +5213,6 @@ static void mainQSort3(UInt32 *ptr, UChar *block, UInt16 *quadrant, Int32 nblock
               while (1)
               {
               while_continue___1: /* CIL Label */;
-                if (!(!(unLo > unHi)))
-                {
-                  goto while_break___1;
-                }
                 n = (Int32) * (block + (*(ptr + unLo) + (UInt32)d)) - med;
                 if (n == 0)
                 {
@@ -5293,7 +5244,6 @@ static void mainQSort3(UInt32 *ptr, UChar *block, UInt16 *quadrant, Int32 nblock
                 {
 
                   *(ptr + unHi) = *(ptr + gtHi);
-                  *(ptr + gtHi) = (UInt32)zztmp___0;
                   gtHi--;
                   unHi--;
                   goto while_continue___2;
@@ -5438,7 +5388,6 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab, 
   UInt16 qVal;
 
   {
-    i = 65536; // whyyyyyyyyyyyyyyyyyyyy
     {
       while (1)
       {
@@ -5447,7 +5396,6 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab, 
         {
           goto while_break;
         }
-        *(ftab + i) = (UInt32)0;
         i--;
       }
     while_break: /* CIL Label */;
@@ -5657,7 +5605,6 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab, 
           goto while_break___11;
         }
         ss = runningOrder[i];
-        j = 0;
         {
           while (1)
           {
@@ -5671,7 +5618,6 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab, 
               sb = (ss << 8) + j;
               if (!(*(ftab + sb) & (unsigned int)(1 << 21)))
               {
-                lo = (Int32)(*(ftab + sb) & (unsigned int)(~(1 << 21)));
                 hi = (Int32)((*(ftab + (sb + 1)) & (unsigned int)(~(1 << 21))) - 1U);
                 if (hi > lo)
                 {
@@ -5695,10 +5641,6 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab, 
           while (1)
           {
           while_continue___13: /* CIL Label */;
-            if (!(j <= 255))
-            {
-              goto while_break___13;
-            }
             copyStart[j] = (Int32)(*(ftab + ((j << 8) + ss)) & (unsigned int)(~(1 << 21)));
             copyEnd[j] = (Int32)((*(ftab + (((j << 8) + ss) + 1)) & (unsigned int)(~(1 << 21))) - 1U);
             j++;
@@ -5717,15 +5659,10 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab, 
             }
             k = (Int32)(*(ptr + j) - 1U);
 
-            if (k < 0)
-            {
-              k += nblock;
-            }
             c1 = *(block + k);
             if (!bigDone[c1])
             {
               tmp___0 = copyEnd[c1];
-              (copyEnd[c1])--;
               *(ptr + tmp___0) = (UInt32)k;
             }
             j--;
@@ -5746,7 +5683,6 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab, 
             while_continue___18: /* CIL Label */;
               if (!(j >= 0))
               {
-                goto while_break___18;
               }
               a2update = (Int32) * (ptr + (bbStart + j));
               qVal = (UInt16)(j >> shifts);
@@ -5807,12 +5743,7 @@ void BZ2_blockSort(EState *s)
       {
         wfact = 1;
       }
-      if (wfact > 100)
       {
-        wfact = 100;
-      }
-      {
-        budgetInit = nblock * ((wfact - 1) / 3);
         budget = budgetInit;
         mainSort(ptr, block, quadrant, ftab, nblock, verb, &budget);
       }

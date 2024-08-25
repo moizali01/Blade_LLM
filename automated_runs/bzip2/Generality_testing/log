@@ -1,220 +1,232 @@
+Compiling /Blade_LLM/automated_runs/bzip2/Generality_testing/bzip2-org.c into /Blade_LLM/automated_runs/bzip2/Generality_testing/bzip2.rbin
+Compiling /Blade_LLM/automated_runs/bzip2/Generality_testing/bzip2-org_copy.c into /Blade_LLM/automated_runs/bzip2/Generality_testing/bzip2.bin
 Case: 1 Byte File Test
-Error: Compression failed
-Test failed: 1 Byte File
+CASE: 1
+Success
+
 Case: Single Word File Test
-Error: Compression failed
-Test failed: Single Word File
+CASE: 2
+Success
+
 Case: 10 Byte File Test
-Error: Compression failed
-Test failed: 10 Byte File
+CASE: 3
+Success
+
 Case: Short Sentence File Test
-Error: Compression failed
-Test failed: Short Sentence File
+CASE: 4
+Success
+
 Case: 100 Byte File Test
-Error: Compression failed
-Test failed: 100 Byte File
+CASE: 5
+Success
+
 Case: Small 1KB Text File Test
-Error: Compression failed
-Test failed: 1KB Text File
+CASE: 6
+Success
+
 Case: Small 2KB Text File Test
-Error: Compression failed
-Test failed: 2KB Text File
+CASE: 7
+Success
+
 Case: Small 5KB Text File Test
-Error: Compression failed
-Test failed: 5KB Text File
+CASE: 8
+Success
+
 Case: Small 10KB Text File Test
-Error: Compression failed
-Test failed: 10KB Text File
+CASE: 9
+Success
+
 Case: Small 20KB Text File Test
-Error: Compression failed
-Test failed: 20KB Text File
+CASE: 10
+Success
+
 Case: Small 1KB JPEG File Test
-Error: Compression failed
-Test failed: 1KB JPEG File
+CASE: 11
+Success
+
 Case: Small 2KB PNG File Test
-Error: Compression failed
-Test failed: 2KB PNG File
+CASE: 12
+Success
+
 Case: Small 5KB MP3 File Test
-Error: Compression failed
-Test failed: 5KB MP3 File
+CASE: 13
+Success
+
 Case: Small 10KB WAV File Test
-Error: Compression failed
-Test failed: 10KB WAV File
+CASE: 14
+Success
+
 Case: Small 1KB CSV File Test
-Error: Compression failed
-Test failed: 1KB CSV File
+CASE: 15
+Success
+
 Case: Small 2KB JSON File Test
-Error: Compression failed
-Test failed: 2KB JSON File
+CASE: 16
+Success
+
 Case: Small 5KB Binary File Test
-Error: Compression failed
-Test failed: 5KB Binary File
+CASE: 17
+Success
+
 Case: Small 10KB Binary File Test
-Error: Compression failed
-Test failed: 10KB Binary File
+CASE: 18
+Success
+
 Case: Small 20KB Binary File Test
-Error: Compression failed
-Test failed: 20KB Binary File
-Case: Medium 1MB Text File Test
-Error: Compression failed
-Test failed: 1MB Text File
-Case: Medium 2MB Text File Test
-Error: Compression failed
-Test failed: 2MB Text File
-Case: Medium 5MB Text File Test
-Error: Compression failed
-Test failed: 5MB Text File
-Case: Medium 10MB Text File Test
-Error: Compression failed
-Test failed: 10MB Text File
+CASE: 19
+Success
+
 Case: Medium 1MB PNG File Test
-Error: Compression failed
-Test failed: 1MB PNG File
-Case: Medium 2MB JPEG File Test
-Error: Compression failed
-Test failed: 2MB JPEG File
-Case: Medium 5MB GIF File Test
-Error: Compression failed
-Test failed: 5MB GIF File
-Case: Medium 10MB BMP File Test
-Error: Compression failed
-Test failed: 10MB BMP File
+CASE: 20
+Success
+
 Case: Medium 1MB WAV File Test
-Error: Compression failed
-Test failed: 1MB WAV File
-Case: Medium 2MB MP3 File Test
-Error: Compression failed
-Test failed: 2MB MP3 File
-Case: Medium 5MB OGG File Test
-Error: Compression failed
-Test failed: 5MB OGG File
-Case: Medium 10MB FLAC File Test
-Error: Compression failed
-Test failed: 10MB FLAC File
+CASE: 21
+Success
+
 Case: Medium 1MB ZIP File Test
-Error: Compression failed
-Test failed: 1MB ZIP File
-Case: Medium 2MB TAR.GZ File Test
-Error: Compression failed
-Test failed: 2MB TAR.GZ File
-Case: Medium 5MB PDF File Test
-Error: Compression failed
-Test failed: 5MB PDF File
+CASE: 22
+Success
+
 Case: Medium 1MB Binary File Test
-Error: Compression failed
+CASE: 23
+Decompression failed
 Test failed: 1MB Binary File
 Case: Medium 2MB Binary File Test
-Error: Compression failed
+CASE: 24
+Compression failed
 Test failed: 2MB Binary File
-Case: Medium 5MB Binary File Test
-Error: Compression failed
-Test failed: 5MB Binary File
 Case: English Text File Test
-Error: Compression failed
-Test failed: English Text File
+CASE: 25
+Success
+
 Case: C Code File Test
-Error: Compression failed
-Test failed: C Code File
+CASE: 26
+Success
+
 Case: Python Code File Test
-Error: Compression failed
-Test failed: Python Code File
+CASE: 27
+Success
+
 Case: JavaScript Code File Test
-Error: Compression failed
-Test failed: JavaScript Code File
+CASE: 28
+Success
+
 Case: HTML Code File Test
-Error: Compression failed
-Test failed: HTML Code File
+CASE: 29
+Success
+
 Case: English Text with Lots of Spaces Test
-Error: Compression failed
-Test failed: English Text with Lots of Spaces
+CASE: 30
+Success
+
 Case: English Text with Lots of Line Breaks Test
-Error: Compression failed
-Test failed: English Text with Lots of Line Breaks
+CASE: 31
+Success
+
 Case: English Text with Lots of Punctuation Test
-Error: Compression failed
-Test failed: English Text with Lots of Punctuation
+CASE: 32
+Success
+
 Case: English Text with Lots of Numbers Test
-Error: Compression failed
-Test failed: English Text with Lots of Numbers
-Case: 1KB Random Text File Test
-Error: Compression failed
-Test failed: 1KB Random Text File
-Case: 2KB Random Text File Test
-Error: Compression failed
-Test failed: 2KB Random Text File
+CASE: 33
+Success
+
 Case: JPEG Image File Test
-Error: Compression failed
-Test failed: JPEG Image File
+CASE: 34
+Success
+
 Case: PNG Image File Test
-Error: Compression failed
-Test failed: PNG Image File
+CASE: 35
+Success
+
 Case: MP3 Audio File Test
-Error: Compression failed
-Test failed: MP3 Audio File
+CASE: 36
+Success
+
 Case: WAV Audio File Test
-Error: Compression failed
-Test failed: WAV Audio File
+CASE: 37
+Success
+
 Case: Executable File Test
-Error: Compression failed
-Test failed: Executable File
+CASE: 38
+Success
+
 Case: Empty File Test
+CASE: 39
 Success
+
 Case: File with Special Characters Test
+CASE: 40
 Success
+
 Case: Read-Only File Test
-Error: Compression failed
-Test failed: Read-Only File
-Case: Executable File Test
-Error: Compression failed
-Test failed: Executable File
-Case: Unix Line Endings File Test
-Error: Compression failed
-Test failed: Unix Line Endings File
-Case: Windows Line Endings File Test
-Error: Compression failed
-Test failed: Windows Line Endings File
-Case: Corrupted Data File Test
-Error: Compression failed
-Test failed: Corrupted Data File
-Processing file with only new lines:
-Error: Compression failed
-Test failed: File with only new lines
-Processing different encodings test:
-Error: Compression failed
-Test failed: Different encodings
-Processing very long lines in a file test:
-Error: Compression failed
-Test failed: Very long lines in a file
-Processing invalid data file:
-Error: Compression failed
-Test failed: Invalid data file
-Processing sparse file:
-Error: Compression failed
-Test failed: Sparse file
-Case 9
-Processing all files simultaneously:
-Error: Compression failed
-Test failed: Multiple files
-Processing single file:
-Error: Compression failed
-Test failed: Single file
-Processing multiple languages text file:
-Error: Compression failed
-Test failed: Multi-language text
-Processing simple Unicode text file:
-Error: Compression failed
-Test failed: Simple Unicode text
-Processing complex Unicode text file:
-Error: Compression failed
-Test failed: Complex Unicode text
-Processing empty file:
+CASE: 41
 Success
-Processing multiple empty files:
-All files not compressed
-Test failed: Multiple empty files
+
+Case: Executable File Test
+CASE: 42
+Success
+
+Case: Unix Line Endings File Test
+CASE: 43
+Success
+
+Case: Windows Line Endings File Test
+CASE: 44
+Success
+
+Case: Corrupted Data File Test
+CASE: 45
+Success
+
+Processing file with only new lines:
+CASE: 46
+Success
+
+Processing different encodings test:
+CASE: 47
+Success
+
+Processing very long lines in a file test:
+CASE: 48
+Success
+
+Processing invalid data file:
+CASE: 49
+Success
+
+Processing sparse file:
+CASE: 50
+Decompression failed
+Test failed: Sparse file
+Processing single file:
+CASE: 51
+Success
+
+Processing multiple languages text file:
+CASE: 52
+Success
+
+Processing simple Unicode text file:
+CASE: 53
+Success
+
+Processing complex Unicode text file:
+CASE: 54
+Success
+
+Processing empty file:
+CASE: 55
+Success
+
 Processing filename with special characters:
-Error: Compression failed
-Test failed: Filename with special characters
+CASE: 56
+Success
+
 Processing filename with non-ASCII characters:
-Error: Compression failed
-Test failed: Filename with non-ASCII characters
+CASE: 57
+Success
+
+Total Functionality Tests: 57, Passed: 54, Failed: 3
+Some functionality tests failed

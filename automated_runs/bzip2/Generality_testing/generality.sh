@@ -2,7 +2,7 @@
 
 PROGRAM_NAME=bzip2
 DIR=${PWD}
-C_FILE=${DIR}/bzip2-vanilla.c
+C_FILE=${DIR}/bzip2-chisel.c
 REDUCED_BINARY=${DIR}/${PROGRAM_NAME}.rbin
 ORG_BINARY=${DIR}/${PROGRAM_NAME}.bin
 ORG_FILE=${DIR}/bzip2-org.c

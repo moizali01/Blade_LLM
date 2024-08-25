@@ -22,6 +22,7 @@ cp coverage.txt ../../LLM_Util/coverage.txt
 cd $DIR
 cp prompt_in_coverage.txt ../../LLM_Util/prompt_in_coverage.txt
 cp prompt_not_in_coverage.txt ../../LLM_Util/prompt_not_in_coverage.txt
+cp sec_list.txt ../../LLM_Util/sec_list.txt
 # clear
 
 # clear cands
@@ -44,17 +45,26 @@ cd $DIR
 # run the program
 cd ../../src
 python3 blade.py -p target-program/bzip2-util.c -t target-program/bzip2_train.sh -u 1 -d 1
-cp bzip2-util.c.blade.c ../automated_runs/rm/bzip2-util.c.blade.c
+cp bzip2-util.c.blade.c ../automated_runs/bzip2/bzip2-util.c.blade.c
 # clear
 
 # run generality cases
-# cd $DIR
-# chmod +x generality.sh
+cd $DIR
+mkdir test_generality
+cp bzip2-util.c.blade.c test_generality/bzip2-util.c.blade.c
+cp bzip2-org.c test_generality/bzip2-org.c
+cp generality.sh test_generality/generality.sh
+cp diff.py test_generality/diff.py
+cd test_generality
+chmod +x generality.sh
 
-# ./generality.sh > generality_results.txt
-# # clear
+./generality.sh
+cat log > generality_results.txt
+# clear
+cp bzip2-org.c bz2_org_copy.c
+python3 diff.py
+echo "Done"
 
-# echo "Results saved in generality_results.txt"
 
 exit 0
 

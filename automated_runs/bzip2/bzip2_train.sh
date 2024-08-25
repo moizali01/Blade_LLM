@@ -10,102 +10,85 @@ CC=clang
 TIMEOUT_LIMIT="-k 5 5"
 LOG=${DIR}/log
 
-FILE1="bzip2.bin"
-FILE2="test2.txt"
+FILE1="test1.txt"
+FILE2=("test2.txt" "test3.bin" "test4.txt")
 # HARDCODED_FILES=("test2.txt" "test3.jpg" "test4")
-
-function sed_command() {
-    original_log=$1
-    debloated_log=$2
-    sed -i 's/^bzip2\.bin: //' ${original_log}
-    sed -i 's/^bzip2\.rbin: //' ${debloated_log}
-    file1_content=$(cat ${original_log})
-    file2_content=$(cat ${debloated_log})
-    if [[ "${file1_content}" != "${file2_content}" ]]; then
-        echo "Mismatch in content of files before and after decompression" >>${LOG} 2>&1
-        return 1
-    fi
-    return 0
-}
-
-
 function compress_and_decompress() {
-    local files=("$@")
-    rm -rf temp comparison >/dev/null 2>&1
-    mkdir -p temp comparison >/dev/null 2>&1
-
-    local file_list=""
+    ((TOTAL_TESTS++))
     
+    echo "CASE: $TOTAL_TESTS" >>${LOG} 2>&1
+    local files=("$@")
+    rm -rf temp comparison  ${compression_debloated} ${decompression_original}  >/dev/null 2>&1
+    mkdir -p temp >/dev/null 2>&1
+    mkdir -p comparison >/dev/null 2>&1
     for file in "${files[@]}"; do
         cp "${file}" "temp/"
         file_list+="temp/$(basename ${file}) "
+        filename=$(basename "$file")
+        cp "$file" "comparison/original_$filename"
     done
-    
-    local compression_debloated="compression_debloated.txt"
-    { timeout ${TIMEOUT_LIMIT} ${REDUCED_BINARY} temp/*; } &>>${compression_debloated} 
-    a = $?
+
+
+   local compression_debloated="compression_debloated.txt"
+    { timeout ${TIMEOUT_LIMIT} ${REDUCED_BINARY} temp/*; } &>>${compression_debloated}
+    local a=$?
     if [[ $a -ne 0 ]]; then
-        rm -rf temp comparison ${files[@]} >/dev/null 2>&1
+        echo "Compression failed" >>${LOG} 2>&1
+        rm -rf temp comparison  ${compression_debloated} ${decompression_original}  ${files[@]} >/dev/null 2>&1
         return 1
     fi
     local debloated_compressed_files=$(ls temp)
+    ##add find command
 
-    if [[ $(ls temp | grep -v ".bz2" | wc -l) -ne 0 ]]; then
-        echo "All files not compressed" >>${LOG} 2>&1
-        rm -rf temp comparison ${files[@]} >/dev/null 2>&1
+    local decompression_original="decompression_original.txt"
+    { timeout ${TIMEOUT_LIMIT} ${ORG_BINARY} -d temp/*; } &>>${decompression_original}
+    local b=$?
+    if [[ $b -ne 0 ]]; then
+        echo "Decompression failed" >>${LOG} 2>&1
+        rm -rf temp comparison  ${compression_debloated} ${decompression_original}  ${files[@]} >/dev/null 2>&1
         return 1
     fi
+    local original_decompressed_files=$(ls temp)
+    ## add find command
 
     for file in temp/*; do
         filename=$(basename "$file")
         cp "$file" "comparison/debloated_$filename"
     done
-
-    rm -rf temp >/dev/null 2>&1
-    mkdir -p temp >/dev/null 2>&1
-
-    file_list=""
-    for file in "${files[@]}"; do
-        cp "${file}" "temp/"
-        file_list+="temp/$(basename ${file}) "
-    done
-
-    local compression_original="compression_original.txt"
-    { timeout ${TIMEOUT_LIMIT} ${ORG_BINARY} temp/*; } &>>${compression_original}
-    a=$?
-    if [[ $a -ne 0 ]]; then
-        rm -rf temp comparison ${files[@]} >/dev/null 2>&1
-        return 1
-    fi
-    local original_compressed_files=$(ls temp)
-
-    for file in temp/*; do
-        filename=$(basename "$file")
-        cp "$file" "comparison/original_$filename"
-    done
-
-    if [[ "${original_compressed_files}" != "${debloated_compressed_files}" ]]; then
-        echo "Mismatch in file names before and after compression" >>${LOG} 2>&1
-        rm -rf temp comparison >/dev/null 2>&1
-        return 1
-    fi
-
-    sed_command ${compression_original} ${compression_debloated} || return 1
+    
 
     for file in $files; do
         filename=$(basename "$file")
-        cmp "comparison/original_$filename.bz2" "comparison/debloated_$filename.bz2" &>>${LOG} || return 1
-    done
+        if diff "comparison/original_$filename" "comparison/debloated_$filename" >/dev/null; then
 
+            echo "Decompressed file matched the original file" >/dev/null 2>&1
+
+        else
+            echo "Error: Decompressed file does not match the original file" >>${LOG} 2>&1
+            echo "Original:" >>${LOG} 2>&1
+            echo "====================" >>${LOG} 2>&1
+            echo "$(cat comparison/original_$filename)" >>${LOG} 2>&1
+            echo "====================" >>${LOG} 2>&1
+            echo "Debloated:" >>${LOG} 2>&1
+            echo "====================" >>${LOG} 2>&1
+            echo "$(cat comparison/debloated_$filename)" >>${LOG} 2>&1
+            echo "====================" >>${LOG} 2>&1
+            rm -rf temp comparison  ${compression_debloated} ${decompression_original}  ${files[@]} >/dev/null 2>&1
+
+            return 1
+        fi
+    done
+    ((PASSED_COUNT++))
     echo "Success" >>${LOG} 2>&1
-    rm -rf temp comparison ${files[@]} >/dev/null 2>&1
+    echo "" >>${LOG} 2>&1
+    rm -rf temp comparison  ${compression_debloated} ${decompression_original}  ${files[@]} >/dev/null 2>&1
     return 0
 
 }
 
 function clean_env() {
     cd ${DIR}
-    rm -rf ${REDUCED_BINARY} ${ORG_BINARY} *.bz2 *.txt *.wav *.jpg log temp comparison >/dev/null 2>&1
+    rm -rf ${REDUCED_BINARY} ${ORG_BINARY} *.txt *.bin log temp comparison >/dev/null 2>&1
     return 0
 }
 
@@ -124,7 +107,11 @@ function main() {
     clean_env
     compile || exit 1
 
-    touch ${FILE2}
+    echo "I am a test file for bzip2" >test1.txt
+    touch test2.txt
+    cp $ORG_FILE test2.txt
+    dd if=/dev/urandom of=test3.bin bs=1M count=1n 2>/dev/null
+    touch test4.txt
     echo "Processing single file:" >>${LOG} 2>&1
     compress_and_decompress "${FILE1}" || exit 1
     echo "Processing all files simultaneously:" >>${LOG} 2>&1
