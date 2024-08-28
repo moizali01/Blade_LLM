@@ -1,0 +1,2548 @@
+Query:
+
+Int32 BZ2_decompress(DState *s) {
+  UChar uc;
+  Int32 retVal;
+  Int32 minLen;
+  Int32 maxLen;
+  bz_stream *strm;
+  Int32 i;
+  Int32 j;
+  Int32 t;
+  Int32 alphaSize;
+  Int32 nGroups;
+  Int32 nSelectors;
+  Int32 EOB;
+  Int32 groupNo;
+  Int32 groupPos;
+  Int32 nextSym;
+  Int32 nblockMAX;
+  Int32 nblock;
+  Int32 es;
+  Int32 N;
+  Int32 curr;
+  Int32 zt;
+  Int32 zn;
+  Int32 zvec;
+  Int32 zj;
+  Int32 gSel;
+  Int32 gMinlen;
+  Int32 *gLimit;
+  Int32 *gBase;
+  Int32 *gPerm;
+  UInt32 v;
+  UInt32 v___0;
+  UInt32 v___1;
+  UInt32 v___2;
+  UInt32 v___3;
+  UInt32 v___4;
+  UInt32 v___5;
+  UInt32 v___6;
+  UInt32 v___7;
+  UInt32 v___8;
+  UInt32 v___9;
+  UInt32 v___10;
+  UInt32 v___11;
+  UInt32 v___12;
+  UInt32 v___13;
+  UInt32 v___14;
+  UInt32 v___15;
+  UInt32 v___16;
+  UInt32 v___17;
+  UInt32 v___18;
+  UInt32 v___19;
+  UInt32 v___20;
+  UInt32 v___21;
+  UChar pos[6];
+  UChar tmp;
+  UChar v___22;
+  UInt32 v___23;
+  UInt32 v___24;
+  UInt32 v___25;
+  Int32 ii;
+  Int32 jj;
+  Int32 kk;
+  UInt32 v___26;
+  UInt32 v___27;
+  UInt32 v___28;
+  UInt32 v___29;
+  Int32 ii___0;
+  Int32 jj___0;
+  Int32 kk___0;
+  Int32 pp;
+  Int32 lno;
+  Int32 off;
+  UInt32 nn;
+  Int32 z;
+  UInt32 v___30;
+  UInt32 v___31;
+  Int32 tmp___0;
+  int tmp___1;
+  int tmp___2;
+  UInt32 v___32;
+  UInt32 v___33;
+  UInt32 v___34;
+  UInt32 v___35;
+  UInt32 v___36;
+  UInt32 v___37;
+  UInt32 v___38;
+  UInt32 v___39;
+  UInt32 v___40;
+  void *__cil_tmp92;
+
+  {
+    strm = s->strm;
+    if (s->state == 10) {
+      s->save_i = 0;
+      s->save_j = 0;
+      s->save_t = 0;
+      s->save_alphaSize = 0;
+      s->save_nGroups = 0;
+      s->save_nSelectors = 0;
+      s->save_EOB = 0;
+      s->save_groupNo = 0;
+      s->save_groupPos = 0;
+      s->save_nextSym = 0;
+      s->save_nblockMAX = 0;
+      s->save_nblock = 0;
+      s->save_es = 0;
+      s->save_N = 0;
+      s->save_curr = 0;
+      s->save_zt = 0;
+      s->save_zn = 0;
+      s->save_zvec = 0;
+      s->save_zj = 0;
+      s->save_gSel = 0;
+      s->save_gMinlen = 0;
+      s->save_gLimit = (Int32 *)((void *)0);
+      s->save_gBase = (Int32 *)((void *)0);
+      s->save_gPerm = (Int32 *)((void *)0);
+    }
+    i = s->save_i;
+    j = s->save_j;
+    t = s->save_t;
+    alphaSize = s->save_alphaSize;
+    nGroups = s->save_nGroups;
+    nSelectors = s->save_nSelectors;
+    EOB = s->save_EOB;
+    groupNo = s->save_groupNo;
+    groupPos = s->save_groupPos;
+    nextSym = s->save_nextSym;
+    nblockMAX = s->save_nblockMAX;
+    nblock = s->save_nblock;
+    es = s->save_es;
+    N = s->save_N;
+    curr = s->save_curr;
+    zt = s->save_zt;
+    zn = s->save_zn;
+    zvec = s->save_zvec;
+    zj = s->save_zj;
+    gSel = s->save_gSel;
+    gMinlen = s->save_gMinlen;
+    gLimit = s->save_gLimit;
+    gBase = s->save_gBase;
+    gPerm = s->save_gPerm;
+    retVal = 0;
+    {
+      if (s->state == 10) {
+        goto case_10;
+      }
+      if (s->state == 11) {
+        goto case_11;
+      }
+      if (s->state == 12) {
+        goto case_12;
+      }
+      if (s->state == 13) {
+        goto case_13;
+      }
+      if (s->state == 14) {
+        goto case_14;
+      }
+      if (s->state == 15) {
+        goto case_15;
+      }
+      if (s->state == 16) {
+        goto case_16;
+      }
+      if (s->state == 17) {
+        goto case_17;
+      }
+      if (s->state == 18) {
+        goto case_18;
+      }
+      if (s->state == 19) {
+        goto case_19;
+      }
+      if (s->state == 20) {
+        goto case_20;
+      }
+      if (s->state == 21) {
+        goto case_21;
+      }
+      if (s->state == 22) {
+        goto case_22;
+      }
+      if (s->state == 23) {
+        goto case_23;
+      }
+      if (s->state == 24) {
+        goto case_24;
+      }
+      if (s->state == 25) {
+        goto case_25;
+      }
+      if (s->state == 26) {
+        goto case_26;
+      }
+      if (s->state == 27) {
+        goto case_27;
+      }
+      if (s->state == 28) {
+        goto case_28;
+      }
+      if (s->state == 29) {
+        goto case_29;
+      }
+      if (s->state == 30) {
+        goto case_30;
+      }
+      if (s->state == 31) {
+        goto case_31;
+      }
+      if (s->state == 32) {
+        goto case_32;
+      }
+      if (s->state == 33) {
+        goto case_33;
+      }
+      if (s->state == 34) {
+        goto case_34;
+      }
+      if (s->state == 35) {
+        goto case_35;
+      }
+      if (s->state == 36) {
+        goto case_36;
+      }
+      if (s->state == 37) {
+        goto case_37;
+      }
+      if (s->state == 38) {
+        goto case_38;
+      }
+      if (s->state == 39) {
+        goto case_39;
+      }
+      if (s->state == 40) {
+        goto case_40;
+      }
+      if (s->state == 41) {
+        goto case_41;
+      }
+      if (s->state == 42) {
+        goto endhdr_2;
+      }
+      if (s->state == 43) {
+        goto case_43;
+      }
+      if (s->state == 44) {
+        goto case_44;
+      }
+      if (s->state == 45) {
+        goto case_45;
+      }
+      if (s->state == 46) {
+        goto case_46;
+      }
+      if (s->state == 47) {
+        goto case_47;
+      }
+      if (s->state == 48) {
+        goto case_48;
+      }
+      if (s->state == 49) {
+        goto case_49;
+      }
+      if (s->state == 50) {
+        goto case_50;
+      }
+      goto switch_default;
+    case_10: /* CIL Label */
+      s->state = 10;
+      {
+        while (1) {
+        while_continue: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v = (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v;
+            goto while_break;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break: /* CIL Label */
+          ;
+      }
+      if ((int)uc != 66) {
+        retVal = -5;
+        goto save_state_and_return;
+      }
+    case_11: /* CIL Label */
+      s->state = 11;
+      {
+        while (1) {
+        while_continue___0: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___0 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___0;
+            goto while_break___0;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___0: /* CIL Label */
+          ;
+      }
+      if ((int)uc != 90) {
+        retVal = -5;
+        goto save_state_and_return;
+      }
+    case_12: /* CIL Label */
+      s->state = 12;
+      {
+        while (1) {
+        while_continue___1: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___1 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___1;
+            goto while_break___1;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___1: /* CIL Label */
+          ;
+      }
+      if ((int)uc != 104) {
+        retVal = -5;
+        goto save_state_and_return;
+      }
+    case_13: /* CIL Label */
+      s->state = 13;
+      {
+        while (1) {
+        while_continue___2: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___2 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            s->blockSize100k = (Int32)v___2;
+            goto while_break___2;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___2: /* CIL Label */
+          ;
+      }
+      if (s->blockSize100k < 49) {
+        retVal = -5;
+        goto save_state_and_return;
+      } else {
+        if (s->blockSize100k > 57) {
+          retVal = -5;
+          goto save_state_and_return;
+        }
+      }
+      s->blockSize100k -= 48;
+      if (s->smallDecompress) {
+        {
+          s->ll16 = (UInt16 *)(*(strm->bzalloc))(
+              strm->opaque,
+              (int)((unsigned long)(s->blockSize100k * 100000) *
+                    sizeof(UInt16)),
+              1);
+          s->ll4 = (UChar *)(*(strm->bzalloc))(
+              strm->opaque,
+              (int)((unsigned long)((1 + s->blockSize100k * 100000) >> 1) *
+                    sizeof(UChar)),
+              1);
+        }
+        if ((unsigned long)s->ll16 == (unsigned long)((void *)0)) {
+          retVal = -3;
+          goto save_state_and_return;
+        } else {
+          if ((unsigned long)s->ll4 == (unsigned long)((void *)0)) {
+            retVal = -3;
+            goto save_state_and_return;
+          }
+        }
+      } else {
+        {
+          s->tt = (UInt32 *)(*(strm->bzalloc))(
+              strm->opaque,
+              (int)((unsigned long)(s->blockSize100k * 100000) * sizeof(Int32)),
+              1);
+        }
+        if ((unsigned long)s->tt == (unsigned long)((void *)0)) {
+          retVal = -3;
+          goto save_state_and_return;
+        }
+      }
+    case_14: /* CIL Label */
+      s->state = 14;
+      {
+        while (1) {
+        while_continue___3: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___3 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___3;
+            goto while_break___3;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___3: /* CIL Label */
+          ;
+      }
+      if ((int)uc == 23) {
+        goto endhdr_2;
+      }
+      if ((int)uc != 49) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+    case_15: /* CIL Label */
+      s->state = 15;
+      {
+        while (1) {
+        while_continue___4: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___4 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___4;
+            goto while_break___4;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___4: /* CIL Label */
+          ;
+      }
+      if ((int)uc != 65) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+    case_16: /* CIL Label */
+      s->state = 16;
+      {
+        while (1) {
+        while_continue___5: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___5 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___5;
+            goto while_break___5;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___5: /* CIL Label */
+          ;
+      }
+      if ((int)uc != 89) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+    case_17: /* CIL Label */
+      s->state = 17;
+      {
+        while (1) {
+        while_continue___6: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___6 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___6;
+            goto while_break___6;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___6: /* CIL Label */
+          ;
+      }
+      if ((int)uc != 38) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+    case_18: /* CIL Label */
+      s->state = 18;
+      {
+        while (1) {
+        while_continue___7: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___7 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___7;
+            goto while_break___7;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___7: /* CIL Label */
+          ;
+      }
+      if ((int)uc != 83) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+    case_19: /* CIL Label */
+      s->state = 19;
+      {
+        while (1) {
+        while_continue___8: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___8 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___8;
+            goto while_break___8;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___8: /* CIL Label */
+          ;
+      }
+      if ((int)uc != 89) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+      (s->currBlockNo)++;
+      if (s->verbosity >= 2) {
+        {
+          fprintf((FILE * /* __restrict  */)stderr,
+                  (char const * /* __restrict  */) "\n    [%d: huff+mtf ",
+                  s->currBlockNo);
+        }
+      }
+      s->storedBlockCRC = (UInt32)0;
+    case_20: /* CIL Label */
+      s->state = 20;
+      {
+        while (1) {
+        while_continue___9: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___9 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___9;
+            goto while_break___9;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___9: /* CIL Label */
+          ;
+      }
+      s->storedBlockCRC = (s->storedBlockCRC << 8) | (UInt32)uc;
+    case_21: /* CIL Label */
+      s->state = 21;
+      {
+        while (1) {
+        while_continue___10: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___10 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___10;
+            goto while_break___10;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___10: /* CIL Label */
+          ;
+      }
+      s->storedBlockCRC = (s->storedBlockCRC << 8) | (UInt32)uc;
+    case_22: /* CIL Label */
+      s->state = 22;
+      {
+        while (1) {
+        while_continue___11: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___11 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___11;
+            goto while_break___11;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___11: /* CIL Label */
+          ;
+      }
+      s->storedBlockCRC = (s->storedBlockCRC << 8) | (UInt32)uc;
+    case_23: /* CIL Label */
+      s->state = 23;
+      {
+        while (1) {
+        while_continue___12: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___12 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___12;
+            goto while_break___12;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___12: /* CIL Label */
+          ;
+      }
+      s->storedBlockCRC = (s->storedBlockCRC << 8) | (UInt32)uc;
+    case_24: /* CIL Label */
+      s->state = 24;
+      {
+        while (1) {
+        while_continue___13: /* CIL Label */
+            ;
+          if (s->bsLive >= 1) {
+            v___13 =
+                (s->bsBuff >> (s->bsLive - 1)) & (unsigned int)((1 << 1) - 1);
+            (s->bsLive)--;
+            s->blockRandomised = (Bool)v___13;
+            goto while_break___13;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___13: /* CIL Label */
+          ;
+      }
+      s->origPtr = 0;
+    case_25: /* CIL Label */
+      s->state = 25;
+      {
+        while (1) {
+        while_continue___14: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___14 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___14;
+            goto while_break___14;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___14: /* CIL Label */
+          ;
+      }
+      s->origPtr = (s->origPtr << 8) | (Int32)uc;
+    case_26: /* CIL Label */
+      s->state = 26;
+      {
+        while (1) {
+        while_continue___15: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___15 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___15;
+            goto while_break___15;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___15: /* CIL Label */
+          ;
+      }
+      s->origPtr = (s->origPtr << 8) | (Int32)uc;
+    case_27: /* CIL Label */
+      s->state = 27;
+      {
+        while (1) {
+        while_continue___16: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___16 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___16;
+            goto while_break___16;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___16: /* CIL Label */
+          ;
+      }
+      s->origPtr = (s->origPtr << 8) | (Int32)uc;
+      if (s->origPtr < 0) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+      if (s->origPtr > 10 + 100000 * s->blockSize100k) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+      i = 0;
+      {
+        while (1) {
+        while_continue___17: /* CIL Label */
+            ;
+          if (!(i < 16)) {
+            goto while_break___17;
+          }
+        case_28: /* CIL Label */
+          s->state = 28;
+          {
+            while (1) {
+            while_continue___18: /* CIL Label */
+                ;
+              if (s->bsLive >= 1) {
+                v___17 = (s->bsBuff >> (s->bsLive - 1)) &
+                         (unsigned int)((1 << 1) - 1);
+                (s->bsLive)--;
+                uc = (UChar)v___17;
+                goto while_break___18;
+              }
+              if ((s->strm)->avail_in == 0U) {
+                retVal = 0;
+                goto save_state_and_return;
+              }
+              s->bsBuff =
+                  (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+              s->bsLive += 8;
+              ((s->strm)->next_in)++;
+              ((s->strm)->avail_in)--;
+              ((s->strm)->total_in_lo32)++;
+              if ((s->strm)->total_in_lo32 == 0U) {
+                ((s->strm)->total_in_hi32)++;
+              }
+            }
+          while_break___18: /* CIL Label */
+              ;
+          }
+          if ((int)uc == 1) {
+            s->inUse16[i] = (Bool)1;
+          } else {
+            s->inUse16[i] = (Bool)0;
+          }
+          i++;
+        }
+      while_break___17: /* CIL Label */
+          ;
+      }
+      i = 0;
+      {
+        while (1) {
+        while_continue___19: /* CIL Label */
+            ;
+          if (!(i < 256)) {
+            goto while_break___19;
+          }
+          s->inUse[i] = (Bool)0;
+          i++;
+        }
+      while_break___19: /* CIL Label */
+          ;
+      }
+      i = 0;
+      {
+        while (1) {
+        while_continue___20: /* CIL Label */
+            ;
+          if (!(i < 16)) {
+            goto while_break___20;
+          }
+          if (s->inUse16[i]) {
+            j = 0;
+            {
+              while (1) {
+              while_continue___21: /* CIL Label */
+                  ;
+                if (!(j < 16)) {
+                  goto while_break___21;
+                }
+              case_29: /* CIL Label */
+                s->state = 29;
+                {
+                  while (1) {
+                  while_continue___22: /* CIL Label */
+                      ;
+                    if (s->bsLive >= 1) {
+                      v___18 = (s->bsBuff >> (s->bsLive - 1)) &
+                               (unsigned int)((1 << 1) - 1);
+                      (s->bsLive)--;
+                      uc = (UChar)v___18;
+                      goto while_break___22;
+                    }
+                    if ((s->strm)->avail_in == 0U) {
+                      retVal = 0;
+                      goto save_state_and_return;
+                    }
+                    s->bsBuff = (s->bsBuff << 8) |
+                                (UInt32) * ((UChar *)(s->strm)->next_in);
+                    s->bsLive += 8;
+                    ((s->strm)->next_in)++;
+                    ((s->strm)->avail_in)--;
+                    ((s->strm)->total_in_lo32)++;
+                    if ((s->strm)->total_in_lo32 == 0U) {
+                      ((s->strm)->total_in_hi32)++;
+                    }
+                  }
+                while_break___22: /* CIL Label */
+                    ;
+                }
+                if ((int)uc == 1) {
+                  s->inUse[i * 16 + j] = (Bool)1;
+                }
+                j++;
+              }
+            while_break___21: /* CIL Label */
+                ;
+            }
+          }
+          i++;
+        }
+      while_break___20: /* CIL Label */
+          ;
+      }
+      { makeMaps_d(s); }
+      if (s->nInUse == 0) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+      alphaSize = s->nInUse + 2;
+    case_30: /* CIL Label */
+      s->state = 30;
+      {
+        while (1) {
+        while_continue___23: /* CIL Label */
+            ;
+          if (s->bsLive >= 3) {
+            v___19 =
+                (s->bsBuff >> (s->bsLive - 3)) & (unsigned int)((1 << 3) - 1);
+            s->bsLive -= 3;
+            nGroups = (Int32)v___19;
+            goto while_break___23;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___23: /* CIL Label */
+          ;
+      }
+      if (nGroups < 2) {
+        retVal = -4;
+        goto save_state_and_return;
+      } else {
+        if (nGroups > 6) {
+          retVal = -4;
+          goto save_state_and_return;
+        }
+      }
+    case_31: /* CIL Label */
+      s->state = 31;
+      {
+        while (1) {
+        while_continue___24: /* CIL Label */
+            ;
+          if (s->bsLive >= 15) {
+            v___20 =
+                (s->bsBuff >> (s->bsLive - 15)) & (unsigned int)((1 << 15) - 1);
+            s->bsLive -= 15;
+            nSelectors = (Int32)v___20;
+            goto while_break___24;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___24: /* CIL Label */
+          ;
+      }
+      if (nSelectors < 1) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+      i = 0;
+      {
+        while (1) {
+        while_continue___25: /* CIL Label */
+            ;
+          if (!(i < nSelectors)) {
+            goto while_break___25;
+          }
+          j = 0;
+          {
+            while (1) {
+            while_continue___26: /* CIL Label */
+                ;
+            case_32: /* CIL Label */
+              s->state = 32;
+              {
+                while (1) {
+                while_continue___27: /* CIL Label */
+                    ;
+                  if (s->bsLive >= 1) {
+                    v___21 = (s->bsBuff >> (s->bsLive - 1)) &
+                             (unsigned int)((1 << 1) - 1);
+                    (s->bsLive)--;
+                    uc = (UChar)v___21;
+                    goto while_break___27;
+                  }
+                  if ((s->strm)->avail_in == 0U) {
+                    retVal = 0;
+                    goto save_state_and_return;
+                  }
+                  s->bsBuff = (s->bsBuff << 8) |
+                              (UInt32) * ((UChar *)(s->strm)->next_in);
+                  s->bsLive += 8;
+                  ((s->strm)->next_in)++;
+                  ((s->strm)->avail_in)--;
+                  ((s->strm)->total_in_lo32)++;
+                  if ((s->strm)->total_in_lo32 == 0U) {
+                    ((s->strm)->total_in_hi32)++;
+                  }
+                }
+              while_break___27: /* CIL Label */
+                  ;
+              }
+              if ((int)uc == 0) {
+                goto while_break___26;
+              }
+              j++;
+              if (j >= nGroups) {
+                retVal = -4;
+                goto save_state_and_return;
+              }
+            }
+          while_break___26: /* CIL Label */
+              ;
+          }
+          s->selectorMtf[i] = (UChar)j;
+          i++;
+        }
+      while_break___25: /* CIL Label */
+          ;
+      }
+      v___22 = (UChar)0;
+      {
+        while (1) {
+        while_continue___28: /* CIL Label */
+            ;
+          if (!((int)v___22 < nGroups)) {
+            goto while_break___28;
+          }
+          pos[v___22] = v___22;
+          v___22 = (UChar)((int)v___22 + 1);
+        }
+      while_break___28: /* CIL Label */
+          ;
+      }
+      i = 0;
+      {
+        while (1) {
+        while_continue___29: /* CIL Label */
+            ;
+          if (!(i < nSelectors)) {
+            goto while_break___29;
+          }
+          v___22 = s->selectorMtf[i];
+          tmp = pos[v___22];
+          {
+            while (1) {
+            while_continue___30: /* CIL Label */
+                ;
+              if (!((int)v___22 > 0)) {
+                goto while_break___30;
+              }
+              pos[v___22] = pos[(int)v___22 - 1];
+              v___22 = (UChar)((int)v___22 - 1);
+            }
+          while_break___30: /* CIL Label */
+              ;
+          }
+          pos[0] = tmp;
+          s->selector[i] = tmp;
+          i++;
+        }
+      while_break___29: /* CIL Label */
+          ;
+      }
+      t = 0;
+      {
+        while (1) {
+        while_continue___31: /* CIL Label */
+            ;
+          if (!(t < nGroups)) {
+            goto while_break___31;
+          }
+        case_33: /* CIL Label */
+          s->state = 33;
+          {
+            while (1) {
+            while_continue___32: /* CIL Label */
+                ;
+              if (s->bsLive >= 5) {
+                v___23 = (s->bsBuff >> (s->bsLive - 5)) &
+                         (unsigned int)((1 << 5) - 1);
+                s->bsLive -= 5;
+                curr = (Int32)v___23;
+                goto while_break___32;
+              }
+              if ((s->strm)->avail_in == 0U) {
+                retVal = 0;
+                goto save_state_and_return;
+              }
+              s->bsBuff =
+                  (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+              s->bsLive += 8;
+              ((s->strm)->next_in)++;
+              ((s->strm)->avail_in)--;
+              ((s->strm)->total_in_lo32)++;
+              if ((s->strm)->total_in_lo32 == 0U) {
+                ((s->strm)->total_in_hi32)++;
+              }
+            }
+          while_break___32: /* CIL Label */
+              ;
+          }
+          i = 0;
+          {
+            while (1) {
+            while_continue___33: /* CIL Label */
+                ;
+              if (!(i < alphaSize)) {
+                goto while_break___33;
+              }
+              {
+                while (1) {
+                while_continue___34: /* CIL Label */
+                    ;
+                  if (curr < 1) {
+                    retVal = -4;
+                    goto save_state_and_return;
+                  } else {
+                    if (curr > 20) {
+                      retVal = -4;
+                      goto save_state_and_return;
+                    }
+                  }
+                case_34: /* CIL Label */
+                  s->state = 34;
+                  {
+                    while (1) {
+                    while_continue___35: /* CIL Label */
+                        ;
+                      if (s->bsLive >= 1) {
+                        v___24 = (s->bsBuff >> (s->bsLive - 1)) &
+                                 (unsigned int)((1 << 1) - 1);
+                        (s->bsLive)--;
+                        uc = (UChar)v___24;
+                        goto while_break___35;
+                      }
+                      if ((s->strm)->avail_in == 0U) {
+                        retVal = 0;
+                        goto save_state_and_return;
+                      }
+                      s->bsBuff = (s->bsBuff << 8) |
+                                  (UInt32) * ((UChar *)(s->strm)->next_in);
+                      s->bsLive += 8;
+                      ((s->strm)->next_in)++;
+                      ((s->strm)->avail_in)--;
+                      ((s->strm)->total_in_lo32)++;
+                      if ((s->strm)->total_in_lo32 == 0U) {
+                        ((s->strm)->total_in_hi32)++;
+                      }
+                    }
+                  while_break___35: /* CIL Label */
+                      ;
+                  }
+                  if ((int)uc == 0) {
+                    goto while_break___34;
+                  }
+                case_35: /* CIL Label */
+                  s->state = 35;
+                  {
+                    while (1) {
+                    while_continue___36: /* CIL Label */
+                        ;
+                      if (s->bsLive >= 1) {
+                        v___25 = (s->bsBuff >> (s->bsLive - 1)) &
+                                 (unsigned int)((1 << 1) - 1);
+                        (s->bsLive)--;
+                        uc = (UChar)v___25;
+                        goto while_break___36;
+                      }
+                      if ((s->strm)->avail_in == 0U) {
+                        retVal = 0;
+                        goto save_state_and_return;
+                      }
+                      s->bsBuff = (s->bsBuff << 8) |
+                                  (UInt32) * ((UChar *)(s->strm)->next_in);
+                      s->bsLive += 8;
+                      ((s->strm)->next_in)++;
+                      ((s->strm)->avail_in)--;
+                      ((s->strm)->total_in_lo32)++;
+                      if ((s->strm)->total_in_lo32 == 0U) {
+                        ((s->strm)->total_in_hi32)++;
+                      }
+                    }
+                  while_break___36: /* CIL Label */
+                      ;
+                  }
+                  if ((int)uc == 0) {
+                    curr++;
+                  } else {
+                    curr--;
+                  }
+                }
+              while_break___34: /* CIL Label */
+                  ;
+              }
+              s->len[t][i] = (UChar)curr;
+              i++;
+            }
+          while_break___33: /* CIL Label */
+              ;
+          }
+          t++;
+        }
+      while_break___31: /* CIL Label */
+          ;
+      }
+      t = 0;
+      {
+        while (1) {
+        while_continue___37: /* CIL Label */
+            ;
+          if (!(t < nGroups)) {
+            goto while_break___37;
+          }
+          minLen = 32;
+          maxLen = 0;
+          i = 0;
+          {
+            while (1) {
+            while_continue___38: /* CIL Label */
+                ;
+              if (!(i < alphaSize)) {
+                goto while_break___38;
+              }
+              if ((int)s->len[t][i] > maxLen) {
+                maxLen = (Int32)s->len[t][i];
+              }
+              if ((int)s->len[t][i] < minLen) {
+                minLen = (Int32)s->len[t][i];
+              }
+              i++;
+            }
+          while_break___38: /* CIL Label */
+              ;
+          }
+          {
+            BZ2_hbCreateDecodeTables(&s->limit[t][0], &s->base[t][0],
+                                     &s->perm[t][0], &s->len[t][0], minLen,
+                                     maxLen, alphaSize);
+            s->minLens[t] = minLen;
+            t++;
+          }
+        }
+      while_break___37: /* CIL Label */
+          ;
+      }
+      EOB = s->nInUse + 1;
+      nblockMAX = 100000 * s->blockSize100k;
+      groupNo = -1;
+      groupPos = 0;
+      i = 0;
+      {
+        while (1) {
+        while_continue___39: /* CIL Label */
+            ;
+          if (!(i <= 255)) {
+            goto while_break___39;
+          }
+          s->unzftab[i] = 0;
+          i++;
+        }
+      while_break___39: /* CIL Label */
+          ;
+      }
+      kk = 4095;
+      ii = 15;
+      {
+        while (1) {
+        while_continue___40: /* CIL Label */
+            ;
+          if (!(ii >= 0)) {
+            goto while_break___40;
+          }
+          jj = 15;
+          {
+            while (1) {
+            while_continue___41: /* CIL Label */
+                ;
+              if (!(jj >= 0)) {
+                goto while_break___41;
+              }
+              s->mtfa[kk] = (UChar)(ii * 16 + jj);
+              kk--;
+              jj--;
+            }
+          while_break___41: /* CIL Label */
+              ;
+          }
+          s->mtfbase[ii] = kk + 1;
+          ii--;
+        }
+      while_break___40: /* CIL Label */
+          ;
+      }
+      nblock = 0;
+      if (groupPos == 0) {
+        groupNo++;
+        if (groupNo >= nSelectors) {
+          retVal = -4;
+          goto save_state_and_return;
+        }
+        groupPos = 50;
+        gSel = (Int32)s->selector[groupNo];
+        gMinlen = s->minLens[gSel];
+        gLimit = &s->limit[gSel][0];
+        gPerm = &s->perm[gSel][0];
+        gBase = &s->base[gSel][0];
+      }
+      groupPos--;
+      zn = gMinlen;
+    case_36: /* CIL Label */
+      s->state = 36;
+      {
+        while (1) {
+        while_continue___42: /* CIL Label */
+            ;
+          if (s->bsLive >= zn) {
+            v___26 =
+                (s->bsBuff >> (s->bsLive - zn)) & (unsigned int)((1 << zn) - 1);
+            s->bsLive -= zn;
+            zvec = (Int32)v___26;
+            goto while_break___42;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___42: /* CIL Label */
+          ;
+      }
+      {
+        while (1) {
+        while_continue___43: /* CIL Label */
+            ;
+          if (zn > 20) {
+            retVal = -4;
+            goto save_state_and_return;
+          }
+          if (zvec <= *(gLimit + zn)) {
+            goto while_break___43;
+          }
+          zn++;
+        case_37: /* CIL Label */
+          s->state = 37;
+          {
+            while (1) {
+            while_continue___44: /* CIL Label */
+                ;
+              if (s->bsLive >= 1) {
+                v___27 = (s->bsBuff >> (s->bsLive - 1)) &
+                         (unsigned int)((1 << 1) - 1);
+                (s->bsLive)--;
+                zj = (Int32)v___27;
+                goto while_break___44;
+              }
+              if ((s->strm)->avail_in == 0U) {
+                retVal = 0;
+                goto save_state_and_return;
+              }
+              s->bsBuff =
+                  (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+              s->bsLive += 8;
+              ((s->strm)->next_in)++;
+              ((s->strm)->avail_in)--;
+              ((s->strm)->total_in_lo32)++;
+              if ((s->strm)->total_in_lo32 == 0U) {
+                ((s->strm)->total_in_hi32)++;
+              }
+            }
+          while_break___44: /* CIL Label */
+              ;
+          }
+          zvec = (zvec << 1) | zj;
+        }
+      while_break___43: /* CIL Label */
+          ;
+      }
+      if (zvec - *(gBase + zn) < 0) {
+        retVal = -4;
+        goto save_state_and_return;
+      } else {
+        if (zvec - *(gBase + zn) >= 258) {
+          retVal = -4;
+          goto save_state_and_return;
+        }
+      }
+      nextSym = *(gPerm + (zvec - *(gBase + zn)));
+      {
+        while (1) {
+        while_continue___45: /* CIL Label */
+            ;
+          if (!(!(nextSym == EOB))) {
+            goto while_break___45;
+          }
+          if (nextSym == 0) {
+            goto _L;
+          } else {
+            if (nextSym == 1) {
+            _L:
+              es = -1;
+              N = 1;
+              {
+                while (1) {
+                while_continue___46: /* CIL Label */
+                    ;
+                  if (nextSym == 0) {
+                    es += N;
+                  } else {
+                    if (nextSym == 1) {
+                      es += 2 * N;
+                    }
+                  }
+                  N *= 2;
+                  if (groupPos == 0) {
+                    groupNo++;
+                    if (groupNo >= nSelectors) {
+                      retVal = -4;
+                      goto save_state_and_return;
+                    }
+                    groupPos = 50;
+                    gSel = (Int32)s->selector[groupNo];
+                    gMinlen = s->minLens[gSel];
+                    gLimit = &s->limit[gSel][0];
+                    gPerm = &s->perm[gSel][0];
+                    gBase = &s->base[gSel][0];
+                  }
+                  groupPos--;
+                  zn = gMinlen;
+                case_38: /* CIL Label */
+                  s->state = 38;
+                  {
+                    while (1) {
+                    while_continue___47: /* CIL Label */
+                        ;
+                      if (s->bsLive >= zn) {
+                        v___28 = (s->bsBuff >> (s->bsLive - zn)) &
+                                 (unsigned int)((1 << zn) - 1);
+                        s->bsLive -= zn;
+                        zvec = (Int32)v___28;
+                        goto while_break___47;
+                      }
+                      if ((s->strm)->avail_in == 0U) {
+                        retVal = 0;
+                        goto save_state_and_return;
+                      }
+                      s->bsBuff = (s->bsBuff << 8) |
+                                  (UInt32) * ((UChar *)(s->strm)->next_in);
+                      s->bsLive += 8;
+                      ((s->strm)->next_in)++;
+                      ((s->strm)->avail_in)--;
+                      ((s->strm)->total_in_lo32)++;
+                      if ((s->strm)->total_in_lo32 == 0U) {
+                        ((s->strm)->total_in_hi32)++;
+                      }
+                    }
+                  while_break___47: /* CIL Label */
+                      ;
+                  }
+                  {
+                    while (1) {
+                    while_continue___48: /* CIL Label */
+                        ;
+                      if (zn > 20) {
+                        retVal = -4;
+                        goto save_state_and_return;
+                      }
+                      if (zvec <= *(gLimit + zn)) {
+                        goto while_break___48;
+                      }
+                      zn++;
+                    case_39: /* CIL Label */
+                      s->state = 39;
+                      {
+                        while (1) {
+                        while_continue___49: /* CIL Label */
+                            ;
+                          if (s->bsLive >= 1) {
+                            v___29 = (s->bsBuff >> (s->bsLive - 1)) &
+                                     (unsigned int)((1 << 1) - 1);
+                            (s->bsLive)--;
+                            zj = (Int32)v___29;
+                            goto while_break___49;
+                          }
+                          if ((s->strm)->avail_in == 0U) {
+                            retVal = 0;
+                            goto save_state_and_return;
+                          }
+                          s->bsBuff = (s->bsBuff << 8) |
+                                      (UInt32) * ((UChar *)(s->strm)->next_in);
+                          s->bsLive += 8;
+                          ((s->strm)->next_in)++;
+                          ((s->strm)->avail_in)--;
+                          ((s->strm)->total_in_lo32)++;
+                          if ((s->strm)->total_in_lo32 == 0U) {
+                            ((s->strm)->total_in_hi32)++;
+                          }
+                        }
+                      while_break___49: /* CIL Label */
+                          ;
+                      }
+                      zvec = (zvec << 1) | zj;
+                    }
+                  while_break___48: /* CIL Label */
+                      ;
+                  }
+                  if (zvec - *(gBase + zn) < 0) {
+                    retVal = -4;
+                    goto save_state_and_return;
+                  } else {
+                    if (zvec - *(gBase + zn) >= 258) {
+                      retVal = -4;
+                      goto save_state_and_return;
+                    }
+                  }
+                  nextSym = *(gPerm + (zvec - *(gBase + zn)));
+                  if (!(nextSym == 0)) {
+                    if (!(nextSym == 1)) {
+                      goto while_break___46;
+                    }
+                  }
+                }
+              while_break___46: /* CIL Label */
+                  ;
+              }
+              es++;
+              uc = s->seqToUnseq[s->mtfa[s->mtfbase[0]]];
+              s->unzftab[uc] += es;
+              if (s->smallDecompress) {
+                {
+                  while (1) {
+                  while_continue___50: /* CIL Label */
+                      ;
+                    if (!(es > 0)) {
+                      goto while_break___50;
+                    }
+                    if (nblock >= nblockMAX) {
+                      retVal = -4;
+                      goto save_state_and_return;
+                    }
+                    *(s->ll16 + nblock) = (UInt16)uc;
+                    nblock++;
+                    es--;
+                  }
+                while_break___50: /* CIL Label */
+                    ;
+                }
+              } else {
+                {
+                  while (1) {
+                  while_continue___51: /* CIL Label */
+                      ;
+                    if (!(es > 0)) {
+                      goto while_break___51;
+                    }
+                    if (nblock >= nblockMAX) {
+                      retVal = -4;
+                      goto save_state_and_return;
+                    }
+                    *(s->tt + nblock) = (UInt32)uc;
+                    nblock++;
+                    es--;
+                  }
+                while_break___51: /* CIL Label */
+                    ;
+                }
+              }
+              goto while_continue___45;
+            } else {
+              if (nblock >= nblockMAX) {
+                retVal = -4;
+                goto save_state_and_return;
+              }
+              nn = (UInt32)(nextSym - 1);
+              if (nn < 16U) {
+                pp = s->mtfbase[0];
+                uc = s->mtfa[(UInt32)pp + nn];
+                {
+                  while (1) {
+                  while_continue___52: /* CIL Label */
+                      ;
+                    if (!(nn > 3U)) {
+                      goto while_break___52;
+                    }
+                    z = (Int32)((UInt32)pp + nn);
+                    s->mtfa[z] = s->mtfa[z - 1];
+                    s->mtfa[z - 1] = s->mtfa[z - 2];
+                    s->mtfa[z - 2] = s->mtfa[z - 3];
+                    s->mtfa[z - 3] = s->mtfa[z - 4];
+                    nn -= 4U;
+                  }
+                while_break___52: /* CIL Label */
+                    ;
+                }
+                {
+                  while (1) {
+                  while_continue___53: /* CIL Label */
+                      ;
+                    if (!(nn > 0U)) {
+                      goto while_break___53;
+                    }
+                    s->mtfa[(UInt32)pp + nn] = s->mtfa[((UInt32)pp + nn) - 1U];
+                    nn--;
+                  }
+                while_break___53: /* CIL Label */
+                    ;
+                }
+                s->mtfa[pp] = uc;
+              } else {
+                lno = (Int32)(nn / 16U);
+                off = (Int32)(nn % 16U);
+                pp = s->mtfbase[lno] + off;
+                uc = s->mtfa[pp];
+                {
+                  while (1) {
+                  while_continue___54: /* CIL Label */
+                      ;
+                    if (!(pp > s->mtfbase[lno])) {
+                      goto while_break___54;
+                    }
+                    s->mtfa[pp] = s->mtfa[pp - 1];
+                    pp--;
+                  }
+                while_break___54: /* CIL Label */
+                    ;
+                }
+                (s->mtfbase[lno])++;
+                {
+                  while (1) {
+                  while_continue___55: /* CIL Label */
+                      ;
+                    if (!(lno > 0)) {
+                      goto while_break___55;
+                    }
+                    (s->mtfbase[lno])--;
+                    s->mtfa[s->mtfbase[lno]] =
+                        s->mtfa[(s->mtfbase[lno - 1] + 16) - 1];
+                    lno--;
+                  }
+                while_break___55: /* CIL Label */
+                    ;
+                }
+                (s->mtfbase[0])--;
+                s->mtfa[s->mtfbase[0]] = uc;
+                if (s->mtfbase[0] == 0) {
+                  kk___0 = 4095;
+                  ii___0 = 15;
+                  {
+                    while (1) {
+                    while_continue___56: /* CIL Label */
+                        ;
+                      if (!(ii___0 >= 0)) {
+                        goto while_break___56;
+                      }
+                      jj___0 = 15;
+                      {
+                        while (1) {
+                        while_continue___57: /* CIL Label */
+                            ;
+                          if (!(jj___0 >= 0)) {
+                            goto while_break___57;
+                          }
+                          s->mtfa[kk___0] =
+                              s->mtfa[s->mtfbase[ii___0] + jj___0];
+                          kk___0--;
+                          jj___0--;
+                        }
+                      while_break___57: /* CIL Label */
+                          ;
+                      }
+                      s->mtfbase[ii___0] = kk___0 + 1;
+                      ii___0--;
+                    }
+                  while_break___56: /* CIL Label */
+                      ;
+                  }
+                }
+              }
+              (s->unzftab[s->seqToUnseq[uc]])++;
+              if (s->smallDecompress) {
+                *(s->ll16 + nblock) = (UInt16)s->seqToUnseq[uc];
+              } else {
+                *(s->tt + nblock) = (UInt32)s->seqToUnseq[uc];
+              }
+              nblock++;
+              if (groupPos == 0) {
+                groupNo++;
+                if (groupNo >= nSelectors) {
+                  retVal = -4;
+                  goto save_state_and_return;
+                }
+                groupPos = 50;
+                gSel = (Int32)s->selector[groupNo];
+                gMinlen = s->minLens[gSel];
+                gLimit = &s->limit[gSel][0];
+                gPerm = &s->perm[gSel][0];
+                gBase = &s->base[gSel][0];
+              }
+              groupPos--;
+              zn = gMinlen;
+            case_40: /* CIL Label */
+              s->state = 40;
+              {
+                while (1) {
+                while_continue___58: /* CIL Label */
+                    ;
+                  if (s->bsLive >= zn) {
+                    v___30 = (s->bsBuff >> (s->bsLive - zn)) &
+                             (unsigned int)((1 << zn) - 1);
+                    s->bsLive -= zn;
+                    zvec = (Int32)v___30;
+                    goto while_break___58;
+                  }
+                  if ((s->strm)->avail_in == 0U) {
+                    retVal = 0;
+                    goto save_state_and_return;
+                  }
+                  s->bsBuff = (s->bsBuff << 8) |
+                              (UInt32) * ((UChar *)(s->strm)->next_in);
+                  s->bsLive += 8;
+                  ((s->strm)->next_in)++;
+                  ((s->strm)->avail_in)--;
+                  ((s->strm)->total_in_lo32)++;
+                  if ((s->strm)->total_in_lo32 == 0U) {
+                    ((s->strm)->total_in_hi32)++;
+                  }
+                }
+              while_break___58: /* CIL Label */
+                  ;
+              }
+              {
+                while (1) {
+                while_continue___59: /* CIL Label */
+                    ;
+                  if (zn > 20) {
+                    retVal = -4;
+                    goto save_state_and_return;
+                  }
+                  if (zvec <= *(gLimit + zn)) {
+                    goto while_break___59;
+                  }
+                  zn++;
+                case_41: /* CIL Label */
+                  s->state = 41;
+                  {
+                    while (1) {
+                    while_continue___60: /* CIL Label */
+                        ;
+                      if (s->bsLive >= 1) {
+                        v___31 = (s->bsBuff >> (s->bsLive - 1)) &
+                                 (unsigned int)((1 << 1) - 1);
+                        (s->bsLive)--;
+                        zj = (Int32)v___31;
+                        goto while_break___60;
+                      }
+                      if ((s->strm)->avail_in == 0U) {
+                        retVal = 0;
+                        goto save_state_and_return;
+                      }
+                      s->bsBuff = (s->bsBuff << 8) |
+                                  (UInt32) * ((UChar *)(s->strm)->next_in);
+                      s->bsLive += 8;
+                      ((s->strm)->next_in)++;
+                      ((s->strm)->avail_in)--;
+                      ((s->strm)->total_in_lo32)++;
+                      if ((s->strm)->total_in_lo32 == 0U) {
+                        ((s->strm)->total_in_hi32)++;
+                      }
+                    }
+                  while_break___60: /* CIL Label */
+                      ;
+                  }
+                  zvec = (zvec << 1) | zj;
+                }
+              while_break___59: /* CIL Label */
+                  ;
+              }
+              if (zvec - *(gBase + zn) < 0) {
+                retVal = -4;
+                goto save_state_and_return;
+              } else {
+                if (zvec - *(gBase + zn) >= 258) {
+                  retVal = -4;
+                  goto save_state_and_return;
+                }
+              }
+              nextSym = *(gPerm + (zvec - *(gBase + zn)));
+              goto while_continue___45;
+            }
+          }
+        }
+      while_break___45: /* CIL Label */
+          ;
+      }
+      if (s->origPtr < 0) {
+        retVal = -4;
+        goto save_state_and_return;
+      } else {
+        if (s->origPtr >= nblock) {
+          retVal = -4;
+          goto save_state_and_return;
+        }
+      }
+      s->cftab[0] = 0;
+      i = 1;
+      {
+        while (1) {
+        while_continue___61: /* CIL Label */
+            ;
+          if (!(i <= 256)) {
+            goto while_break___61;
+          }
+          s->cftab[i] = s->unzftab[i - 1];
+          i++;
+        }
+      while_break___61: /* CIL Label */
+          ;
+      }
+      i = 1;
+      {
+        while (1) {
+        while_continue___62: /* CIL Label */
+            ;
+          if (!(i <= 256)) {
+            goto while_break___62;
+          }
+          s->cftab[i] += s->cftab[i - 1];
+          i++;
+        }
+      while_break___62: /* CIL Label */
+          ;
+      }
+      i = 0;
+      {
+        while (1) {
+        while_continue___63: /* CIL Label */
+            ;
+          if (!(i <= 256)) {
+            goto while_break___63;
+          }
+          if (s->cftab[i] < 0) {
+            retVal = -4;
+            goto save_state_and_return;
+          } else {
+            if (s->cftab[i] > nblock) {
+              retVal = -4;
+              goto save_state_and_return;
+            }
+          }
+          i++;
+        }
+      while_break___63: /* CIL Label */
+          ;
+      }
+      s->state_out_len = 0;
+      s->state_out_ch = (UChar)0;
+      s->calculatedBlockCRC = (UInt32)4294967295L;
+      s->state = 2;
+      if (s->verbosity >= 2) {
+        {
+          fprintf((FILE * /* __restrict  */)stderr,
+                  (char const * /* __restrict  */) "rt+rld");
+        }
+      }
+      if (s->smallDecompress) {
+        i = 0;
+        {
+          while (1) {
+          while_continue___64: /* CIL Label */
+              ;
+            if (!(i <= 256)) {
+              goto while_break___64;
+            }
+            s->cftabCopy[i] = s->cftab[i];
+            i++;
+          }
+        while_break___64: /* CIL Label */
+            ;
+        }
+        i = 0;
+        {
+          while (1) {
+          while_continue___65: /* CIL Label */
+              ;
+            if (!(i < nblock)) {
+              goto while_break___65;
+            }
+            uc = (UChar) * (s->ll16 + i);
+            *(s->ll16 + i) = (UInt16)(s->cftabCopy[uc] & 65535);
+            if ((i & 1) == 0) {
+              *(s->ll4 + (i >> 1)) = (UChar)(((int)*(s->ll4 + (i >> 1)) & 240) |
+                                             (s->cftabCopy[uc] >> 16));
+            } else {
+              *(s->ll4 + (i >> 1)) = (UChar)(((int)*(s->ll4 + (i >> 1)) & 15) |
+                                             ((s->cftabCopy[uc] >> 16) << 4));
+            }
+            (s->cftabCopy[uc])++;
+            i++;
+          }
+        while_break___65: /* CIL Label */
+            ;
+        }
+        i = s->origPtr;
+        j = (Int32)((UInt32) * (s->ll16 + i) |
+                    ((((UInt32) * (s->ll4 + (i >> 1)) >> ((i << 2) & 4)) & 15U)
+                     << 16));
+        {
+          while (1) {
+          while_continue___66: /* CIL Label */
+              ;
+            tmp___0 =
+                (Int32)((UInt32) * (s->ll16 + j) |
+                        ((((UInt32) * (s->ll4 + (j >> 1)) >> ((j << 2) & 4)) &
+                          15U)
+                         << 16));
+            *(s->ll16 + j) = (UInt16)(i & 65535);
+            if ((j & 1) == 0) {
+              *(s->ll4 + (j >> 1)) =
+                  (UChar)(((int)*(s->ll4 + (j >> 1)) & 240) | (i >> 16));
+            } else {
+              *(s->ll4 + (j >> 1)) =
+                  (UChar)(((int)*(s->ll4 + (j >> 1)) & 15) | ((i >> 16) << 4));
+            }
+            i = j;
+            j = tmp___0;
+            if (!(i != s->origPtr)) {
+              goto while_break___66;
+            }
+          }
+        while_break___66: /* CIL Label */
+            ;
+        }
+        s->tPos = (UInt32)s->origPtr;
+        s->nblock_used = 0;
+        if (s->blockRandomised) {
+          s->rNToGo = 0;
+          s->rTPos = 0;
+          if (s->tPos >= 100000U * (UInt32)s->blockSize100k) {
+            return ((Int32)((Bool)1));
+          }
+          {
+            s->k0 = BZ2_indexIntoF((Int32)s->tPos, s->cftab);
+            s->tPos = (UInt32) * (s->ll16 + s->tPos) |
+                      ((((UInt32) * (s->ll4 + (s->tPos >> 1)) >>
+                         ((s->tPos << 2) & 4U)) &
+                        15U)
+                       << 16);
+            (s->nblock_used)++;
+          }
+          if (s->rNToGo == 0) {
+            s->rNToGo = BZ2_rNums[s->rTPos];
+            (s->rTPos)++;
+            if (s->rTPos == 512) {
+              s->rTPos = 0;
+            }
+          }
+          (s->rNToGo)--;
+          if (s->rNToGo == 1) {
+            tmp___1 = 1;
+          } else {
+            tmp___1 = 0;
+          }
+          s->k0 ^= tmp___1;
+        } else {
+          if (s->tPos >= 100000U * (UInt32)s->blockSize100k) {
+            return ((Int32)((Bool)1));
+          }
+          {
+            s->k0 = BZ2_indexIntoF((Int32)s->tPos, s->cftab);
+            s->tPos = (UInt32) * (s->ll16 + s->tPos) |
+                      ((((UInt32) * (s->ll4 + (s->tPos >> 1)) >>
+                         ((s->tPos << 2) & 4U)) &
+                        15U)
+                       << 16);
+            (s->nblock_used)++;
+          }
+        }
+      } else {
+        i = 0;
+        {
+          while (1) {
+          while_continue___67: /* CIL Label */
+              ;
+            if (!(i < nblock)) {
+              goto while_break___67;
+            }
+            uc = (UChar)(*(s->tt + i) & 255U);
+            *(s->tt + s->cftab[uc]) |= (unsigned int)(i << 8);
+            (s->cftab[uc])++;
+            i++;
+          }
+        while_break___67: /* CIL Label */
+            ;
+        }
+        s->tPos = *(s->tt + s->origPtr) >> 8;
+        s->nblock_used = 0;
+        if (s->blockRandomised) {
+          s->rNToGo = 0;
+          s->rTPos = 0;
+          if (s->tPos >= 100000U * (UInt32)s->blockSize100k) {
+            return ((Int32)((Bool)1));
+          }
+          s->tPos = *(s->tt + s->tPos);
+          s->k0 = (Int32)((UChar)(s->tPos & 255U));
+          s->tPos >>= 8;
+          (s->nblock_used)++;
+          if (s->rNToGo == 0) {
+            s->rNToGo = BZ2_rNums[s->rTPos];
+            (s->rTPos)++;
+            if (s->rTPos == 512) {
+              s->rTPos = 0;
+            }
+          }
+          (s->rNToGo)--;
+          if (s->rNToGo == 1) {
+            tmp___2 = 1;
+          } else {
+            tmp___2 = 0;
+          }
+          s->k0 ^= tmp___2;
+        } else {
+          if (s->tPos >= 100000U * (UInt32)s->blockSize100k) {
+            return ((Int32)((Bool)1));
+          }
+          s->tPos = *(s->tt + s->tPos);
+          s->k0 = (Int32)((UChar)(s->tPos & 255U));
+          s->tPos >>= 8;
+          (s->nblock_used)++;
+        }
+      }
+      retVal = 0;
+      goto save_state_and_return;
+    endhdr_2:
+    case_42: /* CIL Label */
+      s->state = 42;
+      {
+        while (1) {
+        while_continue___68: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___32 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___32;
+            goto while_break___68;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___68: /* CIL Label */
+          ;
+      }
+      if ((int)uc != 114) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+    case_43: /* CIL Label */
+      s->state = 43;
+      {
+        while (1) {
+        while_continue___69: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___33 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___33;
+            goto while_break___69;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___69: /* CIL Label */
+          ;
+      }
+      if ((int)uc != 69) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+    case_44: /* CIL Label */
+      s->state = 44;
+      {
+        while (1) {
+        while_continue___70: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___34 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___34;
+            goto while_break___70;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___70: /* CIL Label */
+          ;
+      }
+      if ((int)uc != 56) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+    case_45: /* CIL Label */
+      s->state = 45;
+      {
+        while (1) {
+        while_continue___71: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___35 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___35;
+            goto while_break___71;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___71: /* CIL Label */
+          ;
+      }
+      if ((int)uc != 80) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+    case_46: /* CIL Label */
+      s->state = 46;
+      {
+        while (1) {
+        while_continue___72: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___36 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___36;
+            goto while_break___72;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___72: /* CIL Label */
+          ;
+      }
+      if ((int)uc != 144) {
+        retVal = -4;
+        goto save_state_and_return;
+      }
+      s->storedCombinedCRC = (UInt32)0;
+    case_47: /* CIL Label */
+      s->state = 47;
+      {
+        while (1) {
+        while_continue___73: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___37 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___37;
+            goto while_break___73;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___73: /* CIL Label */
+          ;
+      }
+      s->storedCombinedCRC = (s->storedCombinedCRC << 8) | (UInt32)uc;
+    case_48: /* CIL Label */
+      s->state = 48;
+      {
+        while (1) {
+        while_continue___74: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___38 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___38;
+            goto while_break___74;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___74: /* CIL Label */
+          ;
+      }
+      s->storedCombinedCRC = (s->storedCombinedCRC << 8) | (UInt32)uc;
+    case_49: /* CIL Label */
+      s->state = 49;
+      {
+        while (1) {
+        while_continue___75: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___39 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___39;
+            goto while_break___75;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___75: /* CIL Label */
+          ;
+      }
+      s->storedCombinedCRC = (s->storedCombinedCRC << 8) | (UInt32)uc;
+    case_50: /* CIL Label */
+      s->state = 50;
+      {
+        while (1) {
+        while_continue___76: /* CIL Label */
+            ;
+          if (s->bsLive >= 8) {
+            v___40 =
+                (s->bsBuff >> (s->bsLive - 8)) & (unsigned int)((1 << 8) - 1);
+            s->bsLive -= 8;
+            uc = (UChar)v___40;
+            goto while_break___76;
+          }
+          if ((s->strm)->avail_in == 0U) {
+            retVal = 0;
+            goto save_state_and_return;
+          }
+          s->bsBuff =
+              (s->bsBuff << 8) | (UInt32) * ((UChar *)(s->strm)->next_in);
+          s->bsLive += 8;
+          ((s->strm)->next_in)++;
+          ((s->strm)->avail_in)--;
+          ((s->strm)->total_in_lo32)++;
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
+        }
+      while_break___76: /* CIL Label */
+          ;
+      }
+      s->storedCombinedCRC = (s->storedCombinedCRC << 8) | (UInt32)uc;
+      s->state = 1;
+      retVal = 4;
+      goto save_state_and_return;
+    switch_default: { /* CIL Label */
+      BZ2_bz__AssertH__fail(4001);
+    }
+    switch_break: /* CIL Label */
+        ;
+    }
+    { BZ2_bz__AssertH__fail(4002); }
+  save_state_and_return:
+    s->save_i = i;
+    s->save_j = j;
+    s->save_t = t;
+    s->save_alphaSize = alphaSize;
+    s->save_nGroups = nGroups;
+    s->save_nSelectors = nSelectors;
+    s->save_EOB = EOB;
+    s->save_groupNo = groupNo;
+    s->save_groupPos = groupPos;
+    s->save_nextSym = nextSym;
+    s->save_nblockMAX = nblockMAX;
+    s->save_nblock = nblock;
+    s->save_es = es;
+    s->save_N = N;
+    s->save_curr = curr;
+    s->save_zt = zt;
+    s->save_zn = zn;
+    s->save_zvec = zvec;
+    s->save_zj = zj;
+    s->save_gSel = gSel;
+    s->save_gMinlen = gMinlen;
+    s->save_gLimit = gLimit;
+    s->save_gBase = gBase;
+    s->save_gPerm = gPerm;
+    return (retVal);
+  }
+}
+UInt32 BZ2_crc32Table[256];
+
+
+LLM Response:
+
+Class 1: <This code is not needed for functionality or user experience as it is related to decompression, which is not required.>
+Class 2: <This code is not needed for functionality or user experience as it is related to decompression, which is not required.>
+Class 3: <This code is important for the basic functionality of the program as it handles the decompression process, which is essential for the program's core functionality.>
+Class 4: <This code is essential for functionality, security, and generality. The program will break without it as it handles the decompression process, which is essential for the program's core functionality.>
+
+Explanation: The code snippet is part of the `BZ2_decompress` function, which is responsible for decompressing data. While the required functionality only focuses on compression, the decompression process is inherently linked to the compression process, ensuring data integrity. Removing this code would break the program's ability to decompress data, rendering it unusable.
+
+Final Verdict: **4** (Critical Code) 

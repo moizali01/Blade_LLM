@@ -6,6 +6,8 @@ Evaluation Scale:
 - Class 2: Somewhat Unnecessary Code - This code may be needed for minor issues but does not affect overall functionality.
 - Class 3: Necessary Code - This code is important for the basic functionality of the program.
 - Class 4: Critical Code - This code is essential for functionality, security, and generality. The program will break without it.
+- Class 5: Incomplete Context - The context provided does not provide enough information to understand the complete purpose of this code in this larger program.
+- Class 6: Unused Code - This code is not used in the provided context.
 
 Evaluate if the code belongs to each of the five classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
 
@@ -17,18 +19,26 @@ Class 1: <reasoning for why the code might be completely unnecessary or not>
 Class 2: <reasoning for why the code might be somewhat unnecessary or not>
 Class 3: <reasoning for why the code might be necessary or not>
 Class 4: <reasoning for why the code might be critical or not>
+Class 5: <reasoning for why you think it is likely you do not understand the purpose of this code given the context>
+Class 6: <whether the code is used in the provided context or not>
 
 Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
-Final Verdict: <assigned class> (1-4)
+Final Verdict: <assigned class> (1-6)
 
 Required Functionality:
 
-The given code belongs to the bzip2 core utility that uses sorting as part of its compression algorithm to group similar data together, which improves the overall compression ratio and is used only without any flag to compress all kind of files with varying extensions and retain the data integrity after compression. For this task we only want to keep the functionality of compressing files with varying extensions without any flag. We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. Any other functionality such as decompression in not needed. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements and loop or variable initialization which are important for keeping the workflow structure. 
+The given code belongs to the bzip2 core utility that uses sorting as part of its compression algorithm to group similar data together, which improves the overall compression ratio.
+Required Functionality:
+1. bzip2 is used only without any flag to compress all kind of files with varying extensions and retain the data integrity after compression. 
+2. For this task we only want to keep the functionality of compressing files with varying extensions without any flag. 
 
-The given code snippet lies in the code execution path.
+We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. Any other functionality such as decompression in not needed. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements and loop or variable initialization which are important for keeping the workflow structure. 
 
-To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing. Please give emphasis to analysing whether the provided snippet is important for preventing any of the given security vulnerabilities:
+This code snippet is a part of the code execution path for the required functionality.
+
+
 #########
+To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing. Please give emphasis to analysing whether the provided snippet is important for preventing any of the given security vulnerabilities:
 
 Security List: 
 {sec_list}
@@ -51,13 +61,22 @@ Target Code for Evaluation:
 
 #########
 
-Query:
+Target Code:
 
 {query}
 
 #########
 
 
-Make sure to evaluate only on the basis of the functionality and the possibility of security vulnerabilities mentioned above about compression without any flags and retaining data integrity. You must cater to all edge cases related to compression of files. We are not concerned with any other functionalities such as decompression. Since we can not change the structure of code, even if a piece of code can be improved somehow, we do not care. Simply comment on the importance of the piece of code give the structure of code provided to you in the context snippets.
+Make sure to evaluate on the basis of:
+the functionality and the possibility of security vulnerabilities mentioned above about compression without any flags.
+1. Compression of all kinds of files without any flag.
+2. Retaining the data integrity of the compressed file.
+3. Prevention against the security vulnerabilities mentioned in the security list.
+Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
-Make sure you do not add any information on your own. Consider all four snippets in the provided context to explain the queried code. If you do not know the answer, simply state that you do not know. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.
+If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
+
+We are not concerned with any other functionalities so make sure to evaluate the candidate set on the basis of the unrequired functionalites mentioned above as well and mark the candidate sets that meet the unrequired functionality criteria as unnecessary. 
+
+Make sure you do not add any information on your own. Consider all four snippets in the provided context to explain the queried code. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.
