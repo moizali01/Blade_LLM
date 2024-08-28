@@ -3,18 +3,19 @@
 PROGRAM_NAME=date-8.21
 DIR=$(pwd)
 C_FILE=$DIR/date-util.c.blade.c
+# C_FILE=$DIR/date-blade.c
 ORIGINAL_FILE=$DIR/date-org.c
 ORIGINAL_BINARY=$DIR/date-original
 REDUCED_BINARY=$DIR/$PROGRAM_NAME.rbin
 CC=clang
 TIMEOUT_LIMIT="-k 2 2"
-LOG=$DIR/log.txt
+LOG=$DIR/log
 TOTAL_TESTS=0
 PASSED_TESTS=0
 
 # Function to clean up test files
 function cleanup_test_files() {
-    rm -f $DIR/temp_output.txt $DIR/expected_output.txt
+    rm -f $DIR/temp_output.txt $DIR/expected_output.txt $DIR/combined_output.txt
 }
 
 # Function to run a single test case
@@ -25,23 +26,34 @@ function run_test_case() {
     
     ((TOTAL_TESTS++))
 
-    # Run the test command
-    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY "${command[@]}" > $DIR/temp_output.txt 2> /dev/null; }
-    r=$?
-    if [[ $r -ne 0 ]]; then
+    # Run both commands simultaneously and capture their outputs
+    { 
+        paste <(timeout $TIMEOUT_LIMIT $REDUCED_BINARY "${command[@]}" 2>/dev/null) \
+              <(timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY "${command[@]}" 2>/dev/null)
+    } > $DIR/combined_output.txt
+
+    # Check if either command timed out or failed
+    if [[ ${PIPESTATUS[0]} -ne 0 || ${PIPESTATUS[1]} -ne 0 ]]; then
         echo "Test failed: $description"
+        echo "One or both commands failed or timed out."
         return 1
     fi
 
-    # Run the original command to get the expected output
-    { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY "${command[@]}" > $DIR/expected_output.txt 2> /dev/null; }
+    # Separate the outputs
+    cut -f1 $DIR/combined_output.txt > $DIR/temp_output.txt
+    cut -f2 $DIR/combined_output.txt > $DIR/expected_output.txt
+
+    # Compare the outputs
     diff $DIR/temp_output.txt $DIR/expected_output.txt
     
     if [[ $? -eq 0 ]]; then
         echo "Test passed: $description"
+        # echo "Output: $(cat $DIR/temp_output.txt)"
         ((PASSED_TESTS++))
     else
         echo "Test failed: $description"
+        # echo "Reduced output: $(cat $DIR/temp_output.txt)"
+        # echo "Original output: $(cat $DIR/expected_output.txt)"
     fi
 
     cleanup_test_files
@@ -92,6 +104,7 @@ function run_date_calculation_tests() {
     # Edge case tests
     run_test_case -d "2024-01-31 + 1 month" "+%Y-%m-%d" "End-of-month transition: Jan 31 to Feb"
     run_test_case -d "2024-04-30 + 1 day" "+%Y-%m-%d" "End-of-month transition: Apr 30 to May 1"
+
     
     # Special case tests
     run_test_case -d "2023-12-31 + 1 day" "+%Y-%m-%d" "New Year's Eve to New Year's Day"
@@ -117,6 +130,51 @@ function run_generality_tests() {
     run_test_case -d "yesterday" "+%F +%T" "Combination of date calculation and formatting"
     run_test_case -d "2024-12-31 + 1 day" "+%A, %d %B %Y" "Calculate New Year's Day with full date formatting"
 }
+function run_edge_case_tests() {
+    echo
+    echo "Running edge case tests..."
+
+    # Leap year tests
+    run_test_case -d "2000-02-29" "+%Y-%m-%d" "Verify leap year 2000"
+    run_test_case -d "2100-02-28 + 1 day" "+%Y-%m-%d" "Verify non-leap year 2100"
+    run_test_case -d "2400-02-29" "+%Y-%m-%d" "Verify leap year 2400"
+
+    # Date rollover tests
+    run_test_case -d "2023-01-31 + 1 month" "+%Y-%m-%d" "Month rollover in a 31-day month"
+    run_test_case -d "2023-03-31 - 1 month" "+%Y-%m-%d" "Month rollback from 31 to 28"
+
+    # Large date ranges
+    run_test_case -d "9999-12-31" "+%Y-%m-%d" "Far future date"
+    run_test_case -d "0000-01-01" "+%Y-%m-%d" "Earliest representable date"
+    run_test_case -d "@-62167219200" "+%Y-%m-%d" "Unix epoch for 0000-01-01"
+
+   
+}
+
+function run_extended_generality_tests() {
+    echo
+    echo "Running extended generality tests..."
+
+    # Various date input formats
+    run_test_case -d "@1631234567" "+%Y-%m-%d %H:%M:%S" "Unix timestamp input"
+    run_test_case -d "15 Sep 2023 14:30:00" "+%Y-%m-%d %H:%M:%S" "Human-readable date input"
+
+    # Different output formats
+    run_test_case -d "now" "+%s.%M"  "Unix timestamp with microseconds"
+
+    # Relative date expressions
+    run_test_case -d "now + 3 months 2 weeks 4 days" "+%Y-%m-%d" "Complex relative date calculation"
+    run_test_case -d "today - 100 years" "+%Y-%m-%d" "Long-term past date calculation"
+
+    # Combining multiple operations
+    run_test_case -d "2023-01-01 + 1 year - 1 day" "+%Y-%m-%d" "Multiple date operations"
+    run_test_case -d "last Monday + 2 weeks" "+%Y-%m-%d" "Relative and fixed date combination"
+
+    # Date comparisons
+    run_test_case -d "2023-01-01" -d "2024-01-01" "+%Y-%m-%d" "Compare two dates"
+
+}
+
 
 # Function to compile and test the binaries
 function compile_and_test() {
@@ -124,14 +182,17 @@ function compile_and_test() {
     echo "Compiling binaries..."
     
     # Compile the original and reduced binaries
-    $CC $ORIGINAL_FILE -o $ORIGINAL_BINARY >&$LOG || exit 1
-    $CC $C_FILE -o $REDUCED_BINARY >&$LOG || exit 1
+    $CC -w $ORIGINAL_FILE -o $ORIGINAL_BINARY >&$LOG || exit 1
+    $CC -w $C_FILE -o $REDUCED_BINARY >&$LOG || exit 1
 
     # Run the tests
     run_format_tests
     run_date_calculation_tests
     run_generality_tests
+    run_edge_case_tests
+    run_extended_generality_tests
 
+    echo
     echo "Total tests run: $TOTAL_TESTS"
     echo "Total tests passed: $PASSED_TESTS"
     if [[ $TOTAL_TESTS -eq $PASSED_TESTS ]]; then
@@ -150,6 +211,7 @@ function clean_env() {
 function main() {
     clean_env
     compile_and_test || exit 1
+    
     clean_env
 }
 

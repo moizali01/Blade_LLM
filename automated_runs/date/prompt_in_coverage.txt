@@ -9,7 +9,7 @@ Evaluation Scale:
 - Class 5: Incomplete Context - The context provided does not provide enough information to understand the complete purpose of this code in this larger program.
 - Class 6: Unused Code - This code is not used in the provided context.
 
-Evaluate if the code belongs to each of the five classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
+Evaluate if the code belongs to each of the six classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
 
 Strictly follow the answer format below:
 

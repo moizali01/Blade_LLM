@@ -5,7 +5,7 @@ from threading import Thread
 import shutil
 
 # global variable
-# filename = "/Blade_LLM/automated_runs/sort/gen/sort-util.c.blade.c"
+# filename = ""
 filename = input("Enter the filename: ")
 
 def run_cppcheck():
@@ -45,23 +45,51 @@ def parse_unused_functions(lines):
             unused_functions.append((int(match.group(1)), match.group(2)))
     return unused_functions
 
+def parse_unreachable_code(lines):
+    # Parse the cppcheck output to find lines with unreachable code
+    unreachable_lines = []
+    pattern = rf'{re.escape(filename)}:(\d+):\d+: style: Statements following .+ will never be executed\. \[unreachableCode\]'
+    for line in lines:
+        match = re.search(pattern, line)
+        if match:
+            unreachable_lines.append((int(match.group(1)), "unreachablecode"))
+            # print(f"Unreachable code found at line {match.group(1)}")
+    
+    # find out if each line number is a single line or a block of code
+    filelines = ""
+    with open(filename, "r") as file:
+        filelines = file.readlines()
+
+    lines_to_remove = []
+    for line_number, _ in unreachable_lines:
+        if "{" in filelines[line_number - 1]:
+            function_start, function_end = find_function_boundaries(filelines, line_number)
+            print(f"Unreachable code found in block {function_start} to {function_end}")
+            lines_to_remove += [(i, "unreachablecode")for i in range(function_start + 1, function_end + 1)]
+        else:
+            print(f"Unreachable code found at line {line_number}")
+            lines_to_remove.append((line_number, "unreachablecode"))
+
+    return lines_to_remove
+
 def parse_unsused_warnings(lines):
     # Parse the cppcheck output to find lines with unused labels, struct members, and variables
     unused_lines = []
     patterns = [
         rf'{re.escape(filename)}:(\d+):\d+: style: Label .* is not used\. \[unusedLabel\]',
-        # rf'{re.escape(filename)}:(\d+):\d+: style: Unused variable: .* \[unusedVariable\]',
+        rf'{re.escape(filename)}:(\d+):\d+: style: Unused variable: .* \[unusedVariable\]',
         # rf'{re.escape(filename)}:(\d+):\d+: style: Variable .* is reassigned a value before the old one has been used\. \[redundantAssignment\]',
         # rf'{re.escape(filename)}:(\d+):\d+: style: Variable .* is not assigned a value\. \[unassignedVariable\]'
     ]
-    # for line in lines:
-    #     for pattern in patterns:
-    #         match = re.search(pattern, line)
-    #         if match:
-    #             unused_lines.append((int(match.group(1)), "unusedcode"))
+    for line in lines:
+        for pattern in patterns:
+            match = re.search(pattern, line)
+            if match:
+                unused_lines.append((int(match.group(1)), "unusedcode"))
 
     # find out the unused lines within unreachable functions
     unused_functions = parse_unused_functions(lines)
+    
     with open(filename, "r") as file:
         lines = file.readlines()
         for line_number, _ in unused_functions:
@@ -69,7 +97,7 @@ def parse_unsused_warnings(lines):
             unused_lines += [(i, "unusedfunction")for i in range(function_start + 1, function_end + 1)]
 
     # filter out the common occurances between the unused code and unused lines and place them back as unused functions
-    unused_function_lines = {line for line, code in unused_lines if code == 'unusedfunction'}
+    unused_function_lines = {line for line, code in unused_lines if (code == 'unusedfunction')}
     filtered_data = [(line, code) for line, code in unused_lines if not (code == 'unusedcode' and line in unused_function_lines)]
 
     return filtered_data
@@ -98,6 +126,7 @@ def modify_file_to_remove_unused_lines(line_numbers, action="remove"):
     with open(filename, "w") as file:
         file.writelines(lines)
 
+
 def deadcode_elimination():
     previous_total_lines = 0
     iterations = 0
@@ -110,7 +139,7 @@ def deadcode_elimination():
                 print("All dead code eliminated!")
                 break
             previous_total_lines = total_lines
-        print(f"Iteration: {iterations}")
+        print(f"Iteration: {iterations}\n")
         
         print("Starting the dead code elimination process...")
         run_cppcheck()
@@ -118,9 +147,16 @@ def deadcode_elimination():
         lines = read_cppcheck_output()
         unused_lines = parse_unsused_warnings(lines)
         if unused_lines:
-            # print("No more unused labels, struct members, and variables found.")
             modify_file_to_remove_unused_lines(unused_lines, action="remove")
 
+        print("Checking for unreachable code after dead-code removal...")
+        run_cppcheck()
+        lines = read_cppcheck_output()
+        unused_lines = parse_unreachable_code(lines)
+        print("Removing unreachable code...")
+        if unused_lines:
+            modify_file_to_remove_unused_lines(unused_lines, action="remove")
+                    
     # finally delete the cppcheck output file and run the test script
     subprocess.run("rm cppcheck_output.txt", shell=True)
 
@@ -254,6 +290,7 @@ def remove_insignificant_lines(file_path):
         file.writelines(current_lines)
 
 def redundant_line_removal():
+    run_clang_format()
     print("Running remove_comments...")
     remove_cluttered_code(filename)
 
@@ -277,7 +314,6 @@ def redundant_line_removal():
 
     run_clang_format()
     print(f"Processing completed for {filename}.")
-
 
 def run_clang_format():
     subprocess.run(["clang-format", "-style={ColumnLimit: 300, AllowShortFunctionsOnASingleLine: All, AllowShortIfStatementsOnASingleLine: true}", "-i", filename], capture_output=True, text=True)

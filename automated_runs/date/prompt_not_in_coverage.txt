@@ -9,7 +9,7 @@ Evaluation Scale:
 - Class 5: Incomplete Context - The context provided does not provide enough information to understand the complete purpose of this code in this larger program.
 - Class 6: Unused Code - This code is not used in the provided context.
 
-Evaluate if the code belongs to each of the five classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
+Evaluate if the code belongs to each of the six classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
 
 Strictly follow the answer format below:
 
@@ -87,7 +87,7 @@ Make sure to evaluate on the basis of:
 5. Date calculation lets you compute past or future dates (e.g., "yesterday," "next Monday", "2024-08-27 +5 days"). 
 6. Prevention against the security vulnerabilities mentioned in the security list.
 
-Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
+Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations. 
 
 If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
