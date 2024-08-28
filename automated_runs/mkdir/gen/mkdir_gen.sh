@@ -2,8 +2,8 @@
 
 BINARY_DIR="bins"
 LOG="log.txt"
-# C_FILE=mkdir-debloated.c.blade.c
-C_FILE=testing.c
+C_FILE=mkdir-debloated.c.blade.c
+# C_FILE=testing.c
 
 # Compile the binary once
 mkdir -p $BINARY_DIR

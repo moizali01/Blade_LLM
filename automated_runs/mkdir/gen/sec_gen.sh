@@ -140,23 +140,6 @@ run_test "Create directory with invalid permissions using -m" \
   "rm -rf $TEST_DIR/dir6" \
   1
 
-# run_test "Create directory with non-printable characters in name" \
-#   "$TEST_DIR/dir\\x01\\x02\\x03" \
-#   "" \
-#   "rm -rf $TEST_DIR/dir\\x01\\x02\\x03" \
-#   1
-
-# run_test "Create directory with special characters in name" \
-#   "$TEST_DIR/!@#\$%^&*()" \
-#   "" \
-#   "rm -rf $TEST_DIR/!@#\$%^&*()" \
-#   1
-
-# run_test "Create directory with a name containing spaces" \
-#   "\"$TEST_DIR/dir with spaces\"" \
-#   "" \
-#   "rm -rf \"$TEST_DIR/dir with spaces\""
-
 run_test "Create directory with a very long name" \
   "$TEST_DIR/$(printf 'a%.0s' {1..255})" \
   "" \
@@ -193,3 +176,4 @@ run_test "Create directory with backslash in the name" \
 cleanup
 echo "Tests run: $TOTAL_TESTS"
 echo "Tests passed: $PASSED_TESTS"
+cleanup
