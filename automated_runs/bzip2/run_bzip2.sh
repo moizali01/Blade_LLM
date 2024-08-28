@@ -49,21 +49,22 @@ cp bzip2-util.c.blade.c ../automated_runs/bzip2/bzip2-util.c.blade.c
 # clear
 
 # run generality cases
-cd $DIR
-mkdir test_generality
-cp bzip2-util.c.blade.c test_generality/bzip2-util.c.blade.c
-cp bzip2-org.c test_generality/bzip2-org.c
-cp generality.sh test_generality/generality.sh
-cp diff.py test_generality/diff.py
-cd test_generality
-chmod +x generality.sh
+# cd $DIR
+# mkdir test_generality
+# cp bzip2-util.c.blade.c test_generality/bzip2-util.c.blade.c
+# cp bzip2-org.c test_generality/bzip2-org.c
+# cp generality.sh test_generality/generality.sh
+# cp diff.py test_generality/diff.py
+# cd test_generality
+# chmod +x generality.sh
 
-./generality.sh
-cat log > generality_results.txt
-# clear
-cp bzip2-org.c bz2_org_copy.c
-python3 diff.py
-echo "Done"
+# # ./generality.sh
+# # cat log > generality_results.txt
+# cp generality_results.txt ../generality_results.txt
+# # clear
+# cp bzip2-org.c bz2_org_copy.c
+# python3 diff.py
+# echo "Done"
 
 
 exit 0
