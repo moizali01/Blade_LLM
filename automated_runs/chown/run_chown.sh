@@ -44,17 +44,20 @@ clear
 cd ../../src
 python3 blade.py -p target-program/chown-debloated.c -t target-program/chown_train.sh -u 1 -d 1
 cp chown-debloated.c.blade.c ../automated_runs/chown/chown-debloated.c.blade.c
+cp chown-debloated.c.blade.c ../automated_runs/chown/gen/chown-debloated.c.blade.c
 # clear
 
-# # run generality cases
-# cd $DIR
-# chmod +x mkdir_gen.sh
+# run generality cases
+cd $DIR/gen
+chmod +x chown_gen.sh
 
+# remove deadcode
+python3 deadcode.py
 
-# ./mkdir_gen.sh > generality_results.txt
-# clear
+./chown_gen.sh > generality_results.txt
+clear
 
-# echo "Results saved in generality_results.txt"
+echo "Results saved in generality_results.txt"
 
 exit 0
 

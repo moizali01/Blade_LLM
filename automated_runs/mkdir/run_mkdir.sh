@@ -53,7 +53,7 @@ cp mkdir-debloated.c.blade.c ../automated_runs/mkdir/gen/mkdir-debloated.c.blade
 # clear
 
 # add deadcode removal here
-# python3 deadcode_removal.py
+python3 deadcode_removal.py
 
 # run generality cases
 cd $DIR/gen
@@ -65,7 +65,7 @@ echo " " >> mkdir_generality_results.txt
 ./sec_gen.sh >> mkdir_generality_results.txt
 
 
-# echo "Results saved in mkdir_generality_results.txt"
+echo "Results saved in mkdir_generality_results.txt"
 
 exit 0
 

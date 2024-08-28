@@ -20,7 +20,7 @@ function run() {
     # Run the reduced binary and capture output, error, and directory listing
     reduced_output=$(mktemp)
     reduced_error=$(mktemp)
-    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY $1 testdir/file1 >"$reduced_output" 2>"$reduced_error"; } >&$LOG || exit 1
+    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY $1 testdir >"$reduced_output" 2>"$reduced_error"; } >&$LOG || exit 1
     r=$?
     if [[ $r -ne 0 ]]; then
         return 1
@@ -36,7 +36,7 @@ function run() {
     # Run the original binary and capture output, error, and directory listing
     original_output=$(mktemp)
     original_error=$(mktemp)
-    $ORIGINAL_BINARY $1 testdir/file1 >"$original_output" 2>"$original_error"
+    $ORIGINAL_BINARY $1 testdir >"$original_output" 2>"$original_error"
     temp2=$(ls -al testdir 2>/dev/null | cut -d ' ' -f 1,3,4)
 
     # Cleanup directory
@@ -66,7 +66,7 @@ function run() {
 }
 
 function args_test() {
-    # run "user1" || exit 1
+    run "user1" || exit 1
     run "user1:group1" || exit 1    
     # run ":group1" || exit 1
     return 0

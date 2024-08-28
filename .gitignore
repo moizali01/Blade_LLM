@@ -36,6 +36,8 @@ src/target-program/
 src/*.blade.c
 src/original.txt
 
+manual_testing/*.txt
+
 # Ignore environment files
 .env
 
