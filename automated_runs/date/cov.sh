@@ -11,20 +11,54 @@ LOG=$DIR/log.txt
 function run() {
     astyle -j -A4 $original_file >&$LOG
 
-    # Test case 1: Using -f flag to read dates from a file and display them
-    echo "2024-07-01" > $DIR/date_input.txt
-    LLVM_PROFILE_FILE="$DIR/profile1.profraw" timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -f $DIR/date_input.txt > /dev/null
+    # Test case 1: Formatting the current date in YYYY-MM-DD format
+    LLVM_PROFILE_FILE="$DIR/profile_format_date.profraw" timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY "+%Y-%m-%d" > /dev/null
+    r=$?
+    if [[ $r -ne 0 ]]; then
+        return 1
+    fi
 
-    # Test case 2: Using the -f flag to read dates from a file and display them
-    echo "2024-06-01" > $DIR/date_input.txt
-    echo "2024-07-02" >> $DIR/date_input.txt
-    LLVM_PROFILE_FILE="$DIR/profile2.profraw" timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -f $DIR/date_input.txt > /dev/null
+    # Test case 2: Formatting the current time in HH:MM:SS format
+    LLVM_PROFILE_FILE="$DIR/profile_format_time.profraw" timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY "+%H:%M:%S" > /dev/null
+    r=$?
+    if [[ $r -ne 0 ]]; then
+        return 1
+    fi
 
-    # Test case 3: Using the -f flag to read dates from a file and display them
-    echo "2021-02-07" > $DIR/date_input.txt
-    echo "2021-02-08" >> $DIR/date_input.txt
-    echo "2021-02-09" >> $DIR/date_input.txt
-    LLVM_PROFILE_FILE="$DIR/profile3.profraw" timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -f $DIR/date_input.txt > /dev/null
+    # Test case 3: Displaying the Unix timestamp
+    LLVM_PROFILE_FILE="$DIR/profile_unix_timestamp.profraw" timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY "+%s" > /dev/null
+    r=$?
+    if [[ $r -ne 0 ]]; then
+        return 1
+    fi
+
+    # Test case 4: Date calculation for "yesterday"
+    LLVM_PROFILE_FILE="$DIR/profile_yesterday.profraw" timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -d "yesterday" "+%Y-%m-%d" > /dev/null
+    r=$?
+    if [[ $r -ne 0 ]]; then
+        return 1
+    fi
+
+    # Test case 5: Date calculation for "next Monday"
+    LLVM_PROFILE_FILE="$DIR/profile_next_monday.profraw" timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -d "next Monday" "+%Y-%m-%d" > /dev/null
+    r=$?
+    if [[ $r -ne 0 ]]; then
+        return 1
+    fi
+
+    # Test case 6: Date calculation for "last year"
+    LLVM_PROFILE_FILE="$DIR/profile_last_year.profraw" timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -d "last year" "+%Y-%m-%d" > /dev/null
+    r=$?
+    if [[ $r -ne 0 ]]; then
+        return 1
+    fi
+
+    # Test case 7: Date calculation for "Adding 5 days"
+    LLVM_PROFILE_FILE="$DIR/profile_add_5_days.profraw" timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -d "2024-08-27 +5 days" "+%Y-%m-%d" > /dev/null
+    r=$?
+    if [[ $r -ne 0 ]]; then
+        return 1
+    fi
 
     return 0
 }

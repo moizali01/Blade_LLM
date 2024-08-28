@@ -43,9 +43,13 @@ cp date-util.c.blade.c ../automated_runs/date/gen/date-util.c.blade.c
 
 # run generality cases
 cd $DIR
+cp ../../LLM_Util/deadcoderemoval.py gen/deadcoderemoval.py
 cp date_generality.sh gen/date_generality.sh
 cp date-org.c gen/date-org.c
 cd gen
+echo date-util.c.blade.c > tempfile.txt
+python3 deadcoderemoval.py < tempfile.txt
+rm tempfile.txt
 chmod +x date_generality.sh
 ./date_generality.sh > generality_results.txt
 cd ..
@@ -55,4 +59,5 @@ mv gen/date-util.c.blade.c date-util.c.blade.c
 mv gen/generality_results.txt generality_results.txt
 rm -r gen
 
+cat generality_results.txt
 echo "Results saved in gen/generality_results.txt"

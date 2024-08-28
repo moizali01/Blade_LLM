@@ -66,6 +66,15 @@ function run() {
     { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -d "last year" "+%Y-%m-%d" > $DIR/expected_output.txt; }
     diff $DIR/temp_output.txt $DIR/expected_output.txt || return 1
 
+    # Test case 7: Date calculation for "Adding 5 days"
+    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY -d "2024-08-27 +5 days" "+%Y-%m-%d" > $DIR/temp_output.txt; }
+    r=$?
+    if [[ $r -ne 0 ]]; then
+        return 1
+    fi
+    { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -d "2024-08-27 +5 days" "+%Y-%m-%d" > $DIR/expected_output.txt; }
+    diff $DIR/temp_output.txt $DIR/expected_output.txt || return 1
+
     return 0
 
 }

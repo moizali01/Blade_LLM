@@ -23,8 +23,32 @@ Final Verdict: <assigned class> (1-4)
 
 Required Functionality:
 
-The given code belongs to the date core utility. The desired functionality of the date utility includes two key features: date formatting and date calculation. Date formatting allows you to convert the current date and time into specific formats (like YYYY-MM-DD or HH:MM:SS) for logging or display. Date calculation lets you compute past or future dates (e.g., "yesterday," "next Monday") for scheduling or automation tasks. These features are essential for creating precise timestamps and manipulating dates in scripts or applications. Any other functionality such as verbose or other flags is considered irrelevant.
+The given code belongs to the date core utility. The desired functionality of the date utility includes multiple key features and we require the following functionalities:
+1. Date formatting and date calculation. Date formatting allows you to convert the current date and time into specific formats (like YYYY-MM-DD or HH:MM:SS) for logging or display. 
+2. Date calculation lets you compute past or future dates (e.g., "yesterday," "next Monday", "2024-08-27 +5 days"). 
+3. Proper input preprocessing. The preprocessing and parsing logic is often complex and critical for the program to function properly.
+4. Proper input parsing. The parsing of the input is critical as it has complete logic of how to properly understand the input provided to it, and is necessary for our use case.
+5. Proper output and display and formatting. The program will be testing the output on the basis of string comparisons with the output of original core-utility. Hence, any piece of code that changes the output is necessary for us down to the character level.
 
+Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
+
+Undesired Functionality:
+
+Any other functionality that does not contribute to our required functionalites is irrelevant to our use case. Here are some of the unrequired functionalities:
+- Any other functionalities related to flags other than the ones mentioned in required functionalities. For example displaying modification times of a file with the -r flag, 
+- Any kind of verbose for user guidance, 
+- Any kind of help information, 
+- displaying error messages, 
+- displaying version information,
+- displaying any kind of feedback to the user other than the date information
+
+Exceptional Case:
+
+If the context provided does not provide enough information to understand the complete purpose of this piece of code in this larger program you must do the following: 
+- In the final verdict state that you did not fully understand the purpose of this piece of code in the larger context of the program 
+- Classify it as critical and in class 4 as it is safer to keep a provided code snippet if we do not fully understand it, as opposed to removing it and causing unexpected issues.
+
+This code snippet is a part of the code execution path for the required functionality.
 
 To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing:
 
@@ -58,6 +82,20 @@ Query:
 #########
 
 
-Make sure to evaluate only on the basis of the functionality and the possibility of security vulnerabilities mentioned above about the date formatting and date calculation. We are not concerned with any other functionalities such as verbose or other flags. 
+Make sure to evaluate on the basis of:
+1. Functionality of date formatting, 
+2. Date calculation, 
+3. Proper preprocessing of input
+4. Proper parsing of the input
+5. Proper output and display formatting, 
+6. The possibility of security vulnerabilities mentioned above. 
 
-Make sure you do not add any information on your own. Consider all four snippets in the provided context to explain the queried code. If you do not know the answer, simply state that you do not know. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.
+If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
+
+We are not concerned with any other functionalities so make sure to evaluate the candidate set on the basis of the unrequired functionalites mentioned above as well and mark the candidate sets that meet the unrequired functionality criteria as unnecessary. 
+
+Make sure you do not add any information on your own. Consider all four snippets in the provided context to explain the queried code. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.
+
+If the context provided does not provide enough information to understand the complete purpose of this piece of code in this larger program you must do the following: 
+- In the final verdict state that you did not fully understand the purpose of this piece of code in the larger context of the program 
+- Classify it as critical and in class 4 as it is safer to keep a provided code snippet if we do not fully understand it, as opposed to removing it and causing unexpected issues.

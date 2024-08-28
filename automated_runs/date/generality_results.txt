@@ -1,31 +1,69 @@
-Running -f flag with valid dates...
-fail
-Running -f flag with invalid dates...
-fail
-Running -f flag with empty file...
-fail
-Running -f flag with mixed valid and invalid dates...
-fail
-Running -f flag with date and time components...
-fail
-Running -f flag with different date formats...
-fail
-Running -f flag with a lot of dates...
-fail
-Running -f flag with dates in the past, present, and future...
-fail
-Running -f flag with dates and other text...
-fail
-Running -f flag with dates and special characters...
-fail
-Running -f flag with dates and spaces...
-fail
-Running -f flag with dates and newlines...
-fail
-Running -f flag with dates and tabs...
-fail
-Running -f flag with valid dates but special characters in the name...
-fail
-Running -f flag with valid dates but spaces in the name...
--f flag with valid dates but spaces in the name failed on original binary.
-Summary: 0 out of 15 tests passed.
+Compiling binaries...
+
+Running date formatting tests...
+Test passed: Format date in YYYY-MM-DD
+Test passed: Format time in HH:MM:SS
+Test passed: Display Unix timestamp
+Test passed: Format full date and time
+Test passed: Format with weekday and week number
+Test passed: ISO 8601 date and time format
+Test passed: Locale-specific date and time format
+
+Running date calculation tests...
+Test passed: Calculate yesterday's date
+Test passed: Calculate tomorrow's date
+Test passed: Calculate next Monday's date
+Test passed: Calculate last Friday's date
+1c1
+< 2024-09-01
+---
+> 2024-01-06
+Test failed: Calculate 5 days from 2024-01-01
+1c1
+< 2024-08-28
+---
+> 2024-02-29
+Test failed: Leap year: Calculate 1 day after Feb 28, 2024
+1c1
+< 2024-08-28
+---
+> 2023-03-01
+Test failed: Non-leap year: Calculate 1 day after Feb 28, 2023
+Test failed: End-of-month transition: Jan 31 to Feb
+1c1
+< 2024-08-28
+---
+> 2024-05-01
+Test failed: End-of-month transition: Apr 30 to May 1
+Test failed: Daylight Saving Time transition
+1c1
+< 2024-08-28
+---
+> 2024-01-01
+Test failed: New Year's Eve to New Year's Day
+Test passed: Calculate the year 100 years ago
+1c1
+< 2024-09-06
+---
+> 2024-01-11
+Test failed: Add 10 days to 2024-01-01
+1c1
+< 2024-08-13
+---
+> 2023-12-18
+Test failed: Subtract 2 weeks from 2024-01-01
+Test failed: Add 1 year to 2024-01-01
+Test failed: Compound calculation: Add 1 month and subtract 3 days
+Test passed: Negative offset: Calculate the previous day
+Test failed: Negative offset: Calculate the previous month
+
+Running generality tests...
+Test passed: Combination of date calculation and formatting
+1c1
+< Wednesday, 28 August 2024
+---
+> Wednesday, 01 January 2025
+Test failed: Calculate New Year's Day with full date formatting
+Total tests run: 27
+Total tests passed: 14
+Some tests failed.

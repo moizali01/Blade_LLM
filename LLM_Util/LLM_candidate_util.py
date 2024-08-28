@@ -13,8 +13,10 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
     if len(cand) == 1:
         if cand[0] == " }" or cand[0] == " {" or cand[0] == "}" or cand[0] == "{":
             return 0
-        if "if (" in cand[0] or "else " in cand[0] or "while (" in cand[0] or cand[0].strip().startswith("case_"):
+        else: 
             return 10
+        # if "if (" in cand[0] or "else " in cand[0] or "while (" in cand[0] or cand[0].strip().startswith("case_"):
+        #     return 10
     
 
     # Ensure directories exist
@@ -97,7 +99,7 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
         return score
     except Exception as e:
         print(str(e))
-    return 0 # in case LLM fails, leave the decision to tool
+    return 9 # in case LLM fails, leave the decision to tool
 
 
 # util to check if query already existed before, fetch llm response from cache

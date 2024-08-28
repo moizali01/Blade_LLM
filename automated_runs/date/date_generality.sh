@@ -26,7 +26,7 @@ function run_test_case() {
     ((TOTAL_TESTS++))
 
     # Run the test command
-    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY "${command[@]}" > $DIR/temp_output.txt; }
+    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY "${command[@]}" > $DIR/temp_output.txt 2> /dev/null; }
     r=$?
     if [[ $r -ne 0 ]]; then
         echo "Test failed: $description"
@@ -34,12 +34,11 @@ function run_test_case() {
     fi
 
     # Run the original command to get the expected output
-    { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY "${command[@]}" > $DIR/expected_output.txt; }
+    { timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY "${command[@]}" > $DIR/expected_output.txt 2> /dev/null; }
     diff $DIR/temp_output.txt $DIR/expected_output.txt
     
     if [[ $? -eq 0 ]]; then
         echo "Test passed: $description"
-        echo "Output: $(cat $DIR/temp_output.txt)"
         ((PASSED_TESTS++))
     else
         echo "Test failed: $description"
