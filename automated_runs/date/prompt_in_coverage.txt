@@ -6,6 +6,8 @@ Evaluation Scale:
 - Class 2: Somewhat Unnecessary Code - This code may be needed for minor issues but does not affect overall functionality.
 - Class 3: Necessary Code - This code is important for the basic functionality of the program.
 - Class 4: Critical Code - This code is essential for functionality, security, and generality. The program will break without it.
+- Class 5: Incomplete Context - The context provided does not provide enough information to understand the complete purpose of this code in this larger program.
+- Class 6: Unused Code - This code is not used in the provided context.
 
 Evaluate if the code belongs to each of the five classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
 
@@ -17,18 +19,21 @@ Class 1: <reasoning for why the code might be completely unnecessary or not>
 Class 2: <reasoning for why the code might be somewhat unnecessary or not>
 Class 3: <reasoning for why the code might be necessary or not>
 Class 4: <reasoning for why the code might be critical or not>
+Class 5: <reasoning for why you think it is likely you do not understand the purpose of this code given the context>
+Class 6: <whether the code is used in the provided context or not>
 
 Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
-Final Verdict: <assigned class> (1-4)
+Final Verdict: <assigned class> (1-6)
 
 Required Functionality:
 
 The given code belongs to the date core utility. The desired functionality of the date utility includes multiple key features and we require the following functionalities:
-1. Date formatting and date calculation. Date formatting allows you to convert the current date and time into specific formats (like YYYY-MM-DD or HH:MM:SS) for logging or display. 
-2. Date calculation lets you compute past or future dates (e.g., "yesterday," "next Monday", "2024-08-27 +5 days"). 
-3. Proper input preprocessing. The preprocessing and parsing logic is often complex and critical for the program to function properly.
-4. Proper input parsing. The parsing of the input is critical as it has complete logic of how to properly understand the input provided to it, and is necessary for our use case.
-5. Proper output and display and formatting. The program will be testing the output on the basis of string comparisons with the output of original core-utility. Hence, any piece of code that changes the output is necessary for us down to the character level.
+1. Proper input preprocessing. The preprocessing and parsing logic is often complex and critical for the program to function properly.
+2. Proper input parsing. The parsing of the input is critical as it has complete logic of how to properly understand the input provided to it, and is necessary for our use case.
+3. Date formatting. Date formatting allows you to convert the current date and time into specific formats for logging or display. We want to cater to all formatting characters. Every minor formatting detail is important to us.
+4. Proper output and display and formatting. Every minor formatting detail such as padding, alignment, and case sensitivity of the output is necessary.
+5. Date calculation lets you compute past or future dates (e.g., "yesterday," "next Monday", "2024-08-27 +5 days"). 
+6. Prevention against the security vulnerabilities mentioned in the security list.
 
 Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
@@ -42,17 +47,11 @@ Any other functionality that does not contribute to our required functionalites 
 - displaying version information,
 - displaying any kind of feedback to the user other than the date information
 
-Exceptional Case:
-
-If the context provided does not provide enough information to understand the complete purpose of this piece of code in this larger program you must do the following: 
-- In the final verdict state that you did not fully understand the purpose of this piece of code in the larger context of the program 
-- Classify it as critical and in class 4 as it is safer to keep a provided code snippet if we do not fully understand it, as opposed to removing it and causing unexpected issues.
-
 This code snippet is a part of the code execution path for the required functionality.
 
-To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing:
 
 #########
+To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing:
 
 Security List: 
 {sec_list}
@@ -75,7 +74,7 @@ Target Code for Evaluation:
 
 #########
 
-Query:
+Target Code:
 
 {query}
 
@@ -83,19 +82,17 @@ Query:
 
 
 Make sure to evaluate on the basis of:
-1. Functionality of date formatting, 
-2. Date calculation, 
-3. Proper preprocessing of input
-4. Proper parsing of the input
-5. Proper output and display formatting, 
-6. The possibility of security vulnerabilities mentioned above. 
+1. Proper input preprocessing. The preprocessing and parsing logic is often complex and critical for the program to function properly.
+2. Proper input parsing. The parsing of the input is critical as it has complete logic of how to properly understand the input provided to it, and is necessary for our use case.
+3. Date formatting. Date formatting allows you to convert the current date and time into specific formats for logging or display. We want to cater to all formatting characters. Every minor formatting detail is important to us.
+4. Proper output and display and formatting. Every minor formatting detail such as padding, alignment, and case sensitivity of the output is necessary.
+5. Date calculation lets you compute past or future dates (e.g., "yesterday," "next Monday", "2024-08-27 +5 days"). 
+6. Prevention against the security vulnerabilities mentioned in the security list.
+
+Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
 If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
 We are not concerned with any other functionalities so make sure to evaluate the candidate set on the basis of the unrequired functionalites mentioned above as well and mark the candidate sets that meet the unrequired functionality criteria as unnecessary. 
 
 Make sure you do not add any information on your own. Consider all four snippets in the provided context to explain the queried code. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.
-
-If the context provided does not provide enough information to understand the complete purpose of this piece of code in this larger program you must do the following: 
-- In the final verdict state that you did not fully understand the purpose of this piece of code in the larger context of the program 
-- Classify it as critical and in class 4 as it is safer to keep a provided code snippet if we do not fully understand it, as opposed to removing it and causing unexpected issues.

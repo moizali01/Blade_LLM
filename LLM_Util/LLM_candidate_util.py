@@ -196,9 +196,9 @@ def extract_imp_score_new_prompt(text):
     if match:
         assigned_class = int(match.group(0))
         # removal class
-        if assigned_class == 1 or assigned_class == 2 or assigned_class == 5:
+        if assigned_class < 3:
             return 1
-        if assigned_class == 3 or assigned_class == 4 :
+        else:
             return 9
     else:
         return None  # No number found

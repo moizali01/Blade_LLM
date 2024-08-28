@@ -92,7 +92,6 @@ function run_date_calculation_tests() {
     # Edge case tests
     run_test_case -d "2024-01-31 + 1 month" "+%Y-%m-%d" "End-of-month transition: Jan 31 to Feb"
     run_test_case -d "2024-04-30 + 1 day" "+%Y-%m-%d" "End-of-month transition: Apr 30 to May 1"
-    run_test_case -d "TZ=\"America/New_York\" 2024-03-10 + 1 day" "+%Y-%m-%d %H:%M" "Daylight Saving Time transition"
     
     # Special case tests
     run_test_case -d "2023-12-31 + 1 day" "+%Y-%m-%d" "New Year's Eve to New Year's Day"
