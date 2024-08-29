@@ -42,3 +42,4 @@ manual_testing/*.txt
 .env
 
 testing/
+merged_responses/
