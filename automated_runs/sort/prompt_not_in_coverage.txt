@@ -38,7 +38,25 @@ Make sure to cater to ALL edge cases for the functionalites mentioned, such as c
 Undesired Functionality:
 
 Any other functionality that does not contribute to our required functionalites is irrelevant to our use case. Here are some of the unrequired functionalities:
-- Any other functionalities related to the use of any flags.
+- Any other functionalities related to the use of any flags. All of the flags given below are a part of unrequired functionality. 
+  -b, --ignore-leading-blanks  ignore leading blanks
+  -d, --dictionary-order      consider only blanks and alphanumeric characters
+  -f, --ignore-case           fold lower case to upper case characters
+  -g, --general-numeric-sort  compare according to general numerical value
+  -i, --ignore-nonprinting    consider only printable characters
+  -M, --month-sort            compare (unknown) < 'JAN' < ... < 'DEC'
+  -h, --human-numeric-sort    compare human readable numbers (e.g., 2K 1G)
+  -n, --numeric-sort          compare according to string numerical value
+  -R, --random-sort           shuffle, but group identical keys.  See shuf(1)
+      --random-source=FILE    get random bytes from FILE
+  -r, --reverse               reverse the result of comparisons
+      --sort=WORD             sort according to WORD:
+                                general-numeric -g, human-numeric -h, month -M,
+                                numeric -n, random -R, version -V
+  -V, --version-sort          natural sort of (version) numbers within text
+
+  All of these flags are a part of undesired functionality.
+
 - Any kind of verbose for user guidance, 
 - Any kind of help information,
 - displaying error messages, 

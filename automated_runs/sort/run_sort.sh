@@ -41,13 +41,28 @@ python3 blade.py -p target-program/sort-util.c -t target-program/sort.sh -u 1 -d
 cp sort-util.c.blade.c ../automated_runs/sort/gen/sort-util.c.blade.c
 # clear
 
-# run generality cases
+# run deadcode removal
 cd $DIR/gen
+cp ../../../LLM_Util/deadcoderemoval.py deadcoderemoval.py
+echo sort-util.c.blade.c > filename.txt
+python3 deadcoderemoval.py < filename.txt
+rm filename.txt
+
+# run generality cases
 chmod +x sort_generality.sh
 mkdir -p results
 ./sort_generality.sh > results/generality_results.txt
+
+# clean up
+cp results/generality_results.txt ../generality_results.txt
+cp sort-util.c.blade.c ../sort-util.c.blade.c
+cp sort_generality.sh ../sort_generality.sh
+rm -r results
+cd $DIR
+rm -r gen
 # clear
 
 echo "Results saved in generality_results.txt"
+cat generality_results.txt
 
 exit 0
