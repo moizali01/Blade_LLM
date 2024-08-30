@@ -64,10 +64,10 @@ def parse_unreachable_code(lines):
     for line_number, _ in unreachable_lines:
         if "{" in filelines[line_number - 1]:
             function_start, function_end = find_function_boundaries(filelines, line_number)
-            print(f"Unreachable code found in block {function_start} to {function_end}")
+            # print(f"Unreachable code found in block {function_start} to {function_end}")
             lines_to_remove += [(i, "unreachablecode")for i in range(function_start + 1, function_end + 1)]
         else:
-            print(f"Unreachable code found at line {line_number}")
+            # print(f"Unreachable code found at line {line_number}")
             lines_to_remove.append((line_number, "unreachablecode"))
 
     return lines_to_remove
@@ -118,7 +118,15 @@ def modify_file_to_remove_unused_lines(line_numbers, action="remove"):
         elif action == "remove":
             if line_number <= len(lines):
                 if type == "unusedcode" and any(char in lines[line_number - 1] for char in '{}'):
-                    print(f"Skipping line {line_number} as it contains special characters: {lines[line_number - 1]}")
+                    # edge case where the opening and closing bracket are on the same line
+                    # if "}" in lines[line_number - 1]:
+                    #     start = line_number - 1
+                    #     end = line_number 
+                    # else:
+                    #     start, end = find_function_boundaries(lines, line_number)
+                    # print("deleted the following block:\n", lines[start:end])
+                    # for i in range(start, end):
+                    #     lines[i] = "\n"
                     continue
                 lines.pop(line_number - 1)
 

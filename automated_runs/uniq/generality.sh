@@ -1,7 +1,8 @@
 #!/bin/bash
 
-DEBLOATED_FILE="uniq-og.c"
-ORIGINAL_FILE="uniq-util.c.blade.c"
+DEBLOATED_FILE="uniq-blade-llm.c"
+DEBLOATED_FILE="uniq-util.c.blade.c"
+ORIGINAL_FILE="uniq-og.c"
 CC=clang
 
 # Compile the debloated code
@@ -72,10 +73,10 @@ run_test() {
   eval "$setup_command"
   
   # Create input file
-  echo -e "$input_data" > "$INPUT_FILE"
+  echo -e "$input_data" > "$input_file"
   
   # Suppress stderr for debloated and original program
-  $DEBLOATED_UNIQ "$INPUT_FILE" > "$OUTPUT_DEBLOATED" 2>/dev/null
+  $DEBLOATED_UNIQ "$input_file" > "$OUTPUT_DEBLOATED" 2>/dev/null
   if [ $? -ne 0 ]; then
     echo "Error: Debloated program crashed!"
     eval "$cleanup_command"
@@ -83,7 +84,7 @@ run_test() {
   fi
   
   # Run the original program and suppress stderr
-  $ORIGINAL_UNIQ "$INPUT_FILE" > "$OUTPUT_ORIGINAL" 2>/dev/null
+  $ORIGINAL_UNIQ "$input_file" > "$OUTPUT_ORIGINAL" 2>/dev/null
   if [ $? -ne 0 ]; then
     # echo "Error: Original program crashed!"
     echo "Pass"
@@ -196,183 +197,87 @@ run_test "File with path traversal attempt" \
   "echo 'This is not /etc/passwd' > $TEST_DIR/path_traversal" \
   ""
 
-run_test "File with very long content" \
-  "$TEST_DIR/very_long_content" \
-  "$(yes 'This is a very long line that will be repeated many times.' | head -n 100000)" \
+run_test "Comprehensive uniq test" \
+  "$TEST_DIR/comprehensive_test" \
+  "$(cat << EOF
+$(yes 'This is a very long line that will be repeated many times.' | head -n 1000)
+Apple
+apple
+BANANA
+Banana
+banana
+Cherry
+cherry
+  apple  
+  apple  
+ banana 
+  cherry
+$(printf 'a%.0s' {1..10000})
+a
+a$(printf '\u0301')
+b
+b$(printf '\u0301')
+c
+c$(printf '\u0301')
+apple\r
+apple\r
+banana\r
+cherry\r
+apple\0apple\0\0banana\0cherry
+line\tline
+line\tline
+other\tline
+$(printf 'line\x01\nline\x01\nother\x02\n')
+$(printf '\xF0\x9F\x98\x80\n\xF0\x9F\x98\x80\n\xF0\x9F\x98\x81\n')
+Hello
+Hello
+سلام
+سلام
+Shalom
+a$(printf '\u200B')b
+a$(printf '\u200B')b
+c$(printf '\u200B')d
+apple\b\b\b\borange
+apple\b\b\b\borange
+banana
+cherry
+apple\a\a\aorange
+apple\a\a\aorange
+banana
+cherry
+apple\f\f\forange
+apple\f\f\forange
+banana
+cherry
+apple\r\r\rorange
+apple\r\r\rorange
+banana
+cherry
+apple\v\v\vorange
+apple\v\v\vorange
+banana
+cherry
+apple\e\e\eorange
+apple\e\e\eorange
+banana
+cherry
+apple$(printf '\x7F\x7F\x7F')orange
+apple$(printf '\x7F\x7F\x7F')orange
+banana
+cherry
+apple$(printf '\x01\x02\x03')orange
+apple$(printf '\x01\x02\x03')orange
+banana
+cherry
+a$(printf '\u200B')b$(printf '\u200B')c
+a$(printf '\u200B')b$(printf '\u200B')c
+d$(printf '\u200B')e
+EOF
+)" \
   "" ""
 
-run_test "File with mixed case duplicates" \
-  "$TEST_DIR/mixed_case" \
-  "Apple\napple\nBANANA\nBanana\nbanana\nCherry\ncherry" \
-  "" ""
-
-run_test "File with leading/trailing whitespace" \
-  "$TEST_DIR/whitespace" \
-  "  apple  \n  apple  \n banana \n  cherry" \
-  "" ""
-
-run_test "File with empty content" \
-  "$TEST_DIR/empty" \
-  "" \
-  "" ""
-
-run_test "File with only one very long line" \
-  "$TEST_DIR/one_long_line" \
-  "$(printf 'a%.0s' {1..1000000})" \
-  "" ""
-
-run_test "File with Unicode combining characters" \
-  "$TEST_DIR/unicode_combining" \
-  "a\na\u0301\nb\nb\u0301\nc\nc\u0301" \
-  "" ""
-
-run_test "File with CRLF line endings" \
-  "$TEST_DIR/crlf_endings" \
-  "apple\r\napple\r\nbanana\r\ncherry\r\n" \
-  "" ""
-
-run_test "File with null characters" \
-  "$TEST_DIR/null_chars" \
-  "apple\0apple\0\0banana\0cherry" \
-  "" ""
-
-run_test "File with escape sequences" \
-  "$TEST_DIR/escape_sequences" \
-  "line\tline\nline\tline\nother\tline" \
-  "" ""
-
-run_test "File with control characters" \
-  "$TEST_DIR/control_chars" \
-  "$(printf 'line\x01\nline\x01\nother\x02\n')" \
-  "" ""
-
-run_test "File with surrogate pairs" \
-  "$TEST_DIR/surrogate_pairs" \
-  "$(printf '\xF0\x9F\x98\x80\n\xF0\x9F\x98\x80\n\xF0\x9F\x98\x81\n')" \
-  "" ""
-
-run_test "File with bidirectional text" \
-  "$TEST_DIR/bidi_text" \
-  "Hello\nHello\nسلام\nسلام\nShalom\n" \
-  "" ""
-
-run_test "File with zero-width characters" \
-  "$TEST_DIR/zero_width" \
-  "a\u200Bb\na\u200Bb\nc\u200Bd\n" \
-  "" ""
-
-run_test "File with newline in name" \
-    "$TEST_DIR/file_with_newline\n" \
-    "apple\napple\nbanana\ncherry" \
-    "" ""
-
-run_test "File with backspace characters" \
-    "$TEST_DIR/backspace_chars" \
-    "apple\b\b\b\borange\napple\b\b\b\borange\nbanana\ncherry" \
-    "" ""
-
-run_test "File with bell characters" \
-    "$TEST_DIR/bell_chars" \
-    "apple\a\a\aorange\napple\a\a\aorange\nbanana\ncherry" \
-    "" ""
-
-run_test "File with form feed characters" \
-    "$TEST_DIR/form_feed_chars" \
-    "apple\f\f\forange\napple\f\f\forange\nbanana\ncherry" \
-    "" ""
-
-run_test "File with carriage return characters" \
-    "$TEST_DIR/carriage_return_chars" \
-    "apple\r\r\rorange\napple\r\r\rorange\nbanana\ncherry" \
-    "" ""
-
-run_test "File with vertical tab characters" \
-    "$TEST_DIR/vertical_tab_chars" \
-    "apple\v\v\vorange\napple\v\v\vorange\nbanana\ncherry" \
-    "" ""
-
-run_test "File with escape characters" \
-    "$TEST_DIR/escape_chars" \
-    "apple\e\e\eorange\napple\e\e\eorange\nbanana\ncherry" \
-    "" ""
-
-run_test "File with delete characters" \
-    "$TEST_DIR/delete_chars" \
-    "apple\x7F\x7F\x7Forange\napple\x7F\x7F\x7Forange\nbanana\ncherry" \
-    "" ""
-
-run_test "File with multiple control characters" \
-    "$TEST_DIR/multiple_control_chars" \
-    "apple\x01\x02\x03orange\napple\x01\x02\x03orange\nbanana\ncherry" \
-    "" ""
-
-run_test "File with multiple escape sequences" \
-    "$TEST_DIR/multiple_escape_seqs" \
-    "apple\e\e\eorange\napple\e\e\eorange\nbanana\ncherry" \
-    "" ""
-
-run_test "File with multiple zero-width characters" \
-    "$TEST_DIR/multiple_zero_width" \
-    "a\u200Bb\u200Bc\na\u200Bb\u200Bc\nd\u200Be\n" \
-    "" ""
-
-run_test "File with multiple bidirectional text" \
-    "$TEST_DIR/multiple_bidi_text" \
-    "Hello\nHello\nسلام\nسلام\nShalom\n" \
-    "" ""
-
-run_test "File with multiple surrogate pairs" \
-    "$TEST_DIR/multiple_surrogate_pairs" \
-    "$(printf '\xF0\x9F\x98\x80\n\xF0\x9F\x98\x80\n\xF0\x9F\x98\x81\n')" \
-    "" ""
-
-run_test "File with multiple Unicode combining characters" \
-    "$TEST_DIR/multiple_unicode_combining" \
-    "a\na\u0301\nb\nb\u0301\nc\nc\u0301" \
-    "" ""
-
-run_test "Filename with spaces" \
-    "$TEST_DIR/file with spaces" \
-    "apple\napple\nbanana\ncherry" \
-    "" ""
-
-run_test "Filename with leading/trailing whitespace" \
-    "$TEST_DIR/ file with spaces " \
-    "apple\napple\nbanana\ncherry" \
-    "" ""
-
-run_test "Filename with newline" \
-    "$TEST_DIR/file\nwith\nnewline" \
-    "apple\napple\nbanana\ncherry" \
-    "" ""
-
-run_test "Filename with backspace characters" \
-    "$TEST_DIR/file\bwith\bbackspace" \
-    "apple\napple\nbanana\ncherry" \
-    "" ""
-
-run_test "Debloated source code file" \
-    "$TEST_DIR/$DEBLOATED_FILE" \
-    "$(cat $DEBLOATED_FILE)" \
-    "cp $DEBLOATED_FILE $TEST_DIR/" "rm -f $TEST_DIR/$DEBLOATED_FILE"
-
-run_test "File with multiple control characters in name" \
-    "$TEST_DIR/file\x01\x02\x03" \
-    "apple\napple\nbanana\ncherry" \
-    "" ""
-
-run_test "File with multiple escape sequences in name" \
-    "$TEST_DIR/file\e\e\e" \
-    "apple\napple\nbanana\ncherry" \
-    "" ""
-
-run_test "File with multiple zero-width characters in name" \
-    "$TEST_DIR/file\u200B\u200B\u200B" \
-    "apple\napple\nbanana\ncherry" \
-    "" ""
-
-run_test "File with multiple bidirectional text in name" \
-    "$TEST_DIR/fileHelloسلامShalom" \
+run_test "Comprehensive filename test with various challenging scenarios" \
+    "$TEST_DIR/ file with spaces \x01\x02\x03\e\e\e$(printf '\u200B\u200B\u200B')Hello سلام Shalom\nwith\nnewline\bbackspace" \
     "apple\napple\nbanana\ncherry" \
     "" ""
 
@@ -414,7 +319,7 @@ run_test "File with very long unique lines" \
     "$TEST_DIR/long_unique_lines" \
     "$(for i in {1..100}; do printf '%0.s'"$i"'' {1..1000}; echo; done)" \
     "" \
-    ""
+    "" 
 
 run_test "File with potential buffer overflow input" \
     "$TEST_DIR/buffer_overflow" \
@@ -448,16 +353,71 @@ run_test "File with large number of unique lines" \
     ""
 
 run_test "File with complete path as name" \
-    "$TEST_DIR/$(pwd)/file" \
+    "$(pwd)/$TEST_DIR/file" \
     "apple\napple\nbanana\ncherry" \
     "" \
     ""
 
 run_test "File with complete path name and spaces" \
-    "$TEST_DIR/$(pwd)/file with spaces" \
+    "$(pwd)/$TEST_DIR/file with spaces" \
     "apple\napple\nbanana\ncherry" \
     "" \
     ""
+
+run_test "Prompt with coverage" \
+  "$TEST_DIR/prompt_in_coverage.txt" \
+  "$(cat prompt_in_coverage.txt)" \
+  "cp prompt_in_coverage.txt $TEST_DIR/prompt_in_coverage.txt" \
+  "rm $TEST_DIR/prompt_in_coverage.txt"
+
+run_test "Prompt not in coverage" \
+  "$TEST_DIR/prompt_not_in_coverage.txt" \
+  "$(cat prompt_not_in_coverage.txt)" \
+  "cp prompt_not_in_coverage.txt $TEST_DIR/prompt_not_in_coverage.txt" \
+  "rm $TEST_DIR/prompt_not_in_coverage.txt"
+
+run_test "sec list" \
+  "$TEST_DIR/sec_list.txt" \
+  "$(cat sec_list.txt)" \
+  "cp sec_list.txt $TEST_DIR/sec_list.txt" \
+  "rm $TEST_DIR/sec_list.txt"
+
+run_test "lorem ipsum" \
+  "$TEST_DIR/lorem_ipsum.txt" \
+  "$(cat test_files/lorem_ipsum.txt)" \
+  "cp test_files/lorem_ipsum.txt $TEST_DIR/lorem_ipsum.txt" \
+  "rm $TEST_DIR/lorem_ipsum.txt"
+
+run_test "example linux log file" \
+  "$TEST_DIR/Linux_2k.log" \
+  "$(cat test_files/Linux_2k.txt)" \
+  "cp test_files/Linux_2k.txt $TEST_DIR/Linux_2k.log" \
+  "rm $TEST_DIR/Linux_2k.log"
+
+run_test "example apache log file" \
+  "$TEST_DIR/Apache_2k.log" \
+  "$(cat test_files/Apache_2k.txt)" \
+  "cp test_files/Apache_2k.txt $TEST_DIR/Apache_2k.log" \
+  "rm $TEST_DIR/Apache_2k.log"
+
+run_test "random text text file 1" \
+  "$TEST_DIR/random_text_1.txt" \
+  "($cat test_files/random_text_1.txt)" \
+  "cp test_files/random_text_1.txt $TEST_DIR/random_text_1.txt" \
+  "rm $TEST_DIR/random_text_1.txt"
+
+run_test "random text text file 2" \
+  "$TEST_DIR/random_text_2.txt" \
+  "$(cat test_files/random_text_2.txt)" \
+  "cp test_files/random_text_2.txt $TEST_DIR/random_text_2.txt" \
+  "rm $TEST_DIR/random_text_2.txt"
+
+run_test "random text text file 3" \
+  "$TEST_DIR/random_text_3.txt" \
+  "$(cat test_files/random_text_3.txt)" \
+  "cp test_files/random_text_3.txt $TEST_DIR/random_text_3.txt" \
+  "rm $TEST_DIR/random_text_3.txt"
+
 
 cleanup
 

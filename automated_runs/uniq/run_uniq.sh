@@ -43,6 +43,13 @@ python3 blade.py -p target-program/uniq-util.c -t target-program/uniq.sh -u 1 -d
 cp uniq-util.c.blade.c ../automated_runs/uniq/uniq-util.c.blade.c
 # clear
 
+# run deadcode removal
+cd $DIR
+cp ../../LLM_Util/deadcoderemoval.py deadcoderemoval.py
+echo uniq-util.c.blade.c > filename.txt
+python3 deadcoderemoval.py < filename.txt
+rm filename.txt
+
 # run generality cases
 cd $DIR
 chmod +x generality.sh
@@ -50,6 +57,7 @@ chmod +x generality.sh
 # clear
 
 echo "Results saved in generality_results.txt"
+cat generality_results.txt | tail
 
 exit 0
 

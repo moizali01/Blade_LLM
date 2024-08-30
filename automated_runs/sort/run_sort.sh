@@ -11,6 +11,8 @@ cp original.txt ../../src/original.txt
 cp coverage.txt ../../LLM_Util/coverage.txt
 # clear
 
+mkdir -p gen
+
 # copy prompts to LLM_UTIL
 cd $DIR
 cp prompt_in_coverage.txt ../../LLM_Util/prompt_in_coverage.txt
@@ -63,6 +65,6 @@ rm -r gen
 # clear
 
 echo "Results saved in generality_results.txt"
-cat generality_results.txt
+cat generality_results.txt | tail
 
 exit 0
