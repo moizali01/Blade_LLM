@@ -198,9 +198,6 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
   char const *q;
   unsigned short const **tmp___0;
   int *tmp___1;
-  char *tmp___2;
-  int *tmp___3;
-  int *tmp___4;
   int base;
   int suffixes;
   strtol_error overflow;
@@ -222,11 +219,6 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
     }
     q = s;
     {
-
-    while_break___0: /* CIL Label */;
-    }
-  while_break:;
-    {
       tmp___1 = __errno_location();
       *tmp___1 = 0;
       tmp = strtoul((char const * /* __restrict  */)s, (char ** /* __restrict  */)p, strtol_base);
@@ -246,7 +238,6 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
       goto switch_break___0;
     case_66___0: { overflow = bkm_scale___0(&tmp, 1024); }
       goto switch_break___0;
-    case_99:
       overflow = (strtol_error)0;
       goto switch_break___0;
     case_69: { overflow = bkm_scale_by_power___0(&tmp, base, 6); }
@@ -385,7 +376,6 @@ static struct slotvec *slotvec = &slotvec0;
 
 static struct quoting_options quoting_options_from_style(enum quoting_style style) {
   struct quoting_options o;
-  void *__cil_tmp3;
 
   {
     {
@@ -399,8 +389,6 @@ char *quotearg_n_style(int n, enum quoting_style s, char const *arg) {
   struct quoting_options o;
   struct quoting_options tmp;
   char *tmp___0;
-  void *__cil_tmp7;
-  void *__cil_tmp8;
 
   {
     {
@@ -413,7 +401,6 @@ char *quotearg_n_style(int n, enum quoting_style s, char const *arg) {
 char *quotearg_char(char const *arg, char ch) {
   struct quoting_options options;
   char *tmp;
-  void *__cil_tmp5;
 
   {
     {
@@ -519,7 +506,6 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
   int tmp___14;
   int tmp___15;
   int tmp___16;
-  char *__cil_tmp33;
 
   {
     {
@@ -624,7 +610,6 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
     }
     {
       while (1) {
-      while_continue: /* CIL Label */;
         affected_bits = (mode_t)0;
         ops_to_mask = 0U;
         affected_bits = (mode_t)0;
@@ -632,7 +617,6 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
         mode_string___0++;
         {
           while (1) {
-          while_continue___0: /* CIL Label */;
             if ((int const) * mode_string___0 == 103) {
               goto case_103;
             }
@@ -641,13 +625,11 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
               goto case_97;
             }
             goto switch_default;
-          case_117:
             affected_bits |= 2496U;
             goto switch_break;
           case_103:
             affected_bits |= (unsigned int)(1024 | (448 >> 3));
             goto switch_break;
-          case_111:
             affected_bits |= (unsigned int)(512 | ((448 >> 3) >> 3));
             goto switch_break;
           case_97:
@@ -657,7 +639,6 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
           switch_break:
             mode_string___0++;
           }
-        while_break___3: /* CIL Label */;
         }
       no_more_affected:
         if (affected_bits) {
@@ -669,7 +650,6 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
         }
         {
           while (1) {
-          while_continue___1: /* CIL Label */;
             if (!((int const) * mode_string___0 == 61)) {
               if (!((int const) * mode_string___0 == 43)) {
                 if (!((int const) * mode_string___0 == 45)) {
@@ -725,7 +705,6 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
             }
             {
               while (1) {
-              while_continue___2: /* CIL Label */;
                 if ((int const) * mode_string___0 == 114) {
                   goto case_114;
                 }
@@ -744,10 +723,8 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
                 goto switch_default___0;
               case_114:
                 goto switch_break___0;
-              case_119:
                 change->value |= (unsigned int)((128 | (128 >> 3)) | ((128 >> 3) >> 3)) & affected_masked;
                 goto switch_break___0;
-              case_88:
                 change->flags = (char)((int)change->flags | 1);
               case_120:
                 change->value |= (unsigned int)((64 | (64 >> 3)) | ((64 >> 3) >> 3)) & affected_masked;
@@ -755,10 +732,8 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
               case_115:
                 change->value |= 3072U & affected_masked;
                 goto switch_break___0;
-              case_116:
                 change->value |= 512U & affected_masked;
                 goto switch_break___0;
-              case_117___0:
                 change->value = (mode_t)448;
                 change->flags = (char)((int)change->flags | 2);
                 goto switch_break___0;
@@ -766,7 +741,6 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
                 change->value = (mode_t)(448 >> 3);
                 change->flags = (char)((int)change->flags | 2);
                 goto switch_break___0;
-              case_111___0:
                 change->value = (mode_t)((448 >> 3) >> 3);
                 change->flags = (char)((int)change->flags | 2);
                 goto switch_break___0;
@@ -775,18 +749,15 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
               switch_break___0:
                 mode_string___0++;
               }
-            while_break___5: /* CIL Label */;
             }
           no_more_values:;
           }
-        while_break___4: /* CIL Label */;
         }
       while_break___1:;
         if (!((int const) * mode_string___0 == 44)) {
           goto while_break;
         }
       }
-    while_break___2: /* CIL Label */;
     }
   while_break:;
   invalid: { mode_free(head); }
@@ -810,7 +781,6 @@ mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
     newmode = oldmode & (unsigned int)((4032 | (448 >> 3)) | ((448 >> 3) >> 3));
     {
       while (1) {
-      while_continue: /* CIL Label */;
         if (!changes) {
           goto while_break;
         }
@@ -869,7 +839,6 @@ mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
       case_61:
         newmode = (newmode & (unsigned int)(~changes->affected)) | value;
         goto switch_break;
-      case_43:
         newmode |= value;
         goto switch_break;
       case_45:
@@ -878,23 +847,14 @@ mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
       switch_break:
         changes = (struct mode_change const *)changes->next;
       }
-    while_break___0: /* CIL Label */;
     }
   while_break:;
     return (newmode);
   }
 }
 void mode_free(struct mode_change *changes) {
-  register struct mode_change *next;
 
-  {
-    {
-
-    while_break___0: /* CIL Label */;
-    }
-  while_break:;
-    return;
-  }
+  { return; }
 }
 static unsigned short const __mon_yday[2][13] = {{(unsigned short const)0, (unsigned short const)31, (unsigned short const)59, (unsigned short const)90, (unsigned short const)120, (unsigned short const)151, (unsigned short const)181, (unsigned short const)212, (unsigned short const)243,
                                                   (unsigned short const)273, (unsigned short const)304, (unsigned short const)334, (unsigned short const)365},
@@ -918,9 +878,6 @@ int make_dir(char const *dir, char const *dirpath, mode_t mode, int *created_dir
   char const *tmp___3;
   char *tmp___4;
   int tmp___5;
-  void *__cil_tmp16;
-  char *__cil_tmp17;
-  char *__cil_tmp18;
 
   {
     {
@@ -1062,13 +1019,10 @@ void close_stdout(void) {
   int e;
   int tmp___0;
   int tmp___1;
-  size_t tmp___2;
-  int *tmp___3;
   int tmp___4;
   char const *write_error;
   char *tmp___5;
   char *tmp___6;
-  char *__cil_tmp10;
 
   {
     { tmp___1 = ferror_unlocked(stdout); }
@@ -1117,22 +1071,6 @@ char *program_name;
 static int create_parents;
 static struct option const longopts[6] = {{"mode", 1, (int *)((void *)0), 'm'}, {"parents", 0, (int *)((void *)0), 'p'}, {"verbose", 0, (int *)((void *)0), 'v'}, {"help", 0, (int *)0, -130}, {"version", 0, (int *)0, -131}, {(char const *)((void *)0), 0, (int *)((void *)0), 0}};
 void usage(int status) {
-  char *tmp;
-  char *tmp___0;
-  char *tmp___1;
-  char *tmp___2;
-  char *tmp___3;
-  char *tmp___4;
-  char *tmp___5;
-  char *tmp___6;
-  char *__cil_tmp10;
-  char *__cil_tmp11;
-  char *__cil_tmp12;
-  char *__cil_tmp13;
-  char *__cil_tmp14;
-  char *__cil_tmp15;
-  char *__cil_tmp16;
-  char *__cil_tmp17;
 
   {
 
@@ -1159,21 +1097,9 @@ int main(int argc, char **argv) {
   char *dir;
   char const *dir___0;
   int dir_created;
-  char const *tmp___6;
-  char *tmp___7;
-  char const *tmp___8;
   char const *tmp___9;
   char *tmp___10;
   int *tmp___11;
-  char *__cil_tmp28;
-  char *__cil_tmp29;
-  char *__cil_tmp30;
-  char *__cil_tmp31;
-  char *__cil_tmp32;
-  char *__cil_tmp33;
-  char *__cil_tmp34;
-  char *__cil_tmp35;
-  char *__cil_tmp36;
 
   {
     {
@@ -1189,8 +1115,9 @@ int main(int argc, char **argv) {
     }
     {
       while (1) {
-      while_continue: /* CIL Label */;
-        { optc = getopt_long(argc, (char *const *)argv, "pm:v", longopts, (int *)((void *)0)); }
+        {
+          optc = getopt_long(argc, (char *const *)argv, "pm:v", longopts, (int *)((void *)0));
+        }
         if (!(optc != -1)) {
           goto while_break;
         }
@@ -1200,9 +1127,7 @@ int main(int argc, char **argv) {
         }
 
         goto switch_default;
-      case_0:
         goto switch_break;
-      case_112:
         create_parents = 1;
         goto switch_break;
       case_109:
@@ -1220,7 +1145,6 @@ int main(int argc, char **argv) {
       switch_default: { usage(1); }
       switch_break:;
       }
-    while_break___1: /* CIL Label */;
     }
   while_break:;
     if (optind == argc) {
@@ -1255,7 +1179,6 @@ int main(int argc, char **argv) {
     }
     {
       while (1) {
-      while_continue___0: /* CIL Label */;
         if (!(optind < argc)) {
           goto while_break___0;
         }
@@ -1291,7 +1214,6 @@ int main(int argc, char **argv) {
 
         optind++;
       }
-    while_break___2: /* CIL Label */;
     }
   while_break___0: { exit(errors); }
   }

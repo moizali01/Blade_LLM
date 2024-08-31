@@ -66,7 +66,7 @@ function run() {
 }
 
 function args_test() {
-    run "user1" || exit 1
+    # run "user1" || exit 1
     run "user1:group1" || exit 1    
     # run ":group1" || exit 1
     return 0

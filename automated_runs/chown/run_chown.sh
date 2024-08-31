@@ -11,18 +11,23 @@ cd ../../
 
 # Copy all files need for run to relevant locations
 cd $DIR
+
+if [ ! -d "../../src/target-program" ]; then
+    mkdir -p ../../src/target-program
+fi
+
 cp chown-debloated.c ../../src/target-program/chown-debloated.c
 cp chown-8.2.c.origin.c ../../src/target-program/chown-8.2.c.origin.c
 cp chown_train.sh ../../src/target-program/chown_train.sh
 cp original.txt ../../src/original.txt
 cp coverage.txt ../../LLM_Util/coverage.txt
-clear
+# clear
 
 # copy prompts to LLM_UTIL
 cd $DIR
 cp prompt_in_coverage.txt ../../LLM_Util/prompt_in_coverage.txt
 cp prompt_not_in_coverage.txt ../../LLM_Util/prompt_not_in_coverage.txt
-clear
+# clear
 
 # clear cands
 cd ../../LLM_Util
@@ -33,12 +38,14 @@ mkdir -p context
 mkdir -p pretext_code
 mkdir -p removed_code
 mkdir -p llm_response
+mkdir -p fifty_text
 
 cd ..
 chmod +x clear_cands.sh
 ./clear_cands.sh
 cd $DIR
-clear
+# clear
+
 
 # run the program
 cd ../../src
@@ -47,15 +54,20 @@ cp chown-debloated.c.blade.c ../automated_runs/chown/chown-debloated.c.blade.c
 cp chown-debloated.c.blade.c ../automated_runs/chown/gen/chown-debloated.c.blade.c
 # clear
 
+
 # run generality cases
 cd $DIR/gen
 chmod +x chown_gen.sh
 
-# remove deadcode
-python3 deadcode.py
+cp ../../../LLM_Util/deadcoderemoval.py deadcoderemoval.py
+echo chown-debloated.c.blade.c > tempfile.txt
+python3 deadcoderemoval.py < tempfile.txt
+
+rm tempfile.txt deadcoderemoval.py
+
 
 ./chown_gen.sh > generality_results.txt
-clear
+# clear
 
 echo "Results saved in generality_results.txt"
 

@@ -6,10 +6,9 @@ Evaluation Scale:
 - Class 2: Somewhat Unnecessary Code - This code may be needed for minor issues but does not affect overall functionality.
 - Class 3: Necessary Code - This code is important for the basic functionality of the program.
 - Class 4: Critical Code - This code is essential for functionality, security, and generality. The program will break without it.
+- Class 5: Incomplete Context - The context provided does not provide enough information to understand the complete purpose of this code in this larger program.
 
 Evaluate if the code belongs to each of the five classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
-
-Strictly follow the answer format below:
 
 Answer Format:
 
@@ -17,17 +16,39 @@ Class 1: <reasoning for why the code might be completely unnecessary or not>
 Class 2: <reasoning for why the code might be somewhat unnecessary or not>
 Class 3: <reasoning for why the code might be necessary or not>
 Class 4: <reasoning for why the code might be critical or not>
+Class 5: <reasoning for why you think it is likely you do not understand the purpose of this code given the context>
 
-Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
-Final Verdict: <assigned class> (1-4)
 
-Required Functionality:
+Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines. The verdict should reflect only the code's contribution to the required functionalities and its role in preventing the listed security vulnerabilities. Any other factor is irrelevant.
+Final Verdict: <assigned class> (1-5)
 
-The given code belongs to the chown core utility and is used only to change the ownership and group (user and/or group) of a single directory without affecting its contents. For this task, we only want to change the ownership of the specified directory itself, not its contents such as files or subdirectories. We must cater to all edge cases ONLY related to the above mentioned functionality, including scenarios where only the user, only the group, or both user and group need to be changed. Any other functionality such as recursive directory traversal, and verbose options are not needed. The utility should maintain proper error handling and permission checks for this specific operation. The code must handle various edge cases and error conditions robustly. Consider how the snippet might contribute to error handling or state management throughout the function.
+**Required Functionality:**
 
-To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list of vulnerabilities that the code may be preventing. Please give emphasis to analyzing whether the provided snippet is important for preventing any of the given mentioned vulnerabilities:
+1. **Basic Ownership/Group Change:**
+   - Support for `OWNER` and `:[GROUP]` arguments.
+   - Handle omitted `OWNER` or `GROUP` as described previously.
+   - Accept numeric and symbolic owner/group specifications.
+
+2. Edge cases related to ownership/Group Change
+
+**Undesired Functionality (to be removed):**
+
+1. **Recursion (`-R`, `-H`, `-L`, `-P`):** Remove all recursion-related options.
+2. **Reference File (`--reference`):**  Remove this option.
+3. **Conditional Ownership Change (`--from`):** Remove this option.
+4. **Symbolic Link Behavior (`-h`):**  Remove support for `-h` (`--no-dereference`). You'll likely use `fchownat` to operate directly on the directory, regardless of whether it's a symbolic link.
+5. **Verbosity and Feedback (`-c`, `-f`, `-v`):** Remove all verbosity-related options.
+6. **Preserve Root (`--no-preserve-root`, `--preserve-root`):** Remove these options.
+7. **Help and Version (`--help`, `--version`):**  Remove these options.
+8. Any functionality that is not related to basic Ownership/Group change.
+
+**IMPORTANT**: If you encounter code that appears to relate to any of the undesired functionalities listed above, immediately classify it as Class 1 (No Functional Contribution) and provide a brief explanation.
+
+This code snippet included in the code execution path for the required functionality, therefore verify if the given code snippet is important for the functionality mentioned or security of the program.
+
 
 #########
+Does this code snippet directly prevent any of the following vulnerabilities, considering how it's used in the program? Consider how the code might be exploited if this snippet were absent. Please give emphasis to analyzing whether the provided snippet is important for preventing any of the given mentioned vulnerabilities:
 
 Security List: 
 {sec_list}
@@ -39,10 +60,7 @@ Contextual Information:
 
 #########
 
-Carefully analyze all the context snippets from the program before evaluating the target query snippet. Consider how the snippet interacts with other parts of the function and its role in the overall program flow. Do not evaluate the snippet in isolation.
-
-
-Context Snippets:
+Context:
 
 {formatted_context}
 
@@ -53,7 +71,7 @@ Target Code for Evaluation:
 
 #########
 
-Query:
+Target Code:
 
 {query}
 
@@ -61,4 +79,8 @@ Query:
 
 Make sure to evaluate only on the basis of the functionality and the possibility of security vulnerabilities mentioned above about changing the owner and group of a directory as described above. We are not concerned with any other functionalities such as verbose or symbolic link functionalities. Since we can not change the structure of code, even if a piece of code can be improved somehow, we do not care. We must make sure the program functions correctly in its given configuration in the larger picture. Simply comment on the importance of the piece of code give the structure of code provided to you in the context snippets.
 
-Make sure you do not add any information on your own. Consider all context snippets in the provided context to explain the queried code. If you do not know the answer, simply state that you do not know. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.
+If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
+
+We are not concerned with any other functionalities so make sure to evaluate the candidate set on the basis of the unrequired functionalites mentioned above as well and mark the candidate sets that meet the unrequired functionality criteria as unnecessary. 
+
+Make sure you do not add any information on your own. Consider all four snippets in the provided context to explain the queried code. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.

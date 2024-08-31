@@ -51,15 +51,15 @@ def parse_unsused_warnings(lines):
     unused_lines = []
     patterns = [
         rf'{re.escape(filename)}:(\d+):\d+: style: Label .* is not used\. \[unusedLabel\]',
-        # rf'{re.escape(filename)}:(\d+):\d+: style: Unused variable: .* \[unusedVariable\]',
+        rf'{re.escape(filename)}:(\d+):\d+: style: Unused variable: .* \[unusedVariable\]',
         # rf'{re.escape(filename)}:(\d+):\d+: style: Variable .* is reassigned a value before the old one has been used\. \[redundantAssignment\]',
         # rf'{re.escape(filename)}:(\d+):\d+: style: Variable .* is not assigned a value\. \[unassignedVariable\]'
     ]
-    # for line in lines:
-    #     for pattern in patterns:
-    #         match = re.search(pattern, line)
-    #         if match:
-    #             unused_lines.append((int(match.group(1)), "unusedcode"))
+    for line in lines:
+        for pattern in patterns:
+            match = re.search(pattern, line)
+            if match:
+                unused_lines.append((int(match.group(1)), "unusedcode"))
 
     # find out the unused lines within unreachable functions
     unused_functions = parse_unused_functions(lines)
