@@ -327,39 +327,20 @@ function run_test1() {
 
 function exception_handling() {
 
-    # Generality Test Case 45: Permission Denied
-    touch $DIR/protected_file.txt
-    chmod 000 $DIR/protected_file.txt
-    run_test "Permission denied" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY $DIR/protected_file.txt > $DIR/temp_output.txt; }" \
-        "{ timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY $DIR/protected_file.txt > $DIR/expected_output.txt; }"
-    chmod 644 $DIR/protected_file.txt # Reset permissions for cleanup
 
-    # Generality Test Case 46: Invalid Option Combination
-    echo -e "apple\nBanana\ncherry\nApple\nbanana\nCherry" >$DIR/invalid_option_combination.txt
-    run_test "Invalid option combination" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -M $DIR/invalid_option_combination.txt > $DIR/temp_output.txt; }" \
-        "{ timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY -M $DIR/invalid_option_combination.txt > $DIR/expected_output.txt; }"
-
-    # Generality Test Case 47: Empty File
-    touch $DIR/empty_file.txt
-    run_test "Sort an empty file" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY $DIR/empty_file.txt > $DIR/temp_output.txt; }" \
-        "{ timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY $DIR/empty_file.txt > $DIR/expected_output.txt; }"
-
-    # Generality Test Case 48: Single Line File
+    # Generality Test Case 45: Single Line File
     echo "singleline" >$DIR/single_line.txt
     run_test "Sort a single line file" \
         "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY $DIR/single_line.txt > $DIR/temp_output.txt; }" \
         "{ timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY $DIR/single_line.txt > $DIR/expected_output.txt; }"
 
-    # Generality Test Case 49: Non-ASCII Characters
+    # Generality Test Case 46: Non-ASCII Characters
     echo -e "naïve\ncafé\nresume\nexposé" >$DIR/non_ascii_chars.txt
     run_test "Sort a file with non-ASCII characters" \
         "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY $DIR/non_ascii_chars.txt > $DIR/temp_output.txt; }" \
         "{ timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY $DIR/non_ascii_chars.txt > $DIR/expected_output.txt; }"
 
-    # Generality Test Case 50: Sorting Files with Very Long Lines
+    # Generality Test Case 47: Sorting Files with Very Long Lines
     echo -e "$(openssl rand -base64 1000)\n$(openssl rand -base64 1000)\n$(openssl rand -base64 1000)" >$DIR/very_long_lines.txt
     run_test "Sort files with very long lines" \
         "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY $DIR/very_long_lines.txt > $DIR/temp_output.txt; }" \

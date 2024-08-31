@@ -5,6 +5,7 @@ import os
 from LLM_Util.exist_coverage import exist
 import glob
 import time
+import subprocess
 
 THRESHOLD = 7
 
@@ -15,8 +16,20 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
             return 0
         else: 
             return 10
-        # if "if (" in cand[0] or "else " in cand[0] or "while (" in cand[0] or cand[0].strip().startswith("case_"):
-        #     return 10
+
+    process = subprocess.run(
+    ["clang-format", "-style={ColumnLimit: 300, AllowShortFunctionsOnASingleLine: All, AllowShortIfStatementsOnASingleLine: true}"],
+    input="\n".join(cand),
+    capture_output=True,
+    text=True
+    )
+    formatted_code = process.stdout.split("\n")
+    cand = [c for c in formatted_code if c != ""]
+    if len(cand) == 1:
+        if cand[0] == " }" or cand[0] == " {" or cand[0] == "}" or cand[0] == "{":
+            return 0
+        else: 
+            return 10
     
 
     # Ensure directories exist

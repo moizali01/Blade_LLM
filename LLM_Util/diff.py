@@ -9,7 +9,7 @@ debloated_file_path = ''
 test_script_path = ''
 timeout_value = 2
 
-log_file_path = 'removal_log.txt'
+log_file_path = 'removal_log'
 temp_file_path = 'temp_file.c'
 
 # Function to format the original and debloated files

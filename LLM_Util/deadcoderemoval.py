@@ -297,30 +297,27 @@ def remove_insignificant_lines(file_path):
     with open(file_path, 'w') as file:
         file.writelines(current_lines)
 
+def remove_global_dead_code():
+    with open (filename, 'r') as file:
+        lines = file.readlines()
+    lines = [line for line in lines if not line.startswith("#pragma")]
+    with open (filename, 'w') as file:
+        file.writelines(lines)
+
 def redundant_line_removal():
     run_clang_format()
-    print("Running remove_comments...")
+
+    print("Removing empty blocks and dead code...")
     remove_cluttered_code(filename)
-
-    print("Running clang-format...")
     subprocess.run(["clang-format", "-i", filename])
-
-    print("Running remove_ifelse...")
     remove_insignificant_lines(filename)
-
-    print("Running remove_comments again...")
     remove_cluttered_code(filename)
-
-    print("Running clang-format again...")
     subprocess.run(["clang-format", "-i", filename])
-
-    print("Running remove_ifelse again...")
     remove_insignificant_lines(filename)
-
-    # print ("Running remove_semi_colons...")
-    # remove_semi_colons()
-
     run_clang_format()
+    remove_global_dead_code() 
+
+
     print(f"Processing completed for {filename}.")
 
 def run_clang_format():

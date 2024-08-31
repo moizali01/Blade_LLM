@@ -11,7 +11,11 @@ struct _IO_FILE;
 struct _IO_FILE;
 typedef struct _IO_FILE FILE;
 typedef void _IO_lock_t;
-
+struct _IO_marker {
+  struct _IO_marker *_next;
+  struct _IO_FILE *_sbuf;
+  int _pos;
+};
 struct _IO_FILE {
   int _flags;
   char *_IO_read_ptr;
@@ -227,7 +231,19 @@ int c_strcasecmp(char const *s1, char const *s2) {
     if ((unsigned long)p1 == (unsigned long)p2) {
       return (0);
     }
-
+    while (1) {
+      c1 = (unsigned char)c_tolower((int)*p1);
+      c2 = (unsigned char)c_tolower((int)*p2);
+      if ((int)c1 == 0) {
+        goto while_break;
+      }
+      p1++;
+      p2++;
+      if (!((int)c1 == (int)c2)) {
+        goto while_break;
+      }
+    }
+  while_break:;
     return ((int)c1 - (int)c2);
   }
 }
@@ -285,6 +301,11 @@ _Bool c_isspace(int c) {
   }
 }
 int c_tolower(int c) __attribute__((__const__));
+int c_tolower(int c) {
+  int tmp;
+
+  { return (tmp); }
+}
 int c_toupper(int c) __attribute__((__const__));
 int c_toupper(int c) {
   int tmp;
@@ -302,67 +323,53 @@ int c_toupper(int c) {
     return (tmp);
   }
 }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 char *last_component(char const *name) __attribute__((__pure__));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 __attribute__((__noreturn__)) void xalloc_die(void);
 void *xmalloc(size_t n) __attribute__((__malloc__, __alloc_size__(1)));
 void *xrealloc(void *p, size_t n) __attribute__((__alloc_size__(2)));
 __inline void *xnmalloc(size_t n, size_t s) __attribute__((__malloc__, __alloc_size__(1, 2)));
 __inline void *xnmalloc(size_t n, size_t s) __attribute__((__malloc__, __alloc_size__(1, 2)));
-__inline void *xnmalloc(size_t n, size_t s) {
-  int tmp;
-  void *tmp___0;
 
-  {
-    if (sizeof(ptrdiff_t) <= sizeof(size_t)) {
-      tmp = -1;
-    } else {
-      tmp = -2;
-    }
-    if ((size_t)tmp / s < n) {
-      xalloc_die();
-    }
-    tmp___0 = xmalloc(n * s);
-    return (tmp___0);
-  }
-}
-char *xcharalloc(size_t n) {
-  void *tmp;
-  void *tmp___0;
-  void *tmp___1;
-
-  {
-    if (sizeof(char) == 1UL) {
-      tmp = xmalloc(n);
-      tmp___1 = tmp;
-    } else {
-      tmp___0 = xnmalloc(n, sizeof(char));
-      tmp___1 = tmp___0;
-    }
-    return ((char *)tmp___1);
-  }
-}
 extern __attribute__((__nothrow__)) size_t(__attribute__((__nonnull__(1), __leaf__)) strlen)(char const *__s) __attribute__((__pure__));
 char *last_component(char const *name) __attribute__((__pure__));
+
 extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) malloc)(size_t __size) __attribute__((__malloc__));
 extern __attribute__((__nothrow__)) void(__attribute__((__leaf__)) free)(void *__ptr);
 char const *simple_backup_suffix;
 void (*argmatch_die)(void);
 ptrdiff_t __xargmatch_internal(char const *context, char const *arg, char const *const *arglist, char const *vallist, size_t valsize, void (*exit_fn)(void));
-extern __attribute__((__nothrow__)) int *(__attribute__((__leaf__)) __errno_location)(void)__attribute__((__const__));
-extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1), __leaf__)) getenv)(char const *__name);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+
 extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1, 2), __leaf__)) memcpy)(void *__restrict __dest, void const *__restrict __src, size_t __n);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) memcmp)(void const *__s1, void const *__s2, size_t __n) __attribute__((__pure__));
 extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1, 2), __leaf__)) strcpy)(char *__restrict __dest, char const *__restrict __src);
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+char const *simple_backup_suffix = "~";
 ptrdiff_t argmatch(char const *arg, char const *const *arglist, char const *vallist, size_t valsize) __attribute__((__pure__));
 
 void argmatch_valid(char const *const *arglist, char const *vallist, size_t valsize);
 extern struct _IO_FILE *stderr;
 
 extern int putc_unlocked(int __c, FILE *__stream);
-extern int fputs_unlocked(char const *__restrict __s, FILE *__restrict __stream);
+
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) strncmp)(char const *__s1, char const *__s2, size_t __n) __attribute__((__pure__));
-extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) gettext)(char const *__msgid) __attribute__((__format_arg__(1)));
+
 extern void error(int __status, int __errnum, char const *__format, ...);
 char *quotearg_n_style(int n, enum quoting_style s, char const *arg);
 char const *quote_n(int n, char const *arg);
@@ -377,90 +384,223 @@ static void __argmatch_die(void) {
 }
 void (*argmatch_die)(void) = &__argmatch_die;
 ptrdiff_t argmatch(char const *arg, char const *const *arglist, char const *vallist, size_t valsize) __attribute__((__pure__));
-struct allocator const stdlib_allocator;
+
 extern __attribute__((__nothrow__)) void *(__attribute__((__warn_unused_result__, __leaf__)) realloc)(void *__ptr, size_t __size);
 struct allocator const stdlib_allocator = {(void *(*)(size_t))(&malloc), (void *(*)(void *, size_t))(&realloc), (void (*)(void *))(&free), (void (*)(size_t))((void *)0)};
 extern struct _IO_FILE *stdin;
 extern __ssize_t getline(char **__restrict __lineptr, size_t *__restrict __n, FILE *__restrict __stream);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 extern __attribute__((__nothrow__)) unsigned short const **(__attribute__((__leaf__)) __ctype_b_loc)(void)__attribute__((__const__));
-extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1), __leaf__)) strchr)(char const *__s, int __c) __attribute__((__pure__));
-extern __attribute__((__nothrow__, __noreturn__)) void(__attribute__((__leaf__)) abort)(void);
+
 int volatile exit_failure;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 extern struct _IO_FILE *stdout;
-void *xmemdup(void const *p, size_t s) __attribute__((__malloc__, __alloc_size__(2)));
-extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1), __leaf__)) memset)(void *__s, int __c, size_t __n);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+
 void *xmalloc(size_t n) __attribute__((__malloc__, __alloc_size__(1)));
-void *xmalloc(size_t n) {
-  void *p;
-  void *tmp;
-
-  {
-    tmp = malloc(n);
-    p = tmp;
-    if (!p) {
-      if (n != 0UL) {
-        xalloc_die();
-      }
-    }
-    return (p);
-  }
-}
 void *xrealloc(void *p, size_t n) __attribute__((__alloc_size__(2)));
-void *xrealloc(void *p, size_t n) {
-
-  {
-    if (!n) {
-      if (p) {
-        free(p);
-        return ((void *)0);
-      }
-    }
-    p = realloc(p, n);
-    if (!p) {
-      if (n) {
-        xalloc_die();
-      }
-    }
-    return (p);
-  }
-}
 void *xmemdup(void const *p, size_t s) __attribute__((__malloc__, __alloc_size__(2)));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 __attribute__((__noreturn__)) void xalloc_die(void);
-void xalloc_die(void) {
-  char *tmp;
-
-  {
-    tmp = gettext("memory exhausted");
-    error((int)exit_failure, 0, "%s", tmp);
-    abort();
-  }
-}
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) strcmp)(char const *__s1, char const *__s2) __attribute__((__pure__));
-extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) atexit)(void (*__func)(void));
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 extern size_t fwrite(void const *__restrict __ptr, size_t __size, size_t __n, FILE *__restrict __s);
 extern int printf(char const *__restrict __format, ...);
 char const version_etc_copyright[47];
 void version_etc_arn(FILE *stream, char const *command_name, char const *package, char const *version, char const *const *authors, size_t n_authors);
 
+void version_etc(FILE *stream, char const *command_name, char const *package, char const *version, ...) __attribute__((__sentinel__));
+void version_etc(FILE *stream, char const *command_name, char const *package, char const *version, ...) __attribute__((__sentinel__));
+
 extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) nl_langinfo)(nl_item __item);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 struct timespec get_stat_mtime(struct stat const *st) {
 
   {
     return ((struct timespec)st->st_mtim);
   }
 }
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) stat)(char const *__restrict __file, struct stat *__restrict __buf);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 void gettime(struct timespec *ts);
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 char const *locale_charset(void);
-
+#pragma GCC diagnostic ignored "-Wtype-limits"
+#pragma GCC diagnostic ignored "-Wtype-limits"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) __ctype_get_mb_cur_max)(void);
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) mbsinit)(mbstate_t const *__ps) __attribute__((__pure__));
 extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) mbrtowc)(wchar_t *__restrict __pwc, char const *__restrict __s, size_t __n, mbstate_t *__restrict __p);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 unsigned int const is_basic_table[8];
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma weak pthread_key_create
+#pragma weak pthread_getspecific
+#pragma weak pthread_setspecific
+#pragma weak pthread_key_delete
+#pragma weak pthread_self
+#pragma weak pthread_cancel
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern int(__attribute__((__nonnull__(1))) open)(char const *__file, int __oflag, ...);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern __attribute__((__nothrow__)) time_t(__attribute__((__leaf__)) mktime)(struct tm *__tp);
 extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) strftime)(char *__restrict __s, size_t __maxsize, char const *__restrict __format, struct tm const *__restrict __tp);
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) tolower)(int __c);
-
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) toupper)(int __c);
 __inline static int iso_week_days(int yday, int wday) {
   int big_enough_multiple_of_7;
 
@@ -469,16 +609,95 @@ __inline static int iso_week_days(int yday, int wday) {
     return (((yday - (((yday - wday) + 4) + big_enough_multiple_of_7) % 7) + 4) - 1);
   }
 }
-extern int close(int __fd);
-extern __attribute__((__nothrow__)) int sprintf(char *__restrict __s, char const *__restrict __format, ...);
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) ferror_unlocked)(FILE *__stream);
 
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) settimeofday)(struct timeval const *__tv, struct timezone const *__tz);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+extern __attribute__((__nothrow__)) int sprintf(char *__restrict __s, char const *__restrict __format, ...);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) clock_settime)(clockid_t __clock_id, struct timespec const *__tp);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+int settime(struct timespec const *ts);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+int settime(struct timespec const *ts) {
+  int r;
+  int tmp;
+  int *tmp___0;
+  struct timeval tv;
+  int tmp___1;
+
+  {
+    tmp = clock_settime(0, ts);
+    r = tmp;
+
+    tv.tv_sec = (__time_t)ts->tv_sec;
+    tv.tv_usec = (__suseconds_t)(ts->tv_nsec / 1000L);
+
+    return (tmp___1);
+  }
+}
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern __attribute__((__noreturn__)) void _exit(int __status);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 extern int getc_unlocked(FILE *__stream);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 extern FILE *fopen(char const *__restrict __filename, char const *__restrict __modes);
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fileno)(FILE *__stream);
+
 int(__attribute__((__nonnull__(1))) rpl_fclose)(FILE *fp);
 char *quotearg_colon(char const *arg);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) gettimeofday)(struct timeval *__restrict __tv, __timezone_ptr_t __tz);
@@ -489,31 +708,12 @@ char *quotearg_char(char const *arg, char ch);
 char *quotearg_char_mem(char const *arg, size_t argsize, char ch);
 struct quoting_options quote_quoting_options;
 char const *quote_n_mem(int n, char const *arg, size_t argsize);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) iswprint)(wint_t __wc);
-char const *const quoting_style_args[9] = {"literal", "shell", "shell-always", "c", "c-maybe", "escape", "locale", "clocale", (char const *)0};
-enum quoting_style const quoting_style_vals[8] = {(enum quoting_style const)0, (enum quoting_style const)1, (enum quoting_style const)2, (enum quoting_style const)3, (enum quoting_style const)4, (enum quoting_style const)5, (enum quoting_style const)6, (enum quoting_style const)7};
-static struct quoting_options default_quoting_options;
-int set_char_quoting(struct quoting_options *o, char c, int i) {
-  unsigned char uc;
-  unsigned int *p;
-  struct quoting_options *tmp;
-  int shift;
-  int r;
 
-  {
-    uc = (unsigned char)c;
-    if (o) {
-      tmp = o;
-    } else {
-      tmp = &default_quoting_options;
-    }
-    p = tmp->quote_these_too + (unsigned long)uc / (sizeof(int) * 8UL);
-    shift = (int)((unsigned long)uc % (sizeof(int) * 8UL));
-    r = (int)((*p >> shift) & 1U);
-    *p ^= (unsigned int)(((i & 1) ^ r) << shift);
-    return (r);
-  }
-}
+static struct quoting_options default_quoting_options;
 static char const *gettext_quote(char const *msgid, enum quoting_style s) {
   char const *translation;
   char const *tmp;
@@ -527,9 +727,7 @@ static char const *gettext_quote(char const *msgid, enum quoting_style s) {
   {
     tmp = (char const *)gettext(msgid);
     translation = tmp;
-    if ((unsigned long)translation != (unsigned long)msgid) {
-      return (translation);
-    }
+
     locale_code = locale_charset();
     tmp___1 = c_strcasecmp(locale_code, "UTF-8");
     if (tmp___1 == 0) {
@@ -541,14 +739,7 @@ static char const *gettext_quote(char const *msgid, enum quoting_style s) {
       return (tmp___0);
     }
     tmp___3 = c_strcasecmp(locale_code, "GB18030");
-    if (tmp___3 == 0) {
-      if ((int const) * (msgid + 0) == 96) {
-        tmp___2 = "\241\ae";
-      } else {
-        tmp___2 = "\241\257";
-      }
-      return (tmp___2);
-    }
+
     if ((unsigned int)s == 7U) {
       tmp___4 = "\"";
     } else {
@@ -574,6 +765,13 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
   size_t m;
   _Bool printable;
   unsigned short const **tmp___2;
+  mbstate_t mbstate;
+  wchar_t w;
+  size_t bytes;
+  size_t tmp___3;
+  size_t j;
+  int tmp___4;
+  int tmp___5;
   size_t ilim;
   int tmp___6;
   size_t tmp___7;
@@ -586,11 +784,13 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
     tmp = __ctype_get_mb_cur_max();
     unibyte_locale = (_Bool)(tmp == 1UL);
     elide_outer_quotes = (_Bool)((flags & 2) != 0);
-
-    if ((unsigned int)quoting_style == 3U) {
-      goto case_3;
+    if ((unsigned int)quoting_style == 4U) {
+      goto case_4;
     }
 
+    if ((unsigned int)quoting_style == 5U) {
+      goto case_5;
+    }
     if ((unsigned int)quoting_style == 6U) {
       goto case_6;
     }
@@ -600,58 +800,30 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
     if ((unsigned int)quoting_style == 8U) {
       goto case_6;
     }
-    if ((unsigned int)quoting_style == 1U) {
-      goto case_1;
-    }
+
     if ((unsigned int)quoting_style == 2U) {
       goto case_2;
     }
-    if ((unsigned int)quoting_style == 0U) {
-      goto case_0;
-    }
-    goto switch_default;
-  case_3:
-    if (!elide_outer_quotes) {
-      while (1) {
 
-        if (len < buffersize) {
-          *(buffer + len) = (char)'\"';
-        }
-        len++;
-        goto while_break;
-      }
-    while_break:;
-    }
+    goto switch_default;
+  case_4:
+    quoting_style = (enum quoting_style)3;
+    elide_outer_quotes = (_Bool)1;
+  case_3:
     backslash_escapes = (_Bool)1;
     quote_string = "\"";
     quote_string_len = (size_t)1;
     goto switch_break;
+  case_5:
+    backslash_escapes = (_Bool)1;
+    elide_outer_quotes = (_Bool)0;
     goto switch_break;
   case_6:
     if ((unsigned int)quoting_style != 8U) {
       left_quote = gettext_quote("`", quoting_style);
       right_quote = gettext_quote("\'", quoting_style);
     }
-    if (!elide_outer_quotes) {
-      quote_string = left_quote;
-      while (1) {
 
-        if (!*quote_string) {
-          goto while_break___0;
-        }
-        while (1) {
-
-          if (len < buffersize) {
-            *(buffer + len) = (char)*quote_string;
-          }
-          len++;
-          goto while_break___1;
-        }
-      while_break___1:
-        quote_string++;
-      }
-    while_break___0:;
-    }
     backslash_escapes = (_Bool)1;
     quote_string = right_quote;
     quote_string_len = strlen(quote_string);
@@ -660,17 +832,6 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
     quoting_style = (enum quoting_style)2;
     elide_outer_quotes = (_Bool)1;
   case_2:
-    if (!elide_outer_quotes) {
-      while (1) {
-
-        if (len < buffersize) {
-          *(buffer + len) = (char)'\'';
-        }
-        len++;
-        goto while_break___2;
-      }
-    while_break___2:;
-    }
     quote_string = "\'";
     quote_string_len = (size_t)1;
     goto switch_break;
@@ -688,35 +849,16 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       } else {
         tmp___6 = i == argsize;
       }
-
-      is_right_quote = (_Bool)0;
-      if (backslash_escapes) {
-        if (quote_string_len) {
-          if (i + quote_string_len <= argsize) {
-            tmp___0 = memcmp((void const *)(arg + i), (void const *)quote_string, quote_string_len);
-            if (tmp___0 == 0) {
-
-              is_right_quote = (_Bool)1;
-            }
-          }
-        }
+      if (tmp___6) {
+        goto while_break___3;
       }
+      is_right_quote = (_Bool)0;
+
       c = (unsigned char)*(arg + i);
       if ((int)c == 0) {
         goto case_0___0;
       }
-      if ((int)c == 63) {
-        goto case_63;
-      }
-      if ((int)c == 7) {
-        goto case_7___0;
-      }
-      if ((int)c == 8) {
-        goto case_8___0;
-      }
-      if ((int)c == 12) {
-        goto case_12;
-      }
+
       if ((int)c == 10) {
         goto case_10;
       }
@@ -735,18 +877,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       if ((int)c == 123) {
         goto case_123;
       }
-      if ((int)c == 125) {
-        goto case_123;
-      }
-      if ((int)c == 35) {
-        goto case_35;
-      }
-      if ((int)c == 126) {
-        goto case_35;
-      }
-      if ((int)c == 32) {
-        goto case_32;
-      }
+
       if ((int)c == 33) {
         goto case_32;
       }
@@ -756,42 +887,29 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       if ((int)c == 36) {
         goto case_32;
       }
-      if ((int)c == 38) {
-        goto case_32;
-      }
+
       if ((int)c == 40) {
         goto case_32;
       }
       if ((int)c == 41) {
         goto case_32;
       }
-      if ((int)c == 42) {
-        goto case_32;
-      }
+
       if ((int)c == 59) {
         goto case_32;
       }
       if ((int)c == 60) {
         goto case_32;
       }
-      if ((int)c == 61) {
-        goto case_32;
-      }
-      if ((int)c == 62) {
-        goto case_32;
-      }
+
       if ((int)c == 91) {
         goto case_32;
       }
-      if ((int)c == 94) {
-        goto case_32;
-      }
+
       if ((int)c == 96) {
         goto case_32;
       }
-      if ((int)c == 124) {
-        goto case_32;
-      }
+
       if ((int)c == 39) {
         goto case_39___0;
       }
@@ -816,9 +934,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       if ((int)c == 48) {
         goto case_37;
       }
-      if ((int)c == 49) {
-        goto case_37;
-      }
+
       if ((int)c == 50) {
         goto case_37;
       }
@@ -831,15 +947,11 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       if ((int)c == 53) {
         goto case_37;
       }
-      if ((int)c == 54) {
-        goto case_37;
-      }
+
       if ((int)c == 55) {
         goto case_37;
       }
-      if ((int)c == 56) {
-        goto case_37;
-      }
+
       if ((int)c == 57) {
         goto case_37;
       }
@@ -849,9 +961,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       if ((int)c == 65) {
         goto case_37;
       }
-      if ((int)c == 66) {
-        goto case_37;
-      }
+
       if ((int)c == 67) {
         goto case_37;
       }
@@ -861,9 +971,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       if ((int)c == 69) {
         goto case_37;
       }
-      if ((int)c == 70) {
-        goto case_37;
-      }
+
       if ((int)c == 71) {
         goto case_37;
       }
@@ -873,12 +981,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       if ((int)c == 73) {
         goto case_37;
       }
-      if ((int)c == 74) {
-        goto case_37;
-      }
-      if ((int)c == 75) {
-        goto case_37;
-      }
+
       if ((int)c == 76) {
         goto case_37;
       }
@@ -909,9 +1012,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       if ((int)c == 85) {
         goto case_37;
       }
-      if ((int)c == 86) {
-        goto case_37;
-      }
+
       if ((int)c == 87) {
         goto case_37;
       }
@@ -933,27 +1034,19 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       if ((int)c == 97) {
         goto case_37;
       }
-      if ((int)c == 98) {
-        goto case_37;
-      }
+
       if ((int)c == 99) {
         goto case_37;
       }
-      if ((int)c == 100) {
-        goto case_37;
-      }
+
       if ((int)c == 101) {
         goto case_37;
       }
-      if ((int)c == 102) {
-        goto case_37;
-      }
+
       if ((int)c == 103) {
         goto case_37;
       }
-      if ((int)c == 104) {
-        goto case_37;
-      }
+
       if ((int)c == 105) {
         goto case_37;
       }
@@ -997,53 +1090,15 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       if ((int)c == 119) {
         goto case_37;
       }
-      if ((int)c == 120) {
-        goto case_37;
-      }
+
       if ((int)c == 121) {
         goto case_37;
       }
-      if ((int)c == 122) {
-        goto case_37;
-      }
+
       goto switch_default___2;
     case_0___0:
       if (backslash_escapes) {
-        if (elide_outer_quotes) {
-          goto force_outer_quoting_style;
-        }
-        while (1) {
-
-          if (len < buffersize) {
-            *(buffer + len) = (char)'\\';
-          }
-          len++;
-          goto while_break___4;
-        }
       while_break___4:;
-        if (i + 1UL < argsize) {
-          if (48 <= (int)*(arg + (i + 1UL))) {
-            if ((int const) * (arg + (i + 1UL)) <= 57) {
-              while (1) {
-
-                if (len < buffersize) {
-                  *(buffer + len) = (char)'0';
-                }
-                len++;
-                goto while_break___5;
-              }
-            while_break___5:;
-              while (1) {
-                if (len < buffersize) {
-                  *(buffer + len) = (char)'0';
-                }
-                len++;
-                goto while_break___6;
-              }
-            while_break___6:;
-            }
-          }
-        }
         c = (unsigned char)'0';
       } else {
         if (flags & 1) {
@@ -1060,12 +1115,65 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       }
       goto switch_default___1;
     case_2___0:
-      if (elide_outer_quotes) {
-        goto force_outer_quoting_style;
-      }
       goto switch_break___1;
     case_3___0:
       if (flags & 4) {
+        if (i + 2UL < argsize) {
+          if ((int const) * (arg + (i + 1UL)) == 63) {
+            if ((int const) * (arg + (i + 2UL)) == 33) {
+              goto case_33;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 39) {
+              goto case_33;
+            }
+
+            if ((int const) * (arg + (i + 2UL)) == 41) {
+              goto case_33;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 45) {
+              goto case_33;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 47) {
+              goto case_33;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 60) {
+              goto case_33;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 61) {
+              goto case_33;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 62) {
+              goto case_33;
+            }
+            goto switch_default___0;
+          case_33:
+            c = (unsigned char)*(arg + (i + 2UL));
+            i += 2UL;
+
+          while_break___7:;
+          while_break___8:;
+            while (1) {
+              if (len < buffersize) {
+                *(buffer + len) = (char)'\"';
+              }
+              len++;
+              goto while_break___9;
+            }
+          while_break___9:;
+            while (1) {
+              if (len < buffersize) {
+                *(buffer + len) = (char)'?';
+              }
+              len++;
+              goto while_break___10;
+            }
+          while_break___10:;
+            goto switch_break___2;
+          switch_default___0:
+            goto switch_break___2;
+          switch_break___2:;
+          }
+        }
       }
       goto switch_break___1;
     switch_default___1:
@@ -1121,21 +1229,10 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         goto switch_break___0;
       }
     case_35:
-      if (i != 0UL) {
-        goto switch_break___0;
-      }
     case_32:
-      if ((unsigned int)quoting_style == 2U) {
-        if (elide_outer_quotes) {
-          goto force_outer_quoting_style;
-        }
-      }
       goto switch_break___0;
     case_39___0:
       if ((unsigned int)quoting_style == 2U) {
-        if (elide_outer_quotes) {
-          goto force_outer_quoting_style;
-        }
         while (1) {
 
           if (len < buffersize) {
@@ -1153,94 +1250,48 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
           goto while_break___12;
         }
       while_break___12:;
-        while (1) {
-          if (len < buffersize) {
-            *(buffer + len) = (char)'\'';
-          }
-          len++;
-          goto while_break___13;
-        }
       while_break___13:;
       }
       goto switch_break___0;
     case_37:
       goto switch_break___0;
     switch_default___2:
-      if (1UL < m) {
-        goto _L___0;
+      if (unibyte_locale) {
+        m = (size_t)1;
+        tmp___2 = __ctype_b_loc();
+        printable = (_Bool)(((int const) * (*tmp___2 + (int)c) & 16384) != 0);
       } else {
-        if (backslash_escapes) {
-          if (!printable) {
-          _L___0:
-            ilim = i + m;
-            while (1) {
-
-              if (backslash_escapes) {
-                if (!printable) {
-
-                  while (1) {
-
-                    if (len < buffersize) {
-                      *(buffer + len) = (char)'\\';
-                    }
-                    len++;
-                    goto while_break___18;
-                  }
-                while_break___18:;
-                  while (1) {
-                    if (len < buffersize) {
-                      *(buffer + len) = (char)(48 + ((int)c >> 6));
-                    }
-                    len++;
-                    goto while_break___19;
-                  }
-                while_break___19:;
-                  while (1) {
-                    if (len < buffersize) {
-                      *(buffer + len) = (char)(48 + (((int)c >> 3) & 7));
-                    }
-                    len++;
-                    goto while_break___20;
-                  }
-                while_break___20:
-                  c = (unsigned char)(48 + ((int)c & 7));
-                } else {
-                  goto _L;
-                }
-              } else {
-              _L:
-                if (is_right_quote) {
-                  while (1) {
-
-                    if (len < buffersize) {
-                      *(buffer + len) = (char)'\\';
-                    }
-                    len++;
-                    goto while_break___21;
-                  }
-                while_break___21:
-                  is_right_quote = (_Bool)0;
-                }
-              }
-              if (ilim <= i + 1UL) {
-                goto while_break___17;
-              }
-              while (1) {
-
-                if (len < buffersize) {
-                  *(buffer + len) = (char)c;
-                }
-                len++;
-                goto while_break___22;
-              }
-            while_break___22:
-              i++;
-              c = (unsigned char)*(arg + i);
-            }
-          while_break___17:;
-            goto store_c;
-          }
+        memset((void *)(&mbstate), 0, sizeof(mbstate));
+        m = (size_t)0;
+        printable = (_Bool)1;
+        if (argsize == 0xffffffffffffffffUL) {
+          argsize = strlen(arg);
         }
+        while (1) {
+          tmp___3 = mbrtowc(&w, arg + (i + m), argsize - (i + m), &mbstate);
+          bytes = tmp___3;
+          if (bytes == 0UL) {
+            goto while_break___14;
+          } else {
+            if (bytes == 0xffffffffffffffffUL) {
+              printable = (_Bool)0;
+              goto while_break___14;
+            } else {
+              if (bytes == 0xfffffffffffffffeUL) {
+                printable = (_Bool)0;
+
+              while_break___15:;
+                goto while_break___14;
+              } else {
+                tmp___4 = iswprint((wint_t)w);
+
+                m += bytes;
+              }
+            }
+          }
+          tmp___5 = mbsinit((mbstate_t const *)(&mbstate));
+        }
+      while_break___14:;
       }
     switch_break___0:;
       if (backslash_escapes) {
@@ -1263,11 +1314,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         }
       }
     store_escape:
-      if (elide_outer_quotes) {
-        goto force_outer_quoting_style;
-      }
       while (1) {
-
         if (len < buffersize) {
           *(buffer + len) = (char)'\\';
         }
@@ -1276,16 +1323,15 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       }
     while_break___23:;
     store_c:
+      while (1) {
+        len++;
+        goto while_break___24;
+      }
+    while_break___24:;
     __Cont:
       i++;
     }
-    if (len == 0UL) {
-      if ((unsigned int)quoting_style == 2U) {
-        if (elide_outer_quotes) {
-          goto force_outer_quoting_style;
-        }
-      }
-    }
+  while_break___3:;
     if (len < buffersize) {
       *(buffer + len) = (char)'\000';
     }
@@ -1299,105 +1345,11 @@ static char slot0[256];
 static unsigned int nslots = 1U;
 static struct slotvec slotvec0 = {sizeof(slot0), slot0};
 static struct slotvec *slotvec = &slotvec0;
-static char *quotearg_n_options(int n, char const *arg, size_t argsize, struct quoting_options const *options) {
-  int e;
-  int *tmp;
-  unsigned int n0;
-  struct slotvec *sv;
-  size_t n1;
-  _Bool preallocated;
-  int tmp___0;
-  struct slotvec *tmp___1;
-  size_t size;
-  char *val;
-  int flags;
-  size_t qsize;
-  size_t tmp___2;
-  int *tmp___3;
-
-  {
-    tmp = __errno_location();
-    e = *tmp;
-    n0 = (unsigned int)n;
-    sv = slotvec;
-
-    if (nslots <= n0) {
-      n1 = (size_t)(n0 + 1U);
-      preallocated = (_Bool)((unsigned long)sv == (unsigned long)(&slotvec0));
-      if (sizeof(ptrdiff_t) <= sizeof(size_t)) {
-        tmp___0 = -1;
-      } else {
-        tmp___0 = -2;
-      }
-      if ((size_t)tmp___0 / sizeof(*sv) < n1) {
-        xalloc_die();
-      }
-      if (preallocated) {
-        tmp___1 = (struct slotvec *)((void *)0);
-      } else {
-        tmp___1 = sv;
-      }
-      sv = (struct slotvec *)xrealloc((void *)tmp___1, n1 * sizeof(*sv));
-      slotvec = sv;
-      if (preallocated) {
-        *sv = slotvec0;
-      }
-      memset((void *)(sv + nslots), 0, (n1 - (size_t)nslots) * sizeof(*sv));
-      nslots = (unsigned int)n1;
-    }
-    size = (sv + n)->size;
-    val = (sv + n)->val;
-    flags = (int)(options->flags | 1);
-    tmp___2 = quotearg_buffer_restyled(val, size, arg, argsize, (enum quoting_style)options->style, flags, (unsigned int const *)(options->quote_these_too), (char const *)options->left_quote, (char const *)options->right_quote);
-    qsize = tmp___2;
-    if (size <= qsize) {
-      size = qsize + 1UL;
-      (sv + n)->size = size;
-
-      val = xcharalloc(size);
-      (sv + n)->val = val;
-      quotearg_buffer_restyled(val, size, arg, argsize, (enum quoting_style)options->style, flags, (unsigned int const *)(options->quote_these_too), (char const *)options->left_quote, (char const *)options->right_quote);
-    }
-    tmp___3 = __errno_location();
-    *tmp___3 = e;
-    return (val);
-  }
-}
-char *quotearg_char_mem(char const *arg, size_t argsize, char ch) {
-  struct quoting_options options;
-  char *tmp;
-
-  {
-    options = default_quoting_options;
-    set_char_quoting(&options, ch, 1);
-    tmp = quotearg_n_options(0, arg, argsize, (struct quoting_options const *)(&options));
-    return (tmp);
-  }
-}
-char *quotearg_char(char const *arg, char ch) {
-  char *tmp;
-
-  {
-    tmp = quotearg_char_mem(arg, (size_t)-1, ch);
-    return (tmp);
-  }
-}
-char *quotearg_colon(char const *arg) {
-  char *tmp;
-
-  {
-    tmp = quotearg_char(arg, (char)':');
-    return (tmp);
-  }
-}
 struct quoting_options quote_quoting_options = {(enum quoting_style)6, 0, {0U}, (char const *)((void *)0), (char const *)((void *)0)};
 char const *quote_n_mem(int n, char const *arg, size_t argsize) {
   char const *tmp;
 
-  {
-    tmp = (char const *)quotearg_n_options(n, arg, argsize, (struct quoting_options const *)(&quote_quoting_options));
-    return (tmp);
-  }
+  { return (tmp); }
 }
 char const *quote_n(int n, char const *arg) {
   char const *tmp;
@@ -1420,26 +1372,46 @@ void set_program_name(char const *argv0);
 extern char *program_invocation_name;
 extern char *program_invocation_short_name;
 extern int fputs(char const *__restrict __s, FILE *__restrict __stream);
-
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1), __leaf__)) strrchr)(char const *__s, int __c) __attribute__((__pure__));
 char const *program_name = (char const *)((void *)0);
 void set_program_name(char const *argv0) {
   char const *slash;
   char const *base;
+  int tmp;
+  int tmp___0;
 
   {
-
-    slash = (char const *)strrchr(argv0, '/');
-    if ((unsigned long)slash != (unsigned long)((void *)0)) {
-      base = slash + 1;
-    } else {
-      base = argv0;
+    if ((unsigned long)argv0 == (unsigned long)((void *)0)) {
+      fputs("A NULL argv[0] was passed through an exec system call.\n", stderr);
+      abort();
     }
+    slash = (char const *)strrchr(argv0, '/');
 
     program_name = argv0;
     program_invocation_name = (char *)argv0;
     return;
   }
 }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern __attribute__((__nothrow__)) time_t(__attribute__((__leaf__)) time)(time_t *__timer);
 extern __attribute__((__nothrow__)) struct tm *(__attribute__((__leaf__)) localtime)(time_t const *__timer);
 _Bool posixtime(time_t *p, char const *s, unsigned int syntax_bits);
@@ -1452,7 +1424,12 @@ static int year(struct tm *tm, int const *digit_pair, size_t n, unsigned int syn
     if (n == 1UL) {
       goto case_1;
     }
-
+    if (n == 2UL) {
+      goto case_2;
+    }
+    if (n == 0UL) {
+      goto case_0;
+    }
     goto switch_default;
   case_1:
     tm->tm_year = (int)*digit_pair;
@@ -1463,7 +1440,11 @@ static int year(struct tm *tm, int const *digit_pair, size_t n, unsigned int syn
       tm->tm_year += 100;
     }
     goto switch_break;
+  case_2:
+    tm->tm_year = (int)((*(digit_pair + 0) * 100 + *(digit_pair + 1)) - 1900);
     goto switch_break;
+  case_0:
+    time(&now);
     tmp = localtime((time_t const *)(&now));
     if (!tmp) {
       return (1);
@@ -1490,6 +1471,7 @@ static int posix_time_parse(struct tm *tm, char const *s, unsigned int syntax_bi
   int *tmp___3;
   int *tmp___4;
   int *tmp___5;
+  int tmp___6;
   int seconds;
 
   {
@@ -1515,7 +1497,9 @@ static int posix_time_parse(struct tm *tm, char const *s, unsigned int syntax_bi
       }
     }
     if (dot) {
-
+      if (!(syntax_bits & 8U)) {
+        return (1);
+      }
       if (s_len - len != 3UL) {
         return (1);
       }
@@ -1523,8 +1507,15 @@ static int posix_time_parse(struct tm *tm, char const *s, unsigned int syntax_bi
     i = (size_t)0;
     while (1) {
 
+      if (!(i < len)) {
+        goto while_break;
+      }
+      if (!((unsigned int)*(s + i) - 48U <= 9U)) {
+        return (1);
+      }
       i++;
     }
+  while_break:
     len /= 2UL;
     i = (size_t)0;
     while (1) {
@@ -1539,7 +1530,9 @@ static int posix_time_parse(struct tm *tm, char const *s, unsigned int syntax_bi
     p = pair;
     if (syntax_bits & 1U) {
       tmp___1 = year(tm, (int const *)p, len - 4UL, syntax_bits);
-
+      if (tmp___1) {
+        return (1);
+      }
       p += len - 4UL;
       len = (size_t)4;
     }
@@ -1556,17 +1549,18 @@ static int posix_time_parse(struct tm *tm, char const *s, unsigned int syntax_bi
     p++;
     tm->tm_min = *tmp___5;
     len -= 4UL;
-
+    if (syntax_bits & 2U) {
+      tmp___6 = year(tm, (int const *)p, len, syntax_bits);
+      if (tmp___6) {
+        return (1);
+      }
+    }
     if (!dot) {
       tm->tm_sec = 0;
     } else {
       dot++;
       if (!((unsigned int)*(dot + 0) - 48U <= 9U)) {
         return (1);
-      } else {
-        if (!((unsigned int)*(dot + 1) - 48U <= 9U)) {
-          return (1);
-        }
       }
       seconds = (10 * (int)((int const) * (dot + 0) - 48) + (int)*(dot + 1)) - 48;
       tm->tm_sec = seconds;
@@ -1580,6 +1574,11 @@ _Bool posixtime(time_t *p, char const *s, unsigned int syntax_bits) {
   struct tm const *tm;
   time_t t;
   int tmp;
+  time_t dummy;
+  char buf___1[16];
+  char *b;
+  char *tmp___0;
+  _Bool tmp___1;
 
   {
     tmp = posix_time_parse(&tm0, s, syntax_bits);
@@ -1597,15 +1596,48 @@ _Bool posixtime(time_t *p, char const *s, unsigned int syntax_bits) {
         return ((_Bool)0);
       }
     }
+    if ((((((tm0.tm_year ^ (int)tm->tm_year) | (tm0.tm_mon ^ (int)tm->tm_mon)) | (tm0.tm_mday ^ (int)tm->tm_mday)) | (tm0.tm_hour ^ (int)tm->tm_hour)) | (tm0.tm_min ^ (int)tm->tm_min)) | (tm0.tm_sec ^ (int)tm->tm_sec)) {
 
+      tmp___0 = stpcpy(buf___1, s);
+      b = tmp___0;
+      strcpy(b - 2, "59");
+      tmp___1 = posixtime(&dummy, (char const *)(buf___1), syntax_bits);
+    }
     *p = t;
     return ((_Bool)1);
   }
 }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 _Bool parse_datetime(struct timespec *result, char const *p, struct timespec const *now);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(2), __leaf__)) setenv)(char const *__name, char const *__value, int __replace);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) unsetenv)(char const *__name);
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) abs)(int __x) __attribute__((__const__));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 static unsigned char to_uchar___0(char ch) {
 
   { return ((unsigned char)ch); }
@@ -1875,7 +1907,9 @@ int yyparse(parser_control *pc) {
         goto yyexhaustedlab;
       }
       yystacksize *= 2UL;
-
+      if (20UL < yystacksize) {
+        yystacksize = 20UL;
+      }
       yyss1 = yyss;
       tmp = (union yyalloc *)malloc(yystacksize * (sizeof(yytype_int16) + sizeof(YYSTYPE)) + (sizeof(union yyalloc) - 1UL));
       yyptr = tmp;
@@ -1885,7 +1919,7 @@ int yyparse(parser_control *pc) {
       while (1) {
         __builtin_memcpy((void *)(&yyptr->yyss_alloc), (void const *)yyss, yysize * sizeof(*yyss));
         yyss = &yyptr->yyss_alloc;
-
+        yynewbytes = yystacksize * sizeof(*yyss) + (sizeof(union yyalloc) - 1UL);
         yyptr += yynewbytes / sizeof(*yyptr);
         goto while_break;
       }
@@ -1898,14 +1932,8 @@ int yyparse(parser_control *pc) {
         goto while_break___0;
       }
     while_break___0:;
-      if ((unsigned long)yyss1 != (unsigned long)(yyssa)) {
-        free((void *)yyss1);
-      }
       yyssp = (yyss + yysize) - 1;
       yyvsp = (yyvs + yysize) - 1;
-      if ((unsigned long)((yyss + yystacksize) - 1) <= (unsigned long)yyssp) {
-        goto yyabortlab;
-      }
     }
     if (yystate == 12) {
       goto yyacceptlab;
@@ -1953,9 +1981,7 @@ int yyparse(parser_control *pc) {
       yyn = -yyn;
       goto yyreduce;
     }
-    if (yyerrstatus) {
-      yyerrstatus--;
-    }
+
     yychar = -2;
     yystate = yyn;
     yyvsp++;
@@ -1963,6 +1989,9 @@ int yyparse(parser_control *pc) {
     goto yynewstate;
   yydefault:
     yyn = (int)yydefact[yystate];
+    if (yyn == 0) {
+      goto yyerrlab;
+    }
     goto yyreduce;
   yyreduce:
     yylen = (int)yyr2[yyn];
@@ -2093,9 +2122,7 @@ int yyparse(parser_control *pc) {
     if (yyn == 56) {
       goto case_56;
     }
-    if (yyn == 57) {
-      goto case_57;
-    }
+
     if (yyn == 58) {
       goto case_58;
     }
@@ -2171,16 +2198,14 @@ int yyparse(parser_control *pc) {
     if (yyn == 87) {
       goto case_87;
     }
-    if (yyn == 88) {
-      goto case_88;
-    }
+
     if (yyn == 89) {
       goto case_89;
     }
-
-    if (yyn == 91) {
-      goto case_91;
+    if (yyn == 90) {
+      goto case_90;
     }
+
     goto switch_default;
   case_4:
     pc->seconds = (yyvsp + 0)->timespec;
@@ -2654,6 +2679,8 @@ int yyparse(parser_control *pc) {
     digits_to_date_time(pc, (yyvsp + -1)->textintval);
     apply_relative_time(pc, (yyvsp + 0)->rel, 1);
     goto switch_break;
+  case_90:
+    yyval.intval = -1L;
     goto switch_break;
   case_91:
     yyval.intval = (yyvsp + 0)->textintval.value;
@@ -2683,21 +2710,13 @@ int yyparse(parser_control *pc) {
     }
     goto yynewstate;
   yyerrlab:
-    if (!yyerrstatus) {
-      yynerrs++;
-      yyerror((parser_control const *)pc, "syntax error");
-    }
     if (yyerrstatus == 3) {
-      if (yychar <= 0) {
-        if (yychar == 0) {
-          goto yyabortlab;
-        }
-      } else {
-        yydestruct("Error: discarding", yytoken, &yylval, pc);
-        yychar = -2;
-      }
     }
     goto yyerrlab1;
+    yyvsp -= yylen;
+    yyssp -= yylen;
+    yylen = 0;
+    yystate = (int)*yyssp;
     goto yyerrlab1;
   yyerrlab1:
     yyerrstatus = 3;
@@ -2739,9 +2758,6 @@ int yyparse(parser_control *pc) {
     yyerror((parser_control const *)pc, "memory exhausted");
     yyresult = 2;
   yyreturn:
-    if (yychar != -2) {
-      yydestruct("Cleanup: discarding lookahead", yytoken, &yylval, pc);
-    }
     yyvsp -= yylen;
     yyssp -= yylen;
     while (1) {
@@ -2754,9 +2770,6 @@ int yyparse(parser_control *pc) {
       yyssp--;
     }
   while_break___2:;
-    if ((unsigned long)yyss != (unsigned long)(yyssa)) {
-      free((void *)yyss);
-    }
     return (yyresult);
   }
 }
@@ -2777,13 +2790,15 @@ static table const time_zone_table[48] = {
     {"EST", 273, -300},  {"EDT", 268, -300}, {"CST", 273, -360}, {"CDT", 268, -360}, {"MST", 273, -420}, {"MDT", 268, -420},  {"PST", 273, -480}, {"PDT", 268, -480}, {"AKST", 273, -540}, {"AKDT", 268, -540}, {"HST", 273, -600}, {"HAST", 273, -600},
     {"HADT", 268, -600}, {"SST", 273, -720}, {"WAT", 273, 60},   {"CET", 273, 60},   {"CEST", 268, 60},  {"MET", 273, 60},    {"MEZ", 273, 60},   {"MEST", 268, 60},  {"MESZ", 268, 60},   {"EET", 273, 120},   {"EEST", 268, 120}, {"CAT", 273, 120},
     {"SAST", 273, 120},  {"EAT", 273, 180},  {"MSK", 273, 180},  {"MSD", 268, 180},  {"IST", 273, 330},  {"SGT", 273, 480},   {"KST", 273, 540},  {"JST", 273, 540},  {"GST", 273, 600},   {"NZST", 273, 720},  {"NZDT", 268, 720}, {(char const *)((void *)0), 0, 0}};
-
+static table const military_table[26] = {{"A", 273, -60}, {"B", 273, -120}, {"C", 273, -180}, {"D", 273, -240}, {"E", 273, -300}, {"F", 273, -360}, {"G", 273, -420}, {"H", 273, -480}, {"I", 273, -540}, {"K", 273, -600}, {"L", 273, -660}, {"M", 273, -720}, {"N", 273, 60},
+                                         {"O", 273, 120}, {"P", 273, 180},  {"Q", 273, 240},  {"R", 273, 300},  {"S", 273, 360},  {"T", 'T', 0},    {"U", 273, 480},  {"V", 273, 540},  {"W", 273, 600},  {"X", 273, 660},  {"Y", 273, 720},  {"Z", 273, 0},    {(char const *)((void *)0), 0, 0}};
 static long time_zone_hhmm(parser_control *pc, textint s, long mm) {
   long n_minutes;
   long tmp;
   int tmp___0;
 
   {
+
     if (mm < 0L) {
       n_minutes = (s.value / 100L) * 60L + s.value % 100L;
     } else {
@@ -2795,9 +2810,7 @@ static long time_zone_hhmm(parser_control *pc, textint s, long mm) {
       n_minutes = s.value * 60L + tmp;
     }
     tmp___0 = abs((int)n_minutes);
-    if (1440 < tmp___0) {
-      (pc->zones_seen)++;
-    }
+
     return (n_minutes);
   }
 }
@@ -2805,12 +2818,11 @@ static int to_hour(long hours, int meridian) {
   long tmp;
   int tmp___0;
   long tmp___1;
+  int tmp___2;
   long tmp___3;
 
   {
-    if (meridian == 0) {
-      goto case_0;
-    }
+
     if (meridian == 1) {
       goto case_1;
     }
@@ -2835,6 +2847,11 @@ static int to_hour(long hours, int meridian) {
       }
     } else {
     _L:
+      if (hours == 12L) {
+        tmp___0 = 0;
+      } else {
+        tmp___0 = -1;
+      }
       tmp___1 = (long)tmp___0;
     }
     return ((int)tmp___1);
@@ -2867,6 +2884,8 @@ static long to_year(textint textyear) {
 static table const *__attribute__((__pure__)) lookup_zone(parser_control const *pc, char const *name) {
   table const *tp;
   int tmp;
+  int tmp___0;
+  int tmp___1;
 
   {
     tp = universal_time_zone_table;
@@ -2876,13 +2895,38 @@ static table const *__attribute__((__pure__)) lookup_zone(parser_control const *
         goto while_break;
       }
       tmp = strcmp(name, (char const *)tp->name);
-
+      if (tmp == 0) {
+        return (tp);
+      }
       tp++;
     }
   while_break:
     tp = (table const *)(pc->local_time_zone_table);
-    tp = time_zone_table;
+    while (1) {
 
+      if (!tp->name) {
+        goto while_break___0;
+      }
+      tmp___0 = strcmp(name, (char const *)tp->name);
+      if (tmp___0 == 0) {
+        return (tp);
+      }
+      tp++;
+    }
+  while_break___0:
+    tp = time_zone_table;
+    while (1) {
+
+      if (!tp->name) {
+        goto while_break___1;
+      }
+      tmp___1 = strcmp(name, (char const *)tp->name);
+      if (tmp___1 == 0) {
+        return (tp);
+      }
+      tp++;
+    }
+  while_break___1:;
     return ((table const *)((void *)0));
   }
 }
@@ -2947,6 +2991,7 @@ static table const *lookup_word(parser_control const *pc, char *word___0) {
     abbrev = (_Bool)tmp___0;
     tp = month_and_day_table;
     while (1) {
+
       if (!tp->name) {
         goto while_break___1;
       }
@@ -2968,7 +3013,9 @@ static table const *lookup_word(parser_control const *pc, char *word___0) {
       return (tp);
     }
     tmp___4 = strcmp((char const *)word___0, (char const *)dst_table[0].name);
-
+    if (tmp___4 == 0) {
+      return (dst_table);
+    }
     tp = time_units_table;
     while (1) {
 
@@ -3031,6 +3078,9 @@ static table const *lookup_word(parser_control const *pc, char *word___0) {
   while_break___6:;
     if (period_found) {
       tp = (table const *)lookup_zone(pc, (char const *)word___0);
+      if (tp) {
+        return (tp);
+      }
     }
     return ((table const *)((void *)0));
   }
@@ -3137,7 +3187,9 @@ static int yylex(union YYSTYPE *lvalp, parser_control *pc) {
                 if ((unsigned int)*(p + 1) - 48U <= 9U) {
                   if (sign < 0) {
                     s = (time_t)(-value);
-
+                    if (0L < s) {
+                      return ('?');
+                    }
                     value1___0 = (unsigned long)(-s);
                   } else {
                     s = (time_t)value;
@@ -3260,7 +3312,9 @@ static int yylex(union YYSTYPE *lvalp, parser_control *pc) {
       while_break___6:
         *p___0 = (char)'\000';
         tp = lookup_word((parser_control const *)pc, buff);
-
+        if (!tp) {
+          return ('?');
+        }
         lvalp->intval = (long)tp->value;
         return ((int)tp->type);
       }
@@ -3280,10 +3334,6 @@ static int yylex(union YYSTYPE *lvalp, parser_control *pc) {
         }
         if ((int)c == 40) {
           count++;
-        } else {
-          if ((int)c == 41) {
-            count--;
-          }
         }
         if (!(count != 0UL)) {
           goto while_break___7;
@@ -3314,16 +3364,37 @@ _Bool parse_datetime(struct timespec *result, char const *p, struct timespec con
   unsigned char c;
   _Bool tz_was_altered;
   char *tz0;
+  char tz0buf[100];
   _Bool ok;
   _Bool tmp___0;
+  char const *tzbase;
+  size_t tzsize;
+  char const *s;
+  char *z;
+  char *tz1;
+  char tz1buf[100];
+  _Bool large_tz;
+  _Bool setenv_ok;
+  void *tmp___1;
+  char *tmp___2;
+  int tmp___3;
   int tmp___4;
   relative_time __constr_expr_40;
   int quarter;
   time_t probe;
   struct tm const *probe_tm;
   struct tm const *tmp___5;
+  int tmp___6;
   int tmp___7;
   long tmp___8;
+  long time_zone;
+  long abs_time_zone;
+  long tmp___9;
+  long abs_time_zone_hour;
+  int abs_time_zone_min;
+  char tz1buf___0[sizeof("XXX+0:00") + (sizeof(pc.time_zone) * 8UL) / 3UL];
+  int tmp___10;
+  _Bool tmp___11;
   _Bool tmp___12;
   int tmp___13;
   int year___1;
@@ -3361,14 +3432,7 @@ _Bool parse_datetime(struct timespec *result, char const *p, struct timespec con
     if (!tmp) {
       return ((_Bool)0);
     }
-    while (1) {
-      c = (unsigned char)*p;
-      tmp___0 = c_isspace((int)c);
-      if (!tmp___0) {
-        goto while_break;
-      }
-      p++;
-    }
+
   while_break:
     tmp___4 = strncmp(p, "TZ=\"", (size_t)4);
     if ((int const) * p == 0) {
@@ -3475,13 +3539,41 @@ _Bool parse_datetime(struct timespec *result, char const *p, struct timespec con
           pc.seconds.tv_nsec = (__syscall_slong_t)0;
         }
       }
-      if ((pc.dates_seen | pc.days_seen) | pc.times_seen) {
-        tm.tm_isdst = -1;
-      }
 
+      if (pc.local_zones_seen) {
+        tm.tm_isdst = pc.local_isdst;
+      }
       tm0 = tm;
       Start = mktime(&tm);
       tmp___12 = mktime_ok((struct tm const *)(&tm0), (struct tm const *)(&tm), Start);
+      if (!tmp___12) {
+        if (!pc.zones_seen) {
+          goto fail;
+        } else {
+          time_zone = pc.time_zone;
+          if (time_zone < 0L) {
+            tmp___9 = -time_zone;
+          } else {
+            tmp___9 = time_zone;
+          }
+          abs_time_zone = tmp___9;
+          abs_time_zone_hour = abs_time_zone / 60L;
+          abs_time_zone_min = (int)(abs_time_zone % 60L);
+
+          sprintf(tz1buf___0, "XXX%s%ld:%02d", "-" + (time_zone < 0L), abs_time_zone_hour, abs_time_zone_min);
+          tmp___10 = setenv("TZ", (char const *)(tz1buf___0), 1);
+          if (tmp___10 != 0) {
+            goto fail;
+          }
+          tz_was_altered = (_Bool)1;
+          tm = tm0;
+          Start = mktime(&tm);
+          tmp___11 = mktime_ok((struct tm const *)(&tm0), (struct tm const *)(&tm), Start);
+          if (!tmp___11) {
+            goto fail;
+          }
+        }
+      }
       if (pc.days_seen) {
         if (!pc.dates_seen) {
           if (0L < pc.day_ordinal) {
@@ -3496,9 +3588,6 @@ _Bool parse_datetime(struct timespec *result, char const *p, struct timespec con
           tm.tm_mday = (int)((long)tm.tm_mday + ((long)(((pc.day_number - tm.tm_wday) + 7) % 7) + 7L * (pc.day_ordinal - (long)tmp___13)));
           tm.tm_isdst = -1;
           Start = mktime(&tm);
-          if (Start == -1L) {
-            goto fail;
-          }
         }
       }
       if ((pc.rel.year | pc.rel.month) | pc.rel.day) {
@@ -3551,27 +3640,18 @@ _Bool parse_datetime(struct timespec *result, char const *p, struct timespec con
   fail:
     ok = (_Bool)0;
   done:
-    if (tz_was_altered) {
-      if (tz0) {
-        tmp___14 = setenv("TZ", (char const *)tz0, 1);
-        tmp___16 = tmp___14;
-      } else {
-        tmp___15 = unsetenv("TZ");
-        tmp___16 = tmp___15;
-      }
-      ok = (_Bool)((int)ok & (tmp___16 == 0));
-    }
-
     return (ok);
   }
 }
-unsigned int const is_basic_table[8] = {(unsigned int const)6656, (unsigned int const)4294967279U, (unsigned int const)4294967294U, (unsigned int const)2147483646};
 
 extern int optind;
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) getopt_long)(int ___argc, char *const *___argv, char const *__shortopts, struct option const *__longopts, int *__longind);
-extern __attribute__((__nothrow__)) FILE *(__attribute__((__leaf__)) fdopen)(int __fd, char const *__modes);
+
 extern int fscanf(FILE *__restrict __stream, char const *__restrict __format, ...);
 extern int ungetc(int __c, FILE *__stream);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 static char const *volatile charset_aliases;
 static char const *get_charset_aliases(void) {
   char const *cp;
@@ -3586,6 +3666,15 @@ static char const *get_charset_aliases(void) {
   int tmp___1;
   int fd;
   FILE *fp;
+  char *res_ptr;
+  size_t res_size;
+  int c;
+  char buf1[51];
+  char buf2[51];
+  size_t l1;
+  size_t l2;
+  char *old_res_ptr;
+  int tmp___3;
 
   {
     cp = (char const *)charset_aliases;
@@ -3594,12 +3683,24 @@ static char const *get_charset_aliases(void) {
       dir = (char const *)getenv("CHARSETALIASDIR");
       if ((unsigned long)dir == (unsigned long)((void *)0)) {
         dir = "/usr/local/lib";
+      } else {
+        if ((int const) * (dir + 0) == 0) {
+          dir = "/usr/local/lib";
+        }
       }
       tmp = strlen(dir);
       dir_len___0 = tmp;
       tmp___0 = strlen(base);
       base_len___0 = tmp___0;
-
+      if (dir_len___0 > 0UL) {
+        if (!((int const) * (dir + (dir_len___0 - 1UL)) == 47)) {
+          tmp___1 = 1;
+        } else {
+          tmp___1 = 0;
+        }
+      } else {
+        tmp___1 = 0;
+      }
       add_slash = tmp___1;
       file_name___3 = (char *)malloc(((dir_len___0 + (size_t)add_slash) + base_len___0) + 1UL);
       if ((unsigned long)file_name___3 != (unsigned long)((void *)0)) {
@@ -3609,17 +3710,7 @@ static char const *get_charset_aliases(void) {
         }
         memcpy((void *)((file_name___3 + dir_len___0) + add_slash), (void const *)base, base_len___0 + 1UL);
       }
-      if ((unsigned long)file_name___3 == (unsigned long)((void *)0)) {
-        cp = "";
-      } else {
-        fd = open((char const *)file_name___3, 131072);
-        if (fd < 0) {
-          cp = "";
-        } else {
-          fp = fdopen(fd, "r");
-        }
-        free((void *)file_name___3);
-      }
+
       charset_aliases = cp;
     }
     return (cp);
@@ -3641,9 +3732,6 @@ char const *locale_charset(void) {
     aliases = get_charset_aliases();
     while (1) {
 
-      if (!((int const) * aliases != 0)) {
-        goto while_break;
-      }
       tmp___2 = strcmp(codeset, aliases);
       if (tmp___2 == 0) {
         tmp___1 = strlen(aliases);
@@ -3656,12 +3744,22 @@ char const *locale_charset(void) {
       aliases += tmp___0 + 1UL;
     }
   while_break:;
-    if ((int const) * (codeset + 0) == 0) {
-      codeset = "ASCII";
-    }
     return (codeset);
   }
 }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic ignored "-Wtype-limits"
+#pragma GCC diagnostic ignored "-Wtype-limits"
 char *(__attribute__((__warn_unused_result__)) imaxtostr)(intmax_t i, char *buf___1);
 char *(__attribute__((__warn_unused_result__)) imaxtostr)(intmax_t i, char *buf___1) {
   char *p;
@@ -3674,7 +3772,11 @@ char *(__attribute__((__warn_unused_result__)) imaxtostr)(intmax_t i, char *buf_
         p--;
         *p = (char)(48L - i % 10L);
         i /= 10L;
+        if (!(i != 0L)) {
+          goto while_break;
+        }
       }
+    while_break:
       p--;
       *p = (char)'-';
     } else {
@@ -3692,25 +3794,62 @@ char *(__attribute__((__warn_unused_result__)) imaxtostr)(intmax_t i, char *buf_
   }
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) clock_gettime)(clockid_t __clock_id, struct timespec *__tp);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 void gettime(struct timespec *ts) {
   int tmp;
   struct timeval tv;
 
   {
     tmp = clock_gettime(0, ts);
-    if (tmp == 0) {
-      return;
-    }
+
     gettimeofday(&tv, (__timezone_ptr_t)((void *)0));
     ts->tv_sec = tv.tv_sec;
     ts->tv_nsec = tv.tv_usec * 1000L;
     return;
   }
 }
-int(__attribute__((__nonnull__(1))) rpl_fseeko)(FILE *fp, off_t offset, int whence);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern int fseeko(FILE *__stream, __off_t __off, int __whence);
 extern __attribute__((__nothrow__)) __off_t(__attribute__((__leaf__)) lseek)(int __fd, __off_t __offset, int __whence);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 int(__attribute__((__nonnull__(1))) rpl_fseeko)(FILE *fp, off_t offset, int whence) {
   off_t pos;
   int tmp;
@@ -3718,10 +3857,26 @@ int(__attribute__((__nonnull__(1))) rpl_fseeko)(FILE *fp, off_t offset, int when
   int tmp___1;
 
   {
+    if ((unsigned long)fp->_IO_read_end == (unsigned long)fp->_IO_read_ptr) {
+      if ((unsigned long)fp->_IO_write_ptr == (unsigned long)fp->_IO_write_base) {
+      }
+    }
     tmp___1 = fseeko(fp, offset, whence);
     return (tmp___1);
   }
 }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern int fputc(int __c, FILE *__stream);
 size_t fprintftime(FILE *s, char const *format, struct tm const *tp, int ut, int ns);
 static void fwrite_lowcase(FILE *fp, char const *src, size_t len) {
@@ -3748,16 +3903,7 @@ static void fwrite_uppcase(FILE *fp, char const *src, size_t len) {
   size_t tmp___0;
 
   {
-    while (1) {
-      tmp___0 = len;
-      len--;
-      if (!(tmp___0 > 0UL)) {
-        goto while_break;
-      }
-      tmp = toupper((int)((unsigned char)*src));
-      fputc(tmp, fp);
-      src++;
-    }
+
   while_break:;
     return;
   }
@@ -3792,12 +3938,18 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
   int tmp;
   size_t _incr;
   size_t tmp___0;
+  size_t _delta;
+  size_t _i;
+  size_t _i___0;
   char const *tmp___1;
   size_t _n___0;
   size_t _w___0;
   int tmp___2;
   size_t _incr___0;
   size_t tmp___3;
+  size_t _delta___0;
+  size_t _i___1;
+  size_t _i___2;
   size_t len;
   size_t tmp___4;
   size_t _n___1;
@@ -3806,6 +3958,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
   size_t _incr___1;
   size_t tmp___6;
   size_t _delta___1;
+  size_t _i___3;
   size_t _i___4;
   char ufmt[5];
   char *u;
@@ -3835,12 +3988,14 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
   size_t _i___7;
   size_t _i___8;
   int padding;
+  size_t _i___9;
   size_t _n___4;
   size_t _w___4;
   int tmp___17;
   size_t _incr___4;
   size_t tmp___18;
   size_t _delta___4;
+  size_t _i___10;
   size_t _i___11;
   size_t _n___5;
   size_t _w___5;
@@ -3849,6 +4004,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
   size_t tmp___20;
   size_t _delta___5;
   size_t _i___12;
+  size_t _i___13;
   size_t _i___14;
   size_t _n___6;
   size_t _w___6;
@@ -3864,12 +4020,17 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
   size_t _incr___7;
   size_t tmp___24;
   size_t _delta___7;
+  size_t _i___17;
+  size_t _i___18;
   int j;
   size_t _n___8;
   size_t _w___8;
   int tmp___25;
   size_t _incr___8;
   size_t tmp___26;
+  size_t _delta___8;
+  size_t _i___19;
+  size_t _i___20;
   struct tm ltm;
   time_t t;
   int d;
@@ -3881,6 +4042,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
   size_t tmp___29;
   size_t _delta___9;
   size_t _i___21;
+  size_t _i___22;
   int year___1;
   int tmp___30;
   int year_adjust;
@@ -3900,6 +4062,8 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
   size_t _incr___10;
   size_t tmp___38;
   size_t _delta___10;
+  size_t _i___23;
+  size_t _i___24;
   int diff;
   int hour_diff;
   int min_diff;
@@ -3949,17 +4113,45 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
             tmp = width;
           }
           _w = (size_t)tmp;
-          if (_n < _w) {
-            tmp___0 = _w;
-          } else {
-            tmp___0 = _n;
-          }
+
           _incr = tmp___0;
           if (_incr >= maxsize - i) {
             return ((size_t)0);
           }
           if (p) {
+            if (digits == 0) {
+              if (_n < _w) {
+                _delta = (size_t)width - _n;
+                if (pad == 48) {
+                  while (1) {
+                    _i = (size_t)0;
+                    while (1) {
 
+                      if (!(_i < _delta)) {
+                        goto while_break___2;
+                      }
+                      fputc('0', p);
+                      _i++;
+                    }
+                  while_break___2:;
+                    goto while_break___1;
+                  }
+                while_break___1:;
+                } else {
+                  while (1) {
+                    _i___0 = (size_t)0;
+                    while (1) {
+
+                      fputc(' ', p);
+                      _i___0++;
+                    }
+                  while_break___4:;
+                    goto while_break___3;
+                  }
+                while_break___3:;
+                }
+              }
+            }
             fputc((int)*f, p);
           }
           i += _incr;
@@ -4031,9 +4223,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       if ((int const) * f == 69) {
         goto case_69;
       }
-      if ((int const) * f == 79) {
-        goto case_69;
-      }
+
       goto switch_default___0;
     case_69:
       tmp___1 = f;
@@ -4057,9 +4247,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       if (format_char == 98) {
         goto case_98;
       }
-      if (format_char == 104) {
-        goto case_98;
-      }
+
       if (format_char == 66) {
         goto case_66;
       }
@@ -4108,9 +4296,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       if (format_char == 78) {
         goto case_78;
       }
-      if (format_char == 110) {
-        goto case_110;
-      }
+
       if (format_char == 80) {
         goto case_80;
       }
@@ -4129,9 +4315,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       if (format_char == 115) {
         goto case_115;
       }
-      if (format_char == 88) {
-        goto case_88;
-      }
+
       if (format_char == 84) {
         goto case_84;
       }
@@ -4144,19 +4328,17 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       if (format_char == 85) {
         goto case_85;
       }
-      if (format_char == 86) {
-        goto case_86;
-      }
+
       if (format_char == 103) {
         goto case_86;
       }
-      if (format_char == 71) {
-        goto case_86;
-      }
+
       if (format_char == 87) {
         goto case_87;
       }
-
+      if (format_char == 119) {
+        goto case_119;
+      }
       if (format_char == 89) {
         goto case_89;
       }
@@ -4166,15 +4348,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       if (format_char == 90) {
         goto case_90;
       }
-      if (format_char == 58) {
-        goto case_58;
-      }
-      if (format_char == 122) {
-        goto case_122;
-      }
-      if (format_char == 0) {
-        goto case_0___0;
-      }
+
       goto bad_format;
     case_37:
       if (modifier != 0) {
@@ -4182,11 +4356,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       }
       while (1) {
         _n___0 = (size_t)1;
-        if (width < 0) {
-          tmp___2 = 0;
-        } else {
-          tmp___2 = width;
-        }
+
         _w___0 = (size_t)tmp___2;
         if (_n___0 < _w___0) {
           tmp___3 = _w___0;
@@ -4197,7 +4367,38 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
         if (_incr___0 >= maxsize - i) {
           return ((size_t)0);
         }
+        if (p) {
+          if (digits == 0) {
+            if (_n___0 < _w___0) {
+              _delta___0 = (size_t)width - _n___0;
+              if (pad == 48) {
+                while (1) {
+                  _i___1 = (size_t)0;
+                  while (1) {
 
+                    if (!(_i___1 < _delta___0)) {
+                      goto while_break___9;
+                    }
+                    fputc('0', p);
+                    _i___1++;
+                  }
+                while_break___9:;
+                  goto while_break___8;
+                }
+              while_break___8:;
+              } else {
+                while (1) {
+                  _i___2 = (size_t)0;
+
+                while_break___11:;
+                  goto while_break___10;
+                }
+              while_break___10:;
+              }
+            }
+          }
+          fputc((int)*f, p);
+        }
         i += _incr___0;
         goto while_break___7;
       }
@@ -4213,27 +4414,17 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       }
       goto underlying_strftime;
     case_65:
-      if (modifier != 0) {
-        goto bad_format;
-      }
       if (change_case) {
         to_uppcase = (_Bool)1;
         to_lowcase = (_Bool)0;
       }
       goto underlying_strftime;
     case_98:
-      if (change_case) {
-        to_uppcase = (_Bool)1;
-        to_lowcase = (_Bool)0;
-      }
       if (modifier != 0) {
         goto bad_format;
       }
       goto underlying_strftime;
     case_66:
-      if (modifier != 0) {
-        goto bad_format;
-      }
       if (change_case) {
         to_uppcase = (_Bool)1;
         to_lowcase = (_Bool)0;
@@ -4249,11 +4440,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       len = tmp___4;
       while (1) {
         _n___1 = len;
-        if (width < 0) {
-          tmp___5 = 0;
-        } else {
-          tmp___5 = width;
-        }
+
         _w___1 = (size_t)tmp___5;
         if (_n___1 < _w___1) {
           tmp___6 = _w___1;
@@ -4270,6 +4457,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
               _delta___1 = (size_t)width - _n___1;
               if (pad == 48) {
 
+              while_break___13:;
               } else {
                 while (1) {
                   _i___4 = (size_t)0;
@@ -4316,11 +4504,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       if (len___0 != 0UL) {
         while (1) {
           _n___2 = len___0 - 1UL;
-          if (width < 0) {
-            tmp___11 = 0;
-          } else {
-            tmp___11 = width;
-          }
+
           _w___2 = (size_t)tmp___11;
           if (_n___2 < _w___2) {
             tmp___12 = _w___2;
@@ -4353,14 +4537,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
                 } else {
                   while (1) {
                     _i___6 = (size_t)0;
-                    while (1) {
 
-                      if (!(_i___6 < _delta___2)) {
-                        goto while_break___21;
-                      }
-                      fputc(' ', p);
-                      _i___6++;
-                    }
                   while_break___21:;
                     goto while_break___20;
                   }
@@ -4440,6 +4617,11 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       always_output_a_sign = (_Bool)1;
       goto do_number_body;
     do_number_spacepad:
+      if (pad != 48) {
+        if (pad != 45) {
+          pad = '_';
+        }
+      }
     do_number:
       negative_number = (_Bool)(number_value < 0);
       u_number_value = (unsigned int)number_value;
@@ -4447,8 +4629,6 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       always_output_a_sign = (_Bool)0;
       tz_colon_mask = 0;
     do_number_body:
-      if (modifier == 79) {
-      }
       bufp = buf___1 + sizeof(buf___1) / sizeof(buf___1[0]);
       if (negative_number) {
         u_number_value = -u_number_value;
@@ -4485,68 +4665,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
         sign_char = (char)tmp___14;
       }
       if (pad == 45) {
-        if (sign_char) {
-          while (1) {
-            _n___3 = (size_t)1;
-            if (width < 0) {
-              tmp___15 = 0;
-            } else {
-              tmp___15 = width;
-            }
-            _w___3 = (size_t)tmp___15;
-            if (_n___3 < _w___3) {
-              tmp___16 = _w___3;
-            } else {
-              tmp___16 = _n___3;
-            }
-            _incr___3 = tmp___16;
-            if (_incr___3 >= maxsize - i) {
-              return ((size_t)0);
-            }
-            if (p) {
-              if (digits == 0) {
-                if (_n___3 < _w___3) {
-                  _delta___3 = (size_t)width - _n___3;
-                  if (pad == 48) {
-                    while (1) {
-                      _i___7 = (size_t)0;
-                      while (1) {
 
-                        if (!(_i___7 < _delta___3)) {
-                          goto while_break___26;
-                        }
-                        fputc('0', p);
-                        _i___7++;
-                      }
-                    while_break___26:;
-                      goto while_break___25;
-                    }
-                  while_break___25:;
-                  } else {
-                    while (1) {
-                      _i___8 = (size_t)0;
-                      while (1) {
-
-                        if (!(_i___8 < _delta___3)) {
-                          goto while_break___28;
-                        }
-                        fputc(' ', p);
-                        _i___8++;
-                      }
-                    while_break___28:;
-                      goto while_break___27;
-                    }
-                  while_break___27:;
-                  }
-                }
-              }
-              fputc((int)sign_char, p);
-            }
-            i += _incr___3;
-            goto while_break___24;
-          }
-        while_break___24:;
-        }
       } else {
         padding = (int)(((long)digits - ((buf___1 + sizeof(buf___1) / sizeof(buf___1[0])) - bufp)) - (long)(!(!sign_char)));
         if (padding > 0) {
@@ -4554,62 +4673,17 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
             if ((size_t)padding >= maxsize - i) {
               return ((size_t)0);
             }
+            if (p) {
 
+            while_break___29:;
+            }
             i += (size_t)padding;
             if (width > padding) {
               width -= padding;
             } else {
               width = 0;
             }
-            if (sign_char) {
-              while (1) {
-                _n___4 = (size_t)1;
-                if (width < 0) {
-                  tmp___17 = 0;
-                } else {
-                  tmp___17 = width;
-                }
-                _w___4 = (size_t)tmp___17;
-                if (_n___4 < _w___4) {
-                  tmp___18 = _w___4;
-                } else {
-                  tmp___18 = _n___4;
-                }
-                _incr___4 = tmp___18;
-                if (_incr___4 >= maxsize - i) {
-                  return ((size_t)0);
-                }
-                if (p) {
-                  if (digits == 0) {
-                    if (_n___4 < _w___4) {
-                      _delta___4 = (size_t)width - _n___4;
-                      if (pad == 48) {
 
-                      } else {
-                        while (1) {
-                          _i___11 = (size_t)0;
-                          while (1) {
-
-                            if (!(_i___11 < _delta___4)) {
-                              goto while_break___35;
-                            }
-                            fputc(' ', p);
-                            _i___11++;
-                          }
-                        while_break___35:;
-                          goto while_break___34;
-                        }
-                      while_break___34:;
-                      }
-                    }
-                  }
-                  fputc((int)sign_char, p);
-                }
-                i += _incr___4;
-                goto while_break___31;
-              }
-            while_break___31:;
-            }
           } else {
             if ((size_t)digits >= maxsize - i) {
               return ((size_t)0);
@@ -4651,6 +4725,21 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
                           goto while_break___37;
                         }
                       while_break___37:;
+                      } else {
+                        while (1) {
+                          _i___13 = (size_t)0;
+                          while (1) {
+
+                            if (!(_i___13 < _delta___5)) {
+                              goto while_break___40;
+                            }
+                            fputc(' ', p);
+                            _i___13++;
+                          }
+                        while_break___40:;
+                          goto while_break___39;
+                        }
+                      while_break___39:;
                       }
                     }
                   }
@@ -4680,78 +4769,11 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
             i += (size_t)padding;
             width = 0;
           }
-        } else {
-          if (sign_char) {
-            while (1) {
-              _n___6 = (size_t)1;
-              if (width < 0) {
-                tmp___21 = 0;
-              } else {
-                tmp___21 = width;
-              }
-              _w___6 = (size_t)tmp___21;
-              if (_n___6 < _w___6) {
-                tmp___22 = _w___6;
-              } else {
-                tmp___22 = _n___6;
-              }
-              _incr___6 = tmp___22;
-              if (_incr___6 >= maxsize - i) {
-                return ((size_t)0);
-              }
-              if (p) {
-                if (digits == 0) {
-                  if (_n___6 < _w___6) {
-                    _delta___6 = (size_t)width - _n___6;
-                    if (pad == 48) {
-                      while (1) {
-                        _i___15 = (size_t)0;
-                        while (1) {
-
-                          if (!(_i___15 < _delta___6)) {
-                            goto while_break___45;
-                          }
-                          fputc('0', p);
-                          _i___15++;
-                        }
-                      while_break___45:;
-                        goto while_break___44;
-                      }
-                    while_break___44:;
-                    } else {
-                      while (1) {
-                        _i___16 = (size_t)0;
-                        while (1) {
-
-                          if (!(_i___16 < _delta___6)) {
-                            goto while_break___47;
-                          }
-                          fputc(' ', p);
-                          _i___16++;
-                        }
-                      while_break___47:;
-                        goto while_break___46;
-                      }
-                    while_break___46:;
-                    }
-                  }
-                }
-                fputc((int)sign_char, p);
-              }
-              i += _incr___6;
-              goto while_break___43;
-            }
-          while_break___43:;
-          }
         }
       }
       while (1) {
         _n___7 = (size_t)((buf___1 + sizeof(buf___1) / sizeof(buf___1[0])) - bufp);
-        if (width < 0) {
-          tmp___23 = 0;
-        } else {
-          tmp___23 = width;
-        }
+
         _w___7 = (size_t)tmp___23;
         if (_n___7 < _w___7) {
           tmp___24 = _w___7;
@@ -4766,6 +4788,18 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
           if (digits == 0) {
             if (_n___7 < _w___7) {
               _delta___7 = (size_t)width - _n___7;
+              if (pad == 48) {
+
+              while_break___49:;
+              } else {
+                while (1) {
+                  _i___18 = (size_t)0;
+
+                while_break___52:;
+                  goto while_break___51;
+                }
+              while_break___51:;
+              }
             }
           }
           while (1) {
@@ -4809,9 +4843,6 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       number_value = hour12;
       goto do_number;
     case_107:
-      if (modifier == 69) {
-        goto bad_format;
-      }
       digits = 2;
       number_value = (int)tp->tm_hour;
       goto do_number_spacepad;
@@ -4838,9 +4869,6 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       number_value = (int)tp->tm_min;
       goto do_number;
     case_109:
-      if (modifier == 69) {
-        goto bad_format;
-      }
       digits = 2;
       negative_number = (_Bool)(tp->tm_mon < -1);
       u_number_value = (unsigned int)tp->tm_mon + 1U;
@@ -4850,31 +4878,14 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
         goto bad_format;
       }
       number_value = ns;
-      if (width == -1) {
-        width = 9;
-      } else {
-        j = width;
-        while (1) {
 
-          if (!(j < 9)) {
-            goto while_break___54;
-          }
-          number_value /= 10;
-          j++;
-        }
-      while_break___54:;
-      }
       digits = width;
       number_value = number_value;
       goto do_number;
     case_110:
       while (1) {
         _n___8 = (size_t)1;
-        if (width < 0) {
-          tmp___25 = 0;
-        } else {
-          tmp___25 = width;
-        }
+
         _w___8 = (size_t)tmp___25;
         if (_n___8 < _w___8) {
           tmp___26 = _w___8;
@@ -4885,7 +4896,45 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
         if (_incr___8 >= maxsize - i) {
           return ((size_t)0);
         }
+        if (p) {
+          if (digits == 0) {
+            if (_n___8 < _w___8) {
+              _delta___8 = (size_t)width - _n___8;
+              if (pad == 48) {
+                while (1) {
+                  _i___19 = (size_t)0;
+                  while (1) {
 
+                    if (!(_i___19 < _delta___8)) {
+                      goto while_break___57;
+                    }
+                    fputc('0', p);
+                    _i___19++;
+                  }
+                while_break___57:;
+                  goto while_break___56;
+                }
+              while_break___56:;
+              } else {
+                while (1) {
+                  _i___20 = (size_t)0;
+                  while (1) {
+
+                    if (!(_i___20 < _delta___8)) {
+                      goto while_break___59;
+                    }
+                    fputc(' ', p);
+                    _i___20++;
+                  }
+                while_break___59:;
+                  goto while_break___58;
+                }
+              while_break___58:;
+              }
+            }
+          }
+          fputc('\n', p);
+        }
         i += _incr___8;
         goto while_break___55;
       }
@@ -4936,55 +4985,14 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       always_output_a_sign = (_Bool)0;
       goto do_number_sign_and_padding;
     case_88:
+      if (modifier == 79) {
+        goto bad_format;
+      }
       goto underlying_strftime;
     case_84:
       subfmt = "%H:%M:%S";
       goto subformat;
     case_116:
-      while (1) {
-        _n___9 = (size_t)1;
-        if (width < 0) {
-          tmp___28 = 0;
-        } else {
-          tmp___28 = width;
-        }
-        _w___9 = (size_t)tmp___28;
-        if (_n___9 < _w___9) {
-          tmp___29 = _w___9;
-        } else {
-          tmp___29 = _n___9;
-        }
-        _incr___9 = tmp___29;
-        if (_incr___9 >= maxsize - i) {
-          return ((size_t)0);
-        }
-        if (p) {
-          if (digits == 0) {
-            if (_n___9 < _w___9) {
-              _delta___9 = (size_t)width - _n___9;
-              if (pad == 48) {
-                while (1) {
-                  _i___21 = (size_t)0;
-                  while (1) {
-
-                    if (!(_i___21 < _delta___9)) {
-                      goto while_break___63;
-                    }
-                    fputc('0', p);
-                    _i___21++;
-                  }
-                while_break___63:;
-                  goto while_break___62;
-                }
-              while_break___62:;
-              }
-            }
-          }
-          fputc('\t', p);
-        }
-        i += _incr___9;
-        goto while_break___61;
-      }
     while_break___61:;
       goto switch_break___1;
     case_117:
@@ -5031,6 +5039,12 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
         if (year___1 % 4 == 0) {
           if (year___1 % 100 != 0) {
             tmp___33 = 1;
+          } else {
+            if (year___1 % 400 == 0) {
+              tmp___33 = 1;
+            } else {
+              tmp___33 = 0;
+            }
           }
         } else {
           tmp___33 = 0;
@@ -5045,7 +5059,9 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       if ((int const) * f == 103) {
         goto case_103___0;
       }
-
+      if ((int const) * f == 71) {
+        goto case_71___0;
+      }
       goto switch_default___1;
     case_103___0:
       yy = (int)((tp->tm_year % 100 + (int const)year_adjust) % 100);
@@ -5061,6 +5077,10 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
         number_value = tmp___35;
       }
       goto do_number;
+    case_71___0:
+      digits = 4;
+      negative_number = (_Bool)(tp->tm_year < (int const)(-1900 - year_adjust));
+      u_number_value = ((unsigned int)tp->tm_year + 1900U) + (unsigned int)year_adjust;
       goto do_signed_number;
     switch_default___1:
       digits = 2;
@@ -5068,12 +5088,15 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       goto do_number;
 
     case_87:
-      if (modifier == 69) {
-        goto bad_format;
-      }
       digits = 2;
       number_value = (int)(((tp->tm_yday - ((tp->tm_wday - 1) + 7) % 7) + 7) / 7);
       goto do_number;
+    case_119:
+      if (modifier == 69) {
+        goto bad_format;
+      }
+      digits = 1;
+      number_value = (int)tp->tm_wday;
       goto do_number;
     case_89:
       if (modifier == 69) {
@@ -5111,11 +5134,7 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       while (1) {
         tmp___36 = strlen(zone);
         _n___10 = tmp___36;
-        if (width < 0) {
-          tmp___37 = 0;
-        } else {
-          tmp___37 = width;
-        }
+
         _w___10 = (size_t)tmp___37;
         if (_n___10 < _w___10) {
           tmp___38 = _w___10;
@@ -5130,6 +5149,12 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
           if (digits == 0) {
             if (_n___10 < _w___10) {
               _delta___10 = (size_t)width - _n___10;
+              if (pad == 48) {
+
+              while_break___67:;
+              } else {
+              while_break___69:;
+              }
             }
           }
           while (1) {
@@ -5154,6 +5179,16 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       goto switch_break___1;
     case_58:
       colons = (size_t)1;
+      while (1) {
+
+        if (!((int const) * (f + colons) == 58)) {
+          goto while_break___72;
+        }
+        goto __Cont___0;
+      __Cont___0:
+        colons++;
+      }
+    while_break___72:;
       if ((int const) * (f + colons) != 122) {
         goto bad_format;
       }
@@ -5162,9 +5197,6 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
     case_122:
       colons = (size_t)0;
     do_z_conversion:
-      if (tp->tm_isdst < 0) {
-        goto switch_break___1;
-      }
       diff = (int)tp->tm_gmtoff;
       hour_diff = (diff / 60) / 60;
       min_diff = (diff / 60) % 60;
@@ -5220,9 +5252,6 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
       flen = 1;
       while (1) {
 
-        if (!((int const) * (f + (1 - flen)) != 37)) {
-          goto while_break___73;
-        }
         goto __Cont___1;
       __Cont___1:
         flen++;
@@ -5246,38 +5275,6 @@ static size_t strftime_case____0(_Bool upcase, FILE *s, char const *format, stru
           return ((size_t)0);
         }
         if (p) {
-          if (digits == 0) {
-            if (_n___11 < _w___11) {
-              _delta___11 = (size_t)width - _n___11;
-              if (pad == 48) {
-                while (1) {
-                  _i___25 = (size_t)0;
-                  while (1) {
-
-                    if (!(_i___25 < _delta___11)) {
-                      goto while_break___76;
-                    }
-                    fputc('0', p);
-                    _i___25++;
-                  }
-                while_break___76:;
-                  goto while_break___75;
-                }
-              while_break___75:;
-              } else {
-                while (1) {
-                  _i___26 = (size_t)0;
-                  while (1) {
-
-                    fputc(' ', p);
-                    _i___26++;
-                  }
-                  goto while_break___77;
-                }
-              while_break___77:;
-              }
-            }
-          }
           while (1) {
 
             if (to_lowcase) {
@@ -5314,8 +5311,27 @@ size_t fprintftime(FILE *s, char const *format, struct tm const *tp, int ut, int
     return (tmp);
   }
 }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic ignored "-Wsuggest-attribute=const"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern int fflush(FILE *__stream);
 int rpl_fflush(FILE *stream);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) __freading)(FILE *__fp);
 static void clear_ungetc_buffer_preserving_position(FILE *fp) {
 
@@ -5342,7 +5358,31 @@ int rpl_fflush(FILE *stream) {
     return (tmp___1);
   }
 }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern int fclose(FILE *__stream);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 int(__attribute__((__nonnull__(1))) rpl_fclose)(FILE *fp) {
   int saved_errno;
   int fd;
@@ -5359,10 +5399,7 @@ int(__attribute__((__nonnull__(1))) rpl_fclose)(FILE *fp) {
     saved_errno = 0;
     result = 0;
     fd = fileno(fp);
-    if (fd < 0) {
-      tmp = fclose(fp);
-      return (tmp);
-    }
+
     tmp___1 = __freading(fp);
     if (tmp___1 != 0) {
       tmp___2 = fileno(fp);
@@ -5370,6 +5407,10 @@ int(__attribute__((__nonnull__(1))) rpl_fclose)(FILE *fp) {
       if (tmp___3 != -1L) {
       _L:
         tmp___4 = rpl_fflush(fp);
+        if (tmp___4) {
+          tmp___0 = __errno_location();
+          saved_errno = *tmp___0;
+        }
       }
     } else {
       goto _L;
@@ -5383,7 +5424,52 @@ int(__attribute__((__nonnull__(1))) rpl_fclose)(FILE *fp) {
     return (result);
   }
 }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
 int volatile exit_failure = (int volatile)1;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 char const diacrit_base[256];
 char const diacrit_diac[256];
 char const diacrit_base[256] = {
@@ -5419,6 +5505,10 @@ char const diacrit_diac[256] = {
     (char const)5, (char const)8, (char const)1, (char const)7, (char const)3, (char const)2, (char const)4, (char const)5, (char const)3, (char const)2, (char const)4, (char const)5, (char const)0, (char const)6, (char const)3, (char const)2, (char const)4, (char const)6, (char const)5,
     (char const)0, (char const)9, (char const)3, (char const)2, (char const)4, (char const)5, (char const)2, (char const)0, (char const)0};
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 int close_stream(FILE *stream);
 static char const *file_name;
 static _Bool ignore_EPIPE;
@@ -5434,32 +5524,17 @@ void close_stdout(void) {
 
   {
     tmp___3 = close_stream(stdout);
-    if (tmp___3 != 0) {
-      if (ignore_EPIPE) {
-        tmp___4 = __errno_location();
-        if (!(*tmp___4 == 32)) {
-          goto _L;
-        }
-      } else {
-      _L:
-        tmp = (char const *)gettext("write error");
-        write_error = tmp;
-        if (file_name) {
-          tmp___0 = quotearg_colon(file_name);
-          tmp___1 = __errno_location();
-          error(0, *tmp___1, "%s: %s", tmp___0, write_error);
-        } else {
-          tmp___2 = __errno_location();
-          error(0, *tmp___2, "%s", write_error);
-        }
-        _exit((int)exit_failure);
-      }
-    }
     tmp___5 = close_stream(stderr);
-
+    if (tmp___5 != 0) {
+      _exit((int)exit_failure);
+    }
     return;
   }
 }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) __fpending)(FILE *__fp);
 int close_stream(FILE *stream) {
   _Bool some_pending;
@@ -5468,6 +5543,8 @@ int close_stream(FILE *stream) {
   int tmp___0;
   _Bool fclose_fail;
   int tmp___1;
+  int *tmp___2;
+  int *tmp___3;
 
   {
     tmp = __fpending(stream);
@@ -5476,16 +5553,35 @@ int close_stream(FILE *stream) {
     prev_fail = (_Bool)(tmp___0 != 0);
     tmp___1 = rpl_fclose(stream);
     fclose_fail = (_Bool)(tmp___1 != 0);
-
+    if (prev_fail) {
+      goto _L___0;
+    } else {
+      if (fclose_fail) {
+        if (some_pending) {
+          goto _L___0;
+        } else {
+          tmp___3 = __errno_location();
+          if (*tmp___3 != 9) {
+          _L___0:
+            return (-1);
+          }
+        }
+      }
+    }
     return (0);
   }
 }
-char const *Version = "8.21";
+
 extern int fputc_unlocked(int __c, FILE *__stream);
 extern char *optarg;
 
-extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) textdomain)(char const *__domainname);
-extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) bindtextdomain)(char const *__domainname, char const *__dirname);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 
 __inline static char *timetostr(time_t t, char *buf___1) {
   char *tmp;
@@ -5495,6 +5591,11 @@ __inline static char *timetostr(time_t t, char *buf___1) {
     return (tmp);
   }
 }
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#pragma GCC diagnostic pop
 static _Bool show_date(char const *format, struct timespec when);
 static char const *const time_spec_string[6] = {"hours", "minutes", "date", "seconds", "ns", (char const *)((void *)0)};
 static enum Time_spec const time_spec[5] = {(enum Time_spec const)3, (enum Time_spec const)4, (enum Time_spec const)0, (enum Time_spec const)1, (enum Time_spec const)2};
@@ -5510,6 +5611,27 @@ static struct option const long_options___1[14] = {{"date", 1, (int *)((void *)0
                                                    {"version", 0, (int *)((void *)0), -131},  {(char const *)((void *)0), 0, (int *)((void *)0), 0}};
 __attribute__((__noreturn__)) void usage(int status);
 void usage(int status) {
+  char *tmp;
+  char *tmp___0;
+  char *tmp___1;
+  char *tmp___2;
+  char *tmp___3;
+  char *tmp___4;
+  char *tmp___5;
+  char *tmp___6;
+  char *tmp___7;
+  char *tmp___8;
+  char *tmp___9;
+  char *tmp___10;
+  char *tmp___11;
+  char *tmp___12;
+  char *tmp___13;
+  char *tmp___14;
+  char *tmp___15;
+  char *tmp___16;
+  char *tmp___17;
+  char *tmp___18;
+  char *tmp___19;
 
   { exit(status); }
 }
@@ -5551,17 +5673,13 @@ static _Bool batch_convert(char const *input_filename, char const *format) {
     while (1) {
       tmp___2 = getline(&line, &buflen, in_stream);
       line_length = tmp___2;
-      if (line_length < 0L) {
-        goto while_break;
-      }
+
       tmp___6 = parse_datetime(&when, (char const *)line, (struct timespec const *)((void *)0));
       if (tmp___6) {
         tmp___5 = show_date(format, when);
         ok = (_Bool)((int)ok & (int)tmp___5);
       } else {
-        if ((int)*(line + (line_length - 1L)) == 10) {
-          *(line + (line_length - 1L)) = (char)'\000';
-        }
+
         tmp___3 = quote((char const *)line);
         tmp___4 = gettext("invalid date %s");
         error(0, 0, (char const *)tmp___4, tmp___3);
@@ -5609,18 +5727,30 @@ int main(int argc, char **argv) {
   enum Time_spec i;
   ptrdiff_t tmp;
   enum Time_spec i___0;
+  ptrdiff_t tmp___0;
   unsigned int tmp___1;
+  char *tmp___2;
+  int tmp___3;
+  char *tmp___4;
   int tmp___5;
   int tmp___6;
   int tmp___7;
   char *tmp___8;
   char *tmp___9;
+  char const *tmp___10;
+  char *tmp___11;
+  char *tmp___12;
   int tmp___13;
+  char const *tmp___14;
+  char *tmp___15;
   _Bool valid_date;
   int *tmp___16;
   int tmp___17;
   char const *tmp___18;
   char *tmp___19;
+  char *tmp___20;
+  int *tmp___21;
+  int tmp___22;
   _Bool tmp___23;
   int tmp___24;
 
@@ -5645,7 +5775,18 @@ int main(int argc, char **argv) {
       if (optc == 100) {
         goto case_100;
       }
-
+      if (optc == 102) {
+        goto case_102;
+      }
+      if (optc == 128) {
+        goto case_128;
+      }
+      if (optc == 73) {
+        goto case_73;
+      }
+      if (optc == 114) {
+        goto case_114;
+      }
       if (optc == 82) {
         goto case_82;
       }
@@ -5657,15 +5798,18 @@ int main(int argc, char **argv) {
     case_100:
       datestr = (char const *)optarg;
       goto switch_break;
+    case_102:
+      batch_file = optarg;
       goto switch_break;
-
+    case_128:
       i = (enum Time_spec) * ((time_spec + 2) + tmp);
       new_format = rfc_3339_format[i];
       goto switch_break;
-
+    case_73:
       i___0 = (enum Time_spec)tmp___1;
       new_format = iso_8601_format[i___0];
       goto switch_break;
+    case_114:
       reference = optarg;
       goto switch_break;
     case_82:
@@ -5675,18 +5819,20 @@ int main(int argc, char **argv) {
       set_datestr = (char const *)optarg;
       set_date = (_Bool)1;
       goto switch_break;
+    case_117:
+      tmp___2 = bad_cast("TZ=UTC0");
+      tmp___3 = putenv(tmp___2);
 
       goto switch_break;
+    case_neg_130:
+      usage(0);
       goto switch_break;
-
+    case_neg_131:
       exit(0);
       goto switch_break;
     switch_default:
       usage(1);
     switch_break:;
-      if (new_format) {
-        format = new_format;
-      }
     }
   while_break:;
     if (datestr) {
@@ -5699,34 +5845,45 @@ int main(int argc, char **argv) {
     } else {
       tmp___6 = 0;
     }
-
+    if (reference) {
+      tmp___7 = 1;
+    } else {
+      tmp___7 = 0;
+    }
     option_specified_date = (tmp___5 + tmp___6) + tmp___7;
     if (option_specified_date > 1) {
-      tmp___8 = gettext("the options to specify dates for printing are mutually exclusive");
+
       error(0, 0, (char const *)tmp___8);
       usage(1);
     }
-    if (set_date) {
-      if (option_specified_date) {
-
-        error(0, 0, (char const *)tmp___9);
+    if (optind < argc) {
+      if (optind + 1 < argc) {
+        tmp___10 = quote((char const *)*(argv + (optind + 1)));
+        tmp___11 = gettext("extra operand %s");
+        error(0, 0, (char const *)tmp___11, tmp___10);
         usage(1);
       }
-    }
-    if (optind < argc) {
-
       if ((int)*(*(argv + optind) + 0) == 43) {
-
+        if (format) {
+          tmp___12 = gettext("multiple output formats specified");
+          error(1, 0, (char const *)tmp___12);
+        }
         tmp___13 = optind;
         optind++;
         format = (char const *)(*(argv + tmp___13) + 1);
+      } else {
+        if (set_date) {
+          tmp___14 = quote((char const *)*(argv + optind));
+          tmp___15 = gettext("the argument %s lacks a leading \'+\';\nwhen using an "
+                             "option to specify date(s), any non-option\nargument "
+                             "must be a format string beginning with \'+\'");
+          error(0, 0, (char const *)tmp___15, tmp___14);
+          usage(1);
+        }
       }
     }
     if (!format) {
       format = (char const *)nl_langinfo(131180);
-      if (!*format) {
-        format = "%a %b %e %H:%M:%S %Z %Y";
-      }
     }
     if ((unsigned long)batch_file != (unsigned long)((void *)0)) {
       ok = batch_convert((char const *)batch_file, format);
@@ -5767,7 +5924,15 @@ int main(int argc, char **argv) {
         tmp___19 = gettext("invalid date %s");
         error(1, 0, (char const *)tmp___19, tmp___18);
       }
-
+      if (set_date) {
+        tmp___22 = settime((struct timespec const *)(&when));
+        if (tmp___22 != 0) {
+          tmp___20 = gettext("cannot set date");
+          tmp___21 = __errno_location();
+          error(0, *tmp___21, (char const *)tmp___20);
+          ok = (_Bool)0;
+        }
+      }
       tmp___23 = show_date(format, when);
       ok = (_Bool)((int)ok & (int)tmp___23);
     }
@@ -5793,9 +5958,7 @@ static _Bool show_date(char const *format, struct timespec when) {
       error(0, 0, (char const *)tmp___0, tmp);
       return ((_Bool)0);
     }
-    if ((unsigned long)format == (unsigned long)(rfc_2822_format)) {
-      setlocale(2, "C");
-    }
+
     fprintftime(stdout, format, (struct tm const *)tm, 0, (int)when.tv_nsec);
     fputc_unlocked('\n', stdout);
 

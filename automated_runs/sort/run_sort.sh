@@ -31,9 +31,9 @@ mkdir -p removed_code
 mkdir -p llm_response
 mkdir -p fifty_text
 
-cd ..
-chmod +x clear_cands.sh
-./clear_cands.sh
+# cd ..
+# chmod +x clear_cands.sh
+# ./clear_cands.sh
 cd $DIR
 # clear
 
@@ -49,6 +49,7 @@ cp ../../../LLM_Util/deadcoderemoval.py deadcoderemoval.py
 echo sort-util.c.blade.c > filename.txt
 python3 deadcoderemoval.py < filename.txt
 rm filename.txt
+cp ../sort_generality.sh sort_generality.sh
 
 # run generality cases
 chmod +x sort_generality.sh
