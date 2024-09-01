@@ -218,7 +218,7 @@ struct utimbuf {
   __time_t actime;
   __time_t modtime;
 };
- 
+typedef short Int16;
 typedef int IntNative;
 struct __anonstruct_UInt64_56 {
   UChar b[8];
@@ -267,7 +267,11 @@ Int32 BZ2_rNums[512] = {
     265, 203, 50,  668, 108, 645, 990, 626, 197, 510, 357, 358, 850, 858, 364,
     936, 638};
 void BZ2_bz__AssertH__fail(int errcode);
- 
+void BZ2_hbAssignCodes(Int32 *code, UChar *length, Int32 minLen, Int32 maxLen,
+                       Int32 alphaSize);
+void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
+                           Int32 maxLen);
+
 void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
                            Int32 maxLen) {
   Int32 nNodes;
@@ -294,12 +298,15 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
   int tmp___4;
   Int32 zz___2;
   Int32 tmp___5;
+  void *__cil_tmp29;
+  void *__cil_tmp30;
+  void *__cil_tmp31;
 
   {
     i = 0;
     {
       while (1) {
-      /* CIL Label */
+      while_continue: /* CIL Label */
           ;
         if (!(i < alphaSize)) {
           goto while_break;
@@ -327,7 +334,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
         i = 1;
         {
           while (1) {
-          /* CIL Label */
+          while_continue___1: /* CIL Label */
               ;
             if (!(i <= alphaSize)) {
               goto while_break___1;
@@ -363,7 +370,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
         }
         {
           while (1) {
-           /* CIL Label */
+          while_continue___3: /* CIL Label */
               ;
             if (!(nHeap > 1)) {
               goto while_break___3;
@@ -429,7 +436,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
             parent[n2] = tmp___3;
             parent[n1] = tmp___3;
             if ((weight[n1] & 255) > (weight[n2] & 255)) {
-             
+              tmp___4 = weight[n1] & 255;
             } else {
               tmp___4 = weight[n2] & 255;
             }
@@ -478,7 +485,7 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
             k = i;
             {
               while (1) {
-                /* CIL Label */
+              while_continue___8: /* CIL Label */
                   ;
                 if (!(parent[k] >= 0)) {
                   goto while_break___8;
@@ -501,16 +508,9 @@ void BZ2_hbMakeCodeLengths(UChar *len, Int32 *freq, Int32 alphaSize,
         if (!tooLong) {
           goto while_break___0;
         }
-
+        i = 1;
         {
-          while (1) {
-            /* CIL Label */
-              ;
 
-            j = weight[i] >> 8;
- 
-            i++;
-          }
         while_break___9: /* CIL Label */
             ;
         }
@@ -532,16 +532,16 @@ void BZ2_hbAssignCodes(Int32 *code, UChar *length, Int32 minLen, Int32 maxLen,
     n = minLen;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */
+          ;
         if (!(n <= maxLen)) {
           goto while_break;
         }
         i = 0;
         {
           while (1) {
-            /* CIL Label */
-            ;
+          while_continue___0: /* CIL Label */
+              ;
             if (!(i < alphaSize)) {
               goto while_break___0;
             }
@@ -563,8 +563,163 @@ void BZ2_hbAssignCodes(Int32 *code, UChar *length, Int32 minLen, Int32 maxLen,
     return;
   }
 }
+void BZ2_hbCreateDecodeTables(Int32 *limit, Int32 *base, Int32 *perm,
+                              UChar *length, Int32 minLen, Int32 maxLen,
+                              Int32 alphaSize) {
+  Int32 pp;
+  Int32 i;
+  Int32 j;
+  Int32 vec;
 
+  {
+    pp = 0;
+    i = minLen;
+    {
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!(i <= maxLen)) {
+          goto while_break;
+        }
+        j = 0;
+        {
+          while (1) {
+          while_continue___0: /* CIL Label */
+              ;
+            if (!(j < alphaSize)) {
+              goto while_break___0;
+            }
+            if ((int)*(length + j) == i) {
+              *(perm + pp) = j;
+              pp++;
+            }
+            j++;
+          }
+        while_break___0: /* CIL Label */
+            ;
+        }
+        i++;
+      }
+    while_break: /* CIL Label */
+        ;
+    }
+    i = 0;
+    {
+      while (1) {
+      while_continue___1: /* CIL Label */
+          ;
+        if (!(i < 23)) {
+          goto while_break___1;
+        }
+        *(base + i) = 0;
+        i++;
+      }
+    while_break___1: /* CIL Label */
+        ;
+    }
+    i = 0;
+    {
+      while (1) {
+      while_continue___2: /* CIL Label */
+          ;
+        if (!(i < alphaSize)) {
+          goto while_break___2;
+        }
+        (*(base + ((int)*(length + i) + 1)))++;
+        i++;
+      }
+    while_break___2: /* CIL Label */
+        ;
+    }
+    i = 1;
+    {
+      while (1) {
+      while_continue___3: /* CIL Label */
+          ;
+
+        *(base + i) += *(base + (i - 1));
+        i++;
+      }
+    while_break___3: /* CIL Label */
+        ;
+    }
+    i = 0;
+    {
+      while (1) {
+      while_continue___4: /* CIL Label */
+          ;
+        if (!(i < 23)) {
+          goto while_break___4;
+        }
+        *(limit + i) = 0;
+        i++;
+      }
+    while_break___4: /* CIL Label */
+        ;
+    }
+    vec = 0;
+    i = minLen;
+    {
+      while (1) {
+      while_continue___5: /* CIL Label */
+          ;
+        if (!(i <= maxLen)) {
+          goto while_break___5;
+        }
+        vec += *(base + (i + 1)) - *(base + i);
+        *(limit + i) = vec - 1;
+        vec <<= 1;
+        i++;
+      }
+    while_break___5: /* CIL Label */
+        ;
+    }
+    i = minLen + 1;
+    {
+      while (1) {
+      while_continue___6: /* CIL Label */
+          ;
+        if (!(i <= maxLen)) {
+          goto while_break___6;
+        }
+        *(base + i) = ((*(limit + (i - 1)) + 1) << 1) - *(base + i);
+        i++;
+      }
+    while_break___6: /* CIL Label */
+        ;
+    }
+    return;
+  }
+}
 extern struct _IO_FILE *stderr;
+
+Int32 BZ2_indexIntoF(Int32 indx, Int32 *cftab);
+Int32 BZ2_decompress(DState *s);
+static void makeMaps_d(DState *s) {
+  Int32 i;
+
+  {
+    s->nInUse = 0;
+    i = 0;
+    {
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!(i < 256)) {
+          goto while_break;
+        }
+        if (s->inUse[i]) {
+          s->seqToUnseq[s->nInUse] = (UChar)i;
+          (s->nInUse)++;
+        }
+        i++;
+      }
+    while_break: /* CIL Label */
+        ;
+    }
+    return;
+  }
+}
 
 UInt32 BZ2_crc32Table[256] = {
     (UInt32)0L,          (UInt32)79764919L,   (UInt32)159529838L,
@@ -660,7 +815,7 @@ void BZ2_bsInitWrite(EState *s) {
 
   {
     s->bsLive = 0;
-
+    s->bsBuff = (UInt32)0;
     return;
   }
 }
@@ -669,8 +824,8 @@ static void bsFinishWrite(EState *s) {
   {
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */
+          ;
         if (!(s->bsLive > 0)) {
           goto while_break;
         }
@@ -690,8 +845,8 @@ __inline static void bsW(EState *s, Int32 n, UInt32 v) {
   {
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */
+          ;
         if (!(s->bsLive >= 8)) {
           goto while_break;
         }
@@ -735,8 +890,8 @@ static void makeMaps_e(EState *s) {
     i = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */
+          ;
         if (!(i < 256)) {
           goto while_break;
         }
@@ -767,6 +922,7 @@ static void generateMTFValues(EState *s) {
   register UChar *ryy_j;
   register UChar rll_i;
   register UChar rtmp2;
+  void *__cil_tmp16;
 
   {
     {
@@ -778,7 +934,15 @@ static void generateMTFValues(EState *s) {
       i = 0;
     }
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!(i <= EOB)) {
+          goto while_break;
+        }
+        s->mtfFreq[i] = 0;
+        i++;
+      }
     while_break: /* CIL Label */
         ;
     }
@@ -787,8 +951,8 @@ static void generateMTFValues(EState *s) {
     i = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue___0: /* CIL Label */
+          ;
         if (!(i < s->nInUse)) {
           goto while_break___0;
         }
@@ -878,10 +1042,11 @@ static void generateMTFValues(EState *s) {
           if (zPend & 1) {
             *(mtfv + wr) = (UInt16)1;
             wr++;
-
+            (s->mtfFreq[1])++;
           } else {
             *(mtfv + wr) = (UInt16)0;
             wr++;
+            (s->mtfFreq[0])++;
           }
           if (zPend < 2) {
             goto while_break___4;
@@ -907,7 +1072,7 @@ static void sendMTFValues(EState *s) {
   Int32 j;
   Int32 gs;
   Int32 ge;
-
+  Int32 totc;
   Int32 bt;
   Int32 bc;
   Int32 iter;
@@ -919,7 +1084,7 @@ static void sendMTFValues(EState *s) {
   Int32 nGroups;
   Int32 nBytes;
   UInt16 cost[6];
-
+  Int32 fave[6];
   UInt16 *mtfv;
   Int32 nPart;
   Int32 remF;
@@ -939,6 +1104,10 @@ static void sendMTFValues(EState *s) {
   UInt16 mtfv_i;
   UChar *s_len_sel_selCtr;
   Int32 *s_code_sel_selCtr;
+  void *__cil_tmp40;
+  void *__cil_tmp41;
+  void *__cil_tmp42;
+  void *__cil_tmp43;
 
   {
     mtfv = s->mtfv;
@@ -946,35 +1115,23 @@ static void sendMTFValues(EState *s) {
     alphaSize = s->nInUse + 2;
     t = 0;
     {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        if (!(t < 6)) {
-          goto while_break;
-        }
 
-        {
-
-          /* CIL Label */
-          ;
-        }
-        t++;
-      }
     while_break: /* CIL Label */
         ;
     }
     if (!(s->nMTF > 0)) {
       {
+        BZ2_bz__AssertH__fail(3001);
       }
     }
     if (s->nMTF < 200) {
       nGroups = 2;
     } else {
       if (s->nMTF < 600) {
-
+        nGroups = 3;
       } else {
         if (s->nMTF < 1200) {
-
+          nGroups = 4;
         } else {
           if (s->nMTF < 2400) {
             nGroups = 5;
@@ -989,8 +1146,8 @@ static void sendMTFValues(EState *s) {
     gs = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue___1: /* CIL Label */
+          ;
         if (!(nPart > 0)) {
           goto while_break___1;
         }
@@ -1016,12 +1173,6 @@ static void sendMTFValues(EState *s) {
         }
         if (ge > gs) {
           if (nPart != nGroups) {
-            if (nPart != 1) {
-              if ((nGroups - nPart) % 2 == 1) {
-                aFreq -= s->mtfFreq[ge];
-                ge--;
-              }
-            }
           }
         }
 
@@ -1062,11 +1213,19 @@ static void sendMTFValues(EState *s) {
         if (!(iter < 4)) {
           goto while_break___4;
         }
-
+        t = 0;
         {
-
-          /* CIL Label */
-          ;
+          while (1) {
+          while_continue___5: /* CIL Label */
+              ;
+            if (!(t < nGroups)) {
+              goto while_break___5;
+            }
+            fave[t] = 0;
+            t++;
+          }
+        while_break___5: /* CIL Label */
+            ;
         }
         t = 0;
         {
@@ -1095,34 +1254,14 @@ static void sendMTFValues(EState *s) {
         while_break___6: /* CIL Label */
             ;
         }
-        if (nGroups == 6) {
-          v = 0;
-          {
-            while (1) {
-              /* CIL Label */
-              ;
-              if (!(v < alphaSize)) {
-                goto while_break___8;
-              }
-              s->len_pack[v][0] =
-                  (UInt32)(((int)s->len[1][v] << 16) | (int)s->len[0][v]);
-              s->len_pack[v][1] =
-                  (UInt32)(((int)s->len[3][v] << 16) | (int)s->len[2][v]);
-              s->len_pack[v][2] =
-                  (UInt32)(((int)s->len[5][v] << 16) | (int)s->len[4][v]);
-              v++;
-            }
-          while_break___8: /* CIL Label */
-              ;
-          }
-        }
-        nSelectors = 0;
 
+        nSelectors = 0;
+        totc = 0;
         gs = 0;
         {
           while (1) {
-            /* CIL Label */
-            ;
+          while_continue___9: /* CIL Label */
+              ;
             if (!(!(gs >= s->nMTF))) {
               goto while_break___9;
             }
@@ -1132,15 +1271,7 @@ static void sendMTFValues(EState *s) {
             }
             t = 0;
             {
-              while (1) {
-              while_continue___10: /* CIL Label */
-                  ;
-                if (!(t < nGroups)) {
-                  goto while_break___10;
-                }
-                cost[t] = (UInt16)0;
-                t++;
-              }
+
             while_break___10: /* CIL Label */
                 ;
             }
@@ -1395,8 +1526,8 @@ static void sendMTFValues(EState *s) {
             t = 0;
             {
               while (1) {
-                /* CIL Label */
-                ;
+              while_continue___13: /* CIL Label */
+                  ;
                 if (!(t < nGroups)) {
                   goto while_break___13;
                 }
@@ -1409,7 +1540,8 @@ static void sendMTFValues(EState *s) {
             while_break___13: /* CIL Label */
                 ;
             }
-
+            totc += bc;
+            (fave[bt])++;
             s->selector[nSelectors] = (UChar)bt;
             nSelectors++;
             if (nGroups == 6) {
@@ -1472,8 +1604,8 @@ static void sendMTFValues(EState *s) {
               i = gs;
               {
                 while (1) {
-                  /* CIL Label */
-                  ;
+                while_continue___14: /* CIL Label */
+                    ;
                   if (!(i <= ge)) {
                     goto while_break___14;
                   }
@@ -1512,10 +1644,7 @@ static void sendMTFValues(EState *s) {
     while_break___4: /* CIL Label */
         ;
     }
-    if (!(nGroups < 8)) {
-      {
-      }
-    }
+
     if (nSelectors < 32768) {
       if (!(nSelectors <= 18002)) {
         {
@@ -1523,7 +1652,7 @@ static void sendMTFValues(EState *s) {
         }
       }
     } else {
-      {}
+      { BZ2_bz__AssertH__fail(3003); }
     }
     i = 0;
     {
@@ -1542,8 +1671,8 @@ static void sendMTFValues(EState *s) {
     i = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue___18: /* CIL Label */
+          ;
         if (!(i < nSelectors)) {
           goto while_break___18;
         }
@@ -1585,8 +1714,8 @@ static void sendMTFValues(EState *s) {
         i = 0;
         {
           while (1) {
-            /* CIL Label */
-            ;
+          while_continue___21: /* CIL Label */
+              ;
             if (!(i < alphaSize)) {
               goto while_break___21;
             }
@@ -1603,6 +1732,7 @@ static void sendMTFValues(EState *s) {
         }
         if (!(!(maxLen > 17))) {
           {
+            BZ2_bz__AssertH__fail(3004);
           }
         }
         if (!(!(minLen < 1))) {
@@ -1627,7 +1757,7 @@ static void sendMTFValues(EState *s) {
         if (!(i < 16)) {
           goto while_break___22;
         }
-
+        inUse16[i] = (Bool)0;
         j = 0;
         {
           while (1) {
@@ -1722,8 +1852,8 @@ static void sendMTFValues(EState *s) {
         j = 0;
         {
           while (1) {
-            /* CIL Label */
-            ;
+          while_continue___28: /* CIL Label */
+              ;
             if (!(j < (Int32)s->selectorMtf[i])) {
               goto while_break___28;
             }
@@ -1760,8 +1890,8 @@ static void sendMTFValues(EState *s) {
         }
         {
           while (1) {
-            /* CIL Label */
-            ;
+          while_continue___30: /* CIL Label */
+              ;
             if (!(i < alphaSize)) {
               goto while_break___30;
             }
@@ -1814,8 +1944,8 @@ static void sendMTFValues(EState *s) {
     gs = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue___33: /* CIL Label */
+          ;
         if (!(!(gs >= s->nMTF))) {
           goto while_break___33;
         }
@@ -1823,7 +1953,11 @@ static void sendMTFValues(EState *s) {
         if (ge >= s->nMTF) {
           ge = s->nMTF - 1;
         }
-
+        if (!((int)s->selector[selCtr] < nGroups)) {
+          {
+            BZ2_bz__AssertH__fail(3006);
+          }
+        }
         if (nGroups == 6) {
           if (50 == (ge - gs) + 1) {
             {
@@ -2009,6 +2143,11 @@ static void sendMTFValues(EState *s) {
     while_break___33: /* CIL Label */
         ;
     }
+    if (!(selCtr == nSelectors)) {
+      {
+        BZ2_bz__AssertH__fail(3007);
+      }
+    }
 
     return;
   }
@@ -2020,7 +2159,7 @@ void BZ2_compressBlock(EState *s, Bool is_last_block) {
       s->blockCRC = ~s->blockCRC;
       s->combinedCRC = (s->combinedCRC << 1) | (s->combinedCRC >> 31);
       s->combinedCRC ^= s->blockCRC;
-   
+
       { BZ2_blockSort(s); }
     }
     s->zbits = (UChar *)s->arr2 + s->nblock;
@@ -2058,40 +2197,97 @@ void BZ2_compressBlock(EState *s, Bool is_last_block) {
         bsPutUChar(s, (UChar)144);
         bsPutUInt32(s, s->combinedCRC);
       }
-      
+
       { bsFinishWrite(s); }
     }
     return;
   }
 }
- 
+extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) malloc)(
+    size_t __size) __attribute__((__malloc__));
+extern __attribute__((__nothrow__)) void(__attribute__((__leaf__)) free)(
+    void *__ptr);
+extern __attribute__((__nothrow__, __noreturn__)) void(
+    __attribute__((__leaf__)) exit)(int __status);
 extern struct _IO_FILE *stdin;
 extern struct _IO_FILE *stdout;
 extern int fclose(FILE *__stream);
+extern int fflush(FILE *__stream);
 
 extern __attribute__((__nothrow__))
 FILE *(__attribute__((__leaf__)) fdopen)(int __fd, char const *__modes);
-
+extern int fgetc(FILE *__stream);
+extern int ungetc(int __c, FILE *__stream);
+extern size_t fread(void *__restrict __ptr, size_t __size, size_t __n,
+                    FILE *__restrict __stream);
 extern size_t fwrite(void const *__restrict __ptr, size_t __size, size_t __n,
                      FILE *__restrict __s);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) ferror)(
+    FILE *__stream);
+
+extern __attribute__((__nothrow__)) char *(__attribute__((
+    __nonnull__(1, 2), __leaf__)) strcat)(char *__restrict __dest,
+                                          char const *__restrict __src);
 
 int BZ2_bzCompressInit(bz_stream *strm, int blockSize100k___0,
                        int verbosity___0, int workFactor___0);
 int BZ2_bzCompress(bz_stream *strm, int action);
- 
+int BZ2_bzCompressEnd(bz_stream *strm);
+int BZ2_bzDecompressInit(bz_stream *strm, int verbosity___0, int small);
+int BZ2_bzDecompress(bz_stream *strm);
+int BZ2_bzDecompressEnd(bz_stream *strm);
 BZFILE *BZ2_bzReadOpen(int *bzerror, FILE *f, int verbosity___0, int small,
                        void *unused, int nUnused);
-
+void BZ2_bzReadClose(int *bzerror, BZFILE *b);
+void BZ2_bzReadGetUnused(int *bzerror, BZFILE *b, void **unused, int *nUnused);
+int BZ2_bzRead(int *bzerror, BZFILE *b, void *buf, int len);
+BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0,
+                        int verbosity___0, int workFactor___0);
+void BZ2_bzWrite(int *bzerror, BZFILE *b, void *buf, int len);
+void BZ2_bzWriteClose64(int *bzerror, BZFILE *b, int abandon,
+                        unsigned int *nbytes_in_lo32,
+                        unsigned int *nbytes_in_hi32,
+                        unsigned int *nbytes_out_lo32,
+                        unsigned int *nbytes_out_hi32);
+char const *BZ2_bzlibVersion(void);
 void BZ2_bz__AssertH__fail(int errcode) {
   char const *tmp;
 
   {
-    {}
+    {
+      tmp = BZ2_bzlibVersion();
+      fprintf(
+          (FILE * /* __restrict  */)stderr,
+          (char const
+               * /* __restrict  */) "\n\nbzip2/libbzip2: internal error number "
+                                    "%d.\nThis is a bug in bzip2/libbzip2, "
+                                    "%s.\nPlease report it to me at: "
+                                    "jseward@bzip.org.  If this happened\nwhen "
+                                    "you were using some program which uses "
+                                    "libbzip2 as a\ncomponent, you should also "
+                                    "report this bug to the author(s)\nof that "
+                                    "program.  Please make an effort to report "
+                                    "this bug;\ntimely and accurate bug "
+                                    "reports eventually lead to "
+                                    "higher\nquality software.  Thanks.  "
+                                    "Julian Seward, 10 December 2007.\n\n",
+          errcode, tmp);
+    }
 
-    {}
+    { exit(3); }
   }
 }
+static int bz_config_ok(void) {
 
+  {
+
+    if (sizeof(short) != 2UL) {
+      return (0);
+    }
+
+    return (1);
+  }
+}
 static void *default_bzalloc(void *opaque, Int32 items, Int32 size) {
   void *v;
   void *tmp;
@@ -2123,10 +2319,10 @@ static void prepare_new_block(EState *s) {
     s->numZ = 0;
     s->state_out_pos = 0;
     s->blockCRC = (UInt32)4294967295L;
-    
+    i = 0;
     {
 
-      /* CIL Label */
+    while_break: /* CIL Label */
         ;
     }
     (s->blockNo)++;
@@ -2135,13 +2331,21 @@ static void prepare_new_block(EState *s) {
 }
 static void init_RL(EState *s) {
 
-  { s->state_in_ch = (UInt32)256; }
+  {
+    s->state_in_ch = (UInt32)256;
+    s->state_in_len = 0;
+    return;
+  }
 }
 static Bool isempty_RL(EState *s) {
 
   {
     if (s->state_in_ch < 256U) {
-
+      if (s->state_in_len > 0) {
+        return ((Bool)0);
+      } else {
+        return ((Bool)1);
+      }
     } else {
       return ((Bool)1);
     }
@@ -2154,16 +2358,18 @@ int BZ2_bzCompressInit(bz_stream *strm, int blockSize100k___0,
   int tmp;
 
   {
-    {}
-
+    { tmp = bz_config_ok(); }
+    if (!tmp) {
+      return (-9);
+    }
     if ((unsigned long)strm == (unsigned long)((void *)0)) {
       return (-2);
     } else {
       if (blockSize100k___0 < 1) {
-
+        return (-2);
       } else {
         if (blockSize100k___0 > 9) {
-
+          return (-2);
         } else {
           if (workFactor___0 < 0) {
             return (-2);
@@ -2192,7 +2398,7 @@ int BZ2_bzCompressInit(bz_stream *strm, int blockSize100k___0,
       s->strm = strm;
       s->arr1 = (UInt32 *)((void *)0);
       s->arr2 = (UInt32 *)((void *)0);
-
+      s->ftab = (UInt32 *)((void *)0);
       n = 100000 * blockSize100k___0;
       s->arr1 = (UInt32 *)(*(strm->bzalloc))(
           strm->opaque, (int)((unsigned long)n * sizeof(UInt32)), 1);
@@ -2202,7 +2408,7 @@ int BZ2_bzCompressInit(bz_stream *strm, int blockSize100k___0,
           strm->opaque, (int)(65537UL * sizeof(UInt32)), 1);
     }
     if ((unsigned long)s->arr1 == (unsigned long)((void *)0)) {
-
+      goto _L;
     } else {
       if ((unsigned long)s->arr2 == (unsigned long)((void *)0)) {
         goto _L;
@@ -2221,13 +2427,10 @@ int BZ2_bzCompressInit(bz_stream *strm, int blockSize100k___0,
           }
           if ((unsigned long)s->ftab != (unsigned long)((void *)0)) {
             {
+              (*(strm->bzfree))(strm->opaque, (void *)s->ftab);
             }
           }
-          if ((unsigned long)s != (unsigned long)((void *)0)) {
-            {
-              (*(strm->bzfree))(strm->opaque, (void *)s);
-            }
-          }
+
           return (-3);
         }
       }
@@ -2239,20 +2442,24 @@ int BZ2_bzCompressInit(bz_stream *strm, int blockSize100k___0,
       s->combinedCRC = (UInt32)0;
       s->blockSize100k = blockSize100k___0;
       s->nblockMAX = 100000 * blockSize100k___0 - 19;
-
+      s->verbosity = verbosity___0;
+      s->workFactor = workFactor___0;
       s->block = (UChar *)s->arr2;
       s->mtfv = (UInt16 *)s->arr1;
-
+      s->zbits = (UChar *)((void *)0);
       s->ptr = s->arr1;
       strm->state = (void *)s;
-
+      strm->total_in_lo32 = 0U;
+      strm->total_in_hi32 = 0U;
+      strm->total_out_lo32 = 0U;
+      strm->total_out_hi32 = 0U;
       init_RL(s);
       prepare_new_block(s);
     }
     return (0);
   }
 }
-static void add_pair_to_block(EState *s) { 
+static void add_pair_to_block(EState *s) {
   Int32 i;
   UChar ch;
 
@@ -2261,7 +2468,7 @@ static void add_pair_to_block(EState *s) {
     i = 0;
     {
       while (1) {
-      /* CIL Label */
+      while_continue: /* CIL Label */
           ;
         if (!(i < s->state_in_len)) {
           goto while_break;
@@ -2339,14 +2546,15 @@ static Bool copy_input_until_stop(EState *s) {
   UInt32 zchh;
   UChar ch;
   UInt32 zchh___0;
+  UChar ch___0;
 
   {
-
+    progress_in = (Bool)0;
     if (s->mode == 2) {
       {
         while (1) {
-          /* CIL Label */
-          ;
+        while_continue: /* CIL Label */
+            ;
           if (!(!(s->nblock >= s->nblockMAX))) {
             goto while_break;
           }
@@ -2397,8 +2605,8 @@ static Bool copy_input_until_stop(EState *s) {
     } else {
       {
         while (1) {
-          /* CIL Label */
-          ;
+        while_continue___0: /* CIL Label */
+            ;
           if (!(!(s->nblock >= s->nblockMAX))) {
             goto while_break___0;
           }
@@ -2408,7 +2616,7 @@ static Bool copy_input_until_stop(EState *s) {
           if (s->avail_in_expect == 0U) {
             goto while_break___0;
           }
-
+          progress_in = (Bool)1;
           zchh___0 = (UInt32) * ((UChar *)(s->strm)->next_in);
           if (zchh___0 != s->state_in_ch) {
 
@@ -2434,7 +2642,9 @@ static Bool copy_input_until_stop(EState *s) {
           ((s->strm)->next_in)++;
           ((s->strm)->avail_in)--;
           ((s->strm)->total_in_lo32)++;
-
+          if ((s->strm)->total_in_lo32 == 0U) {
+            ((s->strm)->total_in_hi32)++;
+          }
           (s->avail_in_expect)--;
         }
       while_break___0: /* CIL Label */
@@ -2451,7 +2661,7 @@ static Bool copy_output_until_stop(EState *s) {
     progress_out = (Bool)0;
     {
       while (1) {
-        /* CIL Label */
+      while_continue: /* CIL Label */
           ;
         if (!(!((s->strm)->avail_out == 0U))) {
           goto while_break;
@@ -2465,6 +2675,9 @@ static Bool copy_output_until_stop(EState *s) {
         ((s->strm)->avail_out)--;
         ((s->strm)->next_out)++;
         ((s->strm)->total_out_lo32)++;
+        if ((s->strm)->total_out_lo32 == 0U) {
+          ((s->strm)->total_out_hi32)++;
+        }
       }
     while_break: /* CIL Label */
         ;
@@ -2478,7 +2691,7 @@ static Bool handle_compress(bz_stream *strm) {
   EState *s;
   Bool tmp;
   Bool tmp___0;
-
+  Bool tmp___1;
   Bool tmp___2;
   int tmp___3;
 
@@ -2488,7 +2701,7 @@ static Bool handle_compress(bz_stream *strm) {
     s = (EState *)strm->state;
     {
       while (1) {
-       /* CIL Label */
+      while_continue: /* CIL Label */
           ;
         if (s->state == 1) {
           {
@@ -2512,7 +2725,16 @@ static Bool handle_compress(bz_stream *strm) {
             prepare_new_block(s);
             s->state = 2;
           }
-        
+          if (s->mode == 3) {
+            if (s->avail_in_expect == 0U) {
+              {
+                tmp___1 = isempty_RL(s);
+              }
+              if (tmp___1) {
+                goto while_break;
+              }
+            }
+          }
         }
         if (s->state == 2) {
           {
@@ -2567,6 +2789,7 @@ int BZ2_bzCompress(bz_stream *strm, int action) {
     }
     s = (EState *)strm->state;
     if ((unsigned long)s == (unsigned long)((void *)0)) {
+      return (-2);
     }
     if ((unsigned long)s->strm != (unsigned long)strm) {
       return (-2);
@@ -2586,7 +2809,7 @@ int BZ2_bzCompress(bz_stream *strm, int action) {
     }
     goto switch_break;
   case_1: /* CIL Label */
-
+    return (-1);
   case_2: /* CIL Label */
     if (action == 0) {
       {
@@ -2605,10 +2828,11 @@ int BZ2_bzCompress(bz_stream *strm, int action) {
         goto preswitch;
       } else {
         if (action == 2) {
-
+          s->avail_in_expect = strm->avail_in;
           s->mode = 4;
           goto preswitch;
         } else {
+          return (-2);
         }
       }
     }
@@ -2617,14 +2841,16 @@ int BZ2_bzCompress(bz_stream *strm, int action) {
       return (-1);
     }
     if (s->avail_in_expect != (s->strm)->avail_in) {
+      return (-1);
     }
     { progress = handle_compress(strm); }
     if (s->avail_in_expect > 0U) {
       return (2);
     } else {
-      {}
+      { tmp___0 = isempty_RL(s); }
       if (tmp___0) {
         if (s->state_out_pos < s->numZ) {
+          return (2);
         }
       } else {
         return (2);
@@ -2634,14 +2860,17 @@ int BZ2_bzCompress(bz_stream *strm, int action) {
     return (1);
   case_4: /* CIL Label */
     if (action != 2) {
+      return (-1);
     }
     if (s->avail_in_expect != (s->strm)->avail_in) {
+      return (-1);
     }
     { progress = handle_compress(strm); }
     if (!progress) {
+      return (-1);
     }
     if (s->avail_in_expect > 0U) {
-
+      return (3);
     } else {
       { tmp___1 = isempty_RL(s); }
       if (tmp___1) {
@@ -2649,6 +2878,7 @@ int BZ2_bzCompress(bz_stream *strm, int action) {
           return (3);
         }
       } else {
+        return (3);
       }
     }
     s->mode = 1;
@@ -2664,15 +2894,16 @@ int BZ2_bzCompressEnd(bz_stream *strm) {
 
   {
     if ((unsigned long)strm == (unsigned long)((void *)0)) {
+      return (-2);
     }
     s = (EState *)strm->state;
     if ((unsigned long)s == (unsigned long)((void *)0)) {
-    }
-    if ((unsigned long)s->strm != (unsigned long)strm) {
       return (-2);
     }
+
     if ((unsigned long)s->arr1 != (unsigned long)((void *)0)) {
       {
+        (*(strm->bzfree))(strm->opaque, (void *)s->arr1);
       }
     }
     if ((unsigned long)s->arr2 != (unsigned long)((void *)0)) {
@@ -2680,11 +2911,7 @@ int BZ2_bzCompressEnd(bz_stream *strm) {
         (*(strm->bzfree))(strm->opaque, (void *)s->arr2);
       }
     }
-    if ((unsigned long)s->ftab != (unsigned long)((void *)0)) {
-      {
-        (*(strm->bzfree))(strm->opaque, (void *)s->ftab);
-      }
-    }
+
     {
       (*(strm->bzfree))(strm->opaque, strm->state);
       strm->state = (void *)0;
@@ -2692,150 +2919,51 @@ int BZ2_bzCompressEnd(bz_stream *strm) {
     return (0);
   }
 }
-
-static Bool unRLE_obuf_to_output_FAST(DState *s) {
-  UChar k1;
-
-  UInt32 c_calculatedBlockCRC;
-  UChar c_state_out_ch;
-  Int32 c_state_out_len;
-  Int32 c_nblock_used;
-  Int32 c_k0;
-  UInt32 *c_tt;
-  UInt32 c_tPos;
-  char *cs_next_out;
-  unsigned int cs_avail_out;
-  Int32 ro_blockSize100k;
-  UInt32 avail_out_INIT;
-  Int32 s_save_nblockPP;
-  unsigned int total_out_lo32_old;
+int BZ2_bzDecompressInit(bz_stream *strm, int verbosity___0, int small) {
+  DState *s;
+  int tmp;
 
   {
-    if (s->blockRandomised) {
-      {
-
-      while_break: /* CIL Label */
-          ;
-      }
-    } else {
-      c_calculatedBlockCRC = s->calculatedBlockCRC;
-      c_state_out_ch = s->state_out_ch;
-      c_state_out_len = s->state_out_len;
-      c_nblock_used = s->nblock_used;
-      c_k0 = s->k0;
-      c_tt = s->tt;
-      c_tPos = s->tPos;
-      cs_next_out = (s->strm)->next_out;
-      cs_avail_out = (s->strm)->avail_out;
-      ro_blockSize100k = s->blockSize100k;
-      avail_out_INIT = cs_avail_out;
-      s_save_nblockPP = s->save_nblock + 1;
-      {
-        while (1) {
-        while_continue___1: /* CIL Label */
-            ;
-          if (c_state_out_len > 0) {
-            {
-              while (1) {
-              while_continue___2: /* CIL Label */
-                  ;
-                if (cs_avail_out == 0U) {
-                  goto return_notr;
-                }
-                if (c_state_out_len == 1) {
-                  goto while_break___2;
-                }
-                *((UChar *)cs_next_out) = c_state_out_ch;
-                c_calculatedBlockCRC =
-                    (c_calculatedBlockCRC << 8) ^
-                    BZ2_crc32Table[(c_calculatedBlockCRC >> 24) ^
-                                   (unsigned int)c_state_out_ch];
-                c_state_out_len--;
-                cs_next_out++;
-                cs_avail_out--;
-              }
-            while_break___2: /* CIL Label */
-                ;
-            }
-
-            if (cs_avail_out == 0U) {
-              c_state_out_len = 1;
-              goto return_notr;
-            }
-            *((UChar *)cs_next_out) = c_state_out_ch;
-            c_calculatedBlockCRC = (c_calculatedBlockCRC << 8) ^
-                                   BZ2_crc32Table[(c_calculatedBlockCRC >> 24) ^
-                                                  (unsigned int)c_state_out_ch];
-            cs_next_out++;
-            cs_avail_out--;
-          }
-
-          if (c_nblock_used == s_save_nblockPP) {
-            c_state_out_len = 0;
-            goto return_notr;
-          }
-          c_state_out_ch = (UChar)c_k0;
-          if (c_tPos >= 100000U * (UInt32)ro_blockSize100k) {
-            return ((Bool)1);
-          }
-          c_tPos = *(c_tt + c_tPos);
-          k1 = (UChar)(c_tPos & 255U);
-          c_tPos >>= 8;
-          c_nblock_used++;
-
-          c_state_out_len = 2;
-          if (c_tPos >= 100000U * (UInt32)ro_blockSize100k) {
-            return ((Bool)1);
-          }
-
-          k1 = (UChar)(c_tPos & 255U);
-          c_tPos >>= 8;
-          c_nblock_used++;
-
-          if ((int)k1 != c_k0) {
-            c_k0 = (Int32)k1;
-            goto while_continue___1;
-          }
-          c_state_out_len = 3;
-          if (c_tPos >= 100000U * (UInt32)ro_blockSize100k) {
-            return ((Bool)1);
-          }
-
-          k1 = (UChar)(c_tPos & 255U);
-          c_tPos >>= 8;
-          c_nblock_used++;
-          if (c_nblock_used == s_save_nblockPP) {
-            goto while_continue___1;
-          }
-
-          if (c_tPos >= 100000U * (UInt32)ro_blockSize100k) {
-            return ((Bool)1);
-          }
-          c_tPos = *(c_tt + c_tPos);
-          k1 = (UChar)(c_tPos & 255U);
-
-          c_nblock_used++;
-
-          if (c_tPos >= 100000U * (UInt32)ro_blockSize100k) {
-            return ((Bool)1);
-          }
-
-        }
-        /* CIL Label */
-        ;
-      }
-    return_notr:
-      total_out_lo32_old = (s->strm)->total_out_lo32;
-      (s->strm)->total_out_lo32 += avail_out_INIT - cs_avail_out;
-
-      s->nblock_used = c_nblock_used;
-
-      (s->strm)->next_out = cs_next_out;
-      (s->strm)->avail_out = cs_avail_out;
+    { tmp = bz_config_ok(); }
+    if (!tmp) {
+      return (-9);
     }
-    return ((Bool)0);
+    if ((unsigned long)strm == (unsigned long)((void *)0)) {
+      return (-2);
+    }
+    if (small != 0) {
+    }
+
+    if ((unsigned long)strm->bzalloc == (unsigned long)((void *)0)) {
+      strm->bzalloc = &default_bzalloc;
+    }
+    if ((unsigned long)strm->bzfree == (unsigned long)((void *)0)) {
+      strm->bzfree = &default_bzfree;
+    }
+    { s = (DState *)(*(strm->bzalloc))(strm->opaque, (int)sizeof(DState), 1); }
+    if ((unsigned long)s == (unsigned long)((void *)0)) {
+      return (-3);
+    }
+    s->strm = strm;
+    strm->state = (void *)s;
+    s->state = 10;
+    s->bsLive = 0;
+    s->bsBuff = (UInt32)0;
+    s->calculatedCombinedCRC = (UInt32)0;
+    strm->total_in_lo32 = 0U;
+    strm->total_in_hi32 = 0U;
+    strm->total_out_lo32 = 0U;
+    strm->total_out_hi32 = 0U;
+    s->smallDecompress = (Bool)small;
+    s->ll4 = (UChar *)((void *)0);
+    s->ll16 = (UInt16 *)((void *)0);
+    s->tt = (UInt32 *)((void *)0);
+    s->currBlockNo = 0;
+    s->verbosity = verbosity___0;
+    return (0);
   }
 }
+
 Int32 BZ2_indexIntoF(Int32 indx, Int32 *cftab) {
   Int32 nb;
   Int32 na;
@@ -2846,69 +2974,399 @@ Int32 BZ2_indexIntoF(Int32 indx, Int32 *cftab) {
     na = 256;
     {
       while (1) {
-        /* CIL Label */
-        ;
-
+      while_continue: /* CIL Label */
+          ;
+        mid = (nb + na) >> 1;
+        if (indx >= *(cftab + mid)) {
+          nb = mid;
+        } else {
+          na = mid;
+        }
       }
-      /* CIL Label */
-      ;
+    while_break: /* CIL Label */
+        ;
+    }
+    return (nb);
+  }
+}
+static Bool unRLE_obuf_to_output_SMALL(DState *s) {
+  UChar k1;
+  int tmp;
+  int tmp___0;
+  int tmp___1;
+  int tmp___2;
+  int tmp___3;
+
+  {
+    if (s->blockRandomised) {
+      {
+        while (1) {
+        while_continue: /* CIL Label */
+            ;
+          {
+            while (1) {
+            while_continue___0: /* CIL Label */
+                ;
+              if ((s->strm)->avail_out == 0U) {
+                return ((Bool)0);
+              }
+              if (s->state_out_len == 0) {
+                goto while_break___0;
+              }
+              *((UChar *)(s->strm)->next_out) = s->state_out_ch;
+              s->calculatedBlockCRC =
+                  (s->calculatedBlockCRC << 8) ^
+                  BZ2_crc32Table[(s->calculatedBlockCRC >> 24) ^
+                                 (unsigned int)s->state_out_ch];
+              (s->state_out_len)--;
+              ((s->strm)->next_out)++;
+              ((s->strm)->avail_out)--;
+              ((s->strm)->total_out_lo32)++;
+              if ((s->strm)->total_out_lo32 == 0U) {
+                ((s->strm)->total_out_hi32)++;
+              }
+            }
+          while_break___0: /* CIL Label */
+              ;
+          }
+          if (s->nblock_used == s->save_nblock + 1) {
+            return ((Bool)0);
+          }
+          if (s->nblock_used > s->save_nblock + 1) {
+            return ((Bool)1);
+          }
+          s->state_out_len = 1;
+          s->state_out_ch = (UChar)s->k0;
+
+          {
+            k1 = (UChar)BZ2_indexIntoF((Int32)s->tPos, s->cftab);
+            s->tPos = (UInt32) * (s->ll16 + s->tPos) |
+                      ((((UInt32) * (s->ll4 + (s->tPos >> 1)) >>
+                         ((s->tPos << 2) & 4U)) &
+                        15U)
+                       << 16);
+          }
+          if (s->rNToGo == 0) {
+            s->rNToGo = BZ2_rNums[s->rTPos];
+            (s->rTPos)++;
+            if (s->rTPos == 512) {
+              s->rTPos = 0;
+            }
+          }
+          (s->rNToGo)--;
+          if (s->rNToGo == 1) {
+            tmp = 1;
+          } else {
+            tmp = 0;
+          }
+          k1 = (UChar)((int)k1 ^ tmp);
+          (s->nblock_used)++;
+          if (s->nblock_used == s->save_nblock + 1) {
+            goto while_continue;
+          }
+          if ((int)k1 != s->k0) {
+            s->k0 = (Int32)k1;
+            goto while_continue;
+          }
+          s->state_out_len = 2;
+          if (s->tPos >= 100000U * (UInt32)s->blockSize100k) {
+            return ((Bool)1);
+          }
+          {
+            k1 = (UChar)BZ2_indexIntoF((Int32)s->tPos, s->cftab);
+            s->tPos = (UInt32) * (s->ll16 + s->tPos) |
+                      ((((UInt32) * (s->ll4 + (s->tPos >> 1)) >>
+                         ((s->tPos << 2) & 4U)) &
+                        15U)
+                       << 16);
+          }
+
+          (s->rNToGo)--;
+          if (s->rNToGo == 1) {
+            tmp___0 = 1;
+          } else {
+            tmp___0 = 0;
+          }
+          k1 = (UChar)((int)k1 ^ tmp___0);
+          (s->nblock_used)++;
+          if (s->nblock_used == s->save_nblock + 1) {
+            goto while_continue;
+          }
+          if ((int)k1 != s->k0) {
+            s->k0 = (Int32)k1;
+            goto while_continue;
+          }
+          s->state_out_len = 3;
+          if (s->tPos >= 100000U * (UInt32)s->blockSize100k) {
+            return ((Bool)1);
+          }
+          {
+            k1 = (UChar)BZ2_indexIntoF((Int32)s->tPos, s->cftab);
+            s->tPos = (UInt32) * (s->ll16 + s->tPos) |
+                      ((((UInt32) * (s->ll4 + (s->tPos >> 1)) >>
+                         ((s->tPos << 2) & 4U)) &
+                        15U)
+                       << 16);
+          }
+          if (s->rNToGo == 0) {
+            s->rNToGo = BZ2_rNums[s->rTPos];
+            (s->rTPos)++;
+          }
+          (s->rNToGo)--;
+          if (s->rNToGo == 1) {
+            tmp___1 = 1;
+          } else {
+            tmp___1 = 0;
+          }
+          k1 = (UChar)((int)k1 ^ tmp___1);
+          (s->nblock_used)++;
+          if (s->nblock_used == s->save_nblock + 1) {
+            goto while_continue;
+          }
+          if ((int)k1 != s->k0) {
+            s->k0 = (Int32)k1;
+            goto while_continue;
+          }
+          if (s->tPos >= 100000U * (UInt32)s->blockSize100k) {
+            return ((Bool)1);
+          }
+          {
+            k1 = (UChar)BZ2_indexIntoF((Int32)s->tPos, s->cftab);
+            s->tPos = (UInt32) * (s->ll16 + s->tPos) |
+                      ((((UInt32) * (s->ll4 + (s->tPos >> 1)) >>
+                         ((s->tPos << 2) & 4U)) &
+                        15U)
+                       << 16);
+          }
+          if (s->rNToGo == 0) {
+            s->rNToGo = BZ2_rNums[s->rTPos];
+            (s->rTPos)++;
+            if (s->rTPos == 512) {
+              s->rTPos = 0;
+            }
+          }
+          (s->rNToGo)--;
+
+          k1 = (UChar)((int)k1 ^ tmp___2);
+          (s->nblock_used)++;
+          s->state_out_len = (Int32)k1 + 4;
+          if (s->tPos >= 100000U * (UInt32)s->blockSize100k) {
+            return ((Bool)1);
+          }
+          {
+            s->k0 = BZ2_indexIntoF((Int32)s->tPos, s->cftab);
+            s->tPos = (UInt32) * (s->ll16 + s->tPos) |
+                      ((((UInt32) * (s->ll4 + (s->tPos >> 1)) >>
+                         ((s->tPos << 2) & 4U)) &
+                        15U)
+                       << 16);
+          }
+          if (s->rNToGo == 0) {
+            s->rNToGo = BZ2_rNums[s->rTPos];
+            (s->rTPos)++;
+          }
+          (s->rNToGo)--;
+
+          s->k0 ^= tmp___3;
+          (s->nblock_used)++;
+        }
+      while_break: /* CIL Label */
+          ;
+      }
+    } else {
+      {
+        while (1) {
+        while_continue___1: /* CIL Label */
+            ;
+          {
+            while (1) {
+            while_continue___2: /* CIL Label */
+                ;
+              if ((s->strm)->avail_out == 0U) {
+                return ((Bool)0);
+              }
+              if (s->state_out_len == 0) {
+                goto while_break___2;
+              }
+              *((UChar *)(s->strm)->next_out) = s->state_out_ch;
+              s->calculatedBlockCRC =
+                  (s->calculatedBlockCRC << 8) ^
+                  BZ2_crc32Table[(s->calculatedBlockCRC >> 24) ^
+                                 (unsigned int)s->state_out_ch];
+              (s->state_out_len)--;
+              ((s->strm)->next_out)++;
+              ((s->strm)->avail_out)--;
+              ((s->strm)->total_out_lo32)++;
+              if ((s->strm)->total_out_lo32 == 0U) {
+                ((s->strm)->total_out_hi32)++;
+              }
+            }
+          while_break___2: /* CIL Label */
+              ;
+          }
+          if (s->nblock_used == s->save_nblock + 1) {
+            return ((Bool)0);
+          }
+          if (s->nblock_used > s->save_nblock + 1) {
+            return ((Bool)1);
+          }
+          s->state_out_len = 1;
+          s->state_out_ch = (UChar)s->k0;
+          if (s->tPos >= 100000U * (UInt32)s->blockSize100k) {
+            return ((Bool)1);
+          }
+          {
+            k1 = (UChar)BZ2_indexIntoF((Int32)s->tPos, s->cftab);
+            s->tPos = (UInt32) * (s->ll16 + s->tPos) |
+                      ((((UInt32) * (s->ll4 + (s->tPos >> 1)) >>
+                         ((s->tPos << 2) & 4U)) &
+                        15U)
+                       << 16);
+            (s->nblock_used)++;
+          }
+          if (s->nblock_used == s->save_nblock + 1) {
+            goto while_continue___1;
+          }
+          if ((int)k1 != s->k0) {
+            s->k0 = (Int32)k1;
+            goto while_continue___1;
+          }
+          s->state_out_len = 2;
+          if (s->tPos >= 100000U * (UInt32)s->blockSize100k) {
+            return ((Bool)1);
+          }
+          {
+            k1 = (UChar)BZ2_indexIntoF((Int32)s->tPos, s->cftab);
+
+            (s->nblock_used)++;
+          }
+          if (s->nblock_used == s->save_nblock + 1) {
+            goto while_continue___1;
+          }
+          if ((int)k1 != s->k0) {
+            s->k0 = (Int32)k1;
+            goto while_continue___1;
+          }
+          s->state_out_len = 3;
+          if (s->tPos >= 100000U * (UInt32)s->blockSize100k) {
+            return ((Bool)1);
+          }
+          {
+            k1 = (UChar)BZ2_indexIntoF((Int32)s->tPos, s->cftab);
+            s->tPos = (UInt32) * (s->ll16 + s->tPos) |
+                      ((((UInt32) * (s->ll4 + (s->tPos >> 1)) >>
+                         ((s->tPos << 2) & 4U)) &
+                        15U)
+                       << 16);
+            (s->nblock_used)++;
+          }
+          if (s->nblock_used == s->save_nblock + 1) {
+            goto while_continue___1;
+          }
+          if ((int)k1 != s->k0) {
+            s->k0 = (Int32)k1;
+            goto while_continue___1;
+          }
+
+          {
+            k1 = (UChar)BZ2_indexIntoF((Int32)s->tPos, s->cftab);
+            s->tPos = (UInt32) * (s->ll16 + s->tPos) |
+                      ((((UInt32) * (s->ll4 + (s->tPos >> 1)) >>
+                         ((s->tPos << 2) & 4U)) &
+                        15U)
+                       << 16);
+            (s->nblock_used)++;
+            s->state_out_len = (Int32)k1 + 4;
+          }
+          if (s->tPos >= 100000U * (UInt32)s->blockSize100k) {
+            return ((Bool)1);
+          }
+          {
+            s->k0 = BZ2_indexIntoF((Int32)s->tPos, s->cftab);
+            s->tPos = (UInt32) * (s->ll16 + s->tPos) |
+                      ((((UInt32) * (s->ll4 + (s->tPos >> 1)) >>
+                         ((s->tPos << 2) & 4U)) &
+                        15U)
+                       << 16);
+            (s->nblock_used)++;
+          }
+        }
+      while_break___1: /* CIL Label */
+          ;
+      }
     }
   }
 }
-
 int BZ2_bzDecompress(bz_stream *strm) {
   Bool corrupt;
+  DState *s;
+  Int32 r;
+  Int32 tmp;
+
+  {
+    if ((unsigned long)strm == (unsigned long)((void *)0)) {
+      return (-2);
+    }
+    s = (DState *)strm->state;
+    if ((unsigned long)s == (unsigned long)((void *)0)) {
+      return (-2);
+    }
+    if ((unsigned long)s->strm != (unsigned long)strm) {
+      return (-2);
+    }
+    {
+
+    while_break: /* CIL Label */
+        ;
+    }
+    { BZ2_bz__AssertH__fail(6001); }
+    return (0);
+  }
+}
+int BZ2_bzDecompressEnd(bz_stream *strm) {
   DState *s;
 
   {
     if ((unsigned long)strm == (unsigned long)((void *)0)) {
+      return (-2);
     }
     s = (DState *)strm->state;
-    if ((unsigned long)s == (unsigned long)((void *)0)) {
+
+    if ((unsigned long)s->strm != (unsigned long)strm) {
+      return (-2);
     }
 
-    {
-      while (1) {
-        /* CIL Label */
-        ;
-
-        if (s->state == 2) {
-
-          if (corrupt) {
-          }
-          if (s->nblock_used == s->save_nblock + 1) {
-            if (s->state_out_len == 0) {
-
-              if (s->calculatedBlockCRC != s->storedBlockCRC) {
-                return (-4);
-              }
-              s->calculatedCombinedCRC = (s->calculatedCombinedCRC << 1) |
-                                         (s->calculatedCombinedCRC >> 31);
-              s->calculatedCombinedCRC ^= s->calculatedBlockCRC;
-
-            } else {
-              return (0);
-            }
-          } else {
-            return (0);
-          }
-        }
-
+    if ((unsigned long)s->ll16 != (unsigned long)((void *)0)) {
+      {
+        (*(strm->bzfree))(strm->opaque, (void *)s->ll16);
       }
-      /* CIL Label */
-      ;
     }
-    {}
+    if ((unsigned long)s->ll4 != (unsigned long)((void *)0)) {
+      {
+        (*(strm->bzfree))(strm->opaque, (void *)s->ll4);
+      }
+    }
+    {
+      (*(strm->bzfree))(strm->opaque, strm->state);
+      strm->state = (void *)0;
+    }
+    return (0);
   }
 }
-
 static Bool myfeof(FILE *f) {
   Int32 c;
+  Int32 tmp;
 
   {
-    {}
-
+    {
+      tmp = fgetc(f);
+      c = tmp;
+    }
+    if (c == -1) {
+      return ((Bool)1);
+    }
     { ungetc(c, f); }
+    return ((Bool)0);
   }
 }
 BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0,
@@ -2916,17 +3374,19 @@ BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0,
   Int32 ret;
   bzFile *bzf;
   int tmp;
+  void *__cil_tmp10;
 
   {
-    if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
-      *bzerror = 0;
-    }
+    bzf = (bzFile *)((void *)0);
+
     if ((unsigned long)bzf != (unsigned long)((void *)0)) {
       bzf->lastErr = 0;
     }
     if ((unsigned long)f == (unsigned long)((void *)0)) {
+      goto _L___0;
     } else {
       if (blockSize100k___0 < 1) {
+        goto _L___0;
       } else {
         if (blockSize100k___0 > 9) {
           goto _L___0;
@@ -2942,6 +3402,12 @@ BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0,
               } else {
                 if (verbosity___0 > 4) {
                 _L___0:
+                  if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+                    *bzerror = -2;
+                  }
+                  if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+                    bzf->lastErr = -2;
+                  }
                   return ((void *)0);
                 }
               }
@@ -2955,9 +3421,21 @@ BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0,
       if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
         *bzerror = -6;
       }
+      if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+        bzf->lastErr = -6;
+      }
       return ((void *)0);
     }
     { bzf = (bzFile *)malloc(sizeof(bzFile)); }
+    if ((unsigned long)bzf == (unsigned long)((void *)0)) {
+      if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+        *bzerror = -3;
+      }
+      if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+        bzf->lastErr = -3;
+      }
+      return ((void *)0);
+    }
     if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
       *bzerror = 0;
     }
@@ -2968,18 +3446,24 @@ BZFILE *BZ2_bzWriteOpen(int *bzerror, FILE *f, int blockSize100k___0,
     bzf->bufN = 0;
     bzf->handle = f;
     bzf->writing = (Bool)1;
+    bzf->strm.bzalloc = (void *(*)(void *, int, int))((void *)0);
+    bzf->strm.bzfree = (void (*)(void *, void *))((void *)0);
+    bzf->strm.opaque = (void *)0;
+
     {
       ret = BZ2_bzCompressInit(&bzf->strm, blockSize100k___0, verbosity___0,
                                workFactor___0);
     }
     if (ret != 0) {
-      if ((unsigned long)bzf != (unsigned long)((void *)0)) {
-        bzf->lastErr = ret;
+      if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+        *bzerror = ret;
       }
+
       { free((void *)bzf); }
       return ((void *)0);
     }
     bzf->strm.avail_in = 0U;
+    bzf->initialisedOk = (Bool)1;
     return ((BZFILE *)bzf);
   }
 }
@@ -2993,12 +3477,14 @@ void BZ2_bzWrite(int *bzerror, BZFILE *b, void *buf, int len) {
 
   {
     bzf = (bzFile *)b;
-
+    if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+      *bzerror = 0;
+    }
     if ((unsigned long)bzf != (unsigned long)((void *)0)) {
       bzf->lastErr = 0;
     }
     if ((unsigned long)bzf == (unsigned long)((void *)0)) {
-
+      goto _L;
     } else {
       if ((unsigned long)buf == (unsigned long)((void *)0)) {
         goto _L;
@@ -3006,6 +3492,7 @@ void BZ2_bzWrite(int *bzerror, BZFILE *b, void *buf, int len) {
         if (len < 0) {
         _L:
           if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+            *bzerror = -2;
           }
 
           return;
@@ -3017,6 +3504,7 @@ void BZ2_bzWrite(int *bzerror, BZFILE *b, void *buf, int len) {
         *bzerror = -1;
       }
       if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+        bzf->lastErr = -1;
       }
       return;
     }
@@ -3043,8 +3531,8 @@ void BZ2_bzWrite(int *bzerror, BZFILE *b, void *buf, int len) {
     bzf->strm.next_in = (char *)buf;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */
+          ;
         {
           bzf->strm.avail_out = 5000U;
           bzf->strm.next_out = bzf->buf;
@@ -3052,6 +3540,7 @@ void BZ2_bzWrite(int *bzerror, BZFILE *b, void *buf, int len) {
         }
         if (ret != 1) {
           if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+            *bzerror = ret;
           }
           if ((unsigned long)bzf != (unsigned long)((void *)0)) {
             bzf->lastErr = ret;
@@ -3072,20 +3561,28 @@ void BZ2_bzWrite(int *bzerror, BZFILE *b, void *buf, int len) {
             { tmp___0 = ferror(bzf->handle); }
             if (tmp___0) {
             _L___0:
-
+              if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+                *bzerror = -6;
+              }
+              if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+                bzf->lastErr = -6;
+              }
               return;
             }
           }
         }
         if (bzf->strm.avail_in == 0U) {
-
+          if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+            *bzerror = 0;
+          }
           if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+            bzf->lastErr = 0;
           }
           return;
         }
       }
-      /* CIL Label */
-      ;
+    while_break: /* CIL Label */
+        ;
     }
   }
 }
@@ -3107,6 +3604,7 @@ void BZ2_bzWriteClose64(int *bzerror, BZFILE *b, int abandon,
     bzf = (bzFile *)b;
     if ((unsigned long)bzf == (unsigned long)((void *)0)) {
       if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+        *bzerror = 0;
       }
       if ((unsigned long)bzf != (unsigned long)((void *)0)) {
         bzf->lastErr = 0;
@@ -3133,31 +3631,25 @@ void BZ2_bzWriteClose64(int *bzerror, BZFILE *b, int abandon,
       return;
     }
 
-    if ((unsigned long)nbytes_out_lo32 != (unsigned long)((void *)0)) {
-      *nbytes_out_lo32 = 0U;
+    if ((unsigned long)nbytes_in_hi32 != (unsigned long)((void *)0)) {
+      *nbytes_in_hi32 = 0U;
     }
+
     if ((unsigned long)nbytes_out_hi32 != (unsigned long)((void *)0)) {
+      *nbytes_out_hi32 = 0U;
     }
     if (!abandon) {
       if (bzf->lastErr == 0) {
         {
           while (1) {
-            /* CIL Label */
-            ;
+          while_continue: /* CIL Label */
+              ;
             {
               bzf->strm.avail_out = 5000U;
               bzf->strm.next_out = bzf->buf;
               ret = BZ2_bzCompress(&bzf->strm, 2);
             }
             if (ret != 3) {
-              if (ret != 4) {
-                if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
-                }
-                if ((unsigned long)bzf != (unsigned long)((void *)0)) {
-                  bzf->lastErr = ret;
-                }
-                return;
-              }
             }
             if (bzf->strm.avail_out < 5000U) {
               {
@@ -3168,14 +3660,15 @@ void BZ2_bzWriteClose64(int *bzerror, BZFILE *b, int abandon,
                     (FILE * /* __restrict  */)bzf->handle);
               }
               if (n != n2) {
-
+                goto _L;
               } else {
                 { tmp___0 = ferror(bzf->handle); }
                 if (tmp___0) {
-
-                  if ((unsigned long)bzf != (unsigned long)((void *)0)) {
-                    bzf->lastErr = -6;
+                _L:
+                  if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+                    *bzerror = -6;
                   }
+
                   return;
                 }
               }
@@ -3195,16 +3688,22 @@ void BZ2_bzWriteClose64(int *bzerror, BZFILE *b, int abandon,
       }
       if (!tmp___2) {
         {
-
+          fflush(bzf->handle);
           tmp___1 = ferror(bzf->handle);
         }
         if (tmp___1) {
-
+          if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+            *bzerror = -6;
+          }
           if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+            bzf->lastErr = -6;
           }
           return;
         }
       }
+    }
+    if ((unsigned long)nbytes_in_lo32 != (unsigned long)((void *)0)) {
+      *nbytes_in_lo32 = bzf->strm.total_in_lo32;
     }
 
     if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
@@ -3225,16 +3724,25 @@ BZFILE *BZ2_bzReadOpen(int *bzerror, FILE *f, int verbosity___0, int small,
   bzFile *bzf;
   int ret;
   int tmp;
+  void *__cil_tmp11;
 
   {
-
+    bzf = (bzFile *)((void *)0);
+    if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+      *bzerror = 0;
+    }
     if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+      bzf->lastErr = 0;
     }
     if ((unsigned long)f == (unsigned long)((void *)0)) {
       goto _L___0;
     } else {
       if (small != 0) {
-
+        if (small != 1) {
+          goto _L___0;
+        } else {
+          goto _L___2;
+        }
       } else {
       _L___2:
         if (verbosity___0 < 0) {
@@ -3247,18 +3755,21 @@ BZFILE *BZ2_bzReadOpen(int *bzerror, FILE *f, int verbosity___0, int small,
               if (nUnused != 0) {
                 goto _L___0;
               } else {
+                goto _L___1;
               }
             } else {
             _L___1:
               if ((unsigned long)unused != (unsigned long)((void *)0)) {
                 if (nUnused < 0) {
-
+                  goto _L___0;
                 } else {
                   if (nUnused > 5000) {
                   _L___0:
                     if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
                       *bzerror = -2;
                     }
+
+                    return ((void *)0);
                   }
                 }
               }
@@ -3269,61 +3780,107 @@ BZFILE *BZ2_bzReadOpen(int *bzerror, FILE *f, int verbosity___0, int small,
     }
     { tmp = ferror(f); }
     if (tmp) {
-
+      if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+        *bzerror = -6;
+      }
+      if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+        bzf->lastErr = -6;
+      }
       return ((void *)0);
     }
     { bzf = (bzFile *)malloc(sizeof(bzFile)); }
-
+    if ((unsigned long)bzf == (unsigned long)((void *)0)) {
+      if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+        *bzerror = -3;
+      }
+      if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+        bzf->lastErr = -3;
+      }
+      return ((void *)0);
+    }
     if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
       *bzerror = 0;
     }
     if ((unsigned long)bzf != (unsigned long)((void *)0)) {
       bzf->lastErr = 0;
     }
-
+    bzf->initialisedOk = (Bool)0;
     bzf->handle = f;
     bzf->bufN = 0;
-
+    bzf->writing = (Bool)0;
     bzf->strm.bzalloc = (void *(*)(void *, int, int))((void *)0);
-
+    bzf->strm.bzfree = (void (*)(void *, void *))((void *)0);
+    bzf->strm.opaque = (void *)0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */
+          ;
         if (!(nUnused > 0)) {
           goto while_break;
         }
-
+        bzf->buf[bzf->bufN] = (Char) * ((UChar *)unused);
         (bzf->bufN)++;
+        unused = (void *)((UChar *)unused + 1);
+        nUnused--;
       }
     while_break: /* CIL Label */
         ;
     }
-    {}
+    { ret = BZ2_bzDecompressInit(&bzf->strm, verbosity___0, small); }
     if (ret != 0) {
-
-      {
-        free((void *)bzf);
+      if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+        *bzerror = ret;
       }
+      if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+        bzf->lastErr = ret;
+      }
+      { free((void *)bzf); }
       return ((void *)0);
     }
     bzf->strm.avail_in = (unsigned int)bzf->bufN;
-
+    bzf->strm.next_in = bzf->buf;
     bzf->initialisedOk = (Bool)1;
     return ((BZFILE *)bzf);
   }
 }
+void BZ2_bzReadClose(int *bzerror, BZFILE *b) {
+  bzFile *bzf;
 
+  {
+    bzf = (bzFile *)b;
+    if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+      *bzerror = 0;
+    }
+    if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+      bzf->lastErr = 0;
+    }
+    if ((unsigned long)bzf == (unsigned long)((void *)0)) {
+      if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+        *bzerror = 0;
+      }
+      if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+        bzf->lastErr = 0;
+      }
+      return;
+    }
+
+    { free((void *)bzf); }
+    return;
+  }
+}
 int BZ2_bzRead(int *bzerror, BZFILE *b, void *buf, int len) {
   Int32 n;
   Int32 ret;
   bzFile *bzf;
   int tmp;
   int tmp___0;
+  Bool tmp___1;
+  Bool tmp___2;
 
   {
     bzf = (bzFile *)b;
     if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+      *bzerror = 0;
     }
     if ((unsigned long)bzf != (unsigned long)((void *)0)) {
       bzf->lastErr = 0;
@@ -3339,26 +3896,154 @@ int BZ2_bzRead(int *bzerror, BZFILE *b, void *buf, int len) {
           if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
             *bzerror = -2;
           }
-          if ((unsigned long)bzf != (unsigned long)((void *)0)) {
-            bzf->lastErr = -2;
-          }
+
+          return (0);
         }
       }
     }
-
-    bzf->strm.avail_out = (unsigned int)len;
-
-    {
-
-      /* CIL Label */
-      ;
+    if (bzf->writing) {
+      if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+        *bzerror = -1;
+      }
+      if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+        bzf->lastErr = -1;
+      }
+      return (0);
     }
+    if (len == 0) {
+      if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+        *bzerror = 0;
+      }
+
+      return (0);
+    }
+    bzf->strm.avail_out = (unsigned int)len;
+    bzf->strm.next_out = (char *)buf;
+    {
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        { tmp = ferror(bzf->handle); }
+        if (tmp) {
+          if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+            *bzerror = -6;
+          }
+          if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+            bzf->lastErr = -6;
+          }
+          return (0);
+        }
+        if (bzf->strm.avail_in == 0U) {
+          {
+            tmp___1 = myfeof(bzf->handle);
+          }
+          if (!tmp___1) {
+            {
+              n = (Int32)fread((void * /* __restrict  */)(bzf->buf),
+                               sizeof(UChar), (size_t)5000,
+                               (FILE * /* __restrict  */)bzf->handle);
+              tmp___0 = ferror(bzf->handle);
+            }
+            if (tmp___0) {
+              if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+                *bzerror = -6;
+              }
+              if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+                bzf->lastErr = -6;
+              }
+              return (0);
+            }
+            bzf->bufN = n;
+            bzf->strm.avail_in = (unsigned int)bzf->bufN;
+            bzf->strm.next_in = bzf->buf;
+          }
+        }
+        { ret = BZ2_bzDecompress(&bzf->strm); }
+        if (ret != 0) {
+        }
+        if (ret == 0) {
+          {
+            tmp___2 = myfeof(bzf->handle);
+          }
+          if (tmp___2) {
+            if (bzf->strm.avail_in == 0U) {
+              if (bzf->strm.avail_out > 0U) {
+                if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+                  *bzerror = -7;
+                }
+
+                return (0);
+              }
+            }
+          }
+        }
+
+        if (bzf->strm.avail_out == 0U) {
+          if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+            *bzerror = 0;
+          }
+          if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+            bzf->lastErr = 0;
+          }
+          return (len);
+        }
+      }
+    while_break: /* CIL Label */
+        ;
+    }
+    return (0);
   }
 }
+void BZ2_bzReadGetUnused(int *bzerror, BZFILE *b, void **unused, int *nUnused) {
+  bzFile *bzf;
 
+  {
+    bzf = (bzFile *)b;
+    if ((unsigned long)bzf == (unsigned long)((void *)0)) {
+      if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+        *bzerror = -2;
+      }
+      if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+        bzf->lastErr = -2;
+      }
+      return;
+    }
+    if (bzf->lastErr != 4) {
+      if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+        *bzerror = -1;
+      }
+      if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+        bzf->lastErr = -1;
+      }
+      return;
+    }
+    if ((unsigned long)unused == (unsigned long)((void *)0)) {
+      goto _L;
+    } else {
+      if ((unsigned long)nUnused == (unsigned long)((void *)0)) {
+      _L:
+        if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+          *bzerror = -2;
+        }
+
+        return;
+      }
+    }
+    if ((unsigned long)bzerror != (unsigned long)((void *)0)) {
+      *bzerror = 0;
+    }
+    if ((unsigned long)bzf != (unsigned long)((void *)0)) {
+      bzf->lastErr = 0;
+    }
+    *nUnused = (int)bzf->strm.avail_in;
+    *unused = (void *)bzf->strm.next_in;
+    return;
+  }
+}
 char const *BZ2_bzlibVersion(void) {
+  char *__cil_tmp1;
 
-  {}
+  { return ("1.0.5, 10-Dec-2007"); }
 }
 static char const *bzerrorstrings[16] = {"OK",           "SEQUENCE_ERROR",
                                          "PARAM_ERROR",  "MEM_ERROR",
@@ -3368,25 +4053,63 @@ static char const *bzerrorstrings[16] = {"OK",           "SEQUENCE_ERROR",
                                          "???",          "???",
                                          "???",          "???",
                                          "???",          "???"};
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) remove)(
+    char const *__filename);
+extern void rewind(FILE *__stream);
+extern void perror(char const *__s);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fileno)(
+    FILE *__stream);
+extern __attribute__((__nothrow__)) char *(
+    __attribute__((__nonnull__(1), __leaf__)) getenv)(char const *__name);
+extern __attribute__((__nothrow__)) char *(__attribute__((
+    __nonnull__(1, 2), __leaf__)) strcpy)(char *__restrict __dest,
+                                          char const *__restrict __src);
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1, 2),
+                                                          __leaf__)) strncpy)(
+    char *__restrict __dest, char const *__restrict __src, size_t __n);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2),
+                                                       __leaf__)) strncmp)(
+    char const *__s1, char const *__s2, size_t __n) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) char *(
+    __attribute__((__nonnull__(1, 2), __leaf__)) strstr)(char const *__haystack,
+                                                         char const *__needle)
+    __attribute__((__pure__));
+extern __attribute__((__nothrow__))
+size_t(__attribute__((__nonnull__(1), __leaf__)) strlen)(char const *__s)
+    __attribute__((__pure__));
 
+extern __attribute__((__nothrow__))
+__sighandler_t(__attribute__((__leaf__)) signal)(int __sig,
+                                                 void (*__handler)(int));
+extern __attribute__((__nothrow__)) int *(
+    __attribute__((__leaf__)) __errno_location)(void)__attribute__((__const__));
 extern int(__attribute__((__nonnull__(1))) open)(char const *__file,
                                                  int __oflag,
                                                  ...) __asm__("open64");
- 
+extern __attribute__((__nothrow__)) int(__attribute__((
+    __nonnull__(1), __leaf__)) utime)(char const *__file,
+                                      struct utimbuf const *__file_times);
+extern int close(int __fd);
+
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2),
                                                        __leaf__)) stat)(
     char const *__restrict __file,
     struct stat *__restrict __buf) __asm__("stat64");
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2),
+                                                       __leaf__)) lstat)(
+    char const *__restrict __file,
+    struct stat *__restrict __buf) __asm__("lstat64");
 
 Int32 verbosity;
 Bool keepInputFiles;
 Bool smallMode;
 Bool deleteOutputOnInterrupt;
-
+Bool forceOverwrite;
+Bool testFailsExist;
 Bool unzFailsExist;
-
+Bool noisy;
 Int32 numFileNames;
-
+Int32 numFilesProcessed;
 Int32 blockSize100k;
 Int32 exitValue;
 Int32 opMode;
@@ -3394,25 +4117,88 @@ Int32 srcMode;
 Int32 longestFileName;
 Char inName[1034];
 Char outName[1034];
-
+Char tmpName[1034];
 Char *progName;
 Char progNameReally[1034];
 FILE *outputHandleJustInCase;
 Int32 workFactor;
 static __attribute__((__noreturn__)) void panic(Char const *s);
-
+static __attribute__((__noreturn__)) void ioError(void);
+static __attribute__((__noreturn__)) void outOfMemory(void);
+static __attribute__((__noreturn__)) void configError(void);
+static __attribute__((__noreturn__)) void crcError(void);
+static __attribute__((__noreturn__)) void cleanUpAndFail(Int32 ec);
+static __attribute__((__noreturn__)) void compressedStreamEOF(void);
 static void copyFileName(Char *to, Char *from);
-
+static void *myMalloc(Int32 n);
+static void applySavedFileAttrToOutputFile(IntNative fd);
 static void uInt64_from_UInt32s(UInt64 *n, UInt32 lo32, UInt32 hi32) {
 
   {
-
+    n->b[7] = (UChar)((hi32 >> 24) & 255U);
     n->b[6] = (UChar)((hi32 >> 16) & 255U);
-
+    n->b[5] = (UChar)((hi32 >> 8) & 255U);
+    n->b[4] = (UChar)(hi32 & 255U);
+    n->b[3] = (UChar)((lo32 >> 24) & 255U);
+    n->b[2] = (UChar)((lo32 >> 16) & 255U);
     n->b[1] = (UChar)((lo32 >> 8) & 255U);
+    n->b[0] = (UChar)(lo32 & 255U);
+    return;
   }
 }
 
+static Bool uInt64_isZero(UInt64 *n) {
+  Int32 i;
+
+  {
+    i = 0;
+    {
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!(i < 8)) {
+          goto while_break;
+        }
+        if ((int)n->b[i] != 0) {
+          return ((Bool)0);
+        }
+        i++;
+      }
+    while_break: /* CIL Label */
+        ;
+    }
+    return ((Bool)1);
+  }
+}
+
+static void uInt64_toAscii(char *outbuf, UInt64 *n) {
+  Int32 i;
+  Int32 q;
+  UChar buf[32];
+  Int32 nBuf;
+  UInt64 n_copy;
+  Bool tmp;
+  void *__cil_tmp9;
+  void *__cil_tmp10;
+
+  {
+    nBuf = 0;
+    n_copy = *n;
+    {
+
+    while_break: /* CIL Label */
+        ;
+    }
+    *(outbuf + nBuf) = (char)0;
+    i = 0;
+    {
+
+    while_break___0: /* CIL Label */
+        ;
+    }
+    return;
+  }
+}
 static Bool myfeof___0(FILE *f) {
   Int32 c;
   Int32 tmp;
@@ -3426,6 +4212,7 @@ static Bool myfeof___0(FILE *f) {
       return ((Bool)1);
     }
     { ungetc(c, f); }
+    return ((Bool)0);
   }
 }
 static void compressStream(FILE *stream, FILE *zStream) {
@@ -3444,19 +4231,33 @@ static void compressStream(FILE *stream, FILE *zStream) {
   Bool tmp___1;
   int tmp___2;
   int tmp___3;
-
+  Int32 fd;
   Int32 tmp___4;
   int tmp___5;
+  Char buf_nin[32];
+  Char buf_nout[32];
+  UInt64 nbytes_in;
+  UInt64 nbytes_out;
+  double nbytes_in_d;
+  double nbytes_out_d;
+  void *__cil_tmp28;
+  void *__cil_tmp29;
+  void *__cil_tmp30;
+  void *__cil_tmp31;
+  void *__cil_tmp32;
+  char *__cil_tmp33;
+  char *__cil_tmp34;
 
   {
-    { tmp = ferror(stream); }
+    {
+      bzf = (void *)0;
+      tmp = ferror(stream);
+    }
     if (tmp) {
       goto errhandler_io;
     }
     { tmp___0 = ferror(zStream); }
-    if (tmp___0) {
-      goto errhandler_io;
-    }
+
     {
       bzf = BZ2_bzWriteOpen(&bzerr, zStream, blockSize100k, verbosity,
                             workFactor);
@@ -3511,9 +4312,16 @@ static void compressStream(FILE *stream, FILE *zStream) {
     if ((unsigned long)zStream != (unsigned long)stdout) {
       {
         tmp___4 = fileno(zStream);
+        fd = tmp___4;
       }
-
-      { ret = fclose(zStream); }
+      if (fd < 0) {
+        goto errhandler_io;
+      }
+      {
+        applySavedFileAttrToOutputFile(fd);
+        ret = fclose(zStream);
+        outputHandleJustInCase = (FILE *)((void *)0);
+      }
       if (ret == -1) {
         goto errhandler_io;
       }
@@ -3538,19 +4346,23 @@ static void compressStream(FILE *stream, FILE *zStream) {
     {
 
       if (bzerr == -3) {
+        goto case_neg_3;
       }
       if (bzerr == -6) {
         goto errhandler_io;
       }
       goto switch_default;
     case_neg_9: { /* CIL Label */
+      configError();
     }
-
+      goto switch_break;
     case_neg_3: { /* CIL Label */
+      outOfMemory();
     }
-
+      goto switch_break;
     errhandler_io:
     case_neg_6: { /* CIL Label */
+      ioError();
     }
       goto switch_break;
     switch_default: { /* CIL Label */
@@ -3559,13 +4371,13 @@ static void compressStream(FILE *stream, FILE *zStream) {
     switch_break: /* CIL Label */
         ;
     }
-    {}
+    { panic("compress:end"); }
   }
 }
 static Bool uncompressStream(FILE *zStream, FILE *stream) {
   BZFILE *bzf;
   Int32 bzerr;
-
+  Int32 bzerr_dummy;
   Int32 ret;
   Int32 nread;
   Int32 streamNo;
@@ -3580,11 +4392,26 @@ static Bool uncompressStream(FILE *zStream, FILE *stream) {
   int tmp___1;
   Bool tmp___2;
   int tmp___3;
-
+  Int32 fd;
+  Int32 tmp___4;
   int tmp___5;
+  Bool tmp___6;
+  int tmp___7;
+  int tmp___8;
+  void *__cil_tmp27;
+  void *__cil_tmp28;
+  char *__cil_tmp29;
+  char *__cil_tmp30;
+  char *__cil_tmp31;
+  char *__cil_tmp32;
 
   {
-    { bzf = (void *)0; }
+    {
+      bzf = (void *)0;
+      nUnused = 0;
+      streamNo = 0;
+      tmp = ferror(stream);
+    }
     if (tmp) {
       goto errhandler_io;
     }
@@ -3594,66 +4421,43 @@ static Bool uncompressStream(FILE *zStream, FILE *stream) {
     }
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */
+          ;
         {
           bzf = BZ2_bzReadOpen(&bzerr, zStream, verbosity, (int)smallMode,
                                (void *)(unused), nUnused);
         }
-        if ((unsigned long)bzf == (unsigned long)((void *)0)) {
-          goto errhandler;
-        } else {
-          if (bzerr != 0) {
-            goto errhandler;
-          }
-        }
 
+        streamNo++;
         {
-          while (1) {
-            /* CIL Label */
-            ;
-            if (!(bzerr == 0)) {
-              goto while_break___0;
-            }
-            { nread = BZ2_bzRead(&bzerr, bzf, (void *)(obuf), 5000); }
 
-            if (bzerr == 0) {
-              goto _L;
-            } else {
-              if (bzerr == 4) {
-              _L:
-                if (nread > 0) {
-                  {
-                    fwrite((void const * /* __restrict  */)(obuf),
-                           sizeof(UChar), (size_t)nread,
-                           (FILE * /* __restrict  */)stream);
-                  }
-                }
-              }
-            }
-            { tmp___1 = ferror(stream); }
-            if (tmp___1) {
-              goto errhandler_io;
-            }
-          }
         while_break___0: /* CIL Label */
             ;
         }
         if (bzerr != 4) {
           goto errhandler;
         }
-        {}
+        { BZ2_bzReadGetUnused(&bzerr, bzf, &unusedTmpV, &nUnused); }
 
         unusedTmp = (UChar *)unusedTmpV;
         i = 0;
         {
-
-          /* CIL Label */
-          ;
+          while (1) {
+          while_continue___1: /* CIL Label */
+              ;
+            if (!(i < nUnused)) {
+              goto while_break___1;
+            }
+            unused[i] = *(unusedTmp + i);
+            i++;
+          }
+        while_break___1: /* CIL Label */
+            ;
         }
-        {}
+        { BZ2_bzReadClose(&bzerr, bzf); }
         if (bzerr != 0) {
           {
+            panic("decompress:bzReadGetUnused");
           }
         }
         if (nUnused == 0) {
@@ -3672,7 +4476,16 @@ static Bool uncompressStream(FILE *zStream, FILE *stream) {
     if (tmp___3) {
       goto errhandler_io;
     }
-
+    if ((unsigned long)stream != (unsigned long)stdout) {
+      {
+        tmp___4 = fileno(stream);
+        fd = tmp___4;
+      }
+      if (fd < 0) {
+        goto errhandler_io;
+      }
+      { applySavedFileAttrToOutputFile(fd); }
+    }
     { ret = fclose(zStream); }
     if (ret == -1) {
       goto errhandler_io;
@@ -3682,29 +4495,27 @@ static Bool uncompressStream(FILE *zStream, FILE *stream) {
       goto errhandler_io;
     }
     { ret = fflush(stream); }
-
-    if ((unsigned long)stream != (unsigned long)stdout) {
-      {
-        ret = fclose(stream);
-        outputHandleJustInCase = (FILE *)((void *)0);
-      }
-      if (ret == -1) {
-        goto errhandler_io;
-      }
+    if (ret != 0) {
+      goto errhandler_io;
     }
+
     outputHandleJustInCase = (FILE *)((void *)0);
 
-  errhandler: {}
+    return ((Bool)1);
+  trycat:
+
+  errhandler: { BZ2_bzReadClose(&bzerr_dummy, bzf); }
     {
       if (bzerr == -9) {
+        goto case_neg_9;
       }
       if (bzerr == -6) {
         goto errhandler_io;
       }
-
-      if (bzerr == -3) {
-        goto case_neg_3;
+      if (bzerr == -4) {
+        goto case_neg_4;
       }
+
       if (bzerr == -7) {
         goto case_neg_7;
       }
@@ -3713,60 +4524,73 @@ static Bool uncompressStream(FILE *zStream, FILE *stream) {
       }
       goto switch_default;
     case_neg_9: { /* CIL Label */
+      configError();
     }
       goto switch_break;
     errhandler_io:
     case_neg_6: { /* CIL Label */
+      ioError();
     }
       goto switch_break;
     case_neg_4: { /* CIL Label */
       crcError();
     }
     case_neg_3: { /* CIL Label */
+      outOfMemory();
     }
     case_neg_7: { /* CIL Label */
+      compressedStreamEOF();
     }
     case_neg_5: /* CIL Label */
-
-      if ((unsigned long)stream != (unsigned long)stdout) {
+      if ((unsigned long)zStream != (unsigned long)stdin) {
         {
+          fclose(zStream);
         }
       }
-      if (streamNo == 1) {
-        return ((Bool)0);
-      } else {
+      if ((unsigned long)stream != (unsigned long)stdout) {
+        {
+          fclose(stream);
+        }
       }
+
     switch_default: { /* CIL Label */
       panic("decompress:unexpected error");
     }
     switch_break: /* CIL Label */
         ;
     }
-    {}
+    { panic("decompress:end"); }
+    return ((Bool)1);
   }
 }
 static Bool testStream(FILE *zStream) {
   BZFILE *bzf;
   Int32 bzerr;
-
+  Int32 bzerr_dummy;
   Int32 ret;
   Int32 nread;
   Int32 streamNo;
-
+  Int32 i;
   UChar obuf[5000];
   UChar unused[5000];
   Int32 nUnused;
   void *unusedTmpV;
   UChar *unusedTmp;
   int tmp;
-
+  Bool tmp___0;
   int tmp___1;
+  void *__cil_tmp17;
+  void *__cil_tmp18;
+  char *__cil_tmp19;
+  char *__cil_tmp20;
+  char *__cil_tmp21;
+  char *__cil_tmp22;
 
   {
     {
-
+      bzf = (void *)0;
       nUnused = 0;
-
+      streamNo = 0;
       tmp = ferror(zStream);
     }
     if (tmp) {
@@ -3774,8 +4598,8 @@ static Bool testStream(FILE *zStream) {
     }
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */
+          ;
         {
           bzf = BZ2_bzReadOpen(&bzerr, zStream, verbosity, (int)smallMode,
                                (void *)(unused), nUnused);
@@ -3787,37 +4611,50 @@ static Bool testStream(FILE *zStream) {
             goto errhandler;
           }
         }
-
+        streamNo++;
         {
-          while (1) {
-            /* CIL Label */
-            ;
-            if (!(bzerr == 0)) {
-              goto while_break___0;
-            }
-            { nread = BZ2_bzRead(&bzerr, bzf, (void *)(obuf), 5000); }
-            if (bzerr == -5) {
-            }
-          }
+
         while_break___0: /* CIL Label */
             ;
         }
         if (bzerr != 4) {
           goto errhandler;
         }
-        {}
+        { BZ2_bzReadGetUnused(&bzerr, bzf, &unusedTmpV, &nUnused); }
         if (bzerr != 0) {
           {
+            panic("test:bzReadGetUnused");
           }
         }
         unusedTmp = (UChar *)unusedTmpV;
-
+        i = 0;
         {
-
-          /* CIL Label */
-          ;
+          while (1) {
+          while_continue___1: /* CIL Label */
+              ;
+            if (!(i < nUnused)) {
+              goto while_break___1;
+            }
+            unused[i] = *(unusedTmp + i);
+            i++;
+          }
+        while_break___1: /* CIL Label */
+            ;
         }
-        {}
+        { BZ2_bzReadClose(&bzerr, bzf); }
+        if (bzerr != 0) {
+          {
+            panic("test:bzReadGetUnused");
+          }
+        }
+        if (nUnused == 0) {
+          {
+            tmp___0 = myfeof___0(zStream);
+          }
+          if (tmp___0) {
+            goto while_break;
+          }
+        }
       }
     while_break: /* CIL Label */
         ;
@@ -3826,13 +4663,13 @@ static Bool testStream(FILE *zStream) {
     if (tmp___1) {
       goto errhandler_io;
     }
-    {}
+    { ret = fclose(zStream); }
     if (ret == -1) {
       goto errhandler_io;
     }
 
     return ((Bool)1);
-  errhandler: {}
+  errhandler: { BZ2_bzReadClose(&bzerr_dummy, bzf); }
 
     {
       if (bzerr == -9) {
@@ -3841,7 +4678,9 @@ static Bool testStream(FILE *zStream) {
       if (bzerr == -6) {
         goto errhandler_io;
       }
-
+      if (bzerr == -4) {
+        goto case_neg_4;
+      }
       if (bzerr == -3) {
         goto case_neg_3;
       }
@@ -3849,15 +4688,18 @@ static Bool testStream(FILE *zStream) {
         goto case_neg_7;
       }
       if (bzerr == -5) {
+        goto case_neg_5;
       }
       goto switch_default;
     case_neg_9: { /* CIL Label */
+      configError();
     }
-
+      goto switch_break;
     errhandler_io:
     case_neg_6: { /* CIL Label */
+      ioError();
     }
-
+      goto switch_break;
     case_neg_4: { /* CIL Label */
       fprintf((FILE * /* __restrict  */)stderr,
               (char const
@@ -3865,6 +4707,7 @@ static Bool testStream(FILE *zStream) {
     }
       return ((Bool)0);
     case_neg_3: { /* CIL Label */
+      outOfMemory();
     }
     case_neg_7: { /* CIL Label */
       fprintf((FILE * /* __restrict  */)stderr,
@@ -3872,39 +4715,49 @@ static Bool testStream(FILE *zStream) {
     }
       return ((Bool)0);
     case_neg_5: /* CIL Label */
-      if ((unsigned long)zStream != (unsigned long)stdin) {
-        {
-          fclose(zStream);
-        }
-      }
+
       if (streamNo == 1) {
         {
           fprintf((FILE * /* __restrict  */)stderr,
                   (char const * /* __restrict  */) "bad magic number (file not "
                                                    "created by bzip2)\n");
         }
-
+        return ((Bool)0);
       } else {
 
         return ((Bool)1);
       }
     switch_default: { /* CIL Label */
-
-    } /* CIL Label */
-    ;
+      panic("test:unexpected error");
     }
-    {}
+    switch_break: /* CIL Label */
+        ;
+    }
+    { panic("test:end"); }
+    return ((Bool)1);
   }
 }
 static void setExit(Int32 v) {
 
   { return; }
 }
+static void cadvise(void) {
 
+  { return; }
+}
+static void showFileNames(void) {
+
+  { return; }
+}
+static __attribute__((__noreturn__)) void cleanUpAndFail(Int32 ec);
 static void cleanUpAndFail(Int32 ec) {
   IntNative retVal;
+  struct stat statBuf;
+  void *__cil_tmp4;
 
   {
+    if (srcMode == 3) {
+    }
 
     {
       setExit(ec);
@@ -3912,13 +4765,18 @@ static void cleanUpAndFail(Int32 ec) {
     }
   }
 }
-
+static __attribute__((__noreturn__)) void panic(Char const *s);
 static void panic(Char const *s) {
 
   {
-    { cleanUpAndFail(3); }
+    {
+
+      showFileNames();
+      cleanUpAndFail(3);
+    }
   }
 }
+static __attribute__((__noreturn__)) void crcError(void);
 
 static __attribute__((__noreturn__)) void compressedStreamEOF(void);
 
@@ -3933,10 +4791,17 @@ static void ioError(void) {
                                            "out.  Possible reason follows.\n",
           progName);
       perror((char const *)progName);
+      showFileNames();
+      cleanUpAndFail(1);
     }
   }
 }
+static void mySignalCatcher(IntNative n) {
 
+  {
+    { cleanUpAndFail(1); }
+  }
+}
 static void mySIGSEGVorSIGBUScatcher(IntNative n) {
 
   {
@@ -3947,29 +4812,81 @@ static void mySIGSEGVorSIGBUScatcher(IntNative n) {
       {}
     }
     { showFileNames(); }
+    if (opMode == 1) {
+      {
+        cleanUpAndFail(3);
+      }
+    } else {
+      {
+        cadvise();
+        cleanUpAndFail(2);
+      }
+    }
   }
 }
-
+static __attribute__((__noreturn__)) void outOfMemory(void);
 static void outOfMemory(void) {
 
   {
-    {}
+    {
+      fprintf(
+          (FILE * /* __restrict  */)stderr,
+          (char const
+               * /* __restrict  */) "\n%s: couldn\'t allocate enough memory\n",
+          progName);
+      showFileNames();
+      cleanUpAndFail(1);
+    }
   }
 }
-
+static __attribute__((__noreturn__)) void configError(void);
 static void configError(void) {
 
   {
-    {}
+    {
+
+      setExit(3);
+      exit(exitValue);
+    }
   }
 }
+static void pad(Char *s) {
+  Int32 i;
+  size_t tmp;
+  size_t tmp___0;
 
+  {
+    { tmp = strlen((char const *)s); }
+    if ((Int32)tmp >= longestFileName) {
+      return;
+    }
+    i = 1;
+    {
+
+    while_break: /* CIL Label */
+        ;
+    }
+    return;
+  }
+}
 static void copyFileName(Char *to, Char *from) {
   size_t tmp;
 
   {
     { tmp = strlen((char const *)from); }
-  
+    if (tmp > 1024UL) {
+      {
+        fprintf((FILE * /* __restrict  */)stderr,
+                (char const
+                     * /* __restrict  */) "bzip2: file name\n`%s\'\nis "
+                                          "suspiciously (more than %d chars) "
+                                          "long.\nTry using a reasonable file "
+                                          "name instead.  Sorry! :-)\n",
+                from, 1024);
+        setExit(1);
+        exit(exitValue);
+      }
+    }
     {
       strncpy((char * /* __restrict  */)to,
               (char const * /* __restrict  */)from, (size_t)1024);
@@ -3987,10 +4904,10 @@ static Bool fileExists(Char *name) {
     {
       tmp___0 = fopen((char const * /* __restrict  */)name,
                       (char const * /* __restrict  */) "rb");
-      
+      tmp = tmp___0;
       exists = (Bool)((unsigned long)tmp != (unsigned long)((void *)0));
     }
-    
+
     return (exists);
   }
 }
@@ -4013,11 +4930,28 @@ static FILE *fopen_output_safely(Char *name, char const *mode) {
   }
 }
 
+static Int32 countHardLinks(Char *name) {
+  IntNative i;
+  struct stat statBuf;
+  void *__cil_tmp4;
+
+  {
+    {}
+    if (i != 0) {
+      return (0);
+    }
+    return ((Int32)(statBuf.st_nlink - 1UL));
+  }
+}
+static struct stat fileMetaInfo;
 static void saveInputFileMetaInfo(Char *srcName) {
   IntNative retVal;
 
   {
-    {}
+    {
+      retVal = stat((char const * /* __restrict  */)srcName,
+                    (struct stat * /* __restrict  */)(&fileMetaInfo));
+    }
     if (retVal != 0) {
       {
         ioError();
@@ -4026,23 +4960,77 @@ static void saveInputFileMetaInfo(Char *srcName) {
     return;
   }
 }
+static void applySavedTimeInfoToOutputFile(Char *dstName) {
+  IntNative retVal;
+  struct utimbuf uTimBuf;
 
+  {
+    {
+      uTimBuf.actime = fileMetaInfo.st_atim.tv_sec;
+      uTimBuf.modtime = fileMetaInfo.st_mtim.tv_sec;
+      retVal = utime((char const *)dstName, (struct utimbuf const *)(&uTimBuf));
+    }
+    if (retVal != 0) {
+      {
+        ioError();
+      }
+    }
+    return;
+  }
+}
+static void applySavedFileAttrToOutputFile(IntNative fd) {
+  IntNative retVal;
+
+  {
+    { retVal = fchmod(fd, fileMetaInfo.st_mode); }
+
+    { fchown(fd, fileMetaInfo.st_uid, fileMetaInfo.st_gid); }
+    return;
+  }
+}
 static Bool containsDubiousChars(Char *name) {
 
-  {}
+  { return ((Bool)0); }
+}
+Char const *zSuffix[4] = {".bz2", ".bz", ".tbz2", ".tbz"};
+Char const *unzSuffix[4] = {"", "", ".tar", ".tar"};
+static Bool hasSuffix(Char *s, Char const *suffix) {
+  Int32 ns;
+  Int32 tmp;
+  Int32 nx;
+  Int32 tmp___0;
+  int tmp___1;
+
+  {
+    {
+      tmp = (Int32)strlen((char const *)s);
+      ns = tmp;
+      tmp___0 = (Int32)strlen(suffix);
+      nx = tmp___0;
+    }
+
+    { tmp___1 = strcmp((char const *)((s + ns) - nx), suffix); }
+    if (tmp___1 == 0) {
+      return ((Bool)1);
+    }
+    return ((Bool)0);
+  }
 }
 
 static void compress(Char *name) {
   FILE *inStr;
   FILE *outStr;
-
+  Int32 n;
+  Int32 i;
   struct stat statBuf;
   Bool tmp;
-
+  int *tmp___0;
+  char *tmp___1;
   Bool tmp___2;
-
+  Bool tmp___3;
+  Bool tmp___4;
   Bool tmp___5;
-
+  char const *tmp___6;
   int tmp___7;
   int tmp___8;
   int tmp___9;
@@ -4055,10 +5043,25 @@ static void compress(Char *name) {
   char *tmp___16;
   IntNative retVal;
   IntNative tmp___17;
+  void *__cil_tmp27;
+  char *__cil_tmp28;
+  char *__cil_tmp29;
+  char *__cil_tmp30;
+  char *__cil_tmp31;
+  char *__cil_tmp32;
+  char *__cil_tmp33;
+  char *__cil_tmp34;
+  char *__cil_tmp35;
+  char *__cil_tmp36;
 
   {
-    
+    deleteOutputOnInterrupt = (Bool)0;
     if ((unsigned long)name == (unsigned long)((void *)0)) {
+      if (srcMode != 1) {
+        {
+          panic("compress: bad modes\n");
+        }
+      }
     }
     {
       if (srcMode == 1) {
@@ -4070,12 +5073,12 @@ static void compress(Char *name) {
       if (srcMode == 2) {
         goto case_2;
       }
-
+      goto switch_break;
     case_1: { /* CIL Label */
-
+      copyFileName(inName, (Char *)"(stdin)");
       copyFileName(outName, (Char *)"(stdout)");
     }
-
+      goto switch_break;
     case_3: { /* CIL Label */
       copyFileName(inName, name);
       copyFileName(outName, name);
@@ -4095,30 +5098,23 @@ static void compress(Char *name) {
       {
         tmp = containsDubiousChars(inName);
       }
-      if (tmp) {
-       
-        { 
-          setExit(1); 
-          }
-        return;
-      }
     }
     if (srcMode != 1) {
       {
         tmp___2 = fileExists(inName);
       }
     }
-
+    i = 0;
     {
-    
-    /* CIL Label */
+
+    while_break: /* CIL Label */
         ;
     }
     if (srcMode == 3) {
-
+      goto _L;
     } else {
       if (srcMode == 2) {
-      {
+      _L: {
         stat((char const * /* __restrict  */)(inName),
              (struct stat * /* __restrict  */)(&statBuf));
       }
@@ -4137,18 +5133,7 @@ static void compress(Char *name) {
     }
     if (srcMode == 3) {
     }
-    if (srcMode == 3) {
-      {
-        tmp___5 = fileExists(outName);
-      }
-      if (tmp___5) {
-      }
-    }
 
-    if (srcMode == 3) {
-    {    
-    }
-    }
     {
       if (srcMode == 1) {
         goto case_1___0;
@@ -4161,21 +5146,21 @@ static void compress(Char *name) {
       }
       goto switch_default;
     case_1___0: { /* CIL Label */
-
+      inStr = stdin;
       outStr = stdout;
       tmp___7 = fileno(stdout);
       tmp___8 = isatty(tmp___7);
     }
-   
+
       goto switch_break___0;
     case_2___0: { /* CIL Label */
       inStr = fopen((char const * /* __restrict  */)(inName),
                     (char const * /* __restrict  */) "rb");
-
+      outStr = stdout;
       tmp___9 = fileno(stdout);
       tmp___10 = isatty(tmp___9);
     }
-    
+
       if ((unsigned long)inStr == (unsigned long)((void *)0)) {
         {
           tmp___11 = __errno_location();
@@ -4189,7 +5174,7 @@ static void compress(Char *name) {
         }
         return;
       }
-
+      goto switch_break___0;
     case_3___0: { /* CIL Label */
       inStr = fopen((char const * /* __restrict  */)(inName),
                     (char const * /* __restrict  */) "rb");
@@ -4204,11 +5189,7 @@ static void compress(Char *name) {
                                                    "file %s: %s.\n",
                   progName, outName, tmp___14);
         }
-        if ((unsigned long)inStr != (unsigned long)((void *)0)) {
-          {
-            fclose(inStr);
-          }
-        }
+
         { setExit(1); }
         return;
       }
@@ -4230,26 +5211,40 @@ static void compress(Char *name) {
         { setExit(1); }
         return;
       }
-
+      goto switch_break___0;
     switch_default: { /* CIL Label */
+      panic("compress: bad srcMode");
     }
       goto switch_break___0;
     switch_break___0: /* CIL Label */
         ;
     }
- 
-    { compressStream(inStr, outStr); }
-    if (srcMode == 3) {
+    if (verbosity >= 1) {
       {
 
+        pad(inName);
+        fflush(stderr);
+      }
+    }
+    {
+      outputHandleJustInCase = outStr;
+      deleteOutputOnInterrupt = (Bool)1;
+      compressStream(inStr, outStr);
+      outputHandleJustInCase = (FILE *)((void *)0);
+    }
+    if (srcMode == 3) {
+      {
+        applySavedTimeInfoToOutputFile(outName);
         deleteOutputOnInterrupt = (Bool)0;
       }
       if (!keepInputFiles) {
         {
           tmp___17 = remove((char const *)(inName));
+          retVal = tmp___17;
         }
         if (retVal != 0) {
           {
+            ioError();
           }
         }
       }
@@ -4261,15 +5256,19 @@ static void compress(Char *name) {
 static void uncompress(Char *name) {
   FILE *inStr;
   FILE *outStr;
-
+  Int32 n;
   Int32 i;
   Bool magicNumberOK;
-
+  Bool cantGuess;
+  struct stat statBuf;
+  Bool tmp;
   Bool tmp___0;
   int *tmp___1;
   char *tmp___2;
   Bool tmp___3;
-
+  Bool tmp___4;
+  Bool tmp___5;
+  char const *tmp___6;
   int tmp___7;
   int tmp___8;
   int *tmp___9;
@@ -4278,42 +5277,72 @@ static void uncompress(Char *name) {
   char *tmp___12;
   int *tmp___13;
   char *tmp___14;
+  IntNative retVal;
+  IntNative tmp___15;
+  IntNative retVal___0;
+  IntNative tmp___16;
+  void *__cil_tmp29;
+  char *__cil_tmp30;
+  char *__cil_tmp31;
+  char *__cil_tmp32;
+  char *__cil_tmp33;
+  char *__cil_tmp34;
+  char *__cil_tmp35;
+  char *__cil_tmp36;
+  char *__cil_tmp37;
+  char *__cil_tmp38;
 
   {
-
+    deleteOutputOnInterrupt = (Bool)0;
     if ((unsigned long)name == (unsigned long)((void *)0)) {
     }
-
+    cantGuess = (Bool)0;
     {
       if (srcMode == 1) {
         goto case_1;
       }
-
+      if (srcMode == 3) {
+        goto case_3;
+      }
+      if (srcMode == 2) {
+        goto case_2;
+      }
       goto switch_break;
     case_1: { /* CIL Label */
       copyFileName(inName, (Char *)"(stdin)");
+      copyFileName(outName, (Char *)"(stdout)");
     }
       goto switch_break;
     case_3: { /* CIL Label */
-
+      copyFileName(inName, name);
       copyFileName(outName, name);
       i = 0;
     }
       {
+        while (1) {
+        while_continue: /* CIL Label */
+            ;
+          if (!(i < 4)) {
+            goto while_break;
+          }
+          { tmp = mapSuffix(outName, zSuffix[i], unzSuffix[i]); }
 
+          i++;
+        }
       while_break: /* CIL Label */
           ;
       }
-      {}
+      { cantGuess = (Bool)1; }
       goto switch_break;
     case_2: { /* CIL Label */
       copyFileName(inName, name);
+      copyFileName(outName, (Char *)"(stdout)");
     }
       goto switch_break;
     switch_break: /* CIL Label */
         ;
     }
-
+  zzz:
     if (srcMode != 1) {
       {
         tmp___0 = containsDubiousChars(inName);
@@ -4344,35 +5373,76 @@ static void uncompress(Char *name) {
         return;
       }
     }
-
+    if (srcMode == 3) {
+      goto _L;
+    } else {
+      if (srcMode == 2) {
+      _L: {
+        stat((char const * /* __restrict  */)(inName),
+             (struct stat * /* __restrict  */)(&statBuf));
+      }
+        if ((statBuf.st_mode & 61440U) == 16384U) {
+          {
+            fprintf(
+                (FILE * /* __restrict  */)stderr,
+                (char const
+                     * /* __restrict  */) "%s: Input file %s is a directory.\n",
+                progName, inName);
+            setExit(1);
+          }
+          return;
+        }
+      }
+    }
     if (srcMode == 3) {
     }
 
     if (srcMode == 3) {
       {
+        tmp___5 = fileExists(outName);
+      }
+      if (tmp___5) {
+        if (forceOverwrite) {
+          {
+            remove((char const *)(outName));
+          }
+        } else {
+          {
+            fprintf((FILE * /* __restrict  */)stderr,
+                    (char const * /* __restrict  */) "%s: Output file %s "
+                                                     "already exists.\n",
+                    progName, outName);
+            setExit(1);
+          }
+          return;
+        }
+      }
+    }
+
+    if (srcMode == 3) {
+      {
+        saveInputFileMetaInfo(inName);
       }
     }
     {
       if (srcMode == 1) {
         goto case_1___0;
       }
-      if (srcMode == 2) {
-      }
 
+      if (srcMode == 3) {
+        goto case_3___0;
+      }
       goto switch_default;
     case_1___0: { /* CIL Label */
       inStr = stdin;
-
+      outStr = stdout;
       tmp___7 = fileno(stdin);
       tmp___8 = isatty(tmp___7);
     }
       if (tmp___8) {
         {
-          fprintf(
-              (FILE * /* __restrict  */)stderr,
-              (char const * /* __restrict  */) "%s: I won\'t read compressed "
-                                               "data from a terminal.\n",
-              progName);
+
+          setExit(1);
         }
         return;
       }
@@ -4401,68 +5471,75 @@ static void uncompress(Char *name) {
                     (char const * /* __restrict  */) "rb");
       outStr = fopen_output_safely(outName, "wb");
     }
-      if ((unsigned long)outStr == (unsigned long)((void *)0)) {
+
+      if ((unsigned long)inStr == (unsigned long)((void *)0)) {
         {
-          tmp___11 = __errno_location();
-          tmp___12 = strerror(*tmp___11);
-          fprintf((FILE * /* __restrict  */)stderr,
-                  (char const * /* __restrict  */) "%s: Can\'t create output "
-                                                   "file %s: %s.\n",
-                  progName, outName, tmp___12);
+          tmp___13 = __errno_location();
+          tmp___14 = strerror(*tmp___13);
         }
 
         { setExit(1); }
         return;
       }
-      if ((unsigned long)inStr == (unsigned long)((void *)0)) {
-        {
-          tmp___13 = __errno_location();
-
-          fprintf(
-              (FILE * /* __restrict  */)stderr,
-              (char const
-                   * /* __restrict  */) "%s: Can\'t open input file %s: %s.\n",
-              progName, inName, tmp___14);
-        }
-        if ((unsigned long)outStr != (unsigned long)((void *)0)) {
-          {
-            fclose(outStr);
-          }
-        }
-        {}
-        return;
-      }
       goto switch_break___0;
     switch_default: { /* CIL Label */
+      panic("uncompress: bad srcMode");
     }
       goto switch_break___0;
     switch_break___0: /* CIL Label */
         ;
     }
+    if (verbosity >= 1) {
+      {
 
-    { outputHandleJustInCase = (FILE *)((void *)0); }
+        pad(inName);
+        fflush(stderr);
+      }
+    }
+    {
+      outputHandleJustInCase = outStr;
+      deleteOutputOnInterrupt = (Bool)1;
+      magicNumberOK = uncompressStream(inStr, outStr);
+      outputHandleJustInCase = (FILE *)((void *)0);
+    }
     if (magicNumberOK) {
-
+      if (srcMode == 3) {
+        {
+          applySavedTimeInfoToOutputFile(outName);
+          deleteOutputOnInterrupt = (Bool)0;
+        }
+        if (!keepInputFiles) {
+          {
+            tmp___15 = remove((char const *)(inName));
+            retVal = tmp___15;
+          }
+          if (retVal != 0) {
+            {
+              ioError();
+            }
+          }
+        }
+      }
     } else {
       unzFailsExist = (Bool)1;
       deleteOutputOnInterrupt = (Bool)0;
+      if (srcMode == 3) {
+        {
+          tmp___16 = remove((char const *)(outName));
+          retVal___0 = tmp___16;
+        }
+        if (retVal___0 != 0) {
+          {
+            ioError();
+          }
+        }
+      }
     }
     deleteOutputOnInterrupt = (Bool)0;
     if (magicNumberOK) {
 
     } else {
-      {}
-      if (verbosity >= 1) {
-        {
-        }
-      } else {
-        {
-          fprintf(
-              (FILE * /* __restrict  */)stderr,
-              (char const * /* __restrict  */) "%s: %s is not a bzip2 file.\n",
-              progName, inName);
-        }
-      }
+      { setExit(2); }
     }
     return;
   }
@@ -4472,28 +5549,35 @@ static void testf(Char *name) {
   Bool allOK;
   struct stat statBuf;
   Bool tmp;
-
+  int *tmp___0;
+  char *tmp___1;
   Bool tmp___2;
   int tmp___3;
-
+  int tmp___4;
   int *tmp___5;
   char *tmp___6;
+  void *__cil_tmp13;
+  char *__cil_tmp14;
+  char *__cil_tmp15;
+  char *__cil_tmp16;
+  char *__cil_tmp17;
 
   {
-
-    {}
+    deleteOutputOnInterrupt = (Bool)0;
+    if ((unsigned long)name == (unsigned long)((void *)0)) {
+    }
+    { copyFileName(outName, (Char *)"(none)"); }
     {
       if (srcMode == 1) {
         goto case_1;
       }
-      if (srcMode == 3) {
-        goto case_3;
-      }
+
       if (srcMode == 2) {
         goto case_2;
       }
       goto switch_break;
     case_1: { /* CIL Label */
+      copyFileName(inName, (Char *)"(stdin)");
     }
       goto switch_break;
     case_3: { /* CIL Label */
@@ -4501,41 +5585,50 @@ static void testf(Char *name) {
     }
       goto switch_break;
     case_2: { /* CIL Label */
+      copyFileName(inName, name);
     }
       goto switch_break;
     switch_break: /* CIL Label */
         ;
     }
-    if (srcMode != 1) {
-      {
-        tmp = containsDubiousChars(inName);
-      }
-      if (tmp) {
 
-        {
-          setExit(1);
-        }
-        return;
-      }
-    }
     if (srcMode != 1) {
       {
         tmp___2 = fileExists(inName);
       }
     }
-
+    if (srcMode != 1) {
+      {
+        stat((char const * /* __restrict  */)(inName),
+             (struct stat * /* __restrict  */)(&statBuf));
+      }
+      if ((statBuf.st_mode & 61440U) == 16384U) {
+        {
+          fprintf(
+              (FILE * /* __restrict  */)stderr,
+              (char const
+                   * /* __restrict  */) "%s: Input file %s is a directory.\n",
+              progName, inName);
+          setExit(1);
+        }
+        return;
+      }
+    }
     {
       if (srcMode == 1) {
         goto case_1___0;
       }
       if (srcMode == 2) {
+        goto case_2___0;
       }
 
       goto switch_default;
     case_1___0: { /* CIL Label */
       tmp___3 = fileno(stdin);
+      tmp___4 = isatty(tmp___3);
     }
 
+      inStr = stdin;
       goto switch_break___0;
     case_2___0:   /* CIL Label */
     case_3___0: { /* CIL Label */
@@ -4546,20 +5639,49 @@ static void testf(Char *name) {
         {
           tmp___5 = __errno_location();
           tmp___6 = strerror(*tmp___5);
-
+          fprintf(
+              (FILE * /* __restrict  */)stderr,
+              (char const
+                   * /* __restrict  */) "%s: Can\'t open input file %s:%s.\n",
+              progName, inName, tmp___6);
           setExit(1);
         }
         return;
       }
       goto switch_break___0;
     switch_default: { /* CIL Label */
+      panic("testf: bad srcMode");
     }
       goto switch_break___0;
     switch_break___0: /* CIL Label */
         ;
     }
 
-    { allOK = testStream(inStr); }
+    {
+      outputHandleJustInCase = (FILE *)((void *)0);
+      allOK = testStream(inStr);
+    }
+
+    if (!allOK) {
+      testFailsExist = (Bool)1;
+    }
+    return;
+  }
+}
+static void license(void) {
+  char const *tmp;
+
+  {
+    { tmp = BZ2_bzlibVersion(); }
+    return;
+  }
+}
+static void usage(Char *fullProgName) {
+  char const *tmp;
+
+  {
+    { tmp = BZ2_bzlibVersion(); }
+    return;
   }
 }
 
@@ -4570,6 +5692,7 @@ static void *myMalloc(Int32 n) {
     { p = malloc((size_t)n); }
     if ((unsigned long)p == (unsigned long)((void *)0)) {
       {
+        outOfMemory();
       }
     }
     return (p);
@@ -4579,7 +5702,11 @@ static Cell *mkCell(void) {
   Cell *c;
 
   {
-    { c = (Cell *)myMalloc((Int32)sizeof(Cell)); }
+    {
+      c = (Cell *)myMalloc((Int32)sizeof(Cell));
+      c->name = (Char *)((void *)0);
+      c->link = (struct zzzz *)((void *)0);
+    }
     return (c);
   }
 }
@@ -4587,6 +5714,7 @@ static Cell *snocString(Cell *root, Char *name) {
   Cell *tmp;
   Cell *tmp___0;
   size_t tmp___1;
+  Cell *tmp___3;
 
   {
     if ((unsigned long)root == (unsigned long)((void *)0)) {
@@ -4600,26 +5728,47 @@ static Cell *snocString(Cell *root, Char *name) {
       }
       return (tmp);
     } else {
-
+      tmp___3 = root;
       {
-
-        /* CIL Label */
-        ;
+        while (1) {
+        while_continue: /* CIL Label */
+            ;
+          if (!((unsigned long)tmp___3->link != (unsigned long)((void *)0))) {
+            goto while_break;
+          }
+          tmp___3 = tmp___3->link;
+        }
+      while_break: /* CIL Label */
+          ;
       }
-      {}
+      { tmp___3->link = snocString(tmp___3->link, name); }
       return (root);
     }
   }
 }
+static void addFlagsFromEnvVar(Cell **argList, Char *varName) {
+  Int32 i;
+  Int32 j;
+  Int32 k;
+  Char *envbase;
+  Char *p;
+  unsigned short const **tmp;
+  unsigned short const **tmp___0;
 
+  {
+    { envbase = getenv((char const *)varName); }
+
+    return;
+  }
+}
 IntNative main(IntNative argc, Char **argv) {
   Int32 i;
-
+  Int32 j;
   Char *tmp;
   Cell *argList;
   Cell *aa;
   Bool decode;
-
+  int tmp___0;
   size_t tmp___2;
   char *tmp___3;
   char *tmp___4;
@@ -4628,7 +5777,16 @@ IntNative main(IntNative argc, Char **argv) {
   char *tmp___7;
   char *tmp___8;
   int tmp___9;
-
+  int tmp___10;
+  int tmp___11;
+  int tmp___12;
+  int tmp___13;
+  int tmp___14;
+  int tmp___15;
+  int tmp___16;
+  int tmp___17;
+  int tmp___18;
+  int tmp___19;
   int tmp___20;
   int tmp___21;
   int tmp___22;
@@ -4639,33 +5797,73 @@ IntNative main(IntNative argc, Char **argv) {
   int tmp___27;
   int tmp___28;
   int tmp___29;
+  int tmp___30;
+  int tmp___31;
+  Cell *aa2;
+  char *__cil_tmp42;
+  char *__cil_tmp43;
+  char *__cil_tmp44;
+  char *__cil_tmp45;
 
   {
-
+    if (sizeof(Int32) != 4UL) {
+      {
+        configError();
+      }
+    } else {
+      if (sizeof(UInt32) != 4UL) {
+        {
+          configError();
+        }
+      } else {
+        if (sizeof(Int16) != 2UL) {
+          {
+            configError();
+          }
+        } else {
+        }
+      }
+    }
     {
-
+      outputHandleJustInCase = (FILE *)((void *)0);
+      smallMode = (Bool)0;
+      keepInputFiles = (Bool)0;
+      forceOverwrite = (Bool)0;
+      noisy = (Bool)1;
+      verbosity = 0;
       blockSize100k = 9;
-
+      testFailsExist = (Bool)0;
+      unzFailsExist = (Bool)0;
       numFileNames = 0;
-
+      numFilesProcessed = 0;
+      workFactor = 30;
       deleteOutputOnInterrupt = (Bool)0;
-
+      exitValue = 0;
+      j = 0;
+      i = j;
+      signal(11, &mySIGSEGVorSIGBUScatcher);
+      signal(7, &mySIGSEGVorSIGBUScatcher);
+      copyFileName(inName, (Char *)"(none)");
+      copyFileName(outName, (Char *)"(none)");
+      copyFileName(progNameReally, *(argv + 0));
       progName = &progNameReally[0];
+      tmp = &progNameReally[0];
     }
     {
 
-      /* CIL Label */
-      ;
+    while_break: /* CIL Label */
+        ;
     }
     {
       argList = (Cell *)((void *)0);
-
+      addFlagsFromEnvVar(&argList, (Char *)"BZIP2");
+      addFlagsFromEnvVar(&argList, (Char *)"BZIP");
       i = 1;
     }
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue___0: /* CIL Label */
+          ;
         if (!(i <= argc - 1)) {
           goto while_break___0;
         }
@@ -4683,19 +5881,25 @@ IntNative main(IntNative argc, Char **argv) {
     aa = argList;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue___1: /* CIL Label */
+          ;
         if (!((unsigned long)aa != (unsigned long)((void *)0))) {
           goto while_break___1;
         }
-        {}
-
+        { tmp___0 = strcmp((char const *)aa->name, "--"); }
+        if (tmp___0 == 0) {
+          decode = (Bool)0;
+          goto __Cont;
+        }
         if ((int)*(aa->name + 0) == 45) {
           if (decode) {
             goto __Cont;
           }
         }
-        { numFileNames++; }
+        {
+          numFileNames++;
+          tmp___2 = strlen((char const *)aa->name);
+        }
 
       __Cont:
         aa = aa->link;
@@ -4712,101 +5916,219 @@ IntNative main(IntNative argc, Char **argv) {
       opMode = 1;
       tmp___3 = strstr((char const *)progName, "unzip");
     }
-    if ((unsigned long)tmp___3 != (unsigned long)((char *)0)) {
-      opMode = 2;
-    } else {
-      {}
-    }
-    { tmp___5 = strstr((char const *)progName, "z2cat"); }
-    if ((unsigned long)tmp___5 != (unsigned long)((char *)0)) {
-      goto _L;
-    } else {
-      { tmp___6 = strstr((char const *)progName, "Z2CAT"); }
-      if ((unsigned long)tmp___6 != (unsigned long)((char *)0)) {
-        goto _L;
-      } else {
-        { tmp___7 = strstr((char const *)progName, "zcat"); }
-        if ((unsigned long)tmp___7 != (unsigned long)((char *)0)) {
-          goto _L;
-        } else {
-          {}
-          if ((unsigned long)tmp___8 != (unsigned long)((char *)0)) {
-          _L:
-            opMode = 2;
-            if (numFileNames == 0) {
 
-            } else {
-            }
-          }
-        }
-      }
-    }
+    { tmp___5 = strstr((char const *)progName, "z2cat"); }
+
     aa = argList;
     {
       while (1) {
       while_continue___2: /* CIL Label */
           ;
         if (!((unsigned long)aa != (unsigned long)((void *)0))) {
+          goto while_break___2;
         }
-        {}
+        { tmp___9 = strcmp((char const *)aa->name, "--"); }
         if (tmp___9 == 0) {
           goto while_break___2;
         }
         if ((int)*(aa->name + 0) == 45) {
+          if ((int)*(aa->name + 1) != 45) {
+            j = 1;
+            {
+              while (1) {
+              while_continue___3: /* CIL Label */
+                  ;
+                if (!((int)*(aa->name + j) != 0)) {
+                  goto while_break___3;
+                }
+                {
+
+                  if ((int)*(aa->name + j) == 122) {
+                    goto case_122;
+                  }
+                  if ((int)*(aa->name + j) == 102) {
+                    goto case_102;
+                  }
+
+                  if ((int)*(aa->name + j) == 107) {
+                    goto case_107;
+                  }
+
+                  if ((int)*(aa->name + j) == 51) {
+                    goto case_51;
+                  }
+                  if ((int)*(aa->name + j) == 52) {
+                    goto case_52;
+                  }
+                  if ((int)*(aa->name + j) == 53) {
+                    goto case_53;
+                  }
+
+                  if ((int)*(aa->name + j) == 55) {
+                    goto case_55;
+                  }
+                  if ((int)*(aa->name + j) == 56) {
+                    goto case_56;
+                  }
+
+                  goto switch_default;
+                case_99: /* CIL Label */
+                  srcMode = 2;
+                  goto switch_break;
+                case_100: /* CIL Label */
+                  opMode = 2;
+                  goto switch_break;
+                case_122: /* CIL Label */
+                  opMode = 1;
+                  goto switch_break;
+                case_102: /* CIL Label */
+                  forceOverwrite = (Bool)1;
+                  goto switch_break;
+                case_116: /* CIL Label */
+                  opMode = 3;
+                  goto switch_break;
+                case_107: /* CIL Label */
+                  keepInputFiles = (Bool)1;
+                  goto switch_break;
+                case_115: /* CIL Label */
+                  smallMode = (Bool)1;
+                  goto switch_break;
+                case_113: /* CIL Label */
+                  noisy = (Bool)0;
+                  goto switch_break;
+                case_49: /* CIL Label */
+                  blockSize100k = 1;
+                  goto switch_break;
+                case_50: /* CIL Label */
+                  blockSize100k = 2;
+                  goto switch_break;
+                case_51: /* CIL Label */
+                  blockSize100k = 3;
+                  goto switch_break;
+                case_52: /* CIL Label */
+                  blockSize100k = 4;
+                  goto switch_break;
+                case_53: /* CIL Label */
+                  blockSize100k = 5;
+                  goto switch_break;
+                case_54: /* CIL Label */
+                  blockSize100k = 6;
+                  goto switch_break;
+                case_55: /* CIL Label */
+                  blockSize100k = 7;
+                  goto switch_break;
+                case_56: /* CIL Label */
+                  blockSize100k = 8;
+                  goto switch_break;
+                case_57: /* CIL Label */
+                  blockSize100k = 9;
+                  goto switch_break;
+                case_86:   /* CIL Label */
+                case_76: { /* CIL Label */
+                  license();
+                }
+                  goto switch_break;
+                case_118: /* CIL Label */
+                  verbosity++;
+                  goto switch_break;
+                case_104: { /* CIL Label */
+                  usage(progName);
+                  exit(0);
+                }
+                  goto switch_break;
+                switch_default: { /* CIL Label */
+                  fprintf(
+                      (FILE * /* __restrict  */)stderr,
+                      (char const * /* __restrict  */) "%s: Bad flag `%s\'\n",
+                      progName, aa->name);
+                  usage(progName);
+                  exit(1);
+                }
+                  goto switch_break;
+                switch_break: /* CIL Label */
+                    ;
+                }
+                j++;
+              }
+            while_break___3: /* CIL Label */
+                ;
+            }
+          }
         }
         aa = aa->link;
       }
     while_break___2: /* CIL Label */
         ;
     }
-
+    aa = argList;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue___4: /* CIL Label */
+          ;
         if (!((unsigned long)aa != (unsigned long)((void *)0))) {
           goto while_break___4;
         }
-        {}
-
-        {}
+        { tmp___10 = strcmp((char const *)aa->name, "--"); }
+        if (tmp___10 == 0) {
+          goto while_break___4;
+        }
+        { tmp___28 = strcmp((char const *)aa->name, "--stdout"); }
         if (tmp___28 == 0) {
-
+          srcMode = 2;
         } else {
-          {}
+          { tmp___27 = strcmp((char const *)aa->name, "--decompress"); }
           if (tmp___27 == 0) {
-
+            opMode = 2;
           } else {
-            {}
+            { tmp___26 = strcmp((char const *)aa->name, "--compress"); }
             if (tmp___26 == 0) {
-
+              opMode = 1;
             } else {
-              {}
+              { tmp___25 = strcmp((char const *)aa->name, "--force"); }
               if (tmp___25 == 0) {
-
+                forceOverwrite = (Bool)1;
               } else {
-                {}
+                { tmp___24 = strcmp((char const *)aa->name, "--test"); }
                 if (tmp___24 == 0) {
-
+                  opMode = 3;
                 } else {
-                  {}
+                  { tmp___23 = strcmp((char const *)aa->name, "--keep"); }
                   if (tmp___23 == 0) {
-
+                    keepInputFiles = (Bool)1;
                   } else {
-                    {}
+                    { tmp___22 = strcmp((char const *)aa->name, "--small"); }
                     if (tmp___22 == 0) {
-
+                      smallMode = (Bool)1;
                     } else {
-                      {}
+                      { tmp___21 = strcmp((char const *)aa->name, "--quiet"); }
                       if (tmp___21 == 0) {
-
+                        noisy = (Bool)0;
                       } else {
                         {}
                         if (tmp___20 == 0) {
                           {
+                            license();
                           }
                         } else {
-                          {}
+                          {
+                            tmp___19 =
+                                strcmp((char const *)aa->name, "--license");
+                          }
+                          if (tmp___19 == 0) {
+                            {
+                              license();
+                            }
+                          } else {
+                            {}
+                            if (tmp___18 == 0) {
+                              workFactor = 1;
+                            } else {
+                              {
+                                tmp___17 = strcmp((char const *)aa->name,
+                                                  "--repetitive-best");
+                              }
+                            }
+                          }
                         }
                       }
                     }
@@ -4821,21 +6143,42 @@ IntNative main(IntNative argc, Char **argv) {
     while_break___4: /* CIL Label */
         ;
     }
-
-    if (opMode != 1) {
+    if (verbosity > 4) {
+      verbosity = 4;
     }
 
+    if (opMode == 3) {
+      if (srcMode == 2) {
+        {
+
+          exit(1);
+        }
+      }
+    }
+    if (srcMode == 2) {
+    }
+    if (opMode != 1) {
+      blockSize100k = 0;
+    }
+    if (srcMode == 3) {
+      {
+        signal(2, &mySignalCatcher);
+        signal(15, &mySignalCatcher);
+        signal(1, &mySignalCatcher);
+      }
+    }
     if (opMode == 1) {
       if (srcMode == 1) {
         {
+          compress((Char *)((void *)0));
         }
       } else {
         decode = (Bool)1;
         aa = argList;
         {
           while (1) {
-            /* CIL Label */
-            ;
+          while_continue___5: /* CIL Label */
+              ;
             if (!((unsigned long)aa != (unsigned long)((void *)0))) {
               goto while_break___5;
             }
@@ -4849,7 +6192,10 @@ IntNative main(IntNative argc, Char **argv) {
                 goto __Cont___0;
               }
             }
-            { compress(aa->name); }
+            {
+              numFilesProcessed++;
+              compress(aa->name);
+            }
           __Cont___0:
             aa = aa->link;
           }
@@ -4858,12 +6204,56 @@ IntNative main(IntNative argc, Char **argv) {
         }
       }
     } else {
-    }
+      if (opMode == 2) {
+        unzFailsExist = (Bool)0;
 
+        if (unzFailsExist) {
+          {
+            setExit(2);
+            exit(exitValue);
+          }
+        }
+      } else {
+        testFailsExist = (Bool)0;
+        if (srcMode == 1) {
+          {
+            testf((Char *)((void *)0));
+          }
+        } else {
+          decode = (Bool)1;
+          aa = argList;
+          {
+            while (1) {
+            while_continue___7: /* CIL Label */
+                ;
+              if (!((unsigned long)aa != (unsigned long)((void *)0))) {
+                goto while_break___7;
+              }
+              { tmp___31 = strcmp((char const *)aa->name, "--"); }
+
+              if ((int)*(aa->name + 0) == 45) {
+                if (decode) {
+                  goto __Cont___2;
+                }
+              }
+              {
+                numFilesProcessed++;
+                testf(aa->name);
+              }
+            __Cont___2:
+              aa = aa->link;
+            }
+          while_break___7: /* CIL Label */
+              ;
+          }
+        }
+      }
+    }
+    aa = argList;
     {
 
-      /* CIL Label */
-      ;
+    while_break___8: /* CIL Label */
+        ;
     }
     return (exitValue);
   }
@@ -4882,7 +6272,35 @@ __inline static void fallbackSimpleSort(UInt32 *fmap, UInt32 *eclass, Int32 lo,
     if (hi - lo > 3) {
       i = hi - 4;
       {
-
+        while (1) {
+        while_continue: /* CIL Label */
+            ;
+          if (!(i >= lo)) {
+            goto while_break;
+          }
+          tmp = (Int32) * (fmap + i);
+          ec_tmp = *(eclass + tmp);
+          j = i + 4;
+          {
+            while (1) {
+            while_continue___0: /* CIL Label */
+                ;
+              if (j <= hi) {
+                if (!(ec_tmp > *(eclass + *(fmap + j)))) {
+                  goto while_break___0;
+                }
+              } else {
+                goto while_break___0;
+              }
+              *(fmap + (j - 4)) = *(fmap + j);
+              j += 4;
+            }
+          while_break___0: /* CIL Label */
+              ;
+          }
+          *(fmap + (j - 4)) = (UInt32)tmp;
+          i--;
+        }
       while_break: /* CIL Label */
           ;
       }
@@ -4890,8 +6308,8 @@ __inline static void fallbackSimpleSort(UInt32 *fmap, UInt32 *eclass, Int32 lo,
     i = hi - 1;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue___1: /* CIL Label */
+          ;
         if (!(i >= lo)) {
           goto while_break___1;
         }
@@ -4900,8 +6318,8 @@ __inline static void fallbackSimpleSort(UInt32 *fmap, UInt32 *eclass, Int32 lo,
         j = i + 1;
         {
           while (1) {
-            /* CIL Label */
-            ;
+          while_continue___2: /* CIL Label */
+              ;
             if (j <= hi) {
               if (!(ec_tmp > *(eclass + *(fmap + j)))) {
                 goto while_break___2;
@@ -4951,6 +6369,8 @@ static void fallbackQSort3(UInt32 *fmap, UInt32 *eclass, Int32 loSt,
   Int32 yyp2___0;
   Int32 yyn___0;
   Int32 zztmp___3;
+  void *__cil_tmp30;
+  void *__cil_tmp31;
 
   {
     r = (UInt32)0;
@@ -4967,6 +6387,7 @@ static void fallbackQSort3(UInt32 *fmap, UInt32 *eclass, Int32 loSt,
         }
         if (!(sp < 99)) {
           {
+            BZ2_bz__AssertH__fail(1004);
           }
         }
         sp--;
@@ -5013,9 +6434,7 @@ static void fallbackQSort3(UInt32 *fmap, UInt32 *eclass, Int32 loSt,
                   unLo++;
                   goto while_continue___1;
                 }
-                if (n > 0) {
-                  goto while_break___1;
-                }
+
                 unLo++;
               }
             while_break___1: /* CIL Label */
@@ -5051,7 +6470,7 @@ static void fallbackQSort3(UInt32 *fmap, UInt32 *eclass, Int32 loSt,
             zztmp___1 = (Int32) * (fmap + unLo);
             *(fmap + unLo) = *(fmap + unHi);
             *(fmap + unHi) = (UInt32)zztmp___1;
-            
+            unLo++;
             unHi--;
           }
         while_break___0: /* CIL Label */
@@ -5070,11 +6489,9 @@ static void fallbackQSort3(UInt32 *fmap, UInt32 *eclass, Int32 loSt,
         yyn = n;
         {
           while (1) {
-          /* CIL Label */
+          while_continue___3: /* CIL Label */
               ;
-            if (!(yyn > 0)) {
-              goto while_break___3;
-            }
+
             zztmp___2 = (Int32) * (fmap + yyp1);
             *(fmap + yyp1) = *(fmap + yyp2);
             *(fmap + yyp2) = (UInt32)zztmp___2;
@@ -5097,9 +6514,7 @@ static void fallbackQSort3(UInt32 *fmap, UInt32 *eclass, Int32 loSt,
           while (1) {
           while_continue___4: /* CIL Label */
               ;
-            if (!(yyn___0 > 0)) {
-              goto while_break___4;
-            }
+
             zztmp___3 = (Int32) * (fmap + yyp1___0);
             *(fmap + yyp1___0) = *(fmap + yyp2___0);
             *(fmap + yyp2___0) = (UInt32)zztmp___3;
@@ -5112,21 +6527,6 @@ static void fallbackQSort3(UInt32 *fmap, UInt32 *eclass, Int32 loSt,
         }
         n = ((lo + unLo) - ltLo) - 1;
         m = (hi - (gtHi - unHi)) + 1;
-        if (n - lo > hi - m) {
-          
-          stackHi[sp] = n;
-          sp++;
-          stackLo[sp] = m;
-          stackHi[sp] = hi;
-          sp++;
-        } else {
-          stackLo[sp] = m;
-          stackHi[sp] = hi;
-          sp++;
-          stackLo[sp] = lo;
-          stackHi[sp] = n;
-          sp++;
-        }
       }
     while_break: /* CIL Label */
         ;
@@ -5149,14 +6549,16 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
   Int32 nNotDone;
   Int32 nBhtab;
   UChar *eclass8;
+  void *__cil_tmp19;
+  void *__cil_tmp20;
 
   {
     eclass8 = (UChar *)eclass;
-   
+
     i = 0;
     {
       while (1) {
-       /* CIL Label */
+      while_continue: /* CIL Label */
           ;
         if (!(i < 257)) {
           goto while_break;
@@ -5170,7 +6572,7 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
     i = 0;
     {
       while (1) {
-       /* CIL Label */
+      while_continue___0: /* CIL Label */
           ;
         if (!(i < nblock)) {
           goto while_break___0;
@@ -5258,7 +6660,7 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
     i = 0;
     {
       while (1) {
-      /* CIL Label */
+      while_continue___6: /* CIL Label */
           ;
         if (!(i < 32)) {
           goto while_break___6;
@@ -5275,9 +6677,9 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
     H = 1;
     {
       while (1) {
-      /* CIL Label */
+      while_continue___7: /* CIL Label */
           ;
-       
+
         j = 0;
         i = 0;
         {
@@ -5351,7 +6753,9 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
               while_continue___13: /* CIL Label */
                   ;
                 if (!(*(bhtab + (k >> 5)) & (unsigned int)(1 << (k & 31)))) {
-              
+                  if (!(k & 31)) {
+                    goto while_break___13;
+                  }
                 } else {
                   goto while_break___13;
                 }
@@ -5360,37 +6764,9 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
             while_break___13: /* CIL Label */
                 ;
             }
-            if (!(*(bhtab + (k >> 5)) & (unsigned int)(1 << (k & 31)))) {
-              {
-                while (1) {
-                while_continue___14: /* CIL Label */
-                    ;
-                  if (!(*(bhtab + (k >> 5)) == 0U)) {
-                    goto while_break___14;
-                  }
-                  k += 32;
-                }
-              while_break___14: /* CIL Label */
-                  ;
-              }
-              {
-                while (1) {
-                while_continue___15: /* CIL Label */
-                    ;
-                  if (!(!(*(bhtab + (k >> 5)) &
-                          (unsigned int)(1 << (k & 31))))) {
-                    goto while_break___15;
-                  }
-                  k++;
-                }
-              while_break___15: /* CIL Label */
-                  ;
-              }
-            }
+
             r = k - 1;
-            if (r >= nblock) {
-              goto while_break___9;
-            }
+
             if (r > l) {
               {
                 nNotDone += (r - l) + 1;
@@ -5420,13 +6796,7 @@ static void fallbackSort(UInt32 *fmap, UInt32 *eclass, UInt32 *bhtab,
         while_break___9: /* CIL Label */
             ;
         }
-        if (verb >= 4) {
-          {
-            fprintf((FILE * /* __restrict  */)stderr,
-                    (char const * /* __restrict  */) "%6d unresolved strings\n",
-                    nNotDone);
-          }
-        }
+
         H *= 2;
         if (H > nblock) {
           goto while_break___7;
@@ -5705,7 +7075,9 @@ static void mainSimpleSort(UInt32 *ptr, UChar *block, UInt16 *quadrant,
 
   {
     bigN = (hi - lo) + 1;
-  
+    if (bigN < 2) {
+      return;
+    }
     hp = 0;
     {
       while (1) {
@@ -5830,9 +7202,14 @@ static void mainSimpleSort(UInt32 *ptr, UChar *block, UInt16 *quadrant,
   }
 }
 __inline static UChar mmed3(UChar a, UChar b, UChar c) {
+  UChar t;
 
   {
-    
+    if ((int)a > (int)b) {
+      t = a;
+      a = b;
+      b = t;
+    }
     if ((int)b > (int)c) {
       b = c;
       if ((int)a > (int)b) {
@@ -6137,8 +7514,13 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
   Int32 shifts;
   Int32 a2update;
   UInt16 qVal;
+  void *__cil_tmp31;
+  void *__cil_tmp32;
+  void *__cil_tmp33;
+  void *__cil_tmp34;
+
   {
-    
+
     i = 65536;
     {
       while (1) {
@@ -6180,7 +7562,17 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
         ;
     }
     {
-
+      while (1) {
+      while_continue___1: /* CIL Label */
+          ;
+        if (!(i >= 0)) {
+          goto while_break___1;
+        }
+        *(quadrant + i) = (UInt16)0;
+        j = (j >> 8) | ((int)((UInt16) * (block + i)) << 8);
+        (*(ftab + j))++;
+        i--;
+      }
     while_break___1: /* CIL Label */
         ;
     }
@@ -6199,7 +7591,7 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
     while_break___2: /* CIL Label */
         ;
     }
-    
+
     i = 1;
     {
       while (1) {
@@ -6268,7 +7660,7 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
         if (!(i <= 255)) {
           goto while_break___6;
         }
-        
+        bigDone[i] = (Bool)0;
         runningOrder[i] = i;
         i++;
       }
@@ -6307,7 +7699,11 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
               while (1) {
               while_continue___10: /* CIL Label */
                   ;
-
+                if (!(*(ftab + ((runningOrder[j - h] + 1) << 8)) -
+                          *(ftab + (runningOrder[j - h] << 8)) >
+                      *(ftab + ((vv + 1) << 8)) - *(ftab + (vv << 8)))) {
+                  goto while_break___10;
+                }
                 runningOrder[j] = runningOrder[j - h];
                 j -= h;
                 if (j <= h - 1) {
@@ -6356,26 +7752,32 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
                 hi = (Int32)((*(ftab + (sb + 1)) & (unsigned int)(~(1 << 21))) -
                              1U);
                 if (hi > lo) {
-                  
+
                   {
                     mainQSort3(ptr, block, quadrant, nblock, lo, hi, 2, budget);
+                    numQSorted += (hi - lo) + 1;
                   }
                   if (*budget < 0) {
                     return;
                   }
                 }
               }
+              *(ftab + sb) |= (unsigned int)(1 << 21);
             }
             j++;
           }
         while_break___12: /* CIL Label */
             ;
         }
-
+        if (!(!bigDone[ss])) {
+          {
+            BZ2_bz__AssertH__fail(1006);
+          }
+        }
         j = 0;
         {
           while (1) {
-          /* CIL Label */
+          while_continue___13: /* CIL Label */
               ;
             if (!(j <= 255)) {
               goto while_break___13;
@@ -6384,7 +7786,7 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
                 (Int32)(*(ftab + ((j << 8) + ss)) & (unsigned int)(~(1 << 21)));
             copyEnd[j] = (Int32)((*(ftab + (((j << 8) + ss) + 1)) &
                                   (unsigned int)(~(1 << 21))) -
-                                 1U); //failed 27 cases after this
+                                 1U);
             j++;
           }
         while_break___13: /* CIL Label */
@@ -6439,22 +7841,18 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
         }
         if (!(copyStart[ss] - 1 == copyEnd[ss])) {
           if (copyStart[ss] == 0) {
-
+            if (!(copyEnd[ss] == nblock - 1)) {
+              {
+                BZ2_bz__AssertH__fail(1007);
+              }
+            }
           } else {
             { BZ2_bz__AssertH__fail(1007); }
           }
         }
         j = 0;
         {
-          while (1) {
-          while_continue___16: /* CIL Label */
-              ;
-            if (!(j <= 255)) {
-              goto while_break___16;
-            }
-            
-            j++;
-          }
+
         while_break___16: /* CIL Label */
             ;
         }
@@ -6464,7 +7862,7 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
           bbSize =
               (Int32)((*(ftab + ((ss + 1) << 8)) & (unsigned int)(~(1 << 21))) -
                       (unsigned int)bbStart);
-          
+          shifts = 0;
           {
             while (1) {
             while_continue___17: /* CIL Label */
@@ -6472,6 +7870,7 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
               if (!(bbSize >> shifts > 65534)) {
                 goto while_break___17;
               }
+              shifts++;
             }
           while_break___17: /* CIL Label */
               ;
@@ -6497,6 +7896,7 @@ static void mainSort(UInt32 *ptr, UChar *block, UInt16 *quadrant, UInt32 *ftab,
           }
           if (!((bbSize - 1) >> shifts <= 65535)) {
             {
+              BZ2_bz__AssertH__fail(1002);
             }
           }
         }
@@ -6520,13 +7920,14 @@ void BZ2_blockSort(EState *s) {
   Int32 budget;
   Int32 budgetInit;
   Int32 i;
+  int tmp;
 
   {
     ptr = s->ptr;
     block = s->block;
     ftab = s->ftab;
     nblock = s->nblock;
-
+    verb = s->verbosity;
     wfact = s->workFactor;
     if (nblock < 10000) {
       {
@@ -6541,7 +7942,9 @@ void BZ2_blockSort(EState *s) {
       if (wfact < 1) {
         wfact = 1;
       }
-
+      if (wfact > 100) {
+        wfact = 100;
+      }
       {
         budgetInit = nblock * ((wfact - 1) / 3);
         budget = budgetInit;
@@ -6555,12 +7958,12 @@ void BZ2_blockSort(EState *s) {
         }
       }
     }
-
+    s->origPtr = -1;
     i = 0;
     {
       while (1) {
-        /* CIL Label */
-        ;
+      while_continue: /* CIL Label */
+          ;
         if (!(i < s->nblock)) {
           goto while_break;
         }
@@ -6575,6 +7978,7 @@ void BZ2_blockSort(EState *s) {
     }
     if (!(s->origPtr != -1)) {
       {
+        BZ2_bz__AssertH__fail(1003);
       }
     }
     return;
