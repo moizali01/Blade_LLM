@@ -83,6 +83,7 @@ Make sure to evaluate on the basis of the following:
 1. Prevention against the security vulnerabilities mentioned in the security list.
 2. Compression of all kinds of files without any flag.
 3. Retaining the data integrity of the compressed file.
+4. Prevent the program workflow from being disrupted.
 
 Make sure to cater to ALL edge cases for the functionalites mentioned. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
