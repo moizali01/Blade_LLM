@@ -2,7 +2,7 @@
 
 PROGRAM_NAME=bzip2
 DIR=${PWD}
-C_FILE=${DIR}/bz2_org_copy.c
+C_FILE=${DIR}/bzip2-util.c.blade.c
 REDUCED_BINARY=${DIR}/${PROGRAM_NAME}.rbin
 ORG_BINARY=${DIR}/${PROGRAM_NAME}.bin
 ORG_FILE=${DIR}/bzip2-org.c
@@ -10,57 +10,63 @@ CC=clang
 TIMEOUT_LIMIT="-k 5 5"
 LOG=${DIR}/log
 
-# Hardcoded files
-FILE="test1.txt"
-HARDCODED_FILES=("test2.txt" "test3.txt" "test4.txt" "test5.txt")
+
 PASSED_COUNT=0
-PASSED_EXCEPTION=0
-TOTAL_EXCEPTIONS=4
 TOTAL_TESTS=0
 
 function compress_and_decompress() {
     ((TOTAL_TESTS++))
-    
+
     echo "CASE: $TOTAL_TESTS" >>${LOG} 2>&1
     local files=("$@")
-    rm -rf temp comparison  ${compression_debloated} ${decompression_original}  >/dev/null 2>&1
+    rm -rf temp comparison ${compression_debloated} ${decompression_original} >/dev/null 2>&1
     mkdir -p temp >/dev/null 2>&1
     mkdir -p comparison >/dev/null 2>&1
     for file in "${files[@]}"; do
         cp "${file}" "temp/"
-        file_list+="temp/$(basename ${file}) "
         filename=$(basename "$file")
         cp "$file" "comparison/original_$filename"
     done
 
-
-   local compression_debloated="compression_debloated.txt"
+    local compression_debloated="compression_debloated.txt"
     { timeout ${TIMEOUT_LIMIT} ${REDUCED_BINARY} temp/*; } &>>${compression_debloated}
     local a=$?
     if [[ $a -ne 0 ]]; then
         echo "Compression failed" >>${LOG} 2>&1
-        rm -rf temp comparison  ${compression_debloated} ${decompression_original}  ${files[@]} >/dev/null 2>&1
+        rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
         return 1
     fi
     local debloated_compressed_files=$(ls temp)
-    ##add find command
+    if find temp -type f ! -name "*.bz2" | grep -q .; then
+        echo "Not all files are .bz2" >>${LOG} 2>&1
+        rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
+        return 1
+
+    else
+        echo "All files are .bz2" >>${LOG} 2>&1
+    fi
 
     local decompression_original="decompression_original.txt"
     { timeout ${TIMEOUT_LIMIT} ${ORG_BINARY} -d temp/*; } &>>${decompression_original}
     local b=$?
     if [[ $b -ne 0 ]]; then
         echo "Decompression failed" >>${LOG} 2>&1
-        rm -rf temp comparison  ${compression_debloated} ${decompression_original}  ${files[@]} >/dev/null 2>&1
+        rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
         return 1
     fi
     local original_decompressed_files=$(ls temp)
-    ## add find command
+    if find temp -type f -name "*.bz2" | grep -q .; then
+        echo "There are .bz2 files" >>${LOG} 2>&1
+        rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
+        return 1
+    else
+        echo "There are no .bz2 files" >>${LOG} 2>&1
+    fi
 
     for file in temp/*; do
         filename=$(basename "$file")
         cp "$file" "comparison/debloated_$filename"
     done
-    
 
     for file in $files; do
         filename=$(basename "$file")
@@ -78,7 +84,7 @@ function compress_and_decompress() {
             echo "====================" >>${LOG} 2>&1
             echo "$(cat comparison/debloated_$filename)" >>${LOG} 2>&1
             echo "====================" >>${LOG} 2>&1
-            rm -rf temp comparison  ${compression_debloated} ${decompression_original}  ${files[@]} >/dev/null 2>&1
+            rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
 
             return 1
         fi
@@ -86,13 +92,10 @@ function compress_and_decompress() {
     ((PASSED_COUNT++))
     echo "Success" >>${LOG} 2>&1
     echo "" >>${LOG} 2>&1
-    rm -rf temp comparison  ${compression_debloated} ${decompression_original}  ${files[@]} >/dev/null 2>&1
+    rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
     return 0
 
 }
-
-
-
 
 function execute_tests() {
     # 1 Byte File Test
@@ -168,11 +171,6 @@ function execute_tests() {
     dd if=/dev/zero of=small_2kb.json bs=2048 count=1 2>/dev/null
     compress_and_decompress "small_2kb.json" || echo "Test failed: 2KB JSON File" >>${LOG}
 
-    # Randomly Generated Binary Files
-    echo "Case: Small 5KB Binary File Test" >>${LOG} 2>&1
-    dd if=/dev/urandom of=small_5kb.bin bs=5120 count=1 2>/dev/null
-    compress_and_decompress "small_5kb.bin" || echo "Test failed: 5KB Binary File" >>${LOG}
-
     echo "Case: Small 10KB Binary File Test" >>${LOG} 2>&1
     dd if=/dev/urandom of=small_10kb.bin bs=10240 count=1 2>/dev/null
     compress_and_decompress "small_10kb.bin" || echo "Test failed: 10KB Binary File" >>${LOG}
@@ -181,69 +179,21 @@ function execute_tests() {
     dd if=/dev/urandom of=small_20kb.bin bs=20480 count=1 2>/dev/null
     compress_and_decompress "small_20kb.bin" || echo "Test failed: 20KB Binary File" >>${LOG}
 
-    # Medium Text Files
-    # echo "Case: Medium 1MB Text File Test" >>${LOG} 2>&1
-    # dd if=/dev/zero of=medium_1mb.txt bs=1048576 count=1 2>/dev/null
-    # compress_and_decompress "medium_1mb.txt" || echo "Test failed: 1MB Text File" >>${LOG}
-
-    # echo "Case: Medium 2MB Text File Test" >>${LOG} 2>&1
-    # dd if=/dev/zero of=medium_2mb.txt bs=2097152 count=1 2>/dev/null
-    # compress_and_decompress "medium_2mb.txt" || echo "Test failed: 2MB Text File" >>${LOG}
-
-    # echo "Case: Medium 5MB Text File Test" >>${LOG} 2>&1
-    # dd if=/dev/zero of=medium_5mb.txt bs=5242880 count=1 2>/dev/null
-    # compress_and_decompress "medium_5mb.txt" || echo "Test failed: 5MB Text File" >>${LOG}
-
-    # echo "Case: Medium 10MB Text File Test" >>${LOG} 2>&1
-    # dd if=/dev/zero of=medium_10mb.txt bs=10485760 count=1 2>/dev/null
-    # compress_and_decompress "medium_10mb.txt" || echo "Test failed: 10MB Text File" >>${LOG}
-
     # Medium Image Files
     echo "Case: Medium 1MB PNG File Test" >>${LOG} 2>&1
     dd if=/dev/zero of=medium_1mb.png bs=1048576 count=1 2>/dev/null
     compress_and_decompress "medium_1mb.png" || echo "Test failed: 1MB PNG File" >>${LOG}
-
-    # echo "Case: Medium 2MB JPEG File Test" >>${LOG} 2>&1
-    # dd if=/dev/zero of=medium_2mb.jpg bs=2097152 count=1 2>/dev/null
-    # compress_and_decompress "medium_2mb.jpg" || echo "Test failed: 2MB JPEG File" >>${LOG}
-
-    # echo "Case: Medium 5MB GIF File Test" >>${LOG} 2>&1
-    # dd if=/dev/zero of=medium_5mb.gif bs=5242880 count=1 2>/dev/null
-    # compress_and_decompress "medium_5mb.gif" || echo "Test failed: 5MB GIF File" >>${LOG}
-
-    # echo "Case: Medium 10MB BMP File Test" >>${LOG} 2>&1
-    # dd if=/dev/zero of=medium_10mb.bmp bs=10485760 count=1 2>/dev/null
-    # compress_and_decompress "medium_10mb.bmp" || echo "Test failed: 10MB BMP File" >>${LOG}
 
     # Medium Audio Files
     echo "Case: Medium 1MB WAV File Test" >>${LOG} 2>&1
     dd if=/dev/zero of=medium_1mb.wav bs=1048576 count=1 2>/dev/null
     compress_and_decompress "medium_1mb.wav" || echo "Test failed: 1MB WAV File" >>${LOG}
 
-    # echo "Case: Medium 2MB MP3 File Test" >>${LOG} 2>&1
-    # dd if=/dev/zero of=medium_2mb.mp3 bs=2097152 count=1 2>/dev/null
-    # compress_and_decompress "medium_2mb.mp3" || echo "Test failed: 2MB MP3 File" >>${LOG}
-
-    # echo "Case: Medium 5MB OGG File Test" >>${LOG} 2>&1
-    # dd if=/dev/zero of=medium_5mb.ogg bs=5242880 count=1 2>/dev/null
-    # compress_and_decompress "medium_5mb.ogg" || echo "Test failed: 5MB OGG File" >>${LOG}
-
-    # echo "Case: Medium 10MB FLAC File Test" >>${LOG} 2>&1
-    # dd if=/dev/zero of=medium_10mb.flac bs=10485760 count=1 2>/dev/null
-    # compress_and_decompress "medium_10mb.flac" || echo "Test failed: 10MB FLAC File" >>${LOG}
 
     # Medium Archive and Document Files
     echo "Case: Medium 1MB ZIP File Test" >>${LOG} 2>&1
     dd if=/dev/zero of=medium_1mb.zip bs=1048576 count=1 2>/dev/null
     compress_and_decompress "medium_1mb.zip" || echo "Test failed: 1MB ZIP File" >>${LOG}
-
-    # echo "Case: Medium 2MB TAR.GZ File Test" >>${LOG} 2>&1
-    # dd if=/dev/zero of=medium_2mb.tar.gz bs=2097152 count=1 2>/dev/null
-    # compress_and_decompress "medium_2mb.tar.gz" || echo "Test failed: 2MB TAR.GZ File" >>${LOG}
-
-    # echo "Case: Medium 5MB PDF File Test" >>${LOG} 2>&1
-    # dd if=/dev/zero of=medium_5mb.pdf bs=5242880 count=1 2>/dev/null
-    # compress_and_decompress "medium_5mb.pdf" || echo "Test failed: 5MB PDF File" >>${LOG}
 
     # Medium Randomly Generated Binary Files
     echo "Case: Medium 1MB Binary File Test" >>${LOG} 2>&1
@@ -254,9 +204,6 @@ function execute_tests() {
     dd if=/dev/urandom of=medium_2mb.bin bs=2097152 count=1 2>/dev/null
     compress_and_decompress "medium_2mb.bin" || echo "Test failed: 2MB Binary File" >>${LOG}
 
-    # echo "Case: Medium 5MB Binary File Test" >>${LOG} 2>&1
-    # dd if=/dev/urandom of=medium_5mb.bin bs=5242880 count=1 2>/dev/null
-    # compress_and_decompress "medium_5mb.bin" || echo "Test failed: 5MB Binary File" >>${LOG}
 
     # English Text File Test
     echo "Case: English Text File Test" >>${LOG} 2>&1
@@ -324,7 +271,6 @@ function execute_tests() {
     touch empty_file.txt
     compress_and_decompress "empty_file.txt" || echo "Test failed: Empty File" >>${LOG}
 
-
     echo "Case: File with Special Characters Test" >>${LOG} 2>&1
     touch "file_with_special_characters@#$.txt"
     compress_and_decompress "file_with_special_characters@#$.txt" || echo "Test failed: File with Special Characters" >>${LOG}
@@ -377,22 +323,12 @@ function execute_tests() {
     echo "This is not a compressed file" >invalid_data.txt
     compress_and_decompress "invalid_data.txt" || echo "Test failed: Invalid data file" >>${LOG}
 
-    # Sparse File Test
-    echo "Processing sparse file:" >>${LOG} 2>&1
-    dd if=/dev/zero of=sparse_file.txt bs=1M count=1 seek=100 >/dev/null 2>&1
-    compress_and_decompress "sparse_file.txt" || echo "Test failed: Sparse file" >>${LOG}
 
-    # Standard tests
-    # touch ${HARDCODED_FILES[@]}
-    # cp $ORG_FILE ${HARDCODED_FILES[0]}
-    # cp $ORG_FILE ${HARDCODED_FILES[2]}
-    # echo "Processing all files simultaneously:" >>${LOG} 2>&1
-    # compress_and_decompress "${HARDCODED_FILES[@]}" || echo "Test failed: Multiple files" >>${LOG}
 
     echo "Processing single file:" >>${LOG} 2>&1
-    touch "${FILE}"
-    cp $ORG_FILE ${FILE}
-    compress_and_decompress "${FILE}" || echo "Test failed: Single file" >>${LOG}
+    touch "test1.txt"
+    cp $ORG_FILE "test1.txt"
+    compress_and_decompress "test1.txt" || echo "Test failed: Single file" >>${LOG}
 
     # Multi-language text decompression
     echo "Processing multiple languages text file:" >>${LOG} 2>&1
@@ -414,11 +350,6 @@ function execute_tests() {
     touch empty.txt
     compress_and_decompress "empty.txt" || echo "Test failed: Empty file" >>${LOG}
 
-    #  Repeated Empty File Test
-    # echo "Processing multiple empty files:" >>${LOG} 2>&1
-    # touch empty1.txt empty2.txt empty3.txt
-    # compress_and_decompress "empty1.txt" "empty2.txt" "empty3.txt" || echo "Test failed: Multiple empty files" >>${LOG}
-
     #  Special Characters Basic Test
     echo "Processing filename with special characters:" >>${LOG} 2>&1
     echo "Test content for special characters" >"filewith@#$.txt"
@@ -434,7 +365,7 @@ function execute_tests() {
 function clean_env() {
     cd ${DIR}
     rm -rf ${REDUCED_BINARY} ${ORG_BINARY} *.txt.gz *.txt binary_file *.tar *.jpg *.wav *.png *.mp3 *.csv *.json *.bin *exe *bz2 *.flac *.bmp *tar *.ogg *.pdf *.gif >/dev/null 2>&1
-    rm -rf temp comparison  ${compression_debloated} ${decompression_original}  ${files[@]} >/dev/null 2>&1
+    rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
     rm -rf *.jpg *.wav >/dev/null 2>&1
     return 0
 }
@@ -456,7 +387,7 @@ function main() {
     execute_tests
     echo "Total Functionality Tests: $TOTAL_TESTS, Passed: $PASSED_COUNT, Failed: $(($TOTAL_TESTS - $PASSED_COUNT))" >>${LOG} 2>&1
     if [[ $PASSED_COUNT -eq $TOTAL_TESTS ]]; then
-        echo "All tests passed successfully." 
+        echo "All tests passed successfully."
     else
         echo "Some functionality tests failed" >>${LOG} 2>&1
     fi

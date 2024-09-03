@@ -2,14 +2,13 @@ You are a proficient C code evaluator tasked with assessing the importance of a 
 
 Evaluation Scale:
 
-- Class 1: Completely Unnecessary Code - This code is not needed for functionality or user experience.
+- Class 1: Completely Unnecessary Code - This code is a part of unrequired functionality.
 - Class 2: Somewhat Unnecessary Code - This code may be needed for minor issues but does not affect overall functionality.
-- Class 3: Necessary Code - This code is important for the basic functionality of the program.
+- Class 3: Necessary Code - This code is contributes to the required functionality.
 - Class 4: Critical Code - This code is essential for functionality, security, and generality. The program will break without it.
 - Class 5: Incomplete Context - The context provided does not provide enough information to understand the complete purpose of this code in this larger program.
-- Class 6: Unused Code - This code is not used in the provided context.
 
-Evaluate if the code belongs to each of the five classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
+Evaluate if the code belongs to each of the six classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
 
 Strictly follow the answer format below:
 
@@ -19,26 +18,41 @@ Class 1: <reasoning for why the code might be completely unnecessary or not>
 Class 2: <reasoning for why the code might be somewhat unnecessary or not>
 Class 3: <reasoning for why the code might be necessary or not>
 Class 4: <reasoning for why the code might be critical or not>
-Class 5: <reasoning for why you think it is likely you do not understand the purpose of this code given the context>
-Class 6: <whether the code is used in the provided context or not>
+Class 5: <whether the purpose of this code is unclear without further context or not>
 
 Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
-Final Verdict: <assigned class> (1-6)
+Final Verdict: <assigned class> (1-5)
 
+The code belongs to tthe bzip2 core utility. bzip2 compression functionality uses sorting for compression.
 Required Functionality:
+1. bzip2 is used only without any flag to compress all kind of files with varying extensions.
+2. Retain the data integrity after compression and make sure the compression occurs successfully. 
+3. For compression Burrows-Wheeler transform is used to reorder data, and Huffman coding is used to efficiently represent the reordered data.
+We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements and loop or variable initialization which are important for keeping the workflow structure.  
 
-The given code belongs to the bzip2 core utility that uses sorting as part of its compression algorithm to group similar data together, which improves the overall compression ratio.
-Required Functionality:
-1. bzip2 is used only without any flag to compress all kind of files with varying extensions and retain the data integrity after compression. 
-2. For this task we only want to keep the functionality of compressing files with varying extensions without any flag. 
+We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements and loop or variable initialization which are important for keeping the workflow structure.  
 
-We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. Any other functionality such as decompression in not needed. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements and loop or variable initialization which are important for keeping the workflow structure. 
+Any other functionality that does not contribute to our required functionalites is irrelevant to our use case. Here are some of the unrequired functionalities:
 
+1. **-d, --decompress**:  Forces decompression, which is not needed as we want to compress files.
+2. **-h, --help**:  Displays help information, which is not needed for our use case.
+3. **-L, --license**:  Displays software version and license, which is not relevant to compression functionality.
+4. **-V, --version**:  Displays software version and license, which is not relevant to compression functionality.
+5. **-s, --small**:  Uses less memory, which is not a priority for our use case.
+6. **-1 .. -9, --fast, --best**:  Sets block size, which is not relevant to our use case as we want to compress all files without specific block size requirements.
+7. **-t, --test**:  Tests compressed file integrity, which is not needed as we want to ensure successful compression.
+8. **-q, --quiet**:  Suppresses noncritical error messages, which is not needed as we want to be aware of any issues during compression.
+9. **-v, --verbose**:  Provides verbose output, which is not needed as we only want to ensure successful compression. 
+10. **-c, --stdout**:  Outputs to standard output, which is not needed as we want to compress files to their respective compressed versions. 
+11. **-k, --keep**:  Keeps input files, which is not needed as we are not concerned with deleting input files.
+12. **-f, --force**:  Overwrites existing output files, which is not needed as we are not concerned with overwriting existing files.
+
+These functionalities are not relevant to our use case, which is to compress files without specific flags or options. 
 
 This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for the functionality mentioned or security of the program. 
 
 #########
-To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing. Please give emphasis to analysing whether the provided snippet is important for preventing any of the given security vulnerabilities:
+To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing. Put emphasis on the security list and make sure to evaluate each candidate set and ensure each vulnerability mentioned in below is prevented:
 
 Security List: 
 {sec_list}
@@ -47,7 +61,6 @@ Security List:
 
 Contextual Information:
 
-
 #########
 
 Context:
@@ -55,7 +68,6 @@ Context:
 {formatted_context}
 
 #########
-
 
 Target Code for Evaluation:
 
@@ -67,15 +79,12 @@ Target Code:
 
 #########
 
+Make sure to evaluate on the basis of the following:
+1. Prevention against the security vulnerabilities mentioned in the security list.
+2. Compression of all kinds of files without any flag.
+3. Retaining the data integrity of the compressed file.
 
-Make sure to evaluate on the basis of:
-the functionality and the possibility of security vulnerabilities mentioned above about compression without any flags.
-1. Compression of all kinds of files without any flag.
-2. Retaining the data integrity of the compressed file.
-3. Prevention against the security vulnerabilities mentioned in the security list.
-Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
-
-If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
+Make sure to cater to ALL edge cases for the functionalites mentioned. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
 We are not concerned with any other functionalities so make sure to evaluate the candidate set on the basis of the unrequired functionalites mentioned above as well and mark the candidate sets that meet the unrequired functionality criteria as unnecessary. 
 

@@ -12,50 +12,60 @@ LOG=${DIR}/log
 
 FILE1="test1.txt"
 FILE2=("test2.txt" "test3.bin" "test4.txt")
-# HARDCODED_FILES=("test2.txt" "test3.jpg" "test4")
+
 function compress_and_decompress() {
-    ((TOTAL_TESTS++))
-    
-    echo "CASE: $TOTAL_TESTS" >>${LOG} 2>&1
+    # ((TOTAL_TESTS++))
+
+    # echo "CASE: $TOTAL_TESTS" >>${LOG} 2>&1
     local files=("$@")
-    rm -rf temp comparison  ${compression_debloated} ${decompression_original}  >/dev/null 2>&1
+    rm -rf temp comparison ${compression_debloated} ${decompression_original} >/dev/null 2>&1
     mkdir -p temp >/dev/null 2>&1
     mkdir -p comparison >/dev/null 2>&1
     for file in "${files[@]}"; do
         cp "${file}" "temp/"
-        file_list+="temp/$(basename ${file}) "
         filename=$(basename "$file")
         cp "$file" "comparison/original_$filename"
     done
 
-
-   local compression_debloated="compression_debloated.txt"
+    local compression_debloated="compression_debloated.txt"
     { timeout ${TIMEOUT_LIMIT} ${REDUCED_BINARY} temp/*; } &>>${compression_debloated}
     local a=$?
     if [[ $a -ne 0 ]]; then
         echo "Compression failed" >>${LOG} 2>&1
-        rm -rf temp comparison  ${compression_debloated} ${decompression_original}  ${files[@]} >/dev/null 2>&1
+        rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
         return 1
     fi
     local debloated_compressed_files=$(ls temp)
-    ##add find command
+    if find temp -type f ! -name "*.bz2" | grep -q .; then
+        echo "Not all files are .bz2" >>${LOG} 2>&1
+        rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
+        return 1
+
+    else
+        echo "All files are .bz2" >>${LOG} 2>&1
+    fi
 
     local decompression_original="decompression_original.txt"
     { timeout ${TIMEOUT_LIMIT} ${ORG_BINARY} -d temp/*; } &>>${decompression_original}
     local b=$?
     if [[ $b -ne 0 ]]; then
         echo "Decompression failed" >>${LOG} 2>&1
-        rm -rf temp comparison  ${compression_debloated} ${decompression_original}  ${files[@]} >/dev/null 2>&1
+        rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
         return 1
     fi
     local original_decompressed_files=$(ls temp)
-    ## add find command
+    if find temp -type f -name "*.bz2" | grep -q .; then
+        echo "There are .bz2 files" >>${LOG} 2>&1
+        rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
+        return 1
+    else
+        echo "There are no .bz2 files" >>${LOG} 2>&1
+    fi
 
     for file in temp/*; do
         filename=$(basename "$file")
         cp "$file" "comparison/debloated_$filename"
     done
-    
 
     for file in $files; do
         filename=$(basename "$file")
@@ -73,15 +83,15 @@ function compress_and_decompress() {
             echo "====================" >>${LOG} 2>&1
             echo "$(cat comparison/debloated_$filename)" >>${LOG} 2>&1
             echo "====================" >>${LOG} 2>&1
-            rm -rf temp comparison  ${compression_debloated} ${decompression_original}  ${files[@]} >/dev/null 2>&1
+            rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
 
             return 1
         fi
     done
-    ((PASSED_COUNT++))
+    # ((PASSED_COUNT++))
     echo "Success" >>${LOG} 2>&1
     echo "" >>${LOG} 2>&1
-    rm -rf temp comparison  ${compression_debloated} ${decompression_original}  ${files[@]} >/dev/null 2>&1
+    rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
     return 0
 
 }
@@ -106,6 +116,11 @@ function main() {
     rm -rf log
     clean_env
     compile || exit 1
+
+      # Empty File Test
+    echo "Case: Empty File Test" >>${LOG} 2>&1
+    touch empty_file.txt
+    compress_and_decompress "empty_file.txt" || exit 1
 
     echo "I am a test file for bzip2" >test1.txt
     touch test2.txt
