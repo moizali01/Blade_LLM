@@ -16,6 +16,14 @@ temp_file_path = 'temp_file.c'
 def run_clang_format(filename):
     subprocess.run(["clang-format", "-style={ColumnLimit: 300, AllowShortFunctionsOnASingleLine: All, AllowShortIfStatementsOnASingleLine: true}", "-i", filename], capture_output=True, text=True)
 
+def remove_empty_lines(filename):
+    with open(filename, 'r') as file:
+        lines = file.readlines()
+    with open(filename, 'w') as file:
+        for line in lines:
+            if line.strip() != "":
+                file.write(line)
+
 # Function to run bash script and check test results
 def run_tests():
     try:
@@ -29,6 +37,8 @@ def main():
     # Format the original and debloated files
     run_clang_format(original_file_path)
     run_clang_format(debloated_file_path)
+    remove_empty_lines(original_file_path)
+    remove_empty_lines(debloated_file_path)
     
     # Read both files
     with open(original_file_path, 'r') as original_file:
@@ -59,6 +69,15 @@ def main():
             while i < len(diff) and diff[i].startswith('+'):
                 i += 1
             end = i
+            
+            replace_start = end
+            replace_end = end
+            while replace_end < len(diff) and diff[replace_end].startswith('-'):
+                replace_end += 1
+                
+            block_to_replace = [line[1:] for line in diff[replace_start:replace_end]]
+            block_to_replace.reverse()
+
 
             # Calculate line indices to remove from original_lines
             block_to_remove = [line[1:] for line in diff[start:end]]
@@ -77,7 +96,7 @@ def main():
                 if original_temp[j - len(block_to_remove) + 1:j + 1] == block_to_remove:
                     removal_start = j - len(block_to_remove) + 1
                     removal_end = j+1
-                    original_temp = original_temp[:removal_start] + ["\n"] + original_temp[removal_end:]
+                    original_temp = original_temp[:removal_start] + block_to_replace + original_temp[removal_end:]
                     found = True
                     break
             last_modified_line = removal_start - 1
@@ -91,7 +110,7 @@ def main():
                 temp_file.writelines(original_temp)
 
             # Replace original file with temp file if tests pass
-            shutil.copy(temp_file_path, original_file_path)
+            shutil.copy(temp_file_path, original_file_path)               
             if run_tests():
                 original_lines = original_temp[:]
                 with open(log_file_path, 'a') as log_file:
