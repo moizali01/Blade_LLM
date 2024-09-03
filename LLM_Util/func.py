@@ -7,7 +7,7 @@ def is_complete_c_function(text):
     Checks if the text contains a complete C function.
     This function checks for balanced braces in function bodies.
     """
-    function_pattern = r'\b\w+\s+\w+\s*\([^)]*\)\s*{'
+    function_pattern = r'\b[\w\s\*]+[\s\*]+\w+\s*\([^)]*\)\s*{'
     matches = re.finditer(function_pattern, text, re.DOTALL)
 
     for match in matches:
