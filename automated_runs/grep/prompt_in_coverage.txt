@@ -1,0 +1,135 @@
+You are a proficient C code evaluator tasked with assessing the importance of a specific code snippet within the larger context of the overall program. The code snippet lies in the code execution path for the required functionality.
+
+Evaluation Scale:
+
+- Class 1: Completely Unnecessary Code - This code is a part of unrequired functionality.
+- Class 2: Somewhat Unnecessary Code - This code may be needed for minor issues but does not affect overall functionality.
+- Class 3: Necessary Code - This code is contributes to the required functionality.
+- Class 4: Critical Code - This code is essential for functionality, security, or generality.
+- Class 5: Incomplete Context - The context provided does not provide enough information to understand the complete purpose of this code in this larger program.
+
+Evaluate if the code belongs to each of the five classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
+
+Strictly follow the answer format below:
+
+Answer Format:
+
+Class 1: <reasoning for which unrequired functionality the target code contributes to>
+Class 2: <reasoning for why the code might be somewhat unnecessary or not>
+Class 3: <reasoning for which functionality the target code contributes to>
+Class 4: <reasoning for which functionality or security the code snippet contributes to>
+Class 5: <reasoning for why you think it is likely you do not understand the purpose of this code given the context>
+
+Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
+Final Verdict: <assigned class> (1-5)
+
+
+Required Functionality:
+The given code belongs to the grep core utility. The desired functionality of the grep utility includes multiple key features and we require the following functionalities:
+1. Regular expression matching for simple patterns. We will use this grep core-utility without any flags. This feature is **necessary**
+2. -r, --recursive  like --directories=recurse; to search for simple pattern across files in a directory. Recursive directory traversal functionality to search for regular expressions is **necessary**.
+3. Proper input parsing. Safe and complete parsing of the input is necessary. All kinds of input sanitation and proper dealing with all kinds of input is **necessary**.
+4. Safe file tree traversal to ensure recursive traversal is ensured safely across all scenarios.
+5. Prevention against the security vulnerabilities mentioned in the security list.
+
+When evaluating conditional blocks, make sure to evaluate all outcomes of the conditional statements. Since we can not change the structure of code, evaluate the importance of the target code given its context.
+
+
+Undesired Functionality:
+
+The following functionalities are unnecessary:
+  -F, --fixed-strings       PATTERN is a set of newline-separated fixed strings
+  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)
+  -P, --perl-regexp         PATTERN is a Perl regular expression
+  -i, --ignore-case         ignore case distinctions
+  -w, --word-regexp         force PATTERN to match only whole words
+  -x, --line-regexp         force PATTERN to match only whole lines
+  -z, --null-data           a data line ends in 0 byte, not newline
+  -s, --no-messages         suppress error messages
+  -v, --invert-match        select non-matching lines
+  -V, --version             display version information and exit
+      --help                display this help text and exit
+  -m, --max-count=NUM       stop after NUM matches
+  -b, --byte-offset         print the byte offset with output lines
+  -n, --line-number         print line number with output lines
+      --line-buffered       flush output on every line
+  -H, --with-filename       print the file name for each match
+  -h, --no-filename         suppress the file name prefix on output
+      --label=LABEL         use LABEL as the standard input file name prefix
+  -o, --only-matching       show only the part of a line matching PATTERN
+  -q, --quiet, --silent     suppress all normal output
+      --binary-files=TYPE   assume that binary files are TYPE;
+                            TYPE is 'binary', 'text', or 'without-match'
+  -a, --text                equivalent to --binary-files=text
+  -I                        equivalent to --binary-files=without-match
+  -d, --directories=ACTION  how to handle directories;
+                            ACTION is 'read', 'recurse', or 'skip'
+  -D, --devices=ACTION      how to handle devices, FIFOs and sockets;
+                            ACTION is 'read' or 'skip'
+  -L, --files-without-match  print only names of FILEs containing no match
+  -l, --files-with-matches  print only names of FILEs containing matches
+  -c, --count               print only a count of matching lines per FILE
+  -T, --initial-tab         make tabs line up (if needed)
+  -Z, --null                print 0 byte after FILE name
+  -B, --before-context=NUM  print NUM lines of leading context
+  -A, --after-context=NUM   print NUM lines of trailing context
+  -C, --context=NUM         print NUM lines of output context
+  -NUM                      same as --context=NUM
+      --color[=WHEN],
+      --colour[=WHEN]       use markers to highlight the matching strings;
+                            WHEN is 'always', 'never', or 'auto'
+  -U, --binary              do not strip CR characters at EOL (MSDOS/Windows)
+  -u, --unix-byte-offsets   report offsets as if CRs were not there
+                            (MSDOS/Windows)
+User friendliness is an **undesired** functionality. So consider removal for help statements, usage information or any error feedback to the user.
+
+This code snippet is a part of the code execution path for the required functionality.
+
+To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing:
+
+#########
+
+Security List: 
+{sec_list}
+
+#########
+
+Contextual Information:
+
+
+#########
+
+Context:
+
+{formatted_context}
+
+#########
+
+
+Target Code for Evaluation:
+
+#########
+
+Target Code:
+
+{query}
+
+#########
+
+Make sure to evaluate on the basis of:
+The given code belongs to the grep core utility. The desired functionality of the grep utility includes multiple key features and we require the following functionalities:
+1. Regular expression matching for simple patterns. We will use this grep core-utility without any flags. This feature is **necessary**
+2. -r, --recursive  like --directories=recurse; to search for simple pattern across files in a directory. Recursive directory traversal functionality to search for regular expressions is **necessary**.
+3. Proper input parsing. Safe and complete parsing of the input is necessary. All kinds of input sanitation and proper dealing with all kinds of input is **necessary**.
+4. Safe file tree traversal to ensure recursive traversal is ensured safely across all scenarios.
+5. Prevention against the security vulnerabilities mentioned in the security list.
+
+Make sure to cater to ALL edge cases for the functionalites mentioned. For example, cater to all kinds of regular expressions, and cater to all kinds of input data (it could be standard text or any other kind of input files). If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
+
+When evaluating conditional blocks, make sure to evaluate all outcomes of the conditional statements. Since we can not change the structure of code, evaluate the importance of the target code given its context.
+
+If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
+
+Make sure to evaluate the candidate set on the basis of the unrequired functionalites mentioned above as well and mark the candidate sets that meet the unrequired functionality criteria as unnecessary. 
+
+Make sure you do not add any information on your own. Consider all four snippets in the provided context to explain the queried code. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.

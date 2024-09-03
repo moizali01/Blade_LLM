@@ -6,6 +6,7 @@ from LLM_Util.exist_coverage import exist
 import glob
 import time
 import subprocess
+import re
 
 THRESHOLD = 7
 
@@ -30,6 +31,8 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
             return 0
         else: 
             return 10
+    if is_complete_c_function(process.stdout):
+        return 1
     
 
     # Ensure directories exist
@@ -215,3 +218,33 @@ def extract_imp_score_new_prompt(text):
             return 9
     else:
         return None  # No number found
+    
+
+def is_complete_c_function(text):
+    """
+    Checks if the text contains a complete C function.
+    This function checks for balanced braces in function bodies.
+    """
+    function_pattern = r'\b\w+\s+\w+\s*\([^)]*\)\s*{'
+    matches = re.finditer(function_pattern, text, re.DOTALL)
+
+    for match in matches:
+        start_index = match.end()
+        if has_balanced_braces(text[start_index:]):
+            return True
+
+    return False
+
+def has_balanced_braces(code):
+    """
+    Check if the code has balanced braces, indicating a complete function.
+    """
+    brace_count = 0
+    for char in code:
+        if char == '{':
+            brace_count += 1
+        elif char == '}':
+            brace_count -= 1
+        if brace_count == 0:
+            return True
+    return False

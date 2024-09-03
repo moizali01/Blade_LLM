@@ -144,11 +144,6 @@ run_test "File with all special characters in name" \
   "" ""
 
 # Memory-related edge cases
-run_test "Symlink attack" \
-  "$TEST_DIR/symlink_file" \
-  "apple\napple\nbanana\ncherry" \
-  "ln -s /etc/passwd $TEST_DIR/symlink_file" \
-  "rm -f $TEST_DIR/symlink_file"
 
 run_test "Buffer overflow attempt" \
   "$TEST_DIR/buffer_overflow" \

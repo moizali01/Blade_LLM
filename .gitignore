@@ -36,6 +36,9 @@ src/target-program/
 src/*.blade.c
 src/original.txt
 
+# ignore temporary folders
+gen/
+
 manual_testing/*.txt
 
 # Ignore environment files
