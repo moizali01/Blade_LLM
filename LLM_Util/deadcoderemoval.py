@@ -61,14 +61,14 @@ def parse_unreachable_code(lines):
         filelines = file.readlines()
 
     lines_to_remove = []
-    for line_number, _ in unreachable_lines:
-        if "{" in filelines[line_number - 1]:
-            function_start, function_end = find_function_boundaries(filelines, line_number)
-            # print(f"Unreachable code found in block {function_start} to {function_end}")
-            lines_to_remove += [(i, "unreachablecode")for i in range(function_start + 1, function_end + 1)]
-        else:
-            # print(f"Unreachable code found at line {line_number}")
-            lines_to_remove.append((line_number, "unreachablecode"))
+    # for line_number, _ in unreachable_lines:
+    #     if "{" in filelines[line_number - 1]:
+    #         function_start, function_end = find_function_boundaries(filelines, line_number)
+    #         # print(f"Unreachable code found in block {function_start} to {function_end}")
+    #         lines_to_remove += [(i, "unreachablecode")for i in range(function_start + 1, function_end + 1)]
+    #     else:
+    #         # print(f"Unreachable code found at line {line_number}")
+    #         lines_to_remove.append((line_number, "unreachablecode"))
 
     return lines_to_remove
 
