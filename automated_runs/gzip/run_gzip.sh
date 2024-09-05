@@ -11,9 +11,9 @@ DIR=$(pwd)
 
 # Copy all files need for run to relevant locations
 cd $DIR
-cp bzip2-util.c ../../src/target-program/bzip2-util.c
-cp bzip2-org.c ../../src/target-program/bzip2-org.c
-cp bzip2_train.sh ../../src/target-program/bzip2_train.sh
+cp gzip-util.c ../../src/target-program/gzip-util.c
+cp gzip-org.c ../../src/target-program/gzip-org.c
+cp gzip_train.sh ../../src/target-program/gzip_train.sh
 cp original.txt ../../src/original.txt
 cp coverage.txt ../../LLM_Util/coverage.txt
 # clear
@@ -37,22 +37,22 @@ mkdir -p llm_response
 mkdir -p fifty_text
 
 cd ..
-chmod +x clear_cands.sh
-./clear_cands.sh
+# chmod +x clear_cands.sh
+# ./clear_cands.sh
 cd $DIR
 # clear
 
 # run the program
 cd ../../src
-python3 blade.py -p target-program/bzip2-util.c -t target-program/bzip2_train.sh -u 1 -d 1
-cp bzip2-util.c.blade.c ../automated_runs/bzip2/bzip2-util.c.blade.c
+python3 blade.py -p target-program/gzip-util.c -t target-program/gzip_train.sh -u 1 -d 1
+cp gzip-util.c.blade.c ../automated_runs/gzip/gzip-util.c.blade.c
 # clear
 
 # run generality cases
 cd $DIR
 mkdir test_generality
-cp bzip2-util.c.blade.c test_generality/bzip2-util.c.blade.c
-cp bzip2-org.c test_generality/bzip2-org.c
+cp gzip-util.c.blade.c test_generality/gzip-util.c.blade.c
+cp gzip-org.c test_generality/gzip-org.c
 cp generality.sh test_generality/generality.sh
 cd test_generality
 chmod +x generality.sh

@@ -83,6 +83,8 @@ The following functionalities are unnecessary:
                             (MSDOS/Windows)
 User friendliness is an **undesired** functionality. So consider removal for help statements, usage information or any error feedback to the user.
 
+**IMPORTANT**: If you encounter code that appears to relate to any of the undesired functionalities listed above, immediately classify it as Class 1 (No Functional Contribution) and provide a brief explanation.
+
 This code snippet is not a part of the code execution path for the required functionality. 
 
 To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing:

@@ -23,29 +23,34 @@ Class 5: <whether the purpose of this code is unclear without further context or
 Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
 Final Verdict: <assigned class> (1-5)
 
-The code belongs to tthe bzip2 core utility. bzip2 compression functionality uses sorting for compression.
+The code belongs to tthe Gzip core utility. Gzip compression functionality uses Deflate algorithm for compression.
 Required Functionality:
-1. bzip2 is used only without any flag to compress all kind of files with varying extensions.
+1. Gzip is used only without any flag to compress all kind of files with varying extensions.
 2. Retain the data integrity after compression and make sure the compression occurs successfully. 
-3. For compression Burrows-Wheeler transform is used to reorder data, and Huffman coding is used to efficiently represent the reordered data.
-We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements and loop or variable initialization which are important for keeping the workflow structure.  
+3. For compression LZ77 and Huffman coding is used to indentify repeating sequences in the data and assign shorter codes to more frequent symbols.
 
-We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements and loop or variable initialization which are important for keeping the workflow structure.  
+We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements, goto statements and loop or variable initialization which are important for keeping the workflow structure.   
 
 Any other functionality that does not contribute to our required functionalites is irrelevant to our use case. Here are some of the unrequired functionalities:
 
-1. **-d, --decompress**:  Forces decompression, which is not needed as we want to compress files.
-2. **-h, --help**:  Displays help information, which is not needed for our use case.
-3. **-L, --license**:  Displays software version and license, which is not relevant to compression functionality.
-4. **-V, --version**:  Displays software version and license, which is not relevant to compression functionality.
-5. **-s, --small**:  Uses less memory, which is not a priority for our use case.
-6. **-1 .. -9, --fast, --best**:  Sets block size, which is not relevant to our use case as we want to compress all files without specific block size requirements.
-7. **-t, --test**:  Tests compressed file integrity, which is not needed as we want to ensure successful compression.
-8. **-q, --quiet**:  Suppresses noncritical error messages, which is not needed as we want to be aware of any issues during compression.
-9. **-v, --verbose**:  Provides verbose output, which is not needed as we only want to ensure successful compression. 
-10. **-c, --stdout**:  Outputs to standard output, which is not needed as we want to compress files to their respective compressed versions. 
-11. **-k, --keep**:  Keeps input files, which is not needed as we are not concerned with deleting input files.
-12. **-f, --force**:  Overwrites existing output files, which is not needed as we are not concerned with overwriting existing files.
+1. **-d, --decompress**: This option performs decompression, directly contradicting your goal of compressing files.
+2. **-h, --help**: This option displays help information, which is irrelevant when aiming for simple, flagless compression.
+3. **-l, --list**: This option lists the contents of a compressed file, which is not relevant during the compression process itself.
+4. **-L, --license**: Displays software licensing information, not essential for basic compression.
+5. **-n, --no-name**:  Disables saving the original filename and timestamp in the compressed file. This is often not needed if you're simply compressing a file without specific requirements.
+6. **-N, --name**: This option enables saving the original filename and timestamp, which might be unnecessary in this case.
+7. **-q, --quiet**: Suppresses warning messages. While useful for quiet operation, it's not critical for basic compression.
+8. **-r, --recursive**: Recursively compresses files within directories. This is not required if you're only compressing single files. 
+9. **-S, --suffix=SUF**: Allows customizing the suffix used for compressed files. This is often not necessary if you're fine with the default behavior.
+10. **--rsyncable**: Creates an rsync-friendly archive, which is not necessary for basic compression.
+11. **--synchronous**: Ensures synchronous output for better stability, but it's not essential for basic compression. 
+12. **-t, --test**: Tests the integrity of a compressed file, which is not needed if you're simply compressing files.
+13. **-v, --verbose**: Provides verbose output during compression, which is unnecessary when only seeking successful compression.
+14. **-V, --version**: Displays the gzip version information. This is not crucial for basic compression.
+15. **-1, --fast, -9, --best**: These options control the compression level, which might be undesirable if you want to use the default compression level.
+16. **-c, --stdout**:  Outputs compressed data to standard output. While useful for piping, it's not needed for direct file compression. 
+17. **-k, --keep**:  Keeps input files after compression. While useful for some scenarios, it's not required if you don't need the original files.
+18. **-f, --force**:  Overwrites existing compressed files. This is unnecessary if you're not concerned about overwriting existing files.
 
 These functionalities are not relevant to our use case, which is to compress files without specific flags or options. 
 
