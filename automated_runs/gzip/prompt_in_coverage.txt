@@ -36,23 +36,11 @@ Any other functionality that does not contribute to our required functionalites 
 1. **-d, --decompress**: This option performs decompression, directly contradicting your goal of compressing files.
 2. **-h, --help**: This option displays help information, which is irrelevant when aiming for simple, flagless compression.
 3. **-l, --list**: This option lists the contents of a compressed file, which is not relevant during the compression process itself.
-4. **-L, --license**: Displays software licensing information, not essential for basic compression.
-5. **-n, --no-name**:  Disables saving the original filename and timestamp in the compressed file. This is often not needed if you're simply compressing a file without specific requirements.
-6. **-N, --name**: This option enables saving the original filename and timestamp, which might be unnecessary in this case.
-7. **-q, --quiet**: Suppresses warning messages. While useful for quiet operation, it's not critical for basic compression.
-8. **-r, --recursive**: Recursively compresses files within directories. This is not required if you're only compressing single files. 
-9. **-S, --suffix=SUF**: Allows customizing the suffix used for compressed files. This is often not necessary if you're fine with the default behavior.
-10. **--rsyncable**: Creates an rsync-friendly archive, which is not necessary for basic compression.
-11. **--synchronous**: Ensures synchronous output for better stability, but it's not essential for basic compression. 
-12. **-t, --test**: Tests the integrity of a compressed file, which is not needed if you're simply compressing files.
-13. **-v, --verbose**: Provides verbose output during compression, which is unnecessary when only seeking successful compression.
-14. **-V, --version**: Displays the gzip version information. This is not crucial for basic compression.
-15. **-1, --fast, -9, --best**: These options control the compression level, which might be undesirable if you want to use the default compression level.
-16. **-c, --stdout**:  Outputs compressed data to standard output. While useful for piping, it's not needed for direct file compression. 
-17. **-k, --keep**:  Keeps input files after compression. While useful for some scenarios, it's not required if you don't need the original files.
-18. **-f, --force**:  Overwrites existing compressed files. This is unnecessary if you're not concerned about overwriting existing files.
+3. **-n, --no-name**:  Disables saving the original filename and timestamp in the compressed file. This is often not needed if you're simply compressing a file without specific requirements.
+4. **-N, --name**: This option enables saving the original filename and timestamp, which might be unnecessary in this case. 
+5. Everything other than compression.
 
-These functionalities are not relevant to our use case, which is to compress files without specific flags or options. 
+**IMPORTANT**: If you encounter code that appears to relate to any of the undesired functionalities listed above, immediately classify it as Class 1 (No Functional Contribution) and provide a brief explanation.
 
 This code snippet is a part of the code execution path for the required functionality.
 
@@ -88,7 +76,7 @@ Make sure to evaluate on the basis of the following:
 1. Prevention against the security vulnerabilities mentioned in the security list.
 2. Compression of all kinds of files without any flag.
 3. Retaining the data integrity of the compressed file.
-4. Prevent the program workflow from being disrupted.
+4. Prevent the program workflow from being disrupted by being careful of jump/goto statements.
 
 Make sure to cater to ALL edge cases for the functionalites mentioned. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 

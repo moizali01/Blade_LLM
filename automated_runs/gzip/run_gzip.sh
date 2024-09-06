@@ -37,8 +37,8 @@ mkdir -p llm_response
 mkdir -p fifty_text
 
 cd ..
-# chmod +x clear_cands.sh
-# ./clear_cands.sh
+chmod +x clear_cands.sh
+./clear_cands.sh
 cd $DIR
 # clear
 

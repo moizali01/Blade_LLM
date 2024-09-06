@@ -11,7 +11,11 @@ struct _IO_FILE;
 struct _IO_FILE;
 typedef struct _IO_FILE FILE;
 typedef void _IO_lock_t;
-
+struct _IO_marker {
+  struct _IO_marker *_next;
+  struct _IO_FILE *_sbuf;
+  int _pos;
+};
 struct _IO_FILE {
   int _flags;
   char *_IO_read_ptr;
@@ -130,13 +134,7 @@ struct option {
   int *flag;
   int val;
 };
-struct dirent {
-  __ino_t d_ino;
-  __off_t d_off;
-  unsigned short d_reclen;
-  unsigned char d_type;
-  char d_name[256];
-};
+
 struct __dirstream;
 struct __dirstream;
 typedef struct __dirstream DIR;
@@ -176,118 +174,11 @@ static ush pt_table[256];
 static ush bitbuf;
 static unsigned int subbitbuf;
 static int bitcount;
-static void fillbuf(int n) {
-  unsigned int tmp;
-  int tmp___0;
-  int tmp___1;
 
-  {
-    bitbuf = (ush)((int)bitbuf << n);
-    {
-
-    while_break: /* CIL Label */
-        ;
-    }
-    bitcount -= n;
-    bitbuf = (ush)((unsigned int)bitbuf | (subbitbuf >> bitcount));
-    return;
-  }
-}
-
-static void init_getbits(void) {
-
-  {
-    {
-      bitbuf = (ush)0;
-      subbitbuf = 0U;
-      bitcount = 0;
-      fillbuf((int)(16UL * sizeof(char)));
-    }
-    return;
-  }
-}
-
-static void huf_decode_start(void) {
-
-  {
-    {
-      init_getbits();
-      blocksize = 0U;
-    }
-    return;
-  }
-}
 static int j;
 static int done;
 
 static unsigned int i;
-static unsigned int decode(unsigned int count, uch *buffer) {
-  unsigned int r;
-  unsigned int c;
-  unsigned int tmp;
-
-  {
-    r = 0U;
-    {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        j--;
-
-        *(buffer + r) = *(buffer + i);
-        i = (i + 1U) & ((1U << 13) - 1U);
-        r++;
-        if (r == count) {
-          return (r);
-        }
-      }
-    while_break: /* CIL Label */
-        ;
-    }
-    {
-      while (1) {
-      while_continue___0: /* CIL Label */
-          ;
-        { c = decode_c(); }
-        if (c == 510U) {
-          done = 1;
-          return (r);
-        }
-        if (c <= 255U) {
-          *(buffer + r) = (uch)c;
-          r++;
-          if (r == count) {
-            return (r);
-          }
-        } else {
-          {
-            j = (int)(c - 253U);
-            tmp = decode_p();
-            i = ((r - tmp) - 1U) & ((1U << 13) - 1U);
-          }
-          {
-            while (1) {
-            while_continue___1: /* CIL Label */
-                ;
-              j--;
-
-              *(buffer + r) = *(buffer + i);
-              i = (i + 1U) & ((1U << 13) - 1U);
-              r++;
-              if (r == count) {
-                return (r);
-              }
-            }
-          while_break___1: /* CIL Label */
-              ;
-          }
-        }
-      }
-    while_break___0: /* CIL Label */
-        ;
-    }
-  }
-}
 
 unsigned int outcnt;
 long bytes_out;
@@ -329,18 +220,7 @@ static void read_tree(void) {
     n = 1;
     {
 
-    while_break: /* CIL Label */
-        ;
-    }
-    if (inptr < insize) {
-      tmp___2 = inptr;
-      inptr++;
-      tmp___4 = (int)inbuf[tmp___2];
-    } else {
-      {
-        tmp___3 = fill_inbuf(0);
-        tmp___4 = tmp___3;
-      }
+    while_break: /* CIL Label */;
     }
     max_len = tmp___4;
     if (max_len > 25) {
@@ -352,9 +232,10 @@ static void read_tree(void) {
     len = 1;
     {
       while (1) {
-      while_continue___0: /* CIL Label */
-          ;
-
+      while_continue___0: /* CIL Label */;
+        if (!(len <= max_len)) {
+          goto while_break___0;
+        }
         if (inptr < insize) {
           tmp___5 = inptr;
           inptr++;
@@ -369,8 +250,7 @@ static void read_tree(void) {
         n += leaves[len];
         len++;
       }
-    while_break___0: /* CIL Label */
-        ;
+    while_break___0: /* CIL Label */;
     }
     if (n > 256) {
       {
@@ -382,22 +262,38 @@ static void read_tree(void) {
     len = 1;
     {
       while (1) {
-      while_continue___1: /* CIL Label */
-          ;
+      while_continue___1: /* CIL Label */;
         if (!(len <= max_len)) {
           goto while_break___1;
         }
         lit_base[len] = base;
         n = leaves[len];
         {
-
-        while_break___2: /* CIL Label */
-            ;
+          while (1) {
+          while_continue___2: /* CIL Label */;
+            if (!(n > 0)) {
+              goto while_break___2;
+            }
+            tmp___8 = base;
+            base++;
+            if (inptr < insize) {
+              tmp___9 = inptr;
+              inptr++;
+              tmp___11 = (int)inbuf[tmp___9];
+            } else {
+              {
+                tmp___10 = fill_inbuf(0);
+                tmp___11 = tmp___10;
+              }
+            }
+            literal[tmp___8] = (uch)tmp___11;
+            n--;
+          }
+        while_break___2: /* CIL Label */;
         }
         len++;
       }
-    while_break___1: /* CIL Label */
-        ;
+    while_break___1: /* CIL Label */;
     }
     (leaves[max_len])++;
     return;
@@ -414,9 +310,18 @@ static void build_tree(void) {
     nodes = 0;
     len = max_len;
     {
-
-    while_break: /* CIL Label */
-        ;
+      while (1) {
+      while_continue: /* CIL Label */;
+        if (!(len >= 1)) {
+          goto while_break;
+        }
+        nodes >>= 1;
+        parents[len] = nodes;
+        lit_base[len] -= nodes;
+        nodes += leaves[len];
+        len--;
+      }
+    while_break: /* CIL Label */;
     }
     if (max_len <= 12) {
       peek_bits = max_len;
@@ -426,28 +331,111 @@ static void build_tree(void) {
     prefixp = &outbuf[1 << peek_bits];
     len = 1;
     {
-
-    while_break___0: /* CIL Label */
-        ;
+      while (1) {
+      while_continue___0: /* CIL Label */;
+        if (!(len <= peek_bits)) {
+          goto while_break___0;
+        }
+        prefixes = leaves[len] << (peek_bits - len);
+        {
+          while (1) {
+          while_continue___1: /* CIL Label */;
+            tmp = prefixes;
+            prefixes--;
+            if (!tmp) {
+              goto while_break___1;
+            }
+            prefixp--;
+            *prefixp = (uch)len;
+          }
+        while_break___1: /* CIL Label */;
+        }
+        len++;
+      }
+    while_break___0: /* CIL Label */;
     }
     {
 
-    while_break___2: /* CIL Label */
-        ;
+    while_break___2: /* CIL Label */;
     }
     return;
   }
 }
+int unpack(int in, int out) {
+  int len;
+  unsigned int eob;
+  register unsigned int peek;
+  unsigned int peek_mask;
+  unsigned int tmp;
+  int tmp___0;
+  int tmp___1;
+  ulg mask;
+  unsigned int tmp___2;
+  int tmp___3;
+  int tmp___4;
+  unsigned int tmp___5;
+  char *__cil_tmp15;
 
+  {
+    {
+      ifd = in;
+      ofd = out;
+      read_tree();
+      build_tree();
+      valid = 0;
+      bitbuf___0 = (ulg)0;
+      peek_mask = (unsigned int)((1 << peek_bits) - 1);
+      eob = (unsigned int)(leaves[max_len] - 1);
+    }
+    {
+      while (1) {
+      while_continue: /* CIL Label */;
+        {
+          while (1) {
+          while_continue___0: /* CIL Label */;
+            if (!(valid < peek_bits)) {
+              goto while_break___0;
+            }
+
+            bitbuf___0 = (bitbuf___0 << 8) | (ulg)tmp___1;
+            valid += 8;
+          }
+        while_break___0: /* CIL Label */;
+        }
+        peek = (unsigned int)((bitbuf___0 >> (valid - peek_bits)) & (unsigned long)peek_mask);
+        len = (int)outbuf[peek];
+
+        if (peek == eob) {
+          if (len == max_len) {
+            goto while_break;
+          }
+        }
+        tmp___5 = outcnt;
+        outcnt++;
+        window[tmp___5] = literal[peek + (unsigned int)lit_base[len]];
+        if (outcnt == 32768U) {
+          {
+            flush_window();
+          }
+        }
+        valid -= len;
+      }
+    while_break: /* CIL Label */;
+    }
+    { flush_window(); }
+    if (orig_len != (ulg)bytes_out) {
+      {
+        error((char *)"invalid compressed data--length error");
+      }
+    }
+    return (0);
+  }
+}
 extern ssize_t read(int __fd, void *__buf, size_t __nbytes);
 extern struct _IO_FILE *stderr;
-extern int fprintf(FILE *__restrict __stream, char const *__restrict __format,
-                   ...);
-extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1, 2),
-                                                          __leaf__)) memcpy)(
-    void *__restrict __dest, void const *__restrict __src, size_t __n);
-extern __attribute__((__nothrow__)) void *(__attribute__((
-    __nonnull__(1), __leaf__)) memset)(void *__s, int __c, size_t __n);
+extern int fprintf(FILE *__restrict __stream, char const *__restrict __format, ...);
+extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1, 2), __leaf__)) memcpy)(void *__restrict __dest, void const *__restrict __src, size_t __n);
+extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1), __leaf__)) memset)(void *__s, int __c, size_t __n);
 long bytes_in;
 char ifname[1024];
 char *progname;
@@ -463,38 +451,20 @@ int block_mode = 128;
 int lzw(int in, int out);
 static int msg_done = 0;
 
-extern __attribute__((__nothrow__)) unsigned short const **(
-    __attribute__((__leaf__)) __ctype_b_loc)(void)__attribute__((__const__));
-extern __attribute__((__nothrow__)) int *(
-    __attribute__((__leaf__)) __errno_location)(void)__attribute__((__const__));
+extern __attribute__((__nothrow__)) unsigned short const **(__attribute__((__leaf__)) __ctype_b_loc)(void)__attribute__((__const__));
+extern __attribute__((__nothrow__)) int *(__attribute__((__leaf__)) __errno_location)(void)__attribute__((__const__));
 extern ssize_t write(int __fd, void const *__buf, size_t __n);
-extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) malloc)(
-    size_t __size) __attribute__((__malloc__));
-extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) calloc)(
-    size_t __nmemb, size_t __size) __attribute__((__malloc__));
-extern __attribute__((__nothrow__)) void(__attribute__((__leaf__)) free)(
-    void *__ptr);
-extern __attribute__((__nothrow__)) char *(
-    __attribute__((__nonnull__(1), __leaf__)) getenv)(char const *__name);
+extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) malloc)(size_t __size) __attribute__((__malloc__));
+extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) calloc)(size_t __nmemb, size_t __size) __attribute__((__malloc__));
+extern __attribute__((__nothrow__)) void(__attribute__((__leaf__)) free)(void *__ptr);
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1), __leaf__)) getenv)(char const *__name);
 extern int _IO_putc(int __c, _IO_FILE *__fp);
 extern void perror(char const *__s);
-extern __attribute__((__nothrow__)) char *(__attribute__((
-    __nonnull__(1, 2), __leaf__)) strcpy)(char *__restrict __dest,
-                                          char const *__restrict __src);
-extern __attribute__((__nothrow__)) char *(
-    __attribute__((__nonnull__(1), __leaf__)) strrchr)(char const *__s, int __c)
-    __attribute__((__pure__));
-extern __attribute__((__nothrow__))
-size_t(__attribute__((__nonnull__(1, 2),
-                      __leaf__)) strcspn)(char const *__s, char const *__reject)
-    __attribute__((__pure__));
-extern __attribute__((__nothrow__))
-size_t(__attribute__((__nonnull__(1, 2),
-                      __leaf__)) strspn)(char const *__s, char const *__accept)
-    __attribute__((__pure__));
-extern __attribute__((__nothrow__))
-size_t(__attribute__((__nonnull__(1), __leaf__)) strlen)(char const *__s)
-    __attribute__((__pure__));
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1, 2), __leaf__)) strcpy)(char *__restrict __dest, char const *__restrict __src);
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1), __leaf__)) strrchr)(char const *__s, int __c) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) size_t(__attribute__((__nonnull__(1, 2), __leaf__)) strcspn)(char const *__s, char const *__reject) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) size_t(__attribute__((__nonnull__(1, 2), __leaf__)) strspn)(char const *__s, char const *__accept) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) size_t(__attribute__((__nonnull__(1), __leaf__)) strlen)(char const *__s) __attribute__((__pure__));
 char ofname[1024];
 void abort_gzip(void);
 int copy(int in, int out);
@@ -522,8 +492,7 @@ ulg updcrc(uch *s, unsigned int n) {
       if (n) {
         {
           while (1) {
-          while_continue: /* CIL Label */
-              ;
+          while_continue: /* CIL Label */;
             tmp = s;
             s++;
             c = crc_32_tab[((int)c ^ (int)*tmp) & 255] ^ (c >> 8);
@@ -532,8 +501,7 @@ ulg updcrc(uch *s, unsigned int n) {
               goto while_break;
             }
           }
-        while_break: /* CIL Label */
-            ;
+        while_break: /* CIL Label */;
         }
       }
     }
@@ -563,15 +531,28 @@ int fill_inbuf(int eof_ok) {
       *tmp = 0;
     }
     {
-
-    while_break: /* CIL Label */
-        ;
+      while (1) {
+      while_continue: /* CIL Label */;
+        { len = (int)read(ifd, (void *)((char *)(inbuf) + insize), (size_t)(32768U - insize)); }
+        if (len == 0) {
+          goto while_break;
+        } else {
+          if (len == -1) {
+            goto while_break;
+          }
+        }
+        insize += (unsigned int)len;
+        if (!(insize < 32768U)) {
+          goto while_break;
+        }
+      }
+    while_break: /* CIL Label */;
     }
     if (insize == 0U) {
-      if (eof_ok) {
-        return (-1);
+
+      {
+        read_error();
       }
-      { read_error(); }
     }
     bytes_in = (long)((ulg)bytes_in + (ulg)insize);
     inptr = 1U;
@@ -615,8 +596,7 @@ void write_buf(int fd, voidp buf, unsigned int cnt) {
   {
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+      while_continue: /* CIL Label */;
         { n = (unsigned int)write(fd, (void const *)buf, (size_t)cnt); }
         if (!(n != cnt)) {
           goto while_break;
@@ -629,8 +609,7 @@ void write_buf(int fd, voidp buf, unsigned int cnt) {
         cnt -= n;
         buf = (voidp)((char *)buf + n);
       }
-    while_break: /* CIL Label */
-        ;
+    while_break: /* CIL Label */;
     }
     return;
   }
@@ -643,8 +622,7 @@ char *strlwr(char *s) {
     t = s;
     {
 
-    while_break: /* CIL Label */
-        ;
+    while_break: /* CIL Label */;
     }
     return (s);
   }
@@ -686,14 +664,12 @@ char *add_envopt(int *argcp, char ***argvp, char *env___0) {
     {
       tmp___0 = strlen((char const *)env___0);
       p = (char *)xmalloc((unsigned int)(tmp___0 + 1UL));
-      env___0 = strcpy((char * /* __restrict  */)p,
-                       (char const * /* __restrict  */)env___0);
+      env___0 = strcpy((char * /* __restrict  */)p, (char const * /* __restrict  */)env___0);
       p = env___0;
     }
     {
 
-    while_break: /* CIL Label */
-        ;
+    while_break: /* CIL Label */;
     }
     if (nargc == 0) {
       {
@@ -705,16 +681,16 @@ char *add_envopt(int *argcp, char ***argvp, char *env___0) {
       *argcp += nargc;
       nargv = (char **)calloc((size_t)(*argcp + 1), sizeof(char *));
     }
-
+    if ((unsigned long)nargv == (unsigned long)((void *)0)) {
+      {
+        error((char *)"out of memory");
+      }
+    }
     oargv = *argvp;
     *argvp = nargv;
     tmp___6 = oargc;
     oargc--;
-    if (tmp___6 < 0) {
-      {
-        error((char *)"argc<=0");
-      }
-    }
+
     tmp___7 = nargv;
     nargv++;
     tmp___8 = oargv;
@@ -723,9 +699,10 @@ char *add_envopt(int *argcp, char ***argvp, char *env___0) {
     p = env___0;
     {
       while (1) {
-      while_continue___0: /* CIL Label */
-          ;
-
+      while_continue___0: /* CIL Label */;
+        if (!(nargc > 0)) {
+          goto while_break___0;
+        }
         {
           tmp___9 = strspn((char const *)p, " \t");
           p += tmp___9;
@@ -735,50 +712,34 @@ char *add_envopt(int *argcp, char ***argvp, char *env___0) {
         }
         {
           while (1) {
-          while_continue___1: /* CIL Label */
-              ;
+          while_continue___1: /* CIL Label */;
             tmp___11 = p;
             p++;
             if (!*tmp___11) {
               goto while_break___1;
             }
           }
-        while_break___1: /* CIL Label */
-            ;
+        while_break___1: /* CIL Label */;
         }
         nargc--;
       }
-    while_break___0: /* CIL Label */
-        ;
+    while_break___0: /* CIL Label */;
     }
     {
 
-    while_break___2: /* CIL Label */
-        ;
+    while_break___2: /* CIL Label */;
     }
     *nargv = (char *)((void *)0);
     return (env___0);
   }
 }
-void error(char *m) {
 
-  {
-    {
-      fprintf((FILE * /* __restrict  */)stderr,
-              (char const * /* __restrict  */) "\n%s: %s: %s\n", progname,
-              ifname, m);
-      abort_gzip();
-    }
-    return;
-  }
-}
 void read_error(void) {
   int *tmp;
 
   {
     {
-      fprintf((FILE * /* __restrict  */)stderr,
-              (char const * /* __restrict  */) "\n%s: ", progname);
+      fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "\n%s: ", progname);
       tmp = __errno_location();
     }
     if (*tmp != 0) {
@@ -786,11 +747,7 @@ void read_error(void) {
         perror((char const *)(ifname));
       }
     } else {
-      {
-        fprintf((FILE * /* __restrict  */)stderr,
-                (char const * /* __restrict  */) "%s: unexpected end of file\n",
-                ifname);
-      }
+      { fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%s: unexpected end of file\n", ifname); }
     }
     { abort_gzip(); }
     return;
@@ -800,43 +757,14 @@ void write_error(void) {
 
   {
     {
-      fprintf((FILE * /* __restrict  */)stderr,
-              (char const * /* __restrict  */) "\n%s: ", progname);
+      fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "\n%s: ", progname);
       perror((char const *)(ofname));
       abort_gzip();
     }
     return;
   }
 }
-void display_ratio(long num, long den, FILE *file) {
-  long ratio;
 
-  {
-    if (den == 0L) {
-      ratio = 0L;
-    } else {
-      if (den < 2147483L) {
-        ratio = (1000L * num) / den;
-      } else {
-        ratio = num / (den / 1000L);
-      }
-    }
-    if (ratio < 0L) {
-      {
-        _IO_putc('-', file);
-        ratio = -ratio;
-      }
-    } else {
-      { _IO_putc(' ', file); }
-    }
-    {
-      fprintf((FILE * /* __restrict  */)file,
-              (char const * /* __restrict  */) "%2ld.%1ld%%", ratio / 10L,
-              ratio % 10L);
-    }
-    return;
-  }
-}
 voidp xmalloc(unsigned int size) {
   voidp cp;
   voidp tmp;
@@ -856,135 +784,43 @@ voidp xmalloc(unsigned int size) {
   }
 }
 ulg crc_32_tab[256] = {
-    (ulg)0L,          (ulg)1996959894L, (ulg)3993919788L, (ulg)2567524794L,
-    (ulg)124634137L,  (ulg)1886057615L, (ulg)3915621685L, (ulg)2657392035L,
-    (ulg)249268274L,  (ulg)2044508324L, (ulg)3772115230L, (ulg)2547177864L,
-    (ulg)162941995L,  (ulg)2125561021L, (ulg)3887607047L, (ulg)2428444049L,
-    (ulg)498536548L,  (ulg)1789927666L, (ulg)4089016648L, (ulg)2227061214L,
-    (ulg)450548861L,  (ulg)1843258603L, (ulg)4107580753L, (ulg)2211677639L,
-    (ulg)325883990L,  (ulg)1684777152L, (ulg)4251122042L, (ulg)2321926636L,
-    (ulg)335633487L,  (ulg)1661365465L, (ulg)4195302755L, (ulg)2366115317L,
-    (ulg)997073096L,  (ulg)1281953886L, (ulg)3579855332L, (ulg)2724688242L,
-    (ulg)1006888145L, (ulg)1258607687L, (ulg)3524101629L, (ulg)2768942443L,
-    (ulg)901097722L,  (ulg)1119000684L, (ulg)3686517206L, (ulg)2898065728L,
-    (ulg)853044451L,  (ulg)1172266101L, (ulg)3705015759L, (ulg)2882616665L,
-    (ulg)651767980L,  (ulg)1373503546L, (ulg)3369554304L, (ulg)3218104598L,
-    (ulg)565507253L,  (ulg)1454621731L, (ulg)3485111705L, (ulg)3099436303L,
-    (ulg)671266974L,  (ulg)1594198024L, (ulg)3322730930L, (ulg)2970347812L,
-    (ulg)795835527L,  (ulg)1483230225L, (ulg)3244367275L, (ulg)3060149565L,
-    (ulg)1994146192L, (ulg)31158534L,   (ulg)2563907772L, (ulg)4023717930L,
-    (ulg)1907459465L, (ulg)112637215L,  (ulg)2680153253L, (ulg)3904427059L,
-    (ulg)2013776290L, (ulg)251722036L,  (ulg)2517215374L, (ulg)3775830040L,
-    (ulg)2137656763L, (ulg)141376813L,  (ulg)2439277719L, (ulg)3865271297L,
-    (ulg)1802195444L, (ulg)476864866L,  (ulg)2238001368L, (ulg)4066508878L,
-    (ulg)1812370925L, (ulg)453092731L,  (ulg)2181625025L, (ulg)4111451223L,
-    (ulg)1706088902L, (ulg)314042704L,  (ulg)2344532202L, (ulg)4240017532L,
-    (ulg)1658658271L, (ulg)366619977L,  (ulg)2362670323L, (ulg)4224994405L,
-    (ulg)1303535960L, (ulg)984961486L,  (ulg)2747007092L, (ulg)3569037538L,
-    (ulg)1256170817L, (ulg)1037604311L, (ulg)2765210733L, (ulg)3554079995L,
-    (ulg)1131014506L, (ulg)879679996L,  (ulg)2909243462L, (ulg)3663771856L,
-    (ulg)1141124467L, (ulg)855842277L,  (ulg)2852801631L, (ulg)3708648649L,
-    (ulg)1342533948L, (ulg)654459306L,  (ulg)3188396048L, (ulg)3373015174L,
-    (ulg)1466479909L, (ulg)544179635L,  (ulg)3110523913L, (ulg)3462522015L,
-    (ulg)1591671054L, (ulg)702138776L,  (ulg)2966460450L, (ulg)3352799412L,
-    (ulg)1504918807L, (ulg)783551873L,  (ulg)3082640443L, (ulg)3233442989L,
-    (ulg)3988292384L, (ulg)2596254646L, (ulg)62317068L,   (ulg)1957810842L,
-    (ulg)3939845945L, (ulg)2647816111L, (ulg)81470997L,   (ulg)1943803523L,
-    (ulg)3814918930L, (ulg)2489596804L, (ulg)225274430L,  (ulg)2053790376L,
-    (ulg)3826175755L, (ulg)2466906013L, (ulg)167816743L,  (ulg)2097651377L,
-    (ulg)4027552580L, (ulg)2265490386L, (ulg)503444072L,  (ulg)1762050814L,
-    (ulg)4150417245L, (ulg)2154129355L, (ulg)426522225L,  (ulg)1852507879L,
-    (ulg)4275313526L, (ulg)2312317920L, (ulg)282753626L,  (ulg)1742555852L,
-    (ulg)4189708143L, (ulg)2394877945L, (ulg)397917763L,  (ulg)1622183637L,
-    (ulg)3604390888L, (ulg)2714866558L, (ulg)953729732L,  (ulg)1340076626L,
-    (ulg)3518719985L, (ulg)2797360999L, (ulg)1068828381L, (ulg)1219638859L,
-    (ulg)3624741850L, (ulg)2936675148L, (ulg)906185462L,  (ulg)1090812512L,
-    (ulg)3747672003L, (ulg)2825379669L, (ulg)829329135L,  (ulg)1181335161L,
-    (ulg)3412177804L, (ulg)3160834842L, (ulg)628085408L,  (ulg)1382605366L,
-    (ulg)3423369109L, (ulg)3138078467L, (ulg)570562233L,  (ulg)1426400815L,
-    (ulg)3317316542L, (ulg)2998733608L, (ulg)733239954L,  (ulg)1555261956L,
-    (ulg)3268935591L, (ulg)3050360625L, (ulg)752459403L,  (ulg)1541320221L,
-    (ulg)2607071920L, (ulg)3965973030L, (ulg)1969922972L, (ulg)40735498L,
-    (ulg)2617837225L, (ulg)3943577151L, (ulg)1913087877L, (ulg)83908371L,
-    (ulg)2512341634L, (ulg)3803740692L, (ulg)2075208622L, (ulg)213261112L,
-    (ulg)2463272603L, (ulg)3855990285L, (ulg)2094854071L, (ulg)198958881L,
-    (ulg)2262029012L, (ulg)4057260610L, (ulg)1759359992L, (ulg)534414190L,
-    (ulg)2176718541L, (ulg)4139329115L, (ulg)1873836001L, (ulg)414664567L,
-    (ulg)2282248934L, (ulg)4279200368L, (ulg)1711684554L, (ulg)285281116L,
-    (ulg)2405801727L, (ulg)4167216745L, (ulg)1634467795L, (ulg)376229701L,
-    (ulg)2685067896L, (ulg)3608007406L, (ulg)1308918612L, (ulg)956543938L,
-    (ulg)2808555105L, (ulg)3495958263L, (ulg)1231636301L, (ulg)1047427035L,
-    (ulg)2932959818L, (ulg)3654703836L, (ulg)1088359270L, (ulg)936918000L,
-    (ulg)2847714899L, (ulg)3736837829L, (ulg)1202900863L, (ulg)817233897L,
-    (ulg)3183342108L, (ulg)3401237130L, (ulg)1404277552L, (ulg)615818150L,
-    (ulg)3134207493L, (ulg)3453421203L, (ulg)1423857449L, (ulg)601450431L,
-    (ulg)3009837614L, (ulg)3294710456L, (ulg)1567103746L, (ulg)711928724L,
-    (ulg)3020668471L, (ulg)3272380065L, (ulg)1510334235L, (ulg)755167117L};
+    (ulg)0L,          (ulg)1996959894L, (ulg)3993919788L, (ulg)2567524794L, (ulg)124634137L,  (ulg)1886057615L, (ulg)3915621685L, (ulg)2657392035L, (ulg)249268274L,  (ulg)2044508324L, (ulg)3772115230L, (ulg)2547177864L, (ulg)162941995L,  (ulg)2125561021L, (ulg)3887607047L, (ulg)2428444049L,
+    (ulg)498536548L,  (ulg)1789927666L, (ulg)4089016648L, (ulg)2227061214L, (ulg)450548861L,  (ulg)1843258603L, (ulg)4107580753L, (ulg)2211677639L, (ulg)325883990L,  (ulg)1684777152L, (ulg)4251122042L, (ulg)2321926636L, (ulg)335633487L,  (ulg)1661365465L, (ulg)4195302755L, (ulg)2366115317L,
+    (ulg)997073096L,  (ulg)1281953886L, (ulg)3579855332L, (ulg)2724688242L, (ulg)1006888145L, (ulg)1258607687L, (ulg)3524101629L, (ulg)2768942443L, (ulg)901097722L,  (ulg)1119000684L, (ulg)3686517206L, (ulg)2898065728L, (ulg)853044451L,  (ulg)1172266101L, (ulg)3705015759L, (ulg)2882616665L,
+    (ulg)651767980L,  (ulg)1373503546L, (ulg)3369554304L, (ulg)3218104598L, (ulg)565507253L,  (ulg)1454621731L, (ulg)3485111705L, (ulg)3099436303L, (ulg)671266974L,  (ulg)1594198024L, (ulg)3322730930L, (ulg)2970347812L, (ulg)795835527L,  (ulg)1483230225L, (ulg)3244367275L, (ulg)3060149565L,
+    (ulg)1994146192L, (ulg)31158534L,   (ulg)2563907772L, (ulg)4023717930L, (ulg)1907459465L, (ulg)112637215L,  (ulg)2680153253L, (ulg)3904427059L, (ulg)2013776290L, (ulg)251722036L,  (ulg)2517215374L, (ulg)3775830040L, (ulg)2137656763L, (ulg)141376813L,  (ulg)2439277719L, (ulg)3865271297L,
+    (ulg)1802195444L, (ulg)476864866L,  (ulg)2238001368L, (ulg)4066508878L, (ulg)1812370925L, (ulg)453092731L,  (ulg)2181625025L, (ulg)4111451223L, (ulg)1706088902L, (ulg)314042704L,  (ulg)2344532202L, (ulg)4240017532L, (ulg)1658658271L, (ulg)366619977L,  (ulg)2362670323L, (ulg)4224994405L,
+    (ulg)1303535960L, (ulg)984961486L,  (ulg)2747007092L, (ulg)3569037538L, (ulg)1256170817L, (ulg)1037604311L, (ulg)2765210733L, (ulg)3554079995L, (ulg)1131014506L, (ulg)879679996L,  (ulg)2909243462L, (ulg)3663771856L, (ulg)1141124467L, (ulg)855842277L,  (ulg)2852801631L, (ulg)3708648649L,
+    (ulg)1342533948L, (ulg)654459306L,  (ulg)3188396048L, (ulg)3373015174L, (ulg)1466479909L, (ulg)544179635L,  (ulg)3110523913L, (ulg)3462522015L, (ulg)1591671054L, (ulg)702138776L,  (ulg)2966460450L, (ulg)3352799412L, (ulg)1504918807L, (ulg)783551873L,  (ulg)3082640443L, (ulg)3233442989L,
+    (ulg)3988292384L, (ulg)2596254646L, (ulg)62317068L,   (ulg)1957810842L, (ulg)3939845945L, (ulg)2647816111L, (ulg)81470997L,   (ulg)1943803523L, (ulg)3814918930L, (ulg)2489596804L, (ulg)225274430L,  (ulg)2053790376L, (ulg)3826175755L, (ulg)2466906013L, (ulg)167816743L,  (ulg)2097651377L,
+    (ulg)4027552580L, (ulg)2265490386L, (ulg)503444072L,  (ulg)1762050814L, (ulg)4150417245L, (ulg)2154129355L, (ulg)426522225L,  (ulg)1852507879L, (ulg)4275313526L, (ulg)2312317920L, (ulg)282753626L,  (ulg)1742555852L, (ulg)4189708143L, (ulg)2394877945L, (ulg)397917763L,  (ulg)1622183637L,
+    (ulg)3604390888L, (ulg)2714866558L, (ulg)953729732L,  (ulg)1340076626L, (ulg)3518719985L, (ulg)2797360999L, (ulg)1068828381L, (ulg)1219638859L, (ulg)3624741850L, (ulg)2936675148L, (ulg)906185462L,  (ulg)1090812512L, (ulg)3747672003L, (ulg)2825379669L, (ulg)829329135L,  (ulg)1181335161L,
+    (ulg)3412177804L, (ulg)3160834842L, (ulg)628085408L,  (ulg)1382605366L, (ulg)3423369109L, (ulg)3138078467L, (ulg)570562233L,  (ulg)1426400815L, (ulg)3317316542L, (ulg)2998733608L, (ulg)733239954L,  (ulg)1555261956L, (ulg)3268935591L, (ulg)3050360625L, (ulg)752459403L,  (ulg)1541320221L,
+    (ulg)2607071920L, (ulg)3965973030L, (ulg)1969922972L, (ulg)40735498L,   (ulg)2617837225L, (ulg)3943577151L, (ulg)1913087877L, (ulg)83908371L,   (ulg)2512341634L, (ulg)3803740692L, (ulg)2075208622L, (ulg)213261112L,  (ulg)2463272603L, (ulg)3855990285L, (ulg)2094854071L, (ulg)198958881L,
+    (ulg)2262029012L, (ulg)4057260610L, (ulg)1759359992L, (ulg)534414190L,  (ulg)2176718541L, (ulg)4139329115L, (ulg)1873836001L, (ulg)414664567L,  (ulg)2282248934L, (ulg)4279200368L, (ulg)1711684554L, (ulg)285281116L,  (ulg)2405801727L, (ulg)4167216745L, (ulg)1634467795L, (ulg)376229701L,
+    (ulg)2685067896L, (ulg)3608007406L, (ulg)1308918612L, (ulg)956543938L,  (ulg)2808555105L, (ulg)3495958263L, (ulg)1231636301L, (ulg)1047427035L, (ulg)2932959818L, (ulg)3654703836L, (ulg)1088359270L, (ulg)936918000L,  (ulg)2847714899L, (ulg)3736837829L, (ulg)1202900863L, (ulg)817233897L,
+    (ulg)3183342108L, (ulg)3401237130L, (ulg)1404277552L, (ulg)615818150L,  (ulg)3134207493L, (ulg)3453421203L, (ulg)1423857449L, (ulg)601450431L,  (ulg)3009837614L, (ulg)3294710456L, (ulg)1567103746L, (ulg)711928724L,  (ulg)3020668471L, (ulg)3272380065L, (ulg)1510334235L, (ulg)755167117L};
 int inflate(void);
-int huft_build(unsigned int *b, unsigned int n, unsigned int s, ush *d, ush *e,
-               struct huft **t, int *m);
+int huft_build(unsigned int *b, unsigned int n, unsigned int s, ush *d, ush *e, struct huft **t, int *m);
 int huft_free(struct huft *t);
 int inflate_codes(struct huft *tl, struct huft *td, int bl, int bd);
 int inflate_stored(void);
 int inflate_fixed(void);
 int inflate_dynamic(void);
 int inflate_block(int *e);
-static unsigned int border[19] = {16U, 17U, 18U, 0U, 8U,  7U, 9U,  6U, 10U, 5U,
-                                  11U, 4U,  12U, 3U, 13U, 2U, 14U, 1U, 15U};
-
-static ush cplext[31] = {
-    (ush)0, (ush)0, (ush)0, (ush)0, (ush)0, (ush)0,  (ush)0, (ush)0,
-    (ush)1, (ush)1, (ush)1, (ush)1, (ush)2, (ush)2,  (ush)2, (ush)2,
-    (ush)3, (ush)3, (ush)3, (ush)3, (ush)4, (ush)4,  (ush)4, (ush)4,
-    (ush)5, (ush)5, (ush)5, (ush)5, (ush)0, (ush)99, (ush)99};
-static ush cpdist[30] = {
-    (ush)1,    (ush)2,    (ush)3,    (ush)4,     (ush)5,     (ush)7,
-    (ush)9,    (ush)13,   (ush)17,   (ush)25,    (ush)33,    (ush)49,
-    (ush)65,   (ush)97,   (ush)129,  (ush)193,   (ush)257,   (ush)385,
-    (ush)513,  (ush)769,  (ush)1025, (ush)1537,  (ush)2049,  (ush)3073,
-    (ush)4097, (ush)6145, (ush)8193, (ush)12289, (ush)16385, (ush)24577};
-static ush cpdext[30] = {(ush)0,  (ush)0,  (ush)0,  (ush)0,  (ush)1,  (ush)1,
-                         (ush)2,  (ush)2,  (ush)3,  (ush)3,  (ush)4,  (ush)4,
-                         (ush)5,  (ush)5,  (ush)6,  (ush)6,  (ush)7,  (ush)7,
-                         (ush)8,  (ush)8,  (ush)9,  (ush)9,  (ush)10, (ush)10,
-                         (ush)11, (ush)11, (ush)12, (ush)12, (ush)13, (ush)13};
+static unsigned int border[19] = {16U, 17U, 18U, 0U, 8U, 7U, 9U, 6U, 10U, 5U, 11U, 4U, 12U, 3U, 13U, 2U, 14U, 1U, 15U};
+static ush cplens[31] = {(ush)3,  (ush)4,  (ush)5,  (ush)6,  (ush)7,  (ush)8,  (ush)9,  (ush)10,  (ush)11,  (ush)13,  (ush)15,  (ush)17,  (ush)19,  (ush)23, (ush)27, (ush)31,
+                         (ush)35, (ush)43, (ush)51, (ush)59, (ush)67, (ush)83, (ush)99, (ush)115, (ush)131, (ush)163, (ush)195, (ush)227, (ush)258, (ush)0,  (ush)0};
+static ush cplext[31] = {(ush)0, (ush)0, (ush)0, (ush)0, (ush)0, (ush)0, (ush)0, (ush)0, (ush)1, (ush)1, (ush)1, (ush)1, (ush)2, (ush)2, (ush)2, (ush)2, (ush)3, (ush)3, (ush)3, (ush)3, (ush)4, (ush)4, (ush)4, (ush)4, (ush)5, (ush)5, (ush)5, (ush)5, (ush)0, (ush)99, (ush)99};
+static ush cpdist[30] = {(ush)1,   (ush)2,   (ush)3,   (ush)4,   (ush)5,   (ush)7,    (ush)9,    (ush)13,   (ush)17,   (ush)25,   (ush)33,   (ush)49,   (ush)65,    (ush)97,    (ush)129,
+                         (ush)193, (ush)257, (ush)385, (ush)513, (ush)769, (ush)1025, (ush)1537, (ush)2049, (ush)3073, (ush)4097, (ush)6145, (ush)8193, (ush)12289, (ush)16385, (ush)24577};
+static ush cpdext[30] = {(ush)0, (ush)0, (ush)0, (ush)0, (ush)1, (ush)1, (ush)2, (ush)2, (ush)3, (ush)3, (ush)4, (ush)4, (ush)5, (ush)5, (ush)6, (ush)6, (ush)7, (ush)7, (ush)8, (ush)8, (ush)9, (ush)9, (ush)10, (ush)10, (ush)11, (ush)11, (ush)12, (ush)12, (ush)13, (ush)13};
 ulg bb;
 unsigned int bk;
-ush mask_bits[17] = {(ush)0,     (ush)1,    (ush)3,    (ush)7,    (ush)15,
-                     (ush)31,    (ush)63,   (ush)127,  (ush)255,  (ush)511,
-                     (ush)1023,  (ush)2047, (ush)4095, (ush)8191, (ush)16383,
-                     (ush)32767, (ush)65535};
+ush mask_bits[17] = {(ush)0, (ush)1, (ush)3, (ush)7, (ush)15, (ush)31, (ush)63, (ush)127, (ush)255, (ush)511, (ush)1023, (ush)2047, (ush)4095, (ush)8191, (ush)16383, (ush)32767, (ush)65535};
 int lbits = 9;
 int dbits = 6;
 unsigned int hufts;
-
-int huft_free(struct huft *t) {
-  register struct huft *p;
-  register struct huft *q;
-
-  {
-    p = t;
-    {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        if (!((unsigned long)p !=
-              (unsigned long)((struct huft *)((void *)0)))) {
-          goto while_break;
-        }
-        {
-          p--;
-          q = p->v.t;
-          free((void *)((char *)p));
-          p = q;
-        }
-      }
-    while_break: /* CIL Label */
-        ;
-    }
-    return (0);
-  }
-}
 
 int inflate(void) {
   int e;
@@ -998,13 +834,11 @@ int inflate(void) {
     h = 0U;
     {
 
-    while_break: /* CIL Label */
-        ;
+    while_break: /* CIL Label */;
     }
     {
 
-    while_break___0: /* CIL Label */
-        ;
+    while_break___0: /* CIL Label */;
     }
     {
       outcnt = outcnt;
@@ -1021,6 +855,108 @@ char *key;
 int pkzip = 0;
 int ext_header = 0;
 
+int unzip(int in, int out) {
+  ulg orig_crc;
+  ulg orig_len___0;
+  int n;
+  uch buf[16];
+  int res;
+  int tmp;
+  register ulg n___0;
+  int tmp___0;
+  uch c;
+  unsigned int tmp___1;
+  int tmp___2;
+  int tmp___3;
+  unsigned int tmp___4;
+  ulg tmp___5;
+  unsigned int tmp___6;
+  int tmp___7;
+  int tmp___8;
+  unsigned int tmp___9;
+  int tmp___10;
+  int tmp___11;
+  ulg tmp___12;
+  void *__cil_tmp24;
+  char *__cil_tmp25;
+  char *__cil_tmp26;
+  char *__cil_tmp27;
+  char *__cil_tmp28;
+  char *__cil_tmp29;
+  char *__cil_tmp30;
+  char *__cil_tmp31;
+
+  {
+    {
+      orig_crc = (ulg)0;
+      orig_len___0 = (ulg)0;
+      ifd = in;
+      ofd = out;
+      updcrc((uch *)((void *)0), 0U);
+    }
+
+    if (method == 8) {
+      {
+        tmp = inflate();
+        res = tmp;
+      }
+
+    } else {
+      if (pkzip) {
+        if (method == 0) {
+          n___0 = (ulg)((int)((ush) * ((inbuf + 22) + 0)) | ((int)((ush) * ((inbuf + 22) + 1)) << 8)) | ((ulg)((int)((ush) * (((inbuf + 22) + 2) + 0)) | ((int)((ush) * (((inbuf + 22) + 2) + 1)) << 8)) << 16);
+          if (decrypt) {
+            tmp___0 = 12;
+          } else {
+            tmp___0 = 0;
+          }
+
+          {
+
+          while_break: /* CIL Label */;
+          }
+          { flush_window(); }
+        } else {
+          { error((char *)"internal error, invalid method"); }
+        }
+      } else {
+        { error((char *)"internal error, invalid method"); }
+      }
+    }
+    if (!pkzip) {
+      n = 0;
+      {
+        while (1) {
+        while_continue___0: /* CIL Label */;
+          if (!(n < 8)) {
+            goto while_break___0;
+          }
+
+          buf[n] = (uch)tmp___8;
+          n++;
+        }
+      while_break___0: /* CIL Label */;
+      }
+      orig_crc = (ulg)((int)((ush)buf[0]) | ((int)((ush)buf[1]) << 8)) | ((ulg)((int)((ush) * ((buf + 2) + 0)) | ((int)((ush) * ((buf + 2) + 1)) << 8)) << 16);
+      orig_len___0 = (ulg)((int)((ush) * ((buf + 4) + 0)) | ((int)((ush) * ((buf + 4) + 1)) << 8)) | ((ulg)((int)((ush) * (((buf + 4) + 2) + 0)) | ((int)((ush) * (((buf + 4) + 2) + 1)) << 8)) << 16);
+    }
+    { tmp___12 = updcrc(outbuf, 0U); }
+    if (orig_crc != tmp___12) {
+      {
+        error((char *)"invalid compressed data--crc error");
+      }
+    }
+    if (orig_len___0 != (ulg)bytes_out) {
+      {
+        error((char *)"invalid compressed data--length error");
+      }
+    }
+
+    pkzip = 0;
+    ext_header = pkzip;
+    return (0);
+  }
+}
 int file_read(char *buf, unsigned int size);
 void bi_init(file_t zipfile);
 void send_bits(int value, int length);
@@ -1077,10 +1013,8 @@ void send_bits(int value, int length) {
           }
         }
       }
-      bi_buf = (unsigned short)((int)((ush)value) >> (16UL * sizeof(char) -
-                                                      (unsigned long)bi_valid));
-      bi_valid = (int)((unsigned long)bi_valid +
-                       ((unsigned long)length - 16UL * sizeof(char)));
+      bi_buf = (unsigned short)((int)((ush)value) >> (16UL * sizeof(char) - (unsigned long)bi_valid));
+      bi_valid = (int)((unsigned long)bi_valid + ((unsigned long)length - 16UL * sizeof(char)));
     } else {
       bi_buf = (unsigned short)((int)bi_buf | (value << bi_valid));
       bi_valid += length;
@@ -1095,8 +1029,7 @@ unsigned int bi_reverse(unsigned int code, int len) {
     res = 0U;
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+      while_continue: /* CIL Label */;
         res |= code & 1U;
         code >>= 1;
         res <<= 1;
@@ -1105,8 +1038,7 @@ unsigned int bi_reverse(unsigned int code, int len) {
           goto while_break;
         }
       }
-    while_break: /* CIL Label */
-        ;
+    while_break: /* CIL Label */;
     }
     return (res >> 1);
   }
@@ -1146,38 +1078,121 @@ void bi_windup(void) {
         }
       }
     } else {
+      if (bi_valid > 0) {
+        tmp___3 = outcnt;
+        outcnt++;
+        outbuf[tmp___3] = (uch)bi_buf;
+        if (outcnt == 16384U) {
+          {
+            flush_outbuf();
+          }
+        }
+      }
     }
     bi_buf = (unsigned short)0;
     bi_valid = 0;
     return;
   }
 }
+void copy_block(char *buf, unsigned int len, int header) {
+  unsigned int tmp;
+  unsigned int tmp___0;
+  unsigned int tmp___1;
+  unsigned int tmp___2;
+  unsigned int tmp___3;
+  unsigned int tmp___4;
+  unsigned int tmp___5;
+  unsigned int tmp___6;
+  unsigned int tmp___7;
+  char *tmp___8;
+  unsigned int tmp___9;
 
+  {
+    { bi_windup(); }
+    if (header) {
+      if (outcnt < 16382U) {
+        tmp = outcnt;
+        outcnt++;
+        outbuf[tmp] = (uch)((int)((ush)len) & 255);
+        tmp___0 = outcnt;
+        outcnt++;
+        outbuf[tmp___0] = (uch)((int)((ush)len) >> 8);
+      } else {
+        tmp___1 = outcnt;
+        outcnt++;
+        outbuf[tmp___1] = (uch)((int)((ush)len) & 255);
+        if (outcnt == 16384U) {
+          {
+            flush_outbuf();
+          }
+        }
+        tmp___2 = outcnt;
+        outcnt++;
+        outbuf[tmp___2] = (uch)((int)((ush)len) >> 8);
+      }
+      if (outcnt < 16382U) {
+        tmp___3 = outcnt;
+        outcnt++;
+        outbuf[tmp___3] = (uch)((int)((ush)(~len)) & 255);
+        tmp___4 = outcnt;
+        outcnt++;
+        outbuf[tmp___4] = (uch)((int)((ush)(~len)) >> 8);
+      } else {
+        tmp___5 = outcnt;
+        outcnt++;
+        outbuf[tmp___5] = (uch)((int)((ush)(~len)) & 255);
+
+        tmp___6 = outcnt;
+        outcnt++;
+        outbuf[tmp___6] = (uch)((int)((ush)(~len)) >> 8);
+        if (outcnt == 16384U) {
+          {
+            flush_outbuf();
+          }
+        }
+      }
+    }
+    {
+      while (1) {
+      while_continue: /* CIL Label */;
+        tmp___9 = len;
+        len--;
+        if (!tmp___9) {
+          goto while_break;
+        }
+        tmp___7 = outcnt;
+        outcnt++;
+        tmp___8 = buf;
+        buf++;
+        outbuf[tmp___7] = (uch)*tmp___8;
+        if (outcnt == 16384U) {
+          {
+            flush_outbuf();
+          }
+        }
+      }
+    while_break: /* CIL Label */;
+    }
+    return;
+  }
+}
 int level;
 void ct_init(ush *attr, int *methodp);
 int ct_tally(int dist, int lc);
 ulg flush_block(char *buf, ulg stored_len, int eof);
-static int extra_lbits[29] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2,
-                              2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0};
-static int extra_dbits[30] = {0, 0, 0,  0,  1,  1,  2,  2,  3,  3,
-                              4, 4, 5,  5,  6,  6,  7,  7,  8,  8,
-                              9, 9, 10, 10, 11, 11, 12, 12, 13, 13};
-static int extra_blbits[19] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                               0, 0, 0, 0, 0, 0, 2, 3, 7};
+static int extra_lbits[29] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0};
+static int extra_dbits[30] = {0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13};
+static int extra_blbits[19] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7};
 static ct_data dyn_ltree[573];
 static ct_data dyn_dtree[61];
 static ct_data static_ltree[288];
 static ct_data static_dtree[30];
 static ct_data bl_tree[39];
-static tree_desc l_desc = {dyn_ltree, static_ltree, extra_lbits, 257, 286, 15,
-                           0};
+static tree_desc l_desc = {dyn_ltree, static_ltree, extra_lbits, 257, 286, 15, 0};
 static tree_desc d_desc = {dyn_dtree, static_dtree, extra_dbits, 0, 30, 15, 0};
 static tree_desc bl_desc = {bl_tree, (ct_data *)0, extra_blbits, 0, 19, 7, 0};
 static ush bl_count[16];
-static uch bl_order[19] = {(uch)16, (uch)17, (uch)18, (uch)0,  (uch)8,
-                           (uch)7,  (uch)9,  (uch)6,  (uch)10, (uch)5,
-                           (uch)11, (uch)4,  (uch)12, (uch)3,  (uch)13,
-                           (uch)2,  (uch)14, (uch)1,  (uch)15};
+static uch bl_order[19] = {(uch)16, (uch)17, (uch)18, (uch)0, (uch)8, (uch)7, (uch)9, (uch)6, (uch)10, (uch)5, (uch)11, (uch)4, (uch)12, (uch)3, (uch)13, (uch)2, (uch)14, (uch)1, (uch)15};
 static int heap[573];
 static int heap_len;
 static int heap_max;
@@ -1234,43 +1249,100 @@ void ct_init(ush *attr, int *methodp) {
     length = 0;
     code = 0;
     {
-
-    while_break: /* CIL Label */
-        ;
+      while (1) {
+      while_continue: /* CIL Label */;
+        if (!(code < 28)) {
+          goto while_break;
+        }
+        base_length[code] = length;
+        n = 0;
+        {
+          while (1) {
+          while_continue___0: /* CIL Label */;
+            if (!(n < 1 << extra_lbits[code])) {
+              goto while_break___0;
+            }
+            tmp = length;
+            length++;
+            length_code[tmp] = (uch)code;
+            n++;
+          }
+        while_break___0: /* CIL Label */;
+        }
+        code++;
+      }
+    while_break: /* CIL Label */;
     }
     length_code[length - 1] = (uch)code;
     dist = 0;
     code = 0;
     {
-
-    while_break___1: /* CIL Label */
-        ;
+      while (1) {
+      while_continue___1: /* CIL Label */;
+        if (!(code < 16)) {
+          goto while_break___1;
+        }
+        base_dist[code] = dist;
+        n = 0;
+        {
+          while (1) {
+          while_continue___2: /* CIL Label */;
+            if (!(n < 1 << extra_dbits[code])) {
+              goto while_break___2;
+            }
+            tmp___0 = dist;
+            dist++;
+            dist_code[tmp___0] = (uch)code;
+            n++;
+          }
+        while_break___2: /* CIL Label */;
+        }
+        code++;
+      }
+    while_break___1: /* CIL Label */;
     }
     dist >>= 7;
     {
-
-    while_break___3: /* CIL Label */
-        ;
+      while (1) {
+      while_continue___3: /* CIL Label */;
+        if (!(code < 30)) {
+          goto while_break___3;
+        }
+        base_dist[code] = dist << 7;
+        n = 0;
+        {
+          while (1) {
+          while_continue___4: /* CIL Label */;
+            if (!(n < 1 << (extra_dbits[code] - 7))) {
+              goto while_break___4;
+            }
+            tmp___1 = dist;
+            dist++;
+            dist_code[256 + tmp___1] = (uch)code;
+            n++;
+          }
+        while_break___4: /* CIL Label */;
+        }
+        code++;
+      }
+    while_break___3: /* CIL Label */;
     }
     bits = 0;
     {
       while (1) {
-      while_continue___5: /* CIL Label */
-          ;
+      while_continue___5: /* CIL Label */;
         if (!(bits <= 15)) {
           goto while_break___5;
         }
         bl_count[bits] = (ush)0;
         bits++;
       }
-    while_break___5: /* CIL Label */
-        ;
+    while_break___5: /* CIL Label */;
     }
     n = 0;
     {
       while (1) {
-      while_continue___6: /* CIL Label */
-          ;
+      while_continue___6: /* CIL Label */;
         if (!(n <= 143)) {
           goto while_break___6;
         }
@@ -1279,13 +1351,11 @@ void ct_init(ush *attr, int *methodp) {
         static_ltree[tmp___2].dl.len = (ush)8;
         bl_count[8] = (ush)((int)bl_count[8] + 1);
       }
-    while_break___6: /* CIL Label */
-        ;
+    while_break___6: /* CIL Label */;
     }
     {
       while (1) {
-      while_continue___7: /* CIL Label */
-          ;
+      while_continue___7: /* CIL Label */;
         if (!(n <= 255)) {
           goto while_break___7;
         }
@@ -1294,13 +1364,11 @@ void ct_init(ush *attr, int *methodp) {
         static_ltree[tmp___3].dl.len = (ush)9;
         bl_count[9] = (ush)((int)bl_count[9] + 1);
       }
-    while_break___7: /* CIL Label */
-        ;
+    while_break___7: /* CIL Label */;
     }
     {
       while (1) {
-      while_continue___8: /* CIL Label */
-          ;
+      while_continue___8: /* CIL Label */;
         if (!(n <= 279)) {
           goto while_break___8;
         }
@@ -1309,13 +1377,11 @@ void ct_init(ush *attr, int *methodp) {
         static_ltree[tmp___4].dl.len = (ush)7;
         bl_count[7] = (ush)((int)bl_count[7] + 1);
       }
-    while_break___8: /* CIL Label */
-        ;
+    while_break___8: /* CIL Label */;
     }
     {
       while (1) {
-      while_continue___9: /* CIL Label */
-          ;
+      while_continue___9: /* CIL Label */;
         if (!(n <= 287)) {
           goto while_break___9;
         }
@@ -1324,8 +1390,7 @@ void ct_init(ush *attr, int *methodp) {
         static_ltree[tmp___5].dl.len = (ush)8;
         bl_count[8] = (ush)((int)bl_count[8] + 1);
       }
-    while_break___9: /* CIL Label */
-        ;
+    while_break___9: /* CIL Label */;
     }
     {
       gen_codes(static_ltree, 287);
@@ -1333,8 +1398,7 @@ void ct_init(ush *attr, int *methodp) {
     }
     {
 
-    while_break___10: /* CIL Label */
-        ;
+    while_break___10: /* CIL Label */;
     }
     { init_block(); }
     return;
@@ -1346,21 +1410,39 @@ static void init_block(void) {
   {
     n = 0;
     {
-
-    while_break: /* CIL Label */
-        ;
+      while (1) {
+      while_continue: /* CIL Label */;
+        if (!(n < 286)) {
+          goto while_break;
+        }
+        dyn_ltree[n].fc.freq = (ush)0;
+        n++;
+      }
+    while_break: /* CIL Label */;
     }
     n = 0;
     {
-
-    while_break___0: /* CIL Label */
-        ;
+      while (1) {
+      while_continue___0: /* CIL Label */;
+        if (!(n < 30)) {
+          goto while_break___0;
+        }
+        dyn_dtree[n].fc.freq = (ush)0;
+        n++;
+      }
+    while_break___0: /* CIL Label */;
     }
     n = 0;
     {
-
-    while_break___1: /* CIL Label */
-        ;
+      while (1) {
+      while_continue___1: /* CIL Label */;
+        if (!(n < 19)) {
+          goto while_break___1;
+        }
+        bl_tree[n].fc.freq = (ush)0;
+        n++;
+      }
+    while_break___1: /* CIL Label */;
     }
     dyn_ltree[256].fc.freq = (ush)1;
     static_len = (ulg)0L;
@@ -1381,9 +1463,36 @@ static void pqdownheap(ct_data *tree, int k) {
     v = heap[k];
     j___0 = k << 1;
     {
-
-    while_break: /* CIL Label */
-        ;
+      while (1) {
+      while_continue: /* CIL Label */;
+        if (!(j___0 <= heap_len)) {
+          goto while_break;
+        }
+        if (j___0 < heap_len) {
+          if ((int)(tree + heap[j___0 + 1])->fc.freq < (int)(tree + heap[j___0])->fc.freq) {
+            j___0++;
+          } else {
+            if ((int)(tree + heap[j___0 + 1])->fc.freq == (int)(tree + heap[j___0])->fc.freq) {
+              if ((int)depth[heap[j___0 + 1]] <= (int)depth[heap[j___0]]) {
+                j___0++;
+              }
+            }
+          }
+        }
+        if ((int)(tree + v)->fc.freq < (int)(tree + heap[j___0])->fc.freq) {
+          goto while_break;
+        } else {
+          if ((int)(tree + v)->fc.freq == (int)(tree + heap[j___0])->fc.freq) {
+            if ((int)depth[v] <= (int)depth[heap[j___0]]) {
+              goto while_break;
+            }
+          }
+        }
+        heap[k] = heap[j___0];
+        k = j___0;
+        j___0 <<= 1;
+      }
+    while_break: /* CIL Label */;
     }
     heap[k] = v;
     return;
@@ -1414,28 +1523,104 @@ static void gen_bitlen(tree_desc *desc) {
     overflow = 0;
     bits = 0;
     {
-
-    while_break: /* CIL Label */
-        ;
+      while (1) {
+      while_continue: /* CIL Label */;
+        if (!(bits <= 15)) {
+          goto while_break;
+        }
+        bl_count[bits] = (ush)0;
+        bits++;
+      }
+    while_break: /* CIL Label */;
     }
     (tree + heap[heap_max])->dl.len = (ush)0;
     h = heap_max + 1;
     {
+      while (1) {
+      while_continue___0: /* CIL Label */;
+        if (!(h < 573)) {
+          goto while_break___0;
+        }
+        n = heap[h];
+        bits = (int)(tree + (int)(tree + n)->dl.dad)->dl.len + 1;
+        if (bits > max_length) {
+          bits = max_length;
+          overflow++;
+        }
+        (tree + n)->dl.len = (ush)bits;
+        if (n > max_code) {
+          goto __Cont;
+        }
+        bl_count[bits] = (ush)((int)bl_count[bits] + 1);
+        xbits = 0;
 
-    while_break___0: /* CIL Label */
-        ;
+        f = (tree + n)->fc.freq;
+        opt_len += (ulg)f * (ulg)(bits + xbits);
+        if (stree) {
+          static_len += (ulg)f * (ulg)((int)(stree + n)->dl.len + xbits);
+        }
+      __Cont:
+        h++;
+      }
+    while_break___0: /* CIL Label */;
     }
-
+    if (overflow == 0) {
+      return;
+    }
     {
-
-    while_break___1: /* CIL Label */
-        ;
+      while (1) {
+      while_continue___1: /* CIL Label */;
+        bits = max_length - 1;
+        {
+          while (1) {
+          while_continue___2: /* CIL Label */;
+            if (!((int)bl_count[bits] == 0)) {
+              goto while_break___2;
+            }
+            bits--;
+          }
+        while_break___2: /* CIL Label */;
+        }
+        bl_count[bits] = (ush)((int)bl_count[bits] - 1);
+        bl_count[bits + 1] = (ush)((int)bl_count[bits + 1] + 2);
+        bl_count[max_length] = (ush)((int)bl_count[max_length] - 1);
+        overflow -= 2;
+        if (!(overflow > 0)) {
+          goto while_break___1;
+        }
+      }
+    while_break___1: /* CIL Label */;
     }
     bits = max_length;
     {
-
-    while_break___3: /* CIL Label */
-        ;
+      while (1) {
+      while_continue___3: /* CIL Label */;
+        if (!(bits != 0)) {
+          goto while_break___3;
+        }
+        n = (int)bl_count[bits];
+        {
+          while (1) {
+          while_continue___4: /* CIL Label */;
+            if (!(n != 0)) {
+              goto while_break___4;
+            }
+            h--;
+            m = heap[h];
+            if (m > max_code) {
+              goto while_continue___4;
+            }
+            if ((unsigned int)(tree + m)->dl.len != (unsigned int)bits) {
+              opt_len += (ulg)(((long)bits - (long)(tree + m)->dl.len) * (long)(tree + m)->fc.freq);
+              (tree + m)->dl.len = (ush)bits;
+            }
+            n--;
+          }
+        while_break___4: /* CIL Label */;
+        }
+        bits--;
+      }
+    while_break___3: /* CIL Label */;
     }
     return;
   }
@@ -1454,8 +1639,7 @@ static void gen_codes(ct_data *tree, int max_code) {
     bits = 1;
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+      while_continue: /* CIL Label */;
         if (!(bits <= 15)) {
           goto while_break;
         }
@@ -1463,19 +1647,19 @@ static void gen_codes(ct_data *tree, int max_code) {
         next_code[bits] = code;
         bits++;
       }
-    while_break: /* CIL Label */
-        ;
+    while_break: /* CIL Label */;
     }
     n = 0;
     {
       while (1) {
-      while_continue___0: /* CIL Label */
-          ;
+      while_continue___0: /* CIL Label */;
         if (!(n <= max_code)) {
           goto while_break___0;
         }
         len = (int)(tree + n)->dl.len;
-
+        if (len == 0) {
+          goto __Cont;
+        }
         {
           tmp = next_code[len];
           next_code[len] = (ush)((int)next_code[len] + 1);
@@ -1484,8 +1668,7 @@ static void gen_codes(ct_data *tree, int max_code) {
       __Cont:
         n++;
       }
-    while_break___0: /* CIL Label */
-        ;
+    while_break___0: /* CIL Label */;
     }
     return;
   }
@@ -1515,26 +1698,62 @@ static void build_tree___0(tree_desc *desc) {
     heap_max = 573;
     n = 0;
     {
-
-    while_break: /* CIL Label */
-        ;
+      while (1) {
+      while_continue: /* CIL Label */;
+        if (!(n < elems)) {
+          goto while_break;
+        }
+        if ((int)(tree + n)->fc.freq != 0) {
+          heap_len++;
+          max_code = n;
+          heap[heap_len] = max_code;
+          depth[n] = (uch)0;
+        } else {
+          (tree + n)->dl.len = (ush)0;
+        }
+        n++;
+      }
+    while_break: /* CIL Label */;
     }
     {
-
-    while_break___0: /* CIL Label */
-        ;
+      while (1) {
+      while_continue___0: /* CIL Label */;
+        if (!(heap_len < 2)) {
+          goto while_break___0;
+        }
+        heap_len++;
+        if (max_code < 2) {
+          max_code++;
+          tmp = max_code;
+        } else {
+          tmp = 0;
+        }
+        heap[heap_len] = tmp;
+        new = tmp;
+        (tree + new)->fc.freq = (ush)1;
+        depth[new] = (uch)0;
+        opt_len--;
+      }
+    while_break___0: /* CIL Label */;
     }
     desc->max_code = max_code;
     n = heap_len / 2;
     {
-
-    while_break___1: /* CIL Label */
-        ;
+      while (1) {
+      while_continue___1: /* CIL Label */;
+        if (!(n >= 1)) {
+          goto while_break___1;
+        }
+        {
+          pqdownheap(tree, n);
+          n--;
+        }
+      }
+    while_break___1: /* CIL Label */;
     }
     {
       while (1) {
-      while_continue___2: /* CIL Label */
-          ;
+      while_continue___2: /* CIL Label */;
         {
           n = heap[1];
           tmp___0 = heap_len;
@@ -1546,10 +1765,13 @@ static void build_tree___0(tree_desc *desc) {
           heap[heap_max] = n;
           heap_max--;
           heap[heap_max] = m;
-          (tree + node)->fc.freq =
-              (ush)((int)(tree + n)->fc.freq + (int)(tree + m)->fc.freq);
+          (tree + node)->fc.freq = (ush)((int)(tree + n)->fc.freq + (int)(tree + m)->fc.freq);
         }
-
+        if ((int)depth[n] >= (int)depth[m]) {
+          tmp___1 = (int)depth[n];
+        } else {
+          tmp___1 = (int)depth[m];
+        }
         {
           depth[node] = (uch)(tmp___1 + 1);
           tmp___2 = (ush)node;
@@ -1564,8 +1786,7 @@ static void build_tree___0(tree_desc *desc) {
           goto while_break___2;
         }
       }
-    while_break___2: /* CIL Label */
-        ;
+    while_break___2: /* CIL Label */;
     }
     {
       heap_max--;
@@ -1595,9 +1816,57 @@ static void scan_tree(ct_data *tree, int max_code) {
     (tree + (max_code + 1))->dl.len = (ush)65535;
     n = 0;
     {
-
-    while_break: /* CIL Label */
-        ;
+      while (1) {
+      while_continue: /* CIL Label */;
+        if (!(n <= max_code)) {
+          goto while_break;
+        }
+        curlen = nextlen;
+        nextlen = (int)(tree + (n + 1))->dl.len;
+        count++;
+        if (count < max_count) {
+          if (curlen == nextlen) {
+            goto __Cont;
+          } else {
+            goto _L;
+          }
+        } else {
+        _L:
+          if (count < min_count) {
+            bl_tree[curlen].fc.freq = (ush)((int)bl_tree[curlen].fc.freq + count);
+          } else {
+            if (curlen != 0) {
+              if (curlen != prevlen) {
+                bl_tree[curlen].fc.freq = (ush)((int)bl_tree[curlen].fc.freq + 1);
+              }
+              bl_tree[16].fc.freq = (ush)((int)bl_tree[16].fc.freq + 1);
+            } else {
+              if (count <= 10) {
+                bl_tree[17].fc.freq = (ush)((int)bl_tree[17].fc.freq + 1);
+              } else {
+                bl_tree[18].fc.freq = (ush)((int)bl_tree[18].fc.freq + 1);
+              }
+            }
+          }
+        }
+        count = 0;
+        prevlen = curlen;
+        if (nextlen == 0) {
+          max_count = 138;
+          min_count = 3;
+        } else {
+          if (curlen == nextlen) {
+            max_count = 6;
+            min_count = 3;
+          } else {
+            max_count = 7;
+            min_count = 4;
+          }
+        }
+      __Cont:
+        n++;
+      }
+    while_break: /* CIL Label */;
     }
     return;
   }
@@ -1617,12 +1886,87 @@ static void send_tree(ct_data *tree, int max_code) {
     count = 0;
     max_count = 7;
     min_count = 4;
-
+    if (nextlen == 0) {
+      max_count = 138;
+      min_count = 3;
+    }
     n = 0;
     {
-
-    while_break: /* CIL Label */
-        ;
+      while (1) {
+      while_continue: /* CIL Label */;
+        if (!(n <= max_code)) {
+          goto while_break;
+        }
+        curlen = nextlen;
+        nextlen = (int)(tree + (n + 1))->dl.len;
+        count++;
+        if (count < max_count) {
+          if (curlen == nextlen) {
+            goto __Cont;
+          } else {
+            goto _L;
+          }
+        } else {
+        _L:
+          if (count < min_count) {
+            {
+              while (1) {
+              while_continue___0: /* CIL Label */;
+                {
+                  send_bits((int)bl_tree[curlen].fc.code, (int)bl_tree[curlen].dl.len);
+                  count--;
+                }
+                if (!(count != 0)) {
+                  goto while_break___0;
+                }
+              }
+            while_break___0: /* CIL Label */;
+            }
+          } else {
+            if (curlen != 0) {
+              if (curlen != prevlen) {
+                {
+                  send_bits((int)bl_tree[curlen].fc.code, (int)bl_tree[curlen].dl.len);
+                  count--;
+                }
+              }
+              {
+                send_bits((int)bl_tree[16].fc.code, (int)bl_tree[16].dl.len);
+                send_bits(count - 3, 2);
+              }
+            } else {
+              if (count <= 10) {
+                {
+                  send_bits((int)bl_tree[17].fc.code, (int)bl_tree[17].dl.len);
+                  send_bits(count - 3, 3);
+                }
+              } else {
+                {
+                  send_bits((int)bl_tree[18].fc.code, (int)bl_tree[18].dl.len);
+                  send_bits(count - 11, 7);
+                }
+              }
+            }
+          }
+        }
+        count = 0;
+        prevlen = curlen;
+        if (nextlen == 0) {
+          max_count = 138;
+          min_count = 3;
+        } else {
+          if (curlen == nextlen) {
+            max_count = 6;
+            min_count = 3;
+          } else {
+            max_count = 7;
+            min_count = 4;
+          }
+        }
+      __Cont:
+        n++;
+      }
+    while_break: /* CIL Label */;
     }
     return;
   }
@@ -1639,8 +1983,7 @@ static int build_bl_tree(void) {
     }
     {
 
-    while_break: /* CIL Label */
-        ;
+    while_break: /* CIL Label */;
     }
     opt_len += (ulg)(((3 * (max_blindex + 1) + 5) + 5) + 4);
     return (max_blindex);
@@ -1657,9 +2000,17 @@ static void send_all_trees(int lcodes, int dcodes, int blcodes) {
       rank = 0;
     }
     {
-
-    while_break: /* CIL Label */
-        ;
+      while (1) {
+      while_continue: /* CIL Label */;
+        if (!(rank < blcodes)) {
+          goto while_break;
+        }
+        {
+          send_bits((int)bl_tree[bl_order[rank]].dl.len, 3);
+          rank++;
+        }
+      }
+    while_break: /* CIL Label */;
     }
     {
       send_tree(dyn_ltree, lcodes - 1);
@@ -1675,11 +2026,7 @@ ulg flush_block(char *buf, ulg stored_len, int eof) {
 
   {
     flag_buf[last_flags] = flags;
-    if ((int)*file_type == 65535) {
-      {
-        set_file_type();
-      }
-    }
+
     {
       build_tree___0(&l_desc);
       build_tree___0(&d_desc);
@@ -1704,7 +2051,16 @@ ulg flush_block(char *buf, ulg stored_len, int eof) {
     } else {
     _L___2:
       if (stored_len + 4UL <= opt_lenb) {
-
+        if ((unsigned long)buf != (unsigned long)((char *)0)) {
+          {
+            send_bits(eof, 3);
+            compressed_len = ((compressed_len + 3UL) + 7UL) & 0xfffffffffffffff8UL;
+            compressed_len += (stored_len + 4UL) << 3;
+            copy_block(buf, (unsigned int)stored_len, 1);
+          }
+        } else {
+          goto _L;
+        }
       } else {
       _L:
         if (static_lenb == opt_lenb) {
@@ -1716,8 +2072,7 @@ ulg flush_block(char *buf, ulg stored_len, int eof) {
         } else {
           {
             send_bits((2 << 1) + eof, 3);
-            send_all_trees(l_desc.max_code + 1, d_desc.max_code + 1,
-                           max_blindex + 1);
+            send_all_trees(l_desc.max_code + 1, d_desc.max_code + 1, max_blindex + 1);
             compress_block(dyn_ltree, dyn_dtree);
             compressed_len += 3UL + opt_len;
           }
@@ -1748,7 +2103,22 @@ int ct_tally(int dist, int lc) {
     tmp = last_lit;
     last_lit++;
     inbuf[tmp] = (uch)lc;
-
+    if (dist == 0) {
+      dyn_ltree[lc].fc.freq = (ush)((int)dyn_ltree[lc].fc.freq + 1);
+    } else {
+      dist--;
+      dyn_ltree[((int)length_code[lc] + 256) + 1].fc.freq = (ush)((int)dyn_ltree[((int)length_code[lc] + 256) + 1].fc.freq + 1);
+      if (dist < 256) {
+        tmp___0 = (int)dist_code[dist];
+      } else {
+        tmp___0 = (int)dist_code[256 + (dist >> 7)];
+      }
+      dyn_dtree[tmp___0].fc.freq = (ush)((int)dyn_dtree[tmp___0].fc.freq + 1);
+      tmp___1 = last_dist;
+      last_dist++;
+      d_buf[tmp___1] = (ush)dist;
+      flags = (uch)((int)flags | (int)flag_bit);
+    }
     flag_bit = (uch)((int)flag_bit << 1);
     if ((last_lit & 7U) == 0U) {
       tmp___2 = last_flags;
@@ -1791,8 +2161,7 @@ static void compress_block(ct_data *ltree, ct_data *dtree) {
     if (last_lit != 0U) {
       {
         while (1) {
-        while_continue: /* CIL Label */
-            ;
+        while_continue: /* CIL Label */;
           if ((lx & 7U) == 0U) {
             tmp = fx;
             fx++;
@@ -1808,8 +2177,7 @@ static void compress_block(ct_data *ltree, ct_data *dtree) {
           } else {
             {
               code = (unsigned int)length_code[lc];
-              send_bits((int)(ltree + ((code + 256U) + 1U))->fc.code,
-                        (int)(ltree + ((code + 256U) + 1U))->dl.len);
+              send_bits((int)(ltree + ((code + 256U) + 1U))->fc.code, (int)(ltree + ((code + 256U) + 1U))->dl.len);
               extra = extra_lbits[code];
             }
 
@@ -1822,9 +2190,14 @@ static void compress_block(ct_data *ltree, ct_data *dtree) {
               code = (unsigned int)dist_code[256U + (dist >> 7)];
             }
             {
-              send_bits((int)(dtree + code)->fc.code,
-                        (int)(dtree + code)->dl.len);
+              send_bits((int)(dtree + code)->fc.code, (int)(dtree + code)->dl.len);
               extra = extra_dbits[code];
+            }
+            if (extra != 0) {
+              {
+                dist -= (unsigned int)base_dist[code];
+                send_bits((int)dist, extra);
+              }
             }
           }
           flag = (uch)((int)flag >> 1);
@@ -1832,45 +2205,14 @@ static void compress_block(ct_data *ltree, ct_data *dtree) {
             goto while_break;
           }
         }
-      while_break: /* CIL Label */
-          ;
+      while_break: /* CIL Label */;
       }
     }
     { send_bits((int)(ltree + 256)->fc.code, (int)(ltree + 256)->dl.len); }
     return;
   }
 }
-static void set_file_type(void) {
-  int n;
-  unsigned int ascii_freq;
-  unsigned int bin_freq;
-  int tmp;
-  int tmp___0;
-  int tmp___1;
 
-  {
-    n = 0;
-    ascii_freq = 0U;
-    bin_freq = 0U;
-    {
-
-    while_break: /* CIL Label */
-        ;
-    }
-    {
-
-    while_break___0: /* CIL Label */
-        ;
-    }
-    {
-
-    while_break___1: /* CIL Label */
-        ;
-    }
-
-    return;
-  }
-}
 void lm_init(int pack_level, ush *flags___0);
 ulg deflate(void);
 ulg window_size = 65536UL;
@@ -1884,17 +2226,8 @@ static unsigned int max_lazy_match;
 static int compr_level;
 unsigned int good_match;
 int nice_match;
-static config configuration_table[10] = {
-    {(ush)0, (ush)0, (ush)0, (ush)0},
-    {(ush)4, (ush)4, (ush)8, (ush)4},
-    {(ush)4, (ush)5, (ush)16, (ush)8},
-    {(ush)4, (ush)6, (ush)32, (ush)32},
-    {(ush)4, (ush)4, (ush)16, (ush)16},
-    {(ush)8, (ush)16, (ush)32, (ush)32},
-    {(ush)8, (ush)16, (ush)128, (ush)128},
-    {(ush)8, (ush)32, (ush)128, (ush)256},
-    {(ush)32, (ush)128, (ush)258, (ush)1024},
-    {(ush)32, (ush)258, (ush)258, (ush)4096}};
+static config configuration_table[10] = {{(ush)0, (ush)0, (ush)0, (ush)0},    {(ush)4, (ush)4, (ush)8, (ush)4},      {(ush)4, (ush)5, (ush)16, (ush)8},     {(ush)4, (ush)6, (ush)32, (ush)32},       {(ush)4, (ush)4, (ush)16, (ush)16},
+                                         {(ush)8, (ush)16, (ush)32, (ush)32}, {(ush)8, (ush)16, (ush)128, (ush)128}, {(ush)8, (ush)32, (ush)128, (ush)256}, {(ush)32, (ush)128, (ush)258, (ush)1024}, {(ush)32, (ush)258, (ush)258, (ush)4096}};
 static void fill_window(void);
 static ulg deflate_fast(void);
 int longest_match(IPos cur_match);
@@ -1905,17 +2238,18 @@ void lm_init(int pack_level, ush *flags___0) {
   char *__cil_tmp7;
 
   {
-
+    if (pack_level < 1) {
+      {
+        error((char *)"bad pack level");
+      }
+    }
     {
       compr_level = pack_level;
-      memset((voidp)((char *)(prev + 32768)), 0,
-             (unsigned long)((unsigned int)(1 << 15)) *
-                 sizeof(*(prev + 32768)));
+      memset((voidp)((char *)(prev + 32768)), 0, (unsigned long)((unsigned int)(1 << 15)) * sizeof(*(prev + 32768)));
       max_lazy_match = (unsigned int)configuration_table[pack_level].max_lazy;
       good_match = (unsigned int)configuration_table[pack_level].good_length;
       nice_match = (int)configuration_table[pack_level].nice_length;
-      max_chain_length =
-          (unsigned int)configuration_table[pack_level].max_chain;
+      max_chain_length = (unsigned int)configuration_table[pack_level].max_chain;
     }
 
     strstart = 0U;
@@ -1926,19 +2260,44 @@ void lm_init(int pack_level, ush *flags___0) {
       tmp = 65536U;
     }
     { lookahead = (unsigned int)(*read_buf)((char *)(window), tmp); }
-
+    if (lookahead == 0U) {
+      eofile = 1;
+      lookahead = 0U;
+      return;
+    } else {
+      if (lookahead == 4294967295U) {
+        eofile = 1;
+        lookahead = 0U;
+        return;
+      }
+    }
     eofile = 0;
     {
-
-    while_break: /* CIL Label */
-        ;
+      while (1) {
+      while_continue: /* CIL Label */;
+        if (lookahead < 262U) {
+          if (!(!eofile)) {
+            goto while_break;
+          }
+        } else {
+          goto while_break;
+        }
+        { fill_window(); }
+      }
+    while_break: /* CIL Label */;
     }
     ins_h = 0U;
     j___0 = 0U;
     {
-
-    while_break___0: /* CIL Label */
-        ;
+      while (1) {
+      while_continue___0: /* CIL Label */;
+        if (!(j___0 < 2U)) {
+          goto while_break___0;
+        }
+        ins_h = ((ins_h << 5) ^ (unsigned int)window[j___0]) & ((unsigned int)(1 << 15) - 1U);
+        j___0++;
+      }
+    while_break___0: /* CIL Label */;
     }
     return;
   }
@@ -1972,9 +2331,41 @@ int longest_match(IPos cur_match) {
       chain_length >>= 2;
     }
     {
+      while (1) {
+      while_continue: /* CIL Label */;
+        match = window + cur_match;
+        if ((int)*(match + best_len) != (int)scan_end) {
+          goto __Cont;
+        }
+        scan += 2;
+        match++;
+        {
 
-    while_break: /* CIL Label */
-        ;
+        while_break___0: /* CIL Label */;
+        }
+        len = 258 - (int)(strend - scan);
+        scan = strend - 258;
+        if (len > best_len) {
+          match_start = cur_match;
+          best_len = len;
+          if (len >= nice_match) {
+            goto while_break;
+          }
+          scan_end1 = *(scan + (best_len - 1));
+          scan_end = *(scan + best_len);
+        }
+      __Cont:
+        cur_match = (IPos)prev[cur_match & 32767U];
+        if (cur_match > limit) {
+          chain_length--;
+          if (!(chain_length != 0U)) {
+            goto while_break;
+          }
+        } else {
+          goto while_break;
+        }
+      }
+    while_break: /* CIL Label */;
     }
     return (best_len);
   }
@@ -1993,9 +2384,7 @@ static void fill_window(void) {
     } else {
       if (strstart >= 65274U) {
         {
-          memcpy((void * /* __restrict  */)((char *)(window)),
-                 (void const * /* __restrict  */)((char *)(window) + 32768),
-                 (size_t)32768U);
+          memcpy((void * /* __restrict  */)((char *)(window)), (void const * /* __restrict  */)((char *)(window) + 32768), (size_t)32768U);
           match_start -= 32768U;
           strstart -= 32768U;
           block_start -= 32768L;
@@ -2003,22 +2392,19 @@ static void fill_window(void) {
         }
         {
 
-        while_break: /* CIL Label */
-            ;
+        while_break: /* CIL Label */;
         }
         n = 0U;
         {
 
-        while_break___0: /* CIL Label */
-            ;
+        while_break___0: /* CIL Label */;
         }
         more += 32768U;
       }
     }
     if (!eofile) {
       {
-        n = (unsigned int)(*read_buf)(((char *)(window) + strstart) + lookahead,
-                                      more);
+        n = (unsigned int)(*read_buf)(((char *)(window) + strstart) + lookahead, more);
       }
       if (n == 0U) {
         eofile = 1;
@@ -2033,7 +2419,103 @@ static void fill_window(void) {
     return;
   }
 }
+static ulg deflate_fast(void) {
+  IPos hash_head;
+  int flush;
+  unsigned int match_length;
+  char *tmp;
+  char *tmp___0;
+  ulg tmp___1;
 
+  {
+    match_length = 0U;
+    prev_length = 2U;
+    {
+      while (1) {
+      while_continue: /* CIL Label */;
+        if (!(lookahead != 0U)) {
+          goto while_break;
+        }
+        ins_h = ((ins_h << 5) ^ (unsigned int)window[(strstart + 3U) - 1U]) & ((unsigned int)(1 << 15) - 1U);
+        hash_head = (IPos) * ((prev + 32768) + ins_h);
+        prev[strstart & 32767U] = (ush)hash_head;
+        *((prev + 32768) + ins_h) = (ush)strstart;
+        if (hash_head != 0U) {
+          if (strstart - hash_head <= 32506U) {
+            {
+              match_length = (unsigned int)longest_match(hash_head);
+            }
+            if (match_length > lookahead) {
+              match_length = lookahead;
+            }
+          }
+        }
+        if (match_length >= 3U) {
+          {
+            flush = ct_tally((int)(strstart - match_start), (int)(match_length - 3U));
+            lookahead -= match_length;
+          }
+          if (match_length <= max_lazy_match) {
+            match_length--;
+            {
+              while (1) {
+              while_continue___0: /* CIL Label */;
+                strstart++;
+                ins_h = ((ins_h << 5) ^ (unsigned int)window[(strstart + 3U) - 1U]) & ((unsigned int)(1 << 15) - 1U);
+                hash_head = (IPos) * ((prev + 32768) + ins_h);
+                prev[strstart & 32767U] = (ush)hash_head;
+                *((prev + 32768) + ins_h) = (ush)strstart;
+                match_length--;
+                if (!(match_length != 0U)) {
+                  goto while_break___0;
+                }
+              }
+            while_break___0: /* CIL Label */;
+            }
+            strstart++;
+          } else {
+            strstart += match_length;
+            match_length = 0U;
+            ins_h = (unsigned int)window[strstart];
+            ins_h = ((ins_h << 5) ^ (unsigned int)window[strstart + 1U]) & ((unsigned int)(1 << 15) - 1U);
+          }
+        } else {
+          {
+            flush = ct_tally(0, (int)window[strstart]);
+            lookahead--;
+            strstart++;
+          }
+        }
+        if (flush) {
+          if (block_start >= 0L) {
+            tmp = (char *)(&window[(unsigned int)block_start]);
+          } else {
+            tmp = (char *)((void *)0);
+          }
+          {
+            flush_block(tmp, (ulg)((long)strstart - block_start), 0);
+            block_start = (long)strstart;
+          }
+        }
+        {
+          while (1) {
+          while_continue___1: /* CIL Label */;
+            { fill_window(); }
+          }
+        while_break___1: /* CIL Label */;
+        }
+      }
+    while_break: /* CIL Label */;
+    }
+    if (block_start >= 0L) {
+      tmp___0 = (char *)(&window[(unsigned int)block_start]);
+    } else {
+      tmp___0 = (char *)((void *)0);
+    }
+    { tmp___1 = flush_block(tmp___0, (ulg)((long)strstart - block_start), 1); }
+    return (tmp___1);
+  }
+}
 ulg deflate(void) {
   IPos hash_head;
   IPos prev_match;
@@ -2050,16 +2532,19 @@ ulg deflate(void) {
   {
     match_available = 0;
     match_length = 2U;
-
+    if (compr_level <= 3) {
+      {
+        tmp = deflate_fast();
+      }
+      return (tmp);
+    }
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+      while_continue: /* CIL Label */;
         if (!(lookahead != 0U)) {
           goto while_break;
         }
-        ins_h = ((ins_h << 5) ^ (unsigned int)window[(strstart + 3U) - 1U]) &
-                ((unsigned int)(1 << 15) - 1U);
+        ins_h = ((ins_h << 5) ^ (unsigned int)window[(strstart + 3U) - 1U]) & ((unsigned int)(1 << 15) - 1U);
         hash_head = (IPos) * ((prev + 32768) + ins_h);
         prev[strstart & 32767U] = (ush)hash_head;
         *((prev + 32768) + ins_h) = (ush)strstart;
@@ -2075,16 +2560,48 @@ ulg deflate(void) {
               if (match_length > lookahead) {
                 match_length = lookahead;
               }
-              if (match_length == 3U) {
-                if (strstart - match_start > 4096U) {
-                  match_length--;
-                }
-              }
             }
           }
         }
         if (prev_length >= 3U) {
-
+          if (match_length <= prev_length) {
+            {
+              flush = ct_tally((int)((strstart - 1U) - prev_match), (int)(prev_length - 3U));
+              lookahead -= prev_length - 1U;
+              prev_length -= 2U;
+            }
+            {
+              while (1) {
+              while_continue___0: /* CIL Label */;
+                strstart++;
+                ins_h = ((ins_h << 5) ^ (unsigned int)window[(strstart + 3U) - 1U]) & ((unsigned int)(1 << 15) - 1U);
+                hash_head = (IPos) * ((prev + 32768) + ins_h);
+                prev[strstart & 32767U] = (ush)hash_head;
+                *((prev + 32768) + ins_h) = (ush)strstart;
+                prev_length--;
+                if (!(prev_length != 0U)) {
+                  goto while_break___0;
+                }
+              }
+            while_break___0: /* CIL Label */;
+            }
+            match_available = 0;
+            match_length = 2U;
+            strstart++;
+            if (flush) {
+              if (block_start >= 0L) {
+                tmp___0 = (char *)(&window[(unsigned int)block_start]);
+              } else {
+                tmp___0 = (char *)((void *)0);
+              }
+              {
+                flush_block(tmp___0, (ulg)((long)strstart - block_start), 0);
+                block_start = (long)strstart;
+              }
+            }
+          } else {
+            goto _L;
+          }
         } else {
         _L:
           if (match_available) {
@@ -2112,8 +2629,7 @@ ulg deflate(void) {
         }
         {
           while (1) {
-          while_continue___1: /* CIL Label */
-              ;
+          while_continue___1: /* CIL Label */;
             if (lookahead < 262U) {
               if (!(!eofile)) {
                 goto while_break___1;
@@ -2123,12 +2639,10 @@ ulg deflate(void) {
             }
             { fill_window(); }
           }
-        while_break___1: /* CIL Label */
-            ;
+        while_break___1: /* CIL Label */;
         }
       }
-    while_break: /* CIL Label */
-        ;
+    while_break: /* CIL Label */;
     }
     if (match_available) {
       {
@@ -2228,11 +2742,7 @@ int zip(int in, int out) {
     tmp___2 = outcnt;
     outcnt++;
     outbuf[tmp___2] = flags___0;
-    if (outcnt == 16384U) {
-      {
-        flush_outbuf();
-      }
-    }
+
     if (outcnt < 16382U) {
       tmp___3 = outcnt;
       outcnt++;
@@ -2252,11 +2762,6 @@ int zip(int in, int out) {
       tmp___6 = outcnt;
       outcnt++;
       outbuf[tmp___6] = (uch)((int)((ush)(time_stamp & 65535L)) >> 8);
-      if (outcnt == 16384U) {
-        {
-          flush_outbuf();
-        }
-      }
     }
     if (outcnt < 16382U) {
       tmp___7 = outcnt;
@@ -2269,19 +2774,10 @@ int zip(int in, int out) {
       tmp___9 = outcnt;
       outcnt++;
       outbuf[tmp___9] = (uch)(((ulg)time_stamp >> 16) & 255UL);
-      if (outcnt == 16384U) {
-        {
-          flush_outbuf();
-        }
-      }
+
       tmp___10 = outcnt;
       outcnt++;
       outbuf[tmp___10] = (uch)((int)((ush)((ulg)time_stamp >> 16)) >> 8);
-      if (outcnt == 16384U) {
-        {
-          flush_outbuf();
-        }
-      }
     }
     {
       crc___0 = updcrc((uch *)0, 0U);
@@ -2300,11 +2796,6 @@ int zip(int in, int out) {
     tmp___12 = outcnt;
     outcnt++;
     outbuf[tmp___12] = (uch)3;
-    if (outcnt == 16384U) {
-      {
-        flush_outbuf();
-      }
-    }
 
     {
       header_bytes = (long)outcnt;
@@ -2346,11 +2837,7 @@ int zip(int in, int out) {
       tmp___22 = outcnt;
       outcnt++;
       outbuf[tmp___22] = (uch)((crc___0 >> 16) & 255UL);
-      if (outcnt == 16384U) {
-        {
-          flush_outbuf();
-        }
-      }
+
       tmp___23 = outcnt;
       outcnt++;
       outbuf[tmp___23] = (uch)((int)((ush)(crc___0 >> 16)) >> 8);
@@ -2437,73 +2924,40 @@ int file_read(char *buf, unsigned int size) {
   }
 }
 
-extern __attribute__((__nothrow__))
-__sighandler_t(__attribute__((__leaf__)) signal)(int __sig,
-                                                 void (*__handler)(int));
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1, 2), __leaf__)) stat)(char const *__restrict __file,
-                                        struct stat *__restrict __buf);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(2), __leaf__)) fstat)(int __fd, struct stat *__buf);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1, 2), __leaf__)) lstat)(char const *__restrict __file,
-                                         struct stat *__restrict __buf);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1), __leaf__)) chmod)(char const *__file, __mode_t __mode);
+extern __attribute__((__nothrow__)) __sighandler_t(__attribute__((__leaf__)) signal)(int __sig, void (*__handler)(int));
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) stat)(char const *__restrict __file, struct stat *__restrict __buf);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(2), __leaf__)) fstat)(int __fd, struct stat *__buf);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) lstat)(char const *__restrict __file, struct stat *__restrict __buf);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) chmod)(char const *__file, __mode_t __mode);
 extern struct _IO_FILE *stdin;
 extern struct _IO_FILE *stdout;
 extern int fflush(FILE *__stream);
 extern int printf(char const *__restrict __format, ...);
 extern char *fgets(char *__restrict __s, int __n, FILE *__restrict __stream);
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fileno)(
-    FILE *__stream);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1, 2), __leaf__)) memcmp)(void const *__s1, void const *__s2,
-                                          size_t __n) __attribute__((__pure__));
-extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1, 2),
-                                                          __leaf__)) strncpy)(
-    char *__restrict __dest, char const *__restrict __src, size_t __n);
-extern __attribute__((__nothrow__)) char *(__attribute__((
-    __nonnull__(1, 2), __leaf__)) strcat)(char *__restrict __dest,
-                                          char const *__restrict __src);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1, 2), __leaf__)) strcmp)(char const *__s1, char const *__s2)
-    __attribute__((__pure__));
-extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2),
-                                                       __leaf__)) strncmp)(
-    char const *__s1, char const *__s2, size_t __n) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fileno)(FILE *__stream);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) memcmp)(void const *__s1, void const *__s2, size_t __n) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1, 2), __leaf__)) strncpy)(char *__restrict __dest, char const *__restrict __src, size_t __n);
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1, 2), __leaf__)) strcat)(char *__restrict __dest, char const *__restrict __src);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) strcmp)(char const *__s1, char const *__s2) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) strncmp)(char const *__s1, char const *__s2, size_t __n) __attribute__((__pure__));
 long ifile_size;
 int verbose;
 extern char *optarg;
 extern int optind;
-extern int getopt_long(int argc, char *const *argv, char const *shortopts,
-                       struct option const *longopts, int *longind);
-extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) ctime)(
-    time_t const *__timer);
-extern int(__attribute__((__nonnull__(1))) open)(char const *__file,
-                                                 int __oflag, ...);
-extern __attribute__((__nothrow__))
-__off_t(__attribute__((__leaf__)) lseek)(int __fd, __off_t __offset,
-                                         int __whence);
+extern int getopt_long(int argc, char *const *argv, char const *shortopts, struct option const *longopts, int *longind);
+extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) ctime)(time_t const *__timer);
+extern int(__attribute__((__nonnull__(1))) open)(char const *__file, int __oflag, ...);
+extern __attribute__((__nothrow__)) __off_t(__attribute__((__leaf__)) lseek)(int __fd, __off_t __offset, int __whence);
 extern int close(int __fd);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1), __leaf__)) chown)(char const *__file, __uid_t __owner,
-                                      __gid_t __group);
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) isatty)(
-    int __fd);
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__nonnull__(1), __leaf__)) unlink)(char const *__name);
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__nonnull__(1), __leaf__)) atoi)(char const *__nptr)
-    __attribute__((__pure__));
-extern __attribute__((__nothrow__, __noreturn__)) void(
-    __attribute__((__leaf__)) exit)(int __status);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) chown)(char const *__file, __uid_t __owner, __gid_t __group);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) isatty)(int __fd);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) unlink)(char const *__name);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) atoi)(char const *__nptr) __attribute__((__pure__));
+extern __attribute__((__nothrow__, __noreturn__)) void(__attribute__((__leaf__)) exit)(int __status);
 extern DIR *(__attribute__((__nonnull__(1))) opendir)(char const *__name);
 extern int(__attribute__((__nonnull__(1))) closedir)(DIR *__dirp);
 extern struct dirent *(__attribute__((__nonnull__(1))) readdir)(DIR *__dirp);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1), __leaf__)) utime)(char const *__file,
-                                      struct utimbuf const *__file_times);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) utime)(char const *__file, struct utimbuf const *__file_times);
 int ascii = 0;
 int to_stdout = 0;
 int decompress = 0;
@@ -2531,7 +2985,9 @@ long total_in = 0L;
 long total_out = 0L;
 int remove_ofname = 0;
 struct stat istat;
-
+struct option longopts[24] = {{"ascii", 0, (int *)0, 'a'},   {"to-stdout", 0, (int *)0, 'c'}, {"stdout", 0, (int *)0, 'c'},  {"decompress", 0, (int *)0, 'd'}, {"uncompress", 0, (int *)0, 'd'}, {"force", 0, (int *)0, 'f'},     {"help", 0, (int *)0, 'h'},   {"list", 0, (int *)0, 'l'},
+                              {"license", 0, (int *)0, 'L'}, {"no-name", 0, (int *)0, 'n'},   {"name", 0, (int *)0, 'N'},    {"quiet", 0, (int *)0, 'q'},      {"silent", 0, (int *)0, 'q'},     {"recursive", 0, (int *)0, 'r'}, {"suffix", 1, (int *)0, 'S'}, {"test", 0, (int *)0, 't'},
+                              {"no-time", 0, (int *)0, 'T'}, {"verbose", 0, (int *)0, 'v'},   {"version", 0, (int *)0, 'V'}, {"fast", 0, (int *)0, '1'},       {"best", 0, (int *)0, '9'},       {"lzw", 0, (int *)0, 'Z'},       {"bits", 1, (int *)0, 'b'},   {(char const *)0, 0, (int *)0, 0}};
 static void usage(void);
 static void help(void);
 static void license(void);
@@ -2555,6 +3011,49 @@ int main(int argc, char **argv);
 int (*work)(int infile, int outfile) = &zip;
 static void treat_dir(char *dir);
 static void reset_times(char *name, struct stat *statb);
+static void usage(void) {
+
+  { return; }
+}
+static char *help_msg[18] = {(char *)" -c --stdout      write on standard output, keep original files "
+                                     "unchanged",
+                             (char *)" -d --decompress  decompress",
+                             (char *)" -f --force       force overwrite of output file and compress "
+                                     "links",
+                             (char *)" -h --help        give this help",
+                             (char *)" -l --list        list compressed file contents",
+                             (char *)" -L --license     display software license",
+                             (char *)" -n --no-name     do not save or restore the original name and "
+                                     "time stamp",
+                             (char *)" -N --name        save or restore the original name and time stamp",
+                             (char *)" -q --quiet       suppress all warnings",
+                             (char *)" -r --recursive   operate recursively on directories",
+                             (char *)" -S .suf  --suffix .suf     use suffix .suf on compressed files",
+                             (char *)" -t --test        test compressed file integrity",
+                             (char *)" -v --verbose     verbose mode",
+                             (char *)" -V --version     display version number",
+                             (char *)" -1 --fast        compress faster",
+                             (char *)" -9 --best        compress better",
+                             (char *)" file...          files to (de)compress. If none given, use "
+                                     "standard input.",
+                             (char *)0};
+static void help(void) {
+  char **p;
+  char **tmp;
+
+  {
+    {
+      p = help_msg;
+      fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%s %s (%s)\n", progname, "1.2.4", "18 Aug 93");
+      usage();
+    }
+    {
+
+    while_break: /* CIL Label */;
+    }
+    return;
+  }
+}
 
 int main(int argc, char **argv) {
   int file_count;
@@ -2595,46 +3094,170 @@ int main(int argc, char **argv) {
     { tmp___2 = signal(1, (void (*)(int))1); }
 
     { tmp___5 = strncmp((char const *)progname, "un", (size_t)2); }
-
+    if (tmp___5 == 0) {
+      decompress = 1;
+    } else {
+      { tmp___6 = strncmp((char const *)progname, "gun", (size_t)3); }
+    }
     {
-      strncpy((char * /* __restrict  */)(z_suffix),
-              (char const * /* __restrict  */) ".gz", sizeof(z_suffix) - 1UL);
+      strncpy((char * /* __restrict  */)(z_suffix), (char const * /* __restrict  */) ".gz", sizeof(z_suffix) - 1UL);
       z_len = (int)strlen((char const *)(z_suffix));
     }
     {
+      while (1) {
+      while_continue: /* CIL Label */;
+        { optc = getopt_long(argc, (char *const *)argv, "ab:cdfhH?lLmMnNqrS:tvVZ123456789", (struct option const *)(longopts), (int *)0); }
+        if (!(optc != -1)) {
+          goto while_break;
+        }
+        {
+          if (optc == 97) {
+            goto case_97;
+          }
+          if (optc == 98) {
+            goto case_98;
+          }
 
-    while_break: /* CIL Label */
-        ;
+          if (optc == 104) {
+            goto case_104;
+          }
+
+          if (optc == 108) {
+            goto case_108;
+          }
+
+          if (optc == 53) {
+            goto case_49;
+          }
+          if (optc == 54) {
+            goto case_49;
+          }
+
+          goto switch_default;
+        case_97: /* CIL Label */
+          ascii = 1;
+          goto switch_break;
+        case_98: { /* CIL Label */
+          maxbits = atoi((char const *)optarg);
+        }
+          goto switch_break;
+        case_99: /* CIL Label */
+          to_stdout = 1;
+          goto switch_break;
+        case_100: /* CIL Label */
+          decompress = 1;
+          goto switch_break;
+        case_102: /* CIL Label */
+          force++;
+          goto switch_break;
+        case_104:  /* CIL Label */
+        case_72:   /* CIL Label */
+        case_63: { /* CIL Label */
+          help();
+          do_exit(0);
+        }
+          goto switch_break;
+        case_108: /* CIL Label */
+          to_stdout = 1;
+          decompress = to_stdout;
+          list = decompress;
+          goto switch_break;
+        case_76: { /* CIL Label */
+          license();
+          do_exit(0);
+        }
+          goto switch_break;
+        case_109: /* CIL Label */
+          no_time = 1;
+          goto switch_break;
+        case_77: /* CIL Label */
+          no_time = 0;
+          goto switch_break;
+        case_110: /* CIL Label */
+          no_time = 1;
+          no_name = no_time;
+          goto switch_break;
+        case_78: /* CIL Label */
+          no_time = 0;
+          no_name = no_time;
+          goto switch_break;
+        case_113: /* CIL Label */
+          quiet = 1;
+          verbose = 0;
+          goto switch_break;
+        case_114: /* CIL Label */
+          recursive = 1;
+          goto switch_break;
+        case_83: { /* CIL Label */
+          z_len = (int)strlen((char const *)optarg);
+          strcpy((char * /* __restrict  */)(z_suffix), (char const * /* __restrict  */)optarg);
+        }
+          goto switch_break;
+        case_116: /* CIL Label */
+          to_stdout = 1;
+          decompress = to_stdout;
+          test = decompress;
+          goto switch_break;
+        case_118: /* CIL Label */
+          verbose++;
+          quiet = 0;
+          goto switch_break;
+        case_86: { /* CIL Label */
+          version();
+          do_exit(0);
+        }
+          goto switch_break;
+        case_90: { /* CIL Label */
+          usage();
+          do_exit(1);
+        }
+          goto switch_break;
+        case_49: /* CIL Label */
+        case_50: /* CIL Label */
+        case_51: /* CIL Label */
+        case_52: /* CIL Label */
+        case_53: /* CIL Label */
+        case_54: /* CIL Label */
+        case_55: /* CIL Label */
+        case_56: /* CIL Label */
+        case_57: /* CIL Label */
+          level = optc - 48;
+          goto switch_break;
+        switch_default: { /* CIL Label */
+          usage();
+          do_exit(1);
+        }
+        switch_break: /* CIL Label */;
+        }
+      }
+    while_break: /* CIL Label */;
     }
-
     file_count = argc - optind;
 
-    if (file_count != 0) {
-      if (to_stdout) {
-        if (!test) {
-          if (!list) {
-            if (!decompress) {
-              tmp___7 = 1;
-            } else {
-              if (!ascii) {
-                tmp___7 = 1;
-              } else {
-                tmp___7 = 0;
-              }
-            }
-          } else {
-            tmp___7 = 0;
-          }
-        } else {
-          tmp___7 = 0;
+    if (z_len == 0) {
+      if (!decompress) {
+        {
+          fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%s: incorrect suffix \'%s\'\n", progname, optarg);
+          do_exit(1);
         }
       } else {
-        tmp___7 = 0;
+        goto _L;
       }
+    } else {
+    _L:
+      if (z_len > 30) {
+        {
+          fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%s: incorrect suffix \'%s\'\n", progname, optarg);
+          do_exit(1);
+        }
+      }
+    }
+
+    if (file_count != 0) {
+
       {
         while (1) {
-        while_continue___0: /* CIL Label */
-            ;
+        while_continue___0: /* CIL Label */;
           if (!(optind < argc)) {
             goto while_break___0;
           }
@@ -2644,8 +3267,7 @@ int main(int argc, char **argv) {
             treat_file(*(argv + tmp___8));
           }
         }
-      while_break___0: /* CIL Label */
-          ;
+      while_break___0: /* CIL Label */;
       }
     } else {
       { treat_stdin(); }
@@ -2677,14 +3299,10 @@ static void treat_stdin(void) {
   char *__cil_tmp19;
 
   {
-    if (!force) {
-    }
 
     {
-      strcpy((char * /* __restrict  */)(ifname),
-             (char const * /* __restrict  */) "stdin");
-      strcpy((char * /* __restrict  */)(ofname),
-             (char const * /* __restrict  */) "stdout");
+      strcpy((char * /* __restrict  */)(ifname), (char const * /* __restrict  */) "stdin");
+      strcpy((char * /* __restrict  */)(ofname), (char const * /* __restrict  */) "stdout");
       time_stamp = 0L;
     }
 
@@ -2696,11 +3314,22 @@ static void treat_stdin(void) {
     }
 
     {
+      while (1) {
+      while_continue: /* CIL Label */;
+        {
+          tmp___8 = fileno(stdout);
+          tmp___9 = fileno(stdin);
+          tmp___10 = (*work)(tmp___9, tmp___8);
+        }
 
-    while_break: /* CIL Label */
-        ;
+        { method = get_method(ifd); }
+        if (method < 0) {
+          return;
+        }
+        bytes_out = 0L;
+      }
+    while_break: /* CIL Label */;
     }
-
     return;
   }
 }
@@ -2727,38 +3356,58 @@ static void treat_file(char *iname) {
 
   {
     { tmp = strcmp((char const *)iname, "-"); }
-
+    if (tmp == 0) {
+      {
+        cflag = to_stdout;
+        treat_stdin();
+        to_stdout = cflag;
+      }
+      return;
+    }
     { tmp___0 = get_istat(iname, &istat); }
 
+    if ((istat.st_mode & 61440U) == 16384U) {
+      if (recursive) {
+        {
+          st = istat;
+          treat_dir(iname);
+          reset_times(iname, &st);
+        }
+      }
+      return;
+    }
+    if (!((istat.st_mode & 61440U) == 32768U)) {
+      if (!quiet) {
+        {
+        }
+      }
+
+      return;
+    }
     ifile_size = istat.st_size;
     if (no_time) {
-      if (!list) {
-        time_stamp = 0L;
-      } else {
-        time_stamp = istat.st_mtim.tv_sec;
-      }
+
     } else {
       time_stamp = istat.st_mtim.tv_sec;
     }
     if (to_stdout) {
-      if (!list) {
-        if (!test) {
-          {
-            strcpy((char * /* __restrict  */)(ofname),
-                   (char const * /* __restrict  */) "stdout");
-          }
-        } else {
-          goto _L___0;
-        }
-      } else {
-        goto _L___0;
-      }
+
     } else {
     _L___0: { tmp___2 = make_ofname(); }
+      if (tmp___2 != 0) {
+        return;
+      }
     }
 
     { ifd = open((char const *)(ifname), tmp___3, 384); }
-
+    if (ifd == -1) {
+      {
+        fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%s: ", progname);
+        perror((char const *)(ifname));
+        exit_code = 1;
+      }
+      return;
+    }
     {
       clear_bufs();
       part_nb = 0;
@@ -2770,39 +3419,36 @@ static void treat_file(char *iname) {
       }
     } else {
       { tmp___4 = create_outfile(); }
-
-      if (!decompress) {
-        if (save_orig_name) {
-        }
+      if (tmp___4 != 0) {
+        return;
       }
     }
-    if (!save_orig_name) {
-      save_orig_name = !no_name;
-    }
 
+    if (verbose) {
+      {
+        tmp___10 = strlen((char const *)(ifname));
+      }
+
+      { fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%s:\t%s", ifname, tmp___9); }
+    }
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+      while_continue: /* CIL Label */;
         { tmp___11 = (*work)(ifd, ofd); }
-
+        if (tmp___11 != 0) {
+          method = -1;
+          goto while_break;
+        }
         if (!decompress) {
           goto while_break;
-        } else {
-          if (last_member) {
-            goto while_break;
-          } else {
-            if (inptr == insize) {
-              goto while_break;
-            }
-          }
         }
         { method = get_method(ifd); }
-
+        if (method < 0) {
+          goto while_break;
+        }
         bytes_out = 0L;
       }
-    while_break: /* CIL Label */
-        ;
+    while_break: /* CIL Label */;
     }
     { close(ifd); }
     if (!to_stdout) {
@@ -2815,21 +3461,11 @@ static void treat_file(char *iname) {
         }
       }
     }
+    if (method == -1) {
 
-    if (verbose) {
-      if (test) {
-        {
-          fprintf((FILE * /* __restrict  */)stderr,
-                  (char const * /* __restrict  */) " OK");
-        }
-      } else {
-      }
-
-      {
-        fprintf((FILE * /* __restrict  */)stderr,
-                (char const * /* __restrict  */) "\n");
-      }
+      return;
     }
+
     if (!to_stdout) {
       {
         copy_stat(&istat);
@@ -2851,17 +3487,31 @@ static int create_outfile(void) {
 
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+      while_continue: /* CIL Label */;
         { tmp = check_ofname(); }
-
+        if (tmp != 0) {
+          {
+            close(ifd);
+          }
+          return (1);
+        }
         {
           remove_ofname = 1;
           ofd = open((char const *)(ofname), flags___0, 384);
         }
 
         { tmp___0 = fstat(ofd, &ostat); }
-
+        if (tmp___0 != 0) {
+          {
+            fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%s: ", progname);
+            perror((char const *)(ofname));
+            close(ifd);
+            close(ofd);
+            unlink((char const *)(ofname));
+            exit_code = 1;
+          }
+          return (1);
+        }
         { tmp___1 = name_too_long(ofname, &ostat); }
         if (!tmp___1) {
           return (0);
@@ -2873,8 +3523,7 @@ static int create_outfile(void) {
           shorten_name(ofname);
         }
       }
-    while_break: /* CIL Label */
-        ;
+    while_break: /* CIL Label */;
     }
   }
 }
@@ -2889,18 +3538,18 @@ static int do_stat(char *name, struct stat *sbuf) {
       *tmp = 0;
     }
     if (!to_stdout) {
+      if (!force) {
+        {
+          tmp___0 = lstat((char const * /* __restrict  */)name, (struct stat * /* __restrict  */)sbuf);
+        }
+        return (tmp___0);
+      }
     }
-    {
-      tmp___1 = stat((char const * /* __restrict  */)name,
-                     (struct stat * /* __restrict  */)sbuf);
-    }
+    { tmp___1 = stat((char const * /* __restrict  */)name, (struct stat * /* __restrict  */)sbuf); }
     return (tmp___1);
   }
 }
-static char *known_suffixes[9] = {
-    z_suffix,       (char *)".gz",  (char *)".z",
-    (char *)".taz", (char *)".tgz", (char *)"-gz",
-    (char *)"-z",   (char *)"_z",   (char *)((void *)0)};
+static char *known_suffixes[9] = {z_suffix, (char *)".gz", (char *)".z", (char *)".taz", (char *)".tgz", (char *)"-gz", (char *)"-z", (char *)"_z", (char *)((void *)0)};
 static char *get_suffix(char *name) {
   int nlen;
   int slen;
@@ -2917,33 +3566,49 @@ static char *get_suffix(char *name) {
       suf = known_suffixes;
       tmp = strcmp((char const *)(z_suffix), "z");
     }
-
+    if (tmp == 0) {
+      suf++;
+    }
     { nlen = (int)strlen((char const *)name); }
     if (nlen <= 32) {
       {
-        strcpy((char * /* __restrict  */)(suffix),
-               (char const * /* __restrict  */)name);
+        strcpy((char * /* __restrict  */)(suffix), (char const * /* __restrict  */)name);
       }
     } else {
-      {
-        strcpy((char * /* __restrict  */)(suffix),
-               (char const * /* __restrict  */)(((name + nlen) - 30) - 2));
-      }
+      { strcpy((char * /* __restrict  */)(suffix), (char const * /* __restrict  */)(((name + nlen) - 30) - 2)); }
     }
     {
       strlwr(suffix);
       slen = (int)strlen((char const *)(suffix));
     }
     {
-
-    while_break: /* CIL Label */
-        ;
+      while (1) {
+      while_continue: /* CIL Label */;
+        {
+          tmp___0 = (int)strlen((char const *)*suf);
+          s = tmp___0;
+        }
+        if (slen > s) {
+          if ((int)suffix[(slen - s) - 1] != 47) {
+            {
+              tmp___1 = strcmp((char const *)((suffix + slen) - s), (char const *)*suf);
+            }
+            if (tmp___1 == 0) {
+              return ((name + nlen) - s);
+            }
+          }
+        }
+        suf++;
+        if (!((unsigned long)*suf != (unsigned long)((void *)0))) {
+          goto while_break;
+        }
+      }
+    while_break: /* CIL Label */;
     }
     return ((char *)((void *)0));
   }
 }
-static char *suffixes[6] = {z_suffix,     (char *)".gz", (char *)".z",
-                            (char *)"-z", (char *)".Z",  (char *)((void *)0)};
+static char *suffixes[6] = {z_suffix, (char *)".gz", (char *)".z", (char *)"-z", (char *)".Z", (char *)((void *)0)};
 static int get_istat(char *iname, struct stat *sbuf) {
   int ilen;
   char **suf;
@@ -2956,14 +3621,21 @@ static int get_istat(char *iname, struct stat *sbuf) {
   {
     {
       suf = suffixes;
-      strcpy((char * /* __restrict  */)(ifname),
-             (char const * /* __restrict  */)iname);
+      strcpy((char * /* __restrict  */)(ifname), (char const * /* __restrict  */)iname);
       tmp = do_stat(ifname, sbuf);
     }
     if (tmp == 0) {
       return (0);
     }
-
+    if (!decompress) {
+      {
+        perror((char const *)(ifname));
+        exit_code = 1;
+      }
+      return (1);
+    } else {
+      { tmp___0 = __errno_location(); }
+    }
     { s = get_suffix(ifname); }
 
     {
@@ -2972,13 +3644,24 @@ static int get_istat(char *iname, struct stat *sbuf) {
     }
 
     {
+      while (1) {
+      while_continue: /* CIL Label */;
+        {
+          s = *suf;
+          strcat((char * /* __restrict  */)(ifname), (char const * /* __restrict  */)s);
+          tmp___2 = do_stat(ifname, sbuf);
+        }
 
-    while_break: /* CIL Label */
-        ;
+        ifname[ilen] = (char)'\000';
+        suf++;
+        if (!((unsigned long)*suf != (unsigned long)((void *)0))) {
+          goto while_break;
+        }
+      }
+    while_break: /* CIL Label */;
     }
     {
-      strcat((char * /* __restrict  */)(ifname),
-             (char const * /* __restrict  */)(z_suffix));
+      strcat((char * /* __restrict  */)(ifname), (char const * /* __restrict  */)(z_suffix));
       perror((char const *)(ifname));
       exit_code = 1;
     }
@@ -2994,35 +3677,50 @@ static int make_ofname(void) {
 
   {
     {
-      strcpy((char * /* __restrict  */)(ofname),
-             (char const * /* __restrict  */)(ifname));
+      strcpy((char * /* __restrict  */)(ofname), (char const * /* __restrict  */)(ifname));
       suff = get_suffix(ofname);
     }
     if (decompress) {
+      if ((unsigned long)suff == (unsigned long)((void *)0)) {
 
+        if (verbose) {
+          goto _L;
+        } else {
+          if (!recursive) {
+            if (!quiet) {
+            _L:
+              if (!quiet) {
+                {
+                  fprintf((FILE * /* __restrict  */)stderr,
+                          (char const * /* __restrict  */) "%s: %s: unknown suffix "
+                                                           "-- ignored\n",
+                          progname, ifname);
+                }
+              }
+            }
+          }
+        }
+        return (2);
+      }
       {
         strlwr(suff);
         tmp = strcmp((char const *)suff, ".tgz");
       }
-
+      if (tmp == 0) {
+        {
+          strcpy((char * /* __restrict  */)suff, (char const * /* __restrict  */) ".tar");
+        }
+      } else {
+        { tmp___0 = strcmp((char const *)suff, ".taz"); }
+      }
     } else {
       if ((unsigned long)suff != (unsigned long)((void *)0)) {
-        if (verbose) {
-          {
-            fprintf((FILE * /* __restrict  */)stderr,
-                    (char const * /* __restrict  */) "%s: %s already has %s "
-                                                     "suffix -- unchanged\n",
-                    progname, ifname, suff);
-          }
-        } else {
-        }
 
         return (2);
       } else {
         {
           save_orig_name = 0;
-          strcat((char * /* __restrict  */)(ofname),
-                 (char const * /* __restrict  */)(z_suffix));
+          strcat((char * /* __restrict  */)(ofname), (char const * /* __restrict  */)(z_suffix));
         }
       }
     }
@@ -3107,32 +3805,7 @@ static int get_method(int in) {
 
   {
     if (force) {
-      if (to_stdout) {
-        if (inptr < insize) {
-          tmp = inptr;
-          inptr++;
-          tmp___1 = (int)inbuf[tmp];
-        } else {
-          {
-            tmp___0 = fill_inbuf(1);
-            tmp___1 = tmp___0;
-          }
-        }
-        magic[0] = (char)tmp___1;
-        if (inptr < insize) {
-          tmp___2 = inptr;
-          inptr++;
-          tmp___4 = (int)inbuf[tmp___2];
-        } else {
-          {
-            tmp___3 = fill_inbuf(1);
-            tmp___4 = tmp___3;
-          }
-        }
-        magic[1] = (char)tmp___4;
-      } else {
-        goto _L;
-      }
+
     } else {
     _L:
       if (inptr < insize) {
@@ -3163,87 +3836,176 @@ static int get_method(int in) {
       part_nb++;
       header_bytes = 0L;
       last_member = 0;
-      tmp___61 =
-          memcmp((void const *)(magic), (void const *)"\037\213", (size_t)2);
+      tmp___61 = memcmp((void const *)(magic), (void const *)"\037\213", (size_t)2);
+    }
+    if (tmp___61 == 0) {
+      goto _L___4;
+    } else {
+      { tmp___62 = memcmp((void const *)(magic), (void const *)"\037\236", (size_t)2); }
+      if (tmp___62 == 0) {
+      _L___4:
+        method = tmp___13;
+        if (method != 8) {
+          {
+            fprintf((FILE * /* __restrict  */)stderr,
+                    (char const * /* __restrict  */) "%s: %s: unknown method %d -- "
+                                                     "get newer version of gzip\n",
+                    progname, ifname, method);
+            exit_code = 1;
+          }
+          return (-1);
+        }
+        work = &unzip;
+        if (inptr < insize) {
+          tmp___14 = inptr;
+          inptr++;
+          tmp___16 = (int)inbuf[tmp___14];
+        } else {
+          {
+            tmp___15 = fill_inbuf(0);
+            tmp___16 = tmp___15;
+          }
+        }
+        flags___0 = (uch)tmp___16;
+        if (((int)flags___0 & 32) != 0) {
+          {
+
+            exit_code = 1;
+          }
+          return (-1);
+        }
+
+        if (inptr < insize) {
+          tmp___17 = inptr;
+          inptr++;
+          tmp___19 = (int)inbuf[tmp___17];
+        } else {
+          {
+            tmp___18 = fill_inbuf(0);
+            tmp___19 = tmp___18;
+          }
+        }
+        stamp = (ulg)tmp___19;
+
+        stamp |= (ulg)tmp___22 << 8;
+        if (inptr < insize) {
+          tmp___23 = inptr;
+          inptr++;
+          tmp___25 = (int)inbuf[tmp___23];
+        } else {
+          {
+            tmp___24 = fill_inbuf(0);
+            tmp___25 = tmp___24;
+          }
+        }
+        stamp |= (ulg)tmp___25 << 16;
+
+        stamp |= (ulg)tmp___28 << 24;
+
+        if (inptr < insize) {
+          tmp___30 = inptr;
+          inptr++;
+        } else {
+          { fill_inbuf(0); }
+        }
+
+        if (((int)flags___0 & 4) != 0) {
+          if (inptr < insize) {
+            tmp___37 = inptr;
+            inptr++;
+            tmp___39 = (int)inbuf[tmp___37];
+          } else {
+            {
+              tmp___38 = fill_inbuf(0);
+              tmp___39 = tmp___38;
+            }
+          }
+          len = (unsigned int)tmp___39;
+          if (inptr < insize) {
+            tmp___40 = inptr;
+            inptr++;
+            tmp___42 = (int)inbuf[tmp___40];
+          } else {
+            {
+              tmp___41 = fill_inbuf(0);
+              tmp___42 = tmp___41;
+            }
+          }
+          len |= (unsigned int)tmp___42 << 8;
+
+          {
+
+          while_break: /* CIL Label */;
+          }
+        }
+        if (((int)flags___0 & 8) != 0) {
+          if (no_name) {
+            goto _L___0;
+          } else {
+            if (to_stdout) {
+
+            } else {
+            _L___1:
+              if (part_nb > 1) {
+              _L___0: {
+              while_break___0: /* CIL Label */;
+              }
+              } else {
+                {
+                  tmp___47 = basename(ofname);
+                  p = tmp___47;
+                  base = p;
+                }
+                {
+                  while (1) {
+                  while_continue___1: /* CIL Label */;
+                    if (inptr < insize) {
+                      tmp___48 = inptr;
+                      inptr++;
+                      tmp___50 = (int)inbuf[tmp___48];
+                    } else {
+                      {
+                        tmp___49 = fill_inbuf(0);
+                        tmp___50 = tmp___49;
+                      }
+                    }
+                    *p = (char)tmp___50;
+                    tmp___51 = p;
+                    p++;
+                    if ((int)*tmp___51 == 0) {
+                      goto while_break___1;
+                    }
+                  }
+                while_break___1: /* CIL Label */;
+                }
+              }
+            }
+          }
+        }
+
+      } else {
+        { tmp___59 = memcmp((void const *)(magic), (void const *)"PK\003\004", (size_t)2); }
+        if (tmp___59 == 0) {
+
+        } else {
+        _L___3: { tmp___58 = memcmp((void const *)(magic), (void const *)"\037\036", (size_t)2); }
+          if (tmp___58 == 0) {
+            work = &unpack;
+            method = 2;
+          } else {
+            { tmp___57 = memcmp((void const *)(magic), (void const *)"\037\235", (size_t)2); }
+          }
+        }
+      }
     }
   }
 }
 static int first_time = 1;
-static char *methods[9] = {(char *)"store", (char *)"compr", (char *)"pack ",
-                           (char *)"lzh  ", (char *)"",      (char *)"",
-                           (char *)"",      (char *)"",      (char *)"defla"};
-static void do_list(int ifd___0, int method___0) {
-  ulg crc___1;
-  char *date;
-  __off_t tmp;
-  uch buf[8];
-  ssize_t tmp___0;
-  char *tmp___1;
-  void *__cil_tmp9;
-
-  {
-
-    crc___1 = (ulg)(~0);
-    bytes_out = -1L;
-    bytes_in = ifile_size;
-
-    {
-      tmp___1 = ctime((time_t const *)(&time_stamp));
-      date = tmp___1 + 4;
-      *(date + 12) = (char)'\000';
-    }
-    if (verbose) {
-      {
-        printf((char const * /* __restrict  */) "%5s %08lx %11s ",
-               methods[method___0], crc___1, date);
-      }
-    }
-    {
-      printf((char const * /* __restrict  */) "%9ld %9ld ", bytes_in,
-             bytes_out);
-    }
-    if (bytes_in == -1L) {
-      total_in = -1L;
-      header_bytes = 0L;
-      bytes_out = header_bytes;
-      bytes_in = bytes_out;
-    } else {
-      if (total_in >= 0L) {
-        total_in += bytes_in;
-      }
-    }
-    if (bytes_out == -1L) {
-      total_out = -1L;
-      header_bytes = 0L;
-      bytes_out = header_bytes;
-      bytes_in = bytes_out;
-    } else {
-      if (total_out >= 0L) {
-        total_out += bytes_out;
-      }
-    }
-    {
-      display_ratio(bytes_out - (bytes_in - header_bytes), bytes_out, stdout);
-      printf((char const * /* __restrict  */) " %s\n", ofname);
-    }
-    return;
-  }
-}
+static char *methods[9] = {(char *)"store", (char *)"compr", (char *)"pack ", (char *)"lzh  ", (char *)"", (char *)"", (char *)"", (char *)"", (char *)"defla"};
 static int same_file(struct stat *stat1, struct stat *stat2) {
   int tmp;
 
-  {
-    if (stat1->st_ino == stat2->st_ino) {
-      if (stat1->st_dev == stat2->st_dev) {
-        tmp = 1;
-      } else {
-        tmp = 0;
-      }
-    } else {
-      tmp = 0;
-    }
-    return (tmp);
-  }
+  { return (tmp); }
 }
 static int name_too_long(char *name, struct stat *statb) {
   int s;
@@ -3263,18 +4025,13 @@ static int name_too_long(char *name, struct stat *statb) {
       c = *(name + (s - 1));
       tstat = *statb;
       *(name + (s - 1)) = (char)'\000';
-      tmp___0 = stat((char const * /* __restrict  */)name,
-                     (struct stat * /* __restrict  */)(&tstat));
+      tmp___0 = stat((char const * /* __restrict  */)name, (struct stat * /* __restrict  */)(&tstat));
     }
     if (tmp___0 == 0) {
       {
         tmp___1 = same_file(statb, &tstat);
       }
-      if (tmp___1) {
-        tmp___2 = 1;
-      } else {
-        tmp___2 = 0;
-      }
+
     } else {
       tmp___2 = 0;
     }
@@ -3311,14 +4068,30 @@ static void shorten_name(char *name) {
 
     {
 
-    while_break: /* CIL Label */
-        ;
+    while_break: /* CIL Label */;
     }
+    if ((unsigned long)trunc != (unsigned long)((void *)0)) {
+      {
+        while (1) {
+        while_continue___1: /* CIL Label */;
+          *(trunc + 0) = *(trunc + 1);
+          tmp___0 = trunc;
+          trunc++;
+          if (!*tmp___0) {
+            goto while_break___1;
+          }
+        }
+      while_break___1: /* CIL Label */;
+      }
+      trunc--;
+    } else {
+      { trunc = strrchr((char const *)name, (int)*("." + 0)); }
 
-    {
-      strcpy((char * /* __restrict  */)trunc,
-             (char const * /* __restrict  */)(z_suffix));
+      if ((int)*(trunc + 1) == 0) {
+        trunc--;
+      }
     }
+    { strcpy((char * /* __restrict  */)trunc, (char const * /* __restrict  */)(z_suffix)); }
     return;
   }
 }
@@ -3351,33 +4124,69 @@ static int check_ofname(void) {
     }
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
-        {
-          tmp___1 = stat((char const * /* __restrict  */)(ofname),
-                         (struct stat * /* __restrict  */)(&ostat));
+      while_continue: /* CIL Label */;
+        { tmp___1 = stat((char const * /* __restrict  */)(ofname), (struct stat * /* __restrict  */)(&ostat)); }
+        if (!(tmp___1 != 0)) {
+          goto while_break;
         }
-
         { tmp___0 = __errno_location(); }
         if (*tmp___0 != 36) {
           return (0);
         }
         { shorten_name(ofname); }
       }
-    while_break: /* CIL Label */
-        ;
+    while_break: /* CIL Label */;
     }
-
+    if (!decompress) {
+      {
+        tmp___3 = name_too_long(ofname, &ostat);
+      }
+    }
     { tmp___6 = same_file(&istat, &ostat); }
+    if (tmp___6) {
+      {
+        tmp___5 = strcmp((char const *)(ifname), (char const *)(ofname));
+      }
+      if (tmp___5 == 0) {
 
+        {
+          fprintf((FILE * /* __restrict  */)stderr,
+                  (char const * /* __restrict  */) "%s: %s: cannot %scompress "
+                                                   "onto itself\n",
+                  progname, ifname, tmp___4);
+        }
+      } else {
+        { fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%s: %s and %s are the same file\n", progname, ifname, ofname); }
+      }
+      exit_code = 1;
+      return (1);
+    }
+    if (!force) {
+      {
+        strcpy((char * /* __restrict  */)(response), (char const * /* __restrict  */) "n");
+        fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%s: %s already exists;", progname, ofname);
+      }
+      { tmp___11 = __ctype_b_loc(); }
+      if ((int const) * (*tmp___11 + (int)response[0]) & 256) {
+        tmp___10 = ((int)response[0] - 65) + 97;
+      } else {
+        tmp___10 = (int)response[0];
+      }
+      if (tmp___10 != 121) {
+        {
+          fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "\tnot overwritten\n");
+        }
+
+        return (1);
+      }
+    }
     {
       chmod((char const *)(ofname), (__mode_t)511);
       tmp___12 = unlink((char const *)(ofname));
     }
     if (tmp___12) {
       {
-        fprintf((FILE * /* __restrict  */)stderr,
-                (char const * /* __restrict  */) "%s: ", progname);
+        fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%s: ", progname);
         perror((char const *)(ofname));
         exit_code = 1;
       }
@@ -3396,7 +4205,18 @@ static void reset_times(char *name, struct stat *statb) {
       timep.modtime = statb->st_mtim.tv_sec;
       tmp = utime((char const *)name, (struct utimbuf const *)(&timep));
     }
-
+    if (tmp) {
+      if (!((statb->st_mode & 61440U) == 16384U)) {
+        if (!quiet) {
+          {
+            fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%s: ", progname);
+          }
+        }
+        if (exit_code == 0) {
+          exit_code = 2;
+        }
+      }
+    }
     return;
   }
 }
@@ -3410,7 +4230,16 @@ static void copy_stat(struct stat *ifstat) {
       reset_times(ofname, ifstat);
       tmp = chmod((char const *)(ofname), ifstat->st_mode & 4095U);
     }
-
+    if (tmp) {
+      if (!quiet) {
+        {
+          fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%s: ", progname);
+        }
+      }
+      if (exit_code == 0) {
+        exit_code = 2;
+      }
+    }
     {
       chown((char const *)(ofname), ifstat->st_uid, ifstat->st_gid);
       remove_ofname = 0;
@@ -3434,11 +4263,16 @@ static void treat_dir(char *dir) {
 
   {
     { dirp = opendir((char const *)dir); }
-
+    if ((unsigned long)dirp == (unsigned long)((void *)0)) {
+      {
+        fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */) "%s: %s unreadable\n", progname, dir);
+        exit_code = 1;
+      }
+      return;
+    }
     {
 
-    while_break: /* CIL Label */
-        ;
+    while_break: /* CIL Label */;
     }
     { closedir(dirp); }
     return;
@@ -3454,19 +4288,25 @@ static void do_exit(int exitcode) {
       }
     }
     in_exit = 1;
-
+    if ((unsigned long)env != (unsigned long)((void *)0)) {
+      {
+        free((void *)env);
+        env = (char *)((void *)0);
+      }
+    }
+    if ((unsigned long)args != (unsigned long)((void *)0)) {
+      {
+        free((void *)((char *)args));
+        args = (char **)((void *)0);
+      }
+    }
     { exit(exitcode); }
   }
 }
 void abort_gzip(void) {
 
   {
-    if (remove_ofname) {
-      {
-        close(ofd);
-        unlink((char const *)(ofname));
-      }
-    }
+
     { do_exit(1); }
     return;
   }
