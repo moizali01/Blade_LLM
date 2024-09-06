@@ -18,6 +18,9 @@ RUN ln -sf /usr/bin/clang-14 /usr/bin/clang && \
 # Install other required packages
 RUN apt-get install -y libcurl4-openssl-dev astyle
 
+#Install libpcre3-dev
+RUN apt-get update && apt-get install -y libpcre3-dev
+
 # Install Python 3.10.14 from source
 RUN apt-get update && \
     apt-get install -y \

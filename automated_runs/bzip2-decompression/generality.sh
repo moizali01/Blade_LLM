@@ -29,7 +29,7 @@ function compress_and_decompress() {
     done
 
     local compression_debloated="compression_debloated.txt"
-    { timeout ${TIMEOUT_LIMIT} ${REDUCED_BINARY} temp/*; } &>>${compression_debloated}
+    { timeout ${TIMEOUT_LIMIT} ${ORG_BINARY} temp/*; } &>>${compression_debloated}
     local a=$?
     if [[ $a -ne 0 ]]; then
         echo "Compression failed" >>${LOG} 2>&1
@@ -47,7 +47,7 @@ function compress_and_decompress() {
     fi
 
     local decompression_original="decompression_original.txt"
-    { timeout ${TIMEOUT_LIMIT} ${ORG_BINARY} -d temp/*; } &>>${decompression_original}
+    { timeout ${TIMEOUT_LIMIT} ${REDUCED_BINARY} -d temp/*; } &>>${decompression_original}
     local b=$?
     if [[ $b -ne 0 ]]; then
         echo "Decompression failed" >>${LOG} 2>&1
