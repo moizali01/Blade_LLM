@@ -34,6 +34,8 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
     if is_complete_c_function(process.stdout):
         return 1
     
+    if check_while_break(process.stdout):
+        return 10
 
     # Ensure directories exist
     os.makedirs("../LLM_Util/cands/removed_code", exist_ok=True)
@@ -248,3 +250,10 @@ def has_balanced_braces(code):
         if brace_count == 0:
             return True
     return False
+
+def check_while_break(candidate_set):
+    # Define the regex pattern for the if statement with goto while_break
+    pattern = r'^\s*if\s*\([^{]*\)\s*\{\s*goto\s+while_break(?:___?\d+)?;\s*\}\s*$'
+    
+    # Use re.search to check if the pattern exists in the candidate_set
+    return bool(re.match(pattern, candidate_set, re.DOTALL))
