@@ -28,7 +28,7 @@ from llama_index.core.text_splitter import CodeSplitter
 from dotenv import load_dotenv
 from LLM_Util.chunker import get_code_chunks
 import subprocess
-
+import re
 
 dotenv_path = '../.env'
 load_dotenv(dotenv_path)
@@ -235,7 +235,16 @@ class QAClass:
             # print("sec_list found and read")
         else:
             sec_list = self.get_security_checks()
-            print(sec_list)
+            # print(sec_list)
+            # print("Sec List Read")
+
+        if os.path.exists("../LLM_Util/func_output.txt"):
+            with open("../LLM_Util/func_output.txt", 'r') as file:
+                func_list = file.read()
+            print("func_list found and read")
+        else:
+            func_list = self.get_func_lists()
+            print(func_list)
             print("Sec List Read")
 
         if coverage:
@@ -245,7 +254,7 @@ class QAClass:
             with open('../LLM_Util/prompt_not_in_coverage.txt', 'r') as file:
                 prompt_template = file.read()
 
-        prompt = prompt_template.format(sec_list=sec_list, formatted_context=formatted_context, query=query)
+        prompt = prompt_template.format(sec_list=sec_list, formatted_context=formatted_context, query=query, func_list=func_list)
         prompt_to_send = prompt
 
         # UNCOMMENT YOUR REQUIRED LLM BELOW
@@ -268,28 +277,6 @@ class QAClass:
 
         # 3. Local LLM (via Ollama)
         # response = llm(prompt_to_send)
-        
-
-        ### Two-pass approach ####
-
-        # gemini
-        # response = llm.send_message(prompt_to_send).text
-
-        # # response = llm(prompt_to_send)
-        # with open('../LLM_Util/prompt_second.txt', 'r') as file:
-        #     prompt_template = file.read()
-
-        # # save response1 to a file
-        # now = datetime.now()
-        # formatted_time = now.strftime("%H-%M-%S-%f")[:-3]
-        # with open(f'../LLM_Util/cands/response_firstpass/response_time_{str(formatted_time)}.txt', 'w') as file:
-        #     file.write(response)
-        
-        # prompt = prompt_template.format(response1=response, formatted_context=formatted_context, query=query)
-
-        # response2 = llm(prompt)
-        # response2 = llm.send_message(prompt).text
-        # return response2
 
         return response
 
@@ -303,6 +290,74 @@ class QAClass:
         elif prompt_type == 'security':
             return self.llm_chain.run(query, context_query, True, fifty_clean)
         
+
+    def get_func_lists(self):
+
+        with open("../LLM_Util/file_names.txt", "r") as f:
+            c_program = f.readline().strip()
+            test_oracle = f.readline().strip()
+
+        binary_name = c_program.split(".")[0]
+        
+        os.system(f'clang -w target-program/{c_program} -D __msan_unpoison\(s,z\) -lpcre -lpthread -o target-program/{binary_name}')
+
+        output = subprocess.check_output([f"""./target-program/{binary_name}""", '--help'])
+        functionality_list = output.decode('utf-8')
+
+        with open('../LLM_Util/functionality_prompt.txt', 'r') as file:
+            func_template = file.read()
+
+        with open(f"target-program/{test_oracle}", 'r') as file:
+            train_oracle = file.read()
+
+        func_prompt = func_template.format(functionality_list = functionality_list, train_oracle=train_oracle)
+
+
+        safe = [
+            {
+                "category": "HARM_CATEGORY_HARASSMENT",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_HATE_SPEECH",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                "threshold": "BLOCK_NONE",
+            },
+        ]
+        genai.configure(api_key=os.environ.get("GENAI_API_KEY"))
+        generation_config = {
+        "temperature": 0.1,
+        "top_p": 0.95,
+        "top_k": 64,
+        "max_output_tokens": 8192,
+        "response_mime_type": "text/plain",
+        }
+        model = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        generation_config=generation_config,
+        safety_settings = safe
+        # See https://ai.google.dev/gemini-api/docs/safety-settings
+        )
+        llm_func = model.start_chat(history=[])
+
+        response = (llm_func.send_message(func_prompt)).text
+
+        response = re.sub(r"\*\*Reasoning:\*\*.*\n", "", response)
+
+        with open("../LLM_Util/func_output.txt", 'w') as file:
+            file.write(response)
+
+        return response
+
+
+
 
     def get_security_checks(self):
         code_path = "original.txt"
@@ -322,7 +377,6 @@ Here is the entire program code for the utility:
 ########
 
 Make a list in bullet points to list down the exception and security related issues that must be kept in mind while testing this program. Do not include anything else in your response to this message. Do not include any point regarding the generality or the flags of the program. Make sure that the list is concise and under **20 points** in total.
-
 """      
         safe = [
             {
@@ -342,7 +396,6 @@ Make a list in bullet points to list down the exception and security related iss
                 "threshold": "BLOCK_NONE",
             },
         ]
-        # genai.configure(api_key="AIzaSyCeL2G0fQvkgYn95s7p0orgbgOqtO-lZ28")
         genai.configure(api_key=os.environ.get("GENAI_API_KEY"))
         generation_config = {
         "temperature": 0.1,

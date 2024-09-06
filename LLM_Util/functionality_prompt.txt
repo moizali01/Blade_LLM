@@ -1,0 +1,47 @@
+Here is the train oracle for a a program we are debloating. It contains the functionality that is required: 
+
+#####
+
+**Oracle:** 
+{train_oracle}
+
+Make sure to only focus on the functionality being performed by the *REDUCED_BINARY* as part of the functionality. *ORG_BINARY* is just for comparison and we must not consider that as a part of our program's required functionality. 
+
+#####
+
+Here is a list of all the functionalities present in this utility:
+
+#####
+
+**Functionalities:**
+
+{functionality_list}
+
+#####
+
+Now, your task is to make a list of required and unrequired functionalities of the *REDUCED_BINARY* as shown below:
+
+Use the functionalities list to properly describe the required and unrequired functionalities. 
+
+#######
+
+**Required Functionality**:
+
+Functionality: <Describe the functionality of the *REDUCED_BINARY* (including any flags that are used) as shown in the training oracle above>
+Purpose: <Describe the purpose of the *REDUCED_BINARY* as observed in the training oracle above>
+Reasoning: <Describe which test case we are using this functionality in>
+
+**Undesired Functionality (to be removed):**
+
+1. <unrequired functionality No.1>
+2. <unrequired functionality No.2>
+3. <unrequired functionality No.3>
+4. Any thing apart from what is listed in the required functionality
+
+#######
+
+Strictly follow the answer format shown above. Make sure to keep the undesired functionality list upto 5 points. Properly describe each unrequired functionality in a concise manner. 
+
+**IMPORTANT:** Make sure there is no overlap in the required and unrequired functionality. Carefully analyse the cases being performed by *REDUCED_BINARY* in the *compress_and_decompress()* function of the train oracle. Do not focus on the *ORG_BINARY* in the function since it is only used for comparison purpose. Make sure the list is not too long and is concise.
+
+Make sure you do not add any information on your own. Do not fabricate an answer. Only answer on the basis of the training oracle and functionalities shown above.

@@ -65,6 +65,16 @@ def main():
     ## checking if programs paths paths exists and getting the base name
     c_program = get_file_name(c_program_path)
     test_oracle_file = get_file_name(test_oracle_path)
+    
+    # ########################Save file names for llm pipeline####################################
+
+    with open("../LLM_Util/file_names.txt", "w") as f:
+        if c_program:
+            f.write(f"{c_program}\n")
+        if test_oracle_file:
+            f.write(f"{test_oracle_file}")
+    
+    # ############################################################################################
 
     # setting executable permission for the test oracle
     os.system(f'chmod +x {test_oracle_path}')

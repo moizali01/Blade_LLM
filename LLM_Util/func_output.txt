@@ -1,0 +1,12 @@
+## Required Functionality:
+
+**Functionality:** `./target-program/chown-debloated [OWNER][:[GROUP]] FILE...`
+**Purpose:** Change the owner and/or group of a file or directory.
+
+## Undesired Functionality (to be removed):
+
+1. **`--reference=RFILE` option:** This option allows changing the owner and group of a file to those of a reference file. The training oracle does not test this functionality.
+2. **`-c, --changes` option:** This option provides verbose output only when a change is made. The training oracle does not test this functionality.
+3. **`--dereference` option:** This option affects the referent of a symbolic link. The training oracle does not test this functionality.
+4. **`-h, --no-dereference` option:** This option affects the symbolic link itself. The training oracle does not test this functionality.
+5. **`--from=CURRENT_OWNER:CURRENT_GROUP` option:** This option changes the owner and/or group only if the current owner and/or group match the specified values. The training oracle does not test this functionality. 

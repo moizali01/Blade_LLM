@@ -2,53 +2,39 @@ You are a proficient C code evaluator tasked with assessing the importance of a 
 
 Evaluation Scale:
 
-- Class 1: Completely Unnecessary Code - This code is not needed for functionality or user experience.
+- Class 1: Completely Unnecessary Code - This code is a part of unrequired functionality.
 - Class 2: Somewhat Unnecessary Code - This code may be needed for minor issues but does not affect overall functionality.
-- Class 3: Necessary Code - This code is important for the basic functionality of the program.
-- Class 4: Critical Code - This code is essential for functionality, security, and generality. The program will break without it.
+- Class 3: Necessary Code - This code is contributes to the required functionality.
+- Class 4: Critical Code - This code is essential for functionality, security, or generality.
 - Class 5: Incomplete Context - The context provided does not provide enough information to understand the complete purpose of this code in this larger program.
 
 Evaluate if the code belongs to each of the five classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
 
+Strictly follow the answer format below:
+
 Answer Format:
 
-Class 1: <reasoning for why the code might be completely unnecessary or not>
+Class 1: <reasoning for which unrequired functionality the target code contributes to>
 Class 2: <reasoning for why the code might be somewhat unnecessary or not>
-Class 3: <reasoning for why the code might be necessary or not>
-Class 4: <reasoning for why the code might be critical or not>
+Class 3: <reasoning for which functionality the target code contributes to>
+Class 4: <reasoning for which functionality or security the code snippet contributes to>
 Class 5: <reasoning for why you think it is likely you do not understand the purpose of this code given the context>
 
-
-Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines. The verdict should reflect only the code's contribution to the required functionalities and its role in preventing the listed security vulnerabilities. Any other factor is irrelevant.
+Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
 Final Verdict: <assigned class> (1-5)
 
-**Required Functionality:**
-
-1. **Basic Ownership/Group Change:**
-   - Support for `OWNER` and `:[GROUP]` arguments.
-   - Handle omitted `OWNER` or `GROUP` as described previously.
-   - Accept numeric and symbolic owner/group specifications.
-
-2. Edge cases related to ownership/Group Change
-
-**Undesired Functionality (to be removed):**
-
-1. **Recursion (`-R`, `-H`, `-L`, `-P`):** Remove all recursion-related options.
-2. **Reference File (`--reference`):**  Remove this option.
-3. **Conditional Ownership Change (`--from`):** Remove this option.
-4. **Symbolic Link Behavior (`-h`):**  Remove support for `-h` (`--no-dereference`). You'll likely use `fchownat` to operate directly on the directory, regardless of whether it's a symbolic link.
-5. **Verbosity and Feedback (`-c`, `-f`, `-v`):** Remove all verbosity-related options.
-6. **Preserve Root (`--no-preserve-root`, `--preserve-root`):** Remove these options.
-7. **Help and Version (`--help`, `--version`):**  Remove these options.
-8. Any functionality that is not related to basic Ownership/Group change.
+{func_list}
 
 **IMPORTANT**: If you encounter code that appears to relate to any of the undesired functionalities listed above, immediately classify it as Class 1 (No Functional Contribution) and provide a brief explanation.
 
-This code snippet included in the code execution path for the required functionality, therefore verify if the given code snippet is important for the functionality mentioned or security of the program.
+
+We must cater to all edge cases related to required functionality. We are NOT interested in any other functionality. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements and loop or variable initialization which are important for keeping the workflow structure. 
+
+This code snippet is a part of the code execution path for the required functionality.
 
 
 #########
-Does this code snippet directly prevent any of the following vulnerabilities, considering how it's used in the program? Consider how the code might be exploited if this snippet were absent. Please give emphasis to analyzing whether the provided snippet is important for preventing any of the given mentioned vulnerabilities:
+To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing. Please give emphasis to analysing whether the provided snippet is important for preventing any of the given security vulnerabilities:
 
 Security List: 
 {sec_list}
@@ -77,7 +63,13 @@ Target Code:
 
 #########
 
-Make sure to evaluate only on the basis of the functionality and the possibility of security vulnerabilities mentioned above about changing the owner and group of a directory as described above. We are not concerned with any other functionalities such as verbose or symbolic link functionalities. Since we can not change the structure of code, even if a piece of code can be improved somehow, we do not care. We must make sure the program functions correctly in its given configuration in the larger picture. Simply comment on the importance of the piece of code give the structure of code provided to you in the context snippets.
+
+
+Make sure to evaluate on the basis of:
+1) the *Required Functionality*
+2) the possibility of security vulnerabilities mentioned in the *Security List*.
+
+Make sure to cater to ALL edge cases for the required functionalites, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of data computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
 If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
