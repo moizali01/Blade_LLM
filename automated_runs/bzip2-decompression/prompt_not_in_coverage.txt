@@ -1,0 +1,87 @@
+You are a proficient C code evaluator tasked with assessing the importance of a specific code snippet within the larger context of the overall program. This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for generality or security of the program. 
+
+Evaluation Scale:
+
+- Class 1: Completely Unnecessary Code - This code is a part of unrequired functionality.
+- Class 2: Somewhat Unnecessary Code - This code may be needed for minor issues but does not affect overall functionality.
+- Class 3: Necessary Code - This code is contributes to the required functionality.
+- Class 4: Critical Code - This code is essential for functionality, security, and generality. The program will break without it.
+- Class 5: Incomplete Context - The context provided does not provide enough information to understand the complete purpose of this code in this larger program.
+
+Evaluate if the code belongs to each of the six classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
+
+Strictly follow the answer format below:
+
+Answer Format:
+
+Class 1: <reasoning for why the code might be completely unnecessary or not>
+Class 2: <reasoning for why the code might be somewhat unnecessary or not>
+Class 3: <reasoning for why the code might be necessary or not>
+Class 4: <reasoning for why the code might be critical or not>
+Class 5: <whether the purpose of this code is unclear without further context or not>
+
+Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
+Final Verdict: <assigned class> (1-5)
+
+The code belongs to tthe bzip2 core utility. bzip2 decompression functionality uses sorting to reconstruct data for decompression.
+Required Functionality:
+1. bzip2 is used only with the -d flag to decompress all kind of files.
+2. Retain the data integrity after decompression and make sure the decompression occurs successfully. 
+3. For decompression combination of run-length encoding (RLE) and Huffman coding is used.
+
+We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements, goto statements and loop or variable initialization which are important for keeping the workflow structure.  
+
+Any other functionality that does not contribute to our required functionalites is irrelevant to our use case. Here are some of the unrequired functionalities:
+
+1. **-z, --compress**:  Forces compression, which is not needed as we want to decompress files.
+2. **-h, --help**:  Displays help information, which is not needed for our use case.
+3. **-L, --license**:  Displays software version and license, which is not relevant to decompression functionality.
+4. **-V, --version**:  Displays software version and license, which is not relevant to decompression functionality.
+5. **-1 .. -9, --fast, --best**:  Sets block size, which is not relevant to our use case as we want to decompress all files without specific block size requirements.
+6. **-t, --test**:  Tests compressed file integrity, which is not needed as we want to ensure successful decompression.
+7. **-k, --keep**:  Keeps input files, which is not needed as we are not concerned with deleting input files.
+8. **-f, --force**:  Overwrites existing output files, which is not needed as we are not concerned with overwriting existing files. 
+
+**IMPORTANT**: If you encounter code that appears to relate to any of the undesired functionalities listed above, immediately classify it as Class 1 (No Functional Contribution) and provide a brief explanation.
+
+This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for the functionality mentioned or security of the program. 
+
+#########
+To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing. Put emphasis on the security list and make sure to evaluate each candidate set and ensure each vulnerability mentioned in below is prevented:
+
+Security List: 
+{sec_list}
+
+#########
+
+Contextual Information:
+
+#########
+
+Context:
+
+{formatted_context}
+
+#########
+
+Target Code for Evaluation:
+
+#########
+
+Target Code:
+
+{query}
+
+#########
+
+Make sure to evaluate on the basis of the following:
+1. Prevention against the security vulnerabilities mentioned in the security list.
+2. Decompress files with the -d files.
+3. Retaining the data integrity of the decompressed file.
+4. Prevent the program workflow from being disrupted.
+
+Make sure to cater to ALL edge cases for the functionalites mentioned. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
+
+We are not concerned with any other functionalities so make sure to evaluate the candidate set on the basis of the unrequired functionalites mentioned above as well and mark the candidate sets that meet the unrequired functionality criteria as unnecessary. 
+
+Make sure you do not add any information on your own. Consider all four snippets in the provided context to explain the queried code. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.
