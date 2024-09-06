@@ -19,29 +19,27 @@ Here is a list of all the functionalities present in this utility:
 
 #####
 
-Now, your task is to make a list of required and unrequired functionalities of the *REDUCED_BINARY* as shown below:
+*IMPORTANT:* This task is about the functionality of REDUCED_BINARY inside the run() function. Any reference to **ORG_BINARY** is only for comparison purposes and must be completely ignored when determining required and unrequired functionalities.
 
-Use the functionalities list to properly describe the required and unrequired functionalities. 
+You must ONLY focus on REDUCED_BINARY. Treat any command run by ORG_BINARY as irrelevant to the required functionalities. Be cautious not to mix up the binaries when analyzing the cases.
 
-#######
+Task: Make a list of required and unrequired functionalities of the REDUCED_BINARY only. Follow the specific format below:
 
-**Required Functionality**:
+**Required Functionality:**
 
-Functionality: <Describe the functionality of the *REDUCED_BINARY* (including any flags that are used) as shown in the training oracle above>
-Purpose: <Describe the purpose of the *REDUCED_BINARY* as observed in the training oracle above>
-Reasoning: <Describe which test case we are using this functionality in>
+    Functionality: Clearly describe the functionality of REDUCED_BINARY, including any specific flags used, completely ignore any command being run by **ORG_BINARY** in this section.
+    Purpose: Clearly state the purpose of this command as seen in the run() function.
+    Reasoning: Specify which test case from the train oracle is using this functionality of the REDUCED_BINARY.
 
-**Undesired Functionality (to be removed):**
+**Unrequired Functionality (to be removed):**
 
-1. <unrequired functionality No.1>
-2. <unrequired functionality No.2>
-3. <unrequired functionality No.3>
-4. Any thing apart from what is listed in the required functionality
+    <Unrequired functionality No. 1>
+    <Unrequired functionality No. 2>
+    <Unrequired functionality No. 3>
+    Any functionality that is not listed in the required functionality.
 
-#######
+Do not list or describe any command related to ORG_BINARY as required functionality. Focus exclusively on the REDUCED_BINARY. Do not include unnecessary details or explanations unless they are related to the REDUCED_BINARY. 
 
-Strictly follow the answer format shown above. Make sure to keep the undesired functionality list upto 5 points. Properly describe each unrequired functionality in a concise manner. 
+Parsing and formats: If the REDUCED_BINARY relies on any specific parsing or formatting operations, be sure to mention these details in the required functionality section.
 
-**IMPORTANT:** Make sure there is no overlap in the required and unrequired functionality. Carefully analyse the cases being performed by *REDUCED_BINARY* in the *compress_and_decompress()* function of the train oracle. Do not focus on the *ORG_BINARY* in the function since it is only used for comparison purpose. Make sure the list is not too long and is concise.
-
-Make sure you do not add any information on your own. Do not fabricate an answer. Only answer on the basis of the training oracle and functionalities shown above.
+*Reminder:* There should be no overlap between the required and unrequired functionality. Make sure that no ORG_BINARY commands are incorrectly considered part of the REDUCED_BINARY's required functionality. Additionally, make sure to keep the unrequired functionality list upto 5 points.ionaly

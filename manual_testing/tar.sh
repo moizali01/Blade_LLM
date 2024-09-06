@@ -13,7 +13,7 @@ LOG=${DIR}/log
 FILE1="test1.txt"
 FILE2=("test2.txt" "test3.bin" "test4.txt")
 # HARDCODED_FILES=("test2.txt" "test3.jpg" "test4")
-function compress_and_decompress() {
+function run() {
     ((TOTAL_TESTS++))
     
     echo "CASE: $TOTAL_TESTS" >>${LOG} 2>&1
@@ -30,6 +30,7 @@ function compress_and_decompress() {
     
     local tar_archive="archive.tar"
     local compression_debloated="compression_debloated.txt"
+    # compression with reduced binary for debloating
     { timeout ${TIMEOUT_LIMIT} ${REDUCED_BINARY} -cf ${tar_archive} -C temp .; } &>>${compression_debloated}
     local a=$?
     if [[ $a -ne 0 ]]; then
@@ -38,6 +39,8 @@ function compress_and_decompress() {
         return 1
     fi
     rm temp/*
+
+    # decompression with original binary to see results
     local decompression_original="decompression_original.txt"
     { timeout ${TIMEOUT_LIMIT} ${ORG_BINARY} -xf ${tar_archive} -C temp; } &>>${decompression_original}
     local b=$?
@@ -110,9 +113,9 @@ function main() {
     dd if=/dev/urandom of=test3.bin bs=1M count=1 2>/dev/null
     touch test4.txt
     echo "Processing single file:" >>${LOG} 2>&1
-    compress_and_decompress "${FILE1}" || exit 1
+    run "${FILE1}" || exit 1
     echo "Processing all files simultaneously:" >>${LOG} 2>&1
-    compress_and_decompress "${FILE2}" || exit 1
+    run "${FILE2}" || exit 1
 
     clean_env
 }

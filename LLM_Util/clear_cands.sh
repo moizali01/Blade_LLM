@@ -16,5 +16,5 @@ rm -rf *.c
 cd ..
 cd fifty_text
 rm -rf *.c
-cd ..
-rm func_output.txt
+cd ../..
+rm func_output.txt > /dev/null 2>&1

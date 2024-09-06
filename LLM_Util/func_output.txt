@@ -1,12 +1,13 @@
 ## Required Functionality:
 
-**Functionality:** `./target-program/chown-debloated [OWNER][:[GROUP]] FILE...`
-**Purpose:** Change the owner and/or group of a file or directory.
+**Functionality 1:** 
+    * **Command:** `tar -cf archive.tar -C temp .`
+    * **Purpose:** This command, executed by the REDUCED_BINARY, creates a new tar archive file named "archive.tar". It includes all files and directories present within the "temp" directory. The "-C temp" flag indicates that the tar command should change its working directory to "temp" before creating the archive. 
+    * 
+## Unrequired Functionality (to be removed):
 
-## Undesired Functionality (to be removed):
-
-1. **`--reference=RFILE` option:** This option allows changing the owner and group of a file to those of a reference file. The training oracle does not test this functionality.
-2. **`-c, --changes` option:** This option provides verbose output only when a change is made. The training oracle does not test this functionality.
-3. **`--dereference` option:** This option affects the referent of a symbolic link. The training oracle does not test this functionality.
-4. **`-h, --no-dereference` option:** This option affects the symbolic link itself. The training oracle does not test this functionality.
-5. **`--from=CURRENT_OWNER:CURRENT_GROUP` option:** This option changes the owner and/or group only if the current owner and/or group match the specified values. The training oracle does not test this functionality. 
+1. **Handling of file attributes:** The provided script doesn't utilize or test any functionalities related to preserving or modifying file attributes like ownership, permissions, or timestamps.
+2. **Device selection and switching:** The script focuses on creating archives on the local file system and doesn't involve any functionalities related to tape drives, remote hosts, or multi-volume archives.
+3. **Device blocking:**  The script doesn't utilize or test functionalities related to specifying blocking factors, record sizes, or handling sparse files.
+4. **Archive format selection:** The script doesn't explicitly specify any particular archive format for creation. It relies on the default format of the REDUCED_BINARY.
+5. **Local file selection:** While the script uses "-C" for changing directories, it doesn't utilize other functionalities like excluding specific files, handling symbolic links, or limiting the archive creation to a single file system. 

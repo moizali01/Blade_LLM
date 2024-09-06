@@ -5,7 +5,7 @@ Evaluation Scale:
 - Class 1: Completely Unnecessary Code - This code is a part of unrequired functionality.
 - Class 2: Somewhat Unnecessary Code - This code may be needed for minor issues but does not affect overall functionality.
 - Class 3: Necessary Code - This code is contributes to the required functionality.
-- Class 4: Critical Code - This code is essential for functionality, security, and generality. The program will break without it.
+- Class 4: Critical Code - This code is essential for functionality, security, or generality.
 - Class 5: Incomplete Context - The context provided does not provide enough information to understand the complete purpose of this code in this larger program.
 
 Evaluate if the code belongs to each of the five classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
@@ -14,41 +14,27 @@ Strictly follow the answer format below:
 
 Answer Format:
 
-Class 1: <reasoning for why the code might be completely unnecessary or not>
+Class 1: <reasoning for which unrequired functionality the target code contributes to>
 Class 2: <reasoning for why the code might be somewhat unnecessary or not>
-Class 3: <reasoning for why the code might be necessary or not>
-Class 4: <reasoning for why the code might be critical or not>
+Class 3: <reasoning for which functionality the target code contributes to>
+Class 4: <reasoning for which functionality or security the code snippet contributes to>
 Class 5: <reasoning for why you think it is likely you do not understand the purpose of this code given the context>
 
 Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
 Final Verdict: <assigned class> (1-5)
 
-Required Functionality:
+{func_list}
 
-The given code belongs to the date core utility. The desired functionality of the date utility includes multiple key features and we require the following functionalities:
-1. Proper input preprocessing. The preprocessing and parsing logic is often complex and critical for the program to function properly.
-2. Proper input parsing. The parsing of the input is necessary as it can contain specific formats of time and command line arguments for calculations.
-3. Date formatting. Date formatting allows you to convert the current date and time into specific formats (e.g, +"%Y-%m-%d %H:%M:%S", +"%Y-%m-%d %I:%M:%S %p", and more). It is necessary for us to be able to convert any format of date into another format.
-4. Output display formatting. Every minor formatting is necessary.
-5. Date calculation lets you compute past or future dates (e.g., "yesterday," "next Monday", "2024-08-27 +5 days", and more). 
-6. Prevention against the security vulnerabilities mentioned in the security list.
+**IMPORTANT**: If you encounter code that appears to relate to any of the undesired functionalities listed above, immediately classify it as Class 1 (No Functional Contribution) and provide a brief explanation.
 
-Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
-Undesired Functionality:
-
-Any other functionality that does not contribute to our required functionalites is irrelevant to our use case. Here are some of the unrequired functionalities:
-1. **--debug**:                    Annotate and warn about parsed date usage to stderr.
-2. **-f, --file=DATEFILE**:        Apply --date once for each line in DATEFILE.
-3. **-r, --reference=FILE**:       Show last modification time of FILE.
-4. **--help**:                    Display help information and exit.
-5. **--version**:                 Output version information and exit.
+We must cater to all edge cases related to required functionality. We are NOT interested in any other functionality. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements and loop or variable initialization which are important for keeping the workflow structure. 
 
 This code snippet is a part of the code execution path for the required functionality.
 
 
 #########
-To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing:
+To evaluate the security-related importance of the snippet, refer to the following criteria that contains a list security vulnerabilities that the code may be preventing. Please give emphasis to analysing whether the provided snippet is important for preventing any of the given security vulnerabilities:
 
 Security List: 
 {sec_list}
@@ -78,18 +64,18 @@ Target Code:
 #########
 
 
-Make sure to evaluate on the basis of:
-1. Proper input preprocessing. The preprocessing and parsing logic is often complex and critical for the program to function properly.
-2. Proper input parsing. The parsing of the input is necessary as it can contain specific formats of time and command line arguments for calculations.
-3. Date formatting. Date formatting allows you to convert the current date and time into specific formats (e.g, +"%Y-%m-%d %H:%M:%S", +"%Y-%m-%d %I:%M:%S %p", and more). It is necessary for us to be able to convert any format of date into another format.
-4. Output display formatting. Every minor formatting is necessary.
-5. Date calculation lets you compute past or future dates (e.g., "yesterday," "next Monday", "2024-08-27 +5 days", and more). 
-6. Prevention against the security vulnerabilities mentioned in the security list.
 
-Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
+Make sure to evaluate on the basis of:
+1) the *Required Functionality*
+2) the possibility of security vulnerabilities mentioned in the *Security List*.
+3) ⁠Proper input preprocessing. The preprocessing and parsing logic is often complex and critical for the program to function properly.
+4) ⁠Proper input parsing. The parsing of the input is necessary as it can contain specific formats and command line arguments for the program to function properly.
+5)⁠ ⁠Output display formatting. Every minor formatting is necessary.
+
+Make sure to cater to ALL edge cases for the required functionalites, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of data computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
 If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
-Make sure to evaluate the candidate set on the basis of the unrequired functionalites mentioned above as well and mark the candidate sets that meet the unrequired functionality criteria as unnecessary. 
+We are not concerned with any other functionalities so make sure to evaluate the candidate set on the basis of the unrequired functionalites mentioned above as well and mark the candidate sets that meet the unrequired functionality criteria as unnecessary. 
 
 Make sure you do not add any information on your own. Consider all four snippets in the provided context to explain the queried code. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.

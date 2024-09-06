@@ -64,7 +64,7 @@ class QAClass:
             ########### Voyage Code Embeddings ############
 
             command = ["clang-format","-style={ColumnLimit: 300, AllowShortFunctionsOnASingleLine: All, AllowShortIfStatementsOnASingleLine: true}","-i","original.txt"]
-
+                
             # Run the command
             subprocess.run(command, check=True)
 
@@ -340,7 +340,7 @@ class QAClass:
         "response_mime_type": "text/plain",
         }
         model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
+        model_name="gemini-1.5-pro",
         generation_config=generation_config,
         safety_settings = safe
         # See https://ai.google.dev/gemini-api/docs/safety-settings
@@ -349,12 +349,12 @@ class QAClass:
 
         response = (llm_func.send_message(func_prompt)).text
 
-        response = re.sub(r"\*\*Reasoning:\*\*.*\n", "", response)
-
+        # response = re.sub(r"\*\*Reasoning:\*\*.*\n", "", response)
+        responsereg = re.sub(r"\**Reasoning\**:(.|\n)*?\n\s*\n", "\n", response)
         with open("../LLM_Util/func_output.txt", 'w') as file:
-            file.write(response)
+            file.write(responsereg)
 
-        return response
+        return responsereg
 
 
 

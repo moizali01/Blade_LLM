@@ -23,21 +23,12 @@ Class 5: <reasoning for why you think it is likely you do not understand the pur
 Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
 Final Verdict: <assigned class> (1-5)
 
-**Required Functionality**:
-
-Functionality: tar is used only with the -cf flag to archive all kinds of files with varying extensions and retain data integrity within the archive.
-Purpose: For this task, we only want to keep the functionality of archiving files with varying extensions using the -cf flag.
-
-**Undesired Functionality (to be removed):**
-
-1. **Decompression:** Any decompression functionality such as the -xf option can be safely removed.
-2. **Appending and Updating:** Remove `-A`, `-r`, `-u` for appending files to an archive.
-3. Any Verbose Functionality.
-4. Anything other than compression.
+{func_list}
 
 **IMPORTANT**: If you encounter code that appears to relate to any of the undesired functionalities listed above, immediately classify it as Class 1 (No Functional Contribution) and provide a brief explanation.
 
-We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. Any other functionality such as decompression in not needed. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements and loop or variable initialization which are important for keeping the workflow structure. 
+We must cater to all edge cases related to required functionality. We are NOT interested in any other functionality. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements and loop or variable initialization which are important for keeping the workflow structure. 
+
 This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for the functionality mentioned or security of the program. 
 
 #########
@@ -72,11 +63,13 @@ Target Code:
 
 
 Make sure to evaluate on the basis of:
-the functionality and the possibility of security vulnerabilities mentioned above about compression with the -cf.
-1. Compression of all kinds of files.
-2. Retaining the data integrity of the compressed file.
-3. Prevention against the security vulnerabilities mentioned in the security list.
-Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
+1) the *Required Functionality*
+2) the possibility of security vulnerabilities mentioned in the *Security List*.
+3) ⁠Proper input preprocessing. The preprocessing and parsing logic is often complex and critical for the program to function properly.
+4) ⁠Proper input parsing. The parsing of the input is necessary as it can contain specific formats and command line arguments for the program to function properly.
+5)⁠ ⁠Output display formatting. Every minor formatting is necessary.
+
+Make sure to cater to ALL edge cases for the required functionalites, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of data computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
 If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 

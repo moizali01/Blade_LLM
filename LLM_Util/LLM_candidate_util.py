@@ -24,7 +24,14 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
     capture_output=True,
     text=True
     )
-    formatted_code = process.stdout.split("\n")
+
+    if len(cand) < 10:
+        formatted_code1 = merge_lines_with_semicolon(process.stdout)
+        formatted_code = formatted_code1.split("\n")
+    else: 
+        formatted_code = process.stdout.split("\n")
+
+        
     cand = [c for c in formatted_code if c != ""]
     if len(cand) == 1:
         if cand[0] == " }" or cand[0] == " {" or cand[0] == "}" or cand[0] == "{":
@@ -257,3 +264,31 @@ def check_while_break(candidate_set):
     
     # Use re.search to check if the pattern exists in the candidate_set
     return bool(re.match(pattern, candidate_set, re.DOTALL))
+
+
+
+def merge_lines_with_semicolon(text):
+    lines = text.splitlines()
+    result = []
+    current_line = ""
+    
+    for line in lines:
+        stripped_line = line.strip()
+        
+        if not current_line:
+            current_line = line
+        elif '=' in current_line and not current_line.strip().endswith(';'):
+            current_line += ' ' + stripped_line
+        else:
+            result.append(current_line)
+            current_line = line
+        
+        if current_line.strip().endswith(';'):
+            result.append(current_line)
+            current_line = ""
+    
+    if current_line:
+        result.append(current_line)
+    
+    return '\n'.join(result)
+
