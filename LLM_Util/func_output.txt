@@ -1,13 +1,24 @@
 ## Required Functionality:
 
-**Functionality 1:** 
-    * **Command:** `tar -cf archive.tar -C temp .`
-    * **Purpose:** This command, executed by the REDUCED_BINARY, creates a new tar archive file named "archive.tar". It includes all files and directories present within the "temp" directory. The "-C temp" flag indicates that the tar command should change its working directory to "temp" before creating the archive. 
-    * 
+**Functionality 1:** Display the current date in YYYY-MM-DD format using `+%Y-%m-%d` format string.
+    **Purpose:**  Tests the ability to format and display the current date in a specific format.
+    
+**Functionality 2:** Display the current time in HH:MM:SS format using `+%H:%M:%S` format string.
+    **Purpose:** Tests the ability to format and display the current time in a specific format.
+    
+**Functionality 3:** Display the Unix timestamp using `+%s` format string.
+    **Purpose:** Tests the ability to retrieve and display the Unix timestamp.
+    
+**Functionality 4:** Calculate and display dates based on relative time expressions like "yesterday", "next Monday", "last year" using `-d` flag followed by the expression and desired output format.
+    **Purpose:** Tests the ability to perform date calculations based on relative time expressions.
+    
+**Functionality 5:** Calculate and display dates by adding or subtracting days from a given date using `-d` flag followed by the date and the desired modification like "+5 days" and desired output format.
+    **Purpose:** Tests the ability to perform date arithmetic by adding or subtracting days from a specific date.
+    
 ## Unrequired Functionality (to be removed):
 
-1. **Handling of file attributes:** The provided script doesn't utilize or test any functionalities related to preserving or modifying file attributes like ownership, permissions, or timestamps.
-2. **Device selection and switching:** The script focuses on creating archives on the local file system and doesn't involve any functionalities related to tape drives, remote hosts, or multi-volume archives.
-3. **Device blocking:**  The script doesn't utilize or test functionalities related to specifying blocking factors, record sizes, or handling sparse files.
-4. **Archive format selection:** The script doesn't explicitly specify any particular archive format for creation. It relies on the default format of the REDUCED_BINARY.
-5. **Local file selection:** While the script uses "-C" for changing directories, it doesn't utilize other functionalities like excluding specific files, handling symbolic links, or limiting the archive creation to a single file system. 
+1. **Locale-specific formatting:** Any functionality related to locale-specific date and time representations (e.g., `%a`, `%A`, `%b`, `%B`, `%c`, `%p`, `%P`, `%r`, `%x`, `%X`).
+2. **ISO 8601 and RFC formats:** Support for outputting dates and times in ISO 8601 (`-I/--iso-8601`) and RFC 2822/3339 (`-R/--rfc-2822`, `--rfc-3339`) formats.
+3. **Setting the system date:** The ability to set the system date using the `-s/--set` flag.
+4. **Reading dates from files:** Functionality related to reading dates from files using the `-f/--file` flag.
+5. **Displaying file modification time:** The ability to display the last modification time of a file using the `-r/--reference` flag. 
