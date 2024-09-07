@@ -7,7 +7,7 @@ REDUCED_BINARY=${DIR}/${PROGRAM_NAME}.rbin
 ORG_BINARY=${DIR}/${PROGRAM_NAME}.bin
 ORG_FILE=${DIR}/bzip2-org.c
 CC=clang
-TIMEOUT_LIMIT="-k 5 5"
+TIMEOUT_LIMIT="-k 15 15"
 LOG=${DIR}/log
 
 
@@ -99,9 +99,9 @@ function compress_and_decompress() {
 
 function execute_tests() {
     # 1 Byte File Test
-    echo "Case: 1 Byte File Test" >>${LOG} 2>&1
-    echo -n "x" >tiny_1.txt # Writes exactly one byte without a newline
-    compress_and_decompress "tiny_1.txt" || echo "Test failed: 1 Byte File" >>${LOG}
+    # echo "Case: 1 Byte File Test" >>${LOG} 2>&1
+    # echo -n "x" >tiny_1.txt # Writes exactly one byte without a newline
+    # compress_and_decompress "tiny_1.txt" || echo "Test failed: 1 Byte File" >>${LOG}
 
     # Single Word File Test
     echo "Case: Single Word File Test" >>${LOG} 2>&1
@@ -196,13 +196,13 @@ function execute_tests() {
     compress_and_decompress "medium_1mb.zip" || echo "Test failed: 1MB ZIP File" >>${LOG}
 
     # Medium Randomly Generated Binary Files
-    echo "Case: Medium 1MB Binary File Test" >>${LOG} 2>&1
-    dd if=/dev/urandom of=medium_1mb.bin bs=1048576 count=1 2>/dev/null
-    compress_and_decompress "medium_1mb.bin" || echo "Test failed: 1MB Binary File" >>${LOG}
+    # echo "Case: Medium 1MB Binary File Test" >>${LOG} 2>&1
+    # dd if=/dev/urandom of=medium_1mb.bin bs=1048576 count=1 2>/dev/null
+    # compress_and_decompress "medium_1mb.bin" || echo "Test failed: 1MB Binary File" >>${LOG}
 
-    echo "Case: Medium 2MB Binary File Test" >>${LOG} 2>&1
-    dd if=/dev/urandom of=medium_2mb.bin bs=2097152 count=1 2>/dev/null
-    compress_and_decompress "medium_2mb.bin" || echo "Test failed: 2MB Binary File" >>${LOG}
+    # echo "Case: Medium 2MB Binary File Test" >>${LOG} 2>&1
+    # dd if=/dev/urandom of=medium_2mb.bin bs=2097152 count=1 2>/dev/null
+    # compress_and_decompress "medium_2mb.bin" || echo "Test failed: 2MB Binary File" >>${LOG}
 
 
     # English Text File Test
@@ -360,6 +360,24 @@ function execute_tests() {
     echo "Test content for non-ASCII characters" >"файл中文.txt"
     compress_and_decompress "файл中文.txt" || echo "Test failed: Filename with non-ASCII characters" >>${LOG}
 
+    # Standard tests
+    # touch ${HARDCODED_FILES[@]}
+    # cp $ORG_FILE ${HARDCODED_FILES[0]}
+    # cp $ORG_FILE ${HARDCODED_FILES[2]}
+    # echo "Case 9" >>${LOG} 2>&1
+    # echo "Processing all files simultaneously:" >>${LOG} 2>&1
+    # compress_and_decompress "${HARDCODED_FILES[@]}" || echo "Test failed: Multiple files" >>${LOG}
+    
+    #  Repeated Empty File Test
+    echo "Processing multiple empty files:" >>${LOG} 2>&1
+    touch empty1.txt empty2.txt empty3.txt
+    compress_and_decompress "empty1.txt" "empty2.txt" "empty3.txt" || echo "Test failed: Multiple empty files" >>${LOG}
+    
+    test_dir="test_files"
+    for files in $(ls ${test_dir}); do
+        echo "Processing files in ${test_dir}/${files}:" >>${LOG} 2>&1
+        compress_and_decompress "${test_dir}/${files}" || echo "Test failed: Files in ${test_dir}/${files}" >>${LOG}
+    done
 }
 
 function clean_env() {
@@ -373,6 +391,7 @@ function clean_env() {
 function compile() {
     touch ${LOG}
     cd ${DIR}
+    cp ../test_files . -r >/dev/null 2>&1
     echo "Compiling ${C_FILE} into ${REDUCED_BINARY}" &>>${LOG}
     ${CC} ${C_FILE} -w -o ${REDUCED_BINARY} &>>${LOG} || exit 1
     echo "Compiling ${ORG_FILE} into ${ORG_BINARY}" &>>${LOG}

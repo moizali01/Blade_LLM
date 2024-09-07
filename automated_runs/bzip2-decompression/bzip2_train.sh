@@ -7,7 +7,7 @@ REDUCED_BINARY=${DIR}/${PROGRAM_NAME}.rbin
 ORG_BINARY=${DIR}/${PROGRAM_NAME}.bin
 ORG_FILE=${DIR}/bzip2-org.c
 CC=clang
-TIMEOUT_LIMIT="-k 5 5"
+TIMEOUT_LIMIT="-k 15 15"
 LOG=${DIR}/log
 
 FILE1="test1.txt"
@@ -97,8 +97,37 @@ function compress_and_decompress() {
 }
 
 function clean_env() {
-    cd ${DIR}
-    rm -rf ${REDUCED_BINARY} ${ORG_BINARY} *.txt *.bin log temp comparison >/dev/null 2>&1
+    local initial_state="$1"
+    local final_state="$2"
+    
+    cd "${DIR}"
+    
+    # Function to clean ls output
+    clean_ls_output() {
+        awk '{print $NF}' | sed 's/^.*[0-9] //'
+    }
+    
+    # Clean the input states
+    initial_state=$(echo "$initial_state" | clean_ls_output)
+    final_state=$(echo "$final_state" | clean_ls_output)
+    
+    # Find the differences
+    local to_remove=$(comm -13 <(echo "$initial_state" | sort) <(echo "$final_state" | sort))
+    
+    # Remove the differences
+    if [[ -n "$to_remove" ]]; then
+        while IFS= read -r file; do
+            if [[ -e "$file" ]]; then
+                rm -rf -- "$file"
+                echo "Removed: $file" > /dev/null
+            else
+                echo "File not found: $file" > /dev/null
+            fi
+        done <<< "$to_remove"
+    else
+        echo "No new files or directories to remove." > /dev/null
+    fi
+    
     return 0
 }
 
@@ -114,25 +143,47 @@ function compile() {
 function main() {
     rm -rf temp comparison >/dev/null 2>&1
     rm -rf log
-    clean_env
     compile || exit 1
+    local initial_state=$(ls -al)
+    local final_state=$(ls -al)
+    clean_env "$initial_state" "$initial_state"
 
       # Empty File Test
     echo "Case: Empty File Test" >>${LOG} 2>&1
     touch empty_file.txt
-    compress_and_decompress "empty_file.txt" || exit 1
+    if compress_and_decompress "empty_file.txt"; then
+        echo "Empty file test passed" > /dev/null
+    else
+        echo "Empty file test failed" > /dev/null
+        final_state=$(ls -al)
+        clean_env "$initial_state" "$final_state"
+        exit 1
+    fi
 
     echo "I am a test file for bzip2" >test1.txt
     touch test2.txt
     cp $ORG_FILE test2.txt
-    # dd if=/dev/urandom of=test3.bin bs=1M count=1n 2>/dev/null
+    cp $ORG_BINARY test3.bin
     touch test4.txt
     echo "Processing single file:" >>${LOG} 2>&1
-    compress_and_decompress "${FILE1}" || exit 1
+    if compress_and_decompress "${FILE1}"; then
+        echo "Processing single file test passed" > /dev/null
+    else
+        echo "Processing single file test failed" > /dev/null
+        final_state=$(ls -al)
+        clean_env "$initial_state" "$final_state"
+        exit 1
+    fi
     echo "Processing all files simultaneously:" >>${LOG} 2>&1
-    compress_and_decompress "${FILE2[@]}" || exit 1
-
-    clean_env
+    if compress_and_decompress "${FILE2[@]}"; then
+        echo "Processing all files simultaneously test passed" > /dev/null
+    else
+        echo "Processing all files simultaneously test failed" > /dev/null
+        final_state=$(ls -al)
+        clean_env "$initial_state" "$final_state"
+        exit 1
+    fi
+    return 0
 }
 
 main

@@ -45,7 +45,7 @@ cd $DIR
 # run the program
 cd ../../src
 python3 blade.py -p target-program/bzip2-util.c -t target-program/bzip2_train.sh -u 1 -d 1
-cp bzip2-util.c.blade.c ../automated_runs/bzip2/bzip2-util.c.blade.c
+cp bzip2-util.c.blade.c ../automated_runs/bzip2-decompression/bzip2-util.c.blade.c
 # clear
 
 # run generality cases
