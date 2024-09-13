@@ -47,3 +47,6 @@ manual_testing/*.txt
 testing/
 merged_responses/
 generality_results.txt
+
+LLM_Util/file_names.txt
+LLM_Util/func_output.txt

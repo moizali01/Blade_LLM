@@ -1,24 +1,23 @@
 ## Required Functionality:
 
-**Functionality 1:** Display the current date in YYYY-MM-DD format using `+%Y-%m-%d` format string.
-    **Purpose:**  Tests the ability to format and display the current date in a specific format.
-    
-**Functionality 2:** Display the current time in HH:MM:SS format using `+%H:%M:%S` format string.
-    **Purpose:** Tests the ability to format and display the current time in a specific format.
-    
-**Functionality 3:** Display the Unix timestamp using `+%s` format string.
-    **Purpose:** Tests the ability to retrieve and display the Unix timestamp.
-    
-**Functionality 4:** Calculate and display dates based on relative time expressions like "yesterday", "next Monday", "last year" using `-d` flag followed by the expression and desired output format.
-    **Purpose:** Tests the ability to perform date calculations based on relative time expressions.
-    
-**Functionality 5:** Calculate and display dates by adding or subtracting days from a given date using `-d` flag followed by the date and the desired modification like "+5 days" and desired output format.
-    **Purpose:** Tests the ability to perform date arithmetic by adding or subtracting days from a specific date.
-    
+**Functionality 1:** 
+    * Creates a directory.
+    * **Purpose:** The core functionality being tested is the creation of a directory by `REDUCED_BINARY`.
+    * 
+**Functionality 2:** 
+    * Sets permissions of a newly created directory using the `-m` flag with valid octal permission values (e.g., 400, 500, 644, 700).
+    * **Purpose:**  This tests the ability of `REDUCED_BINARY` to correctly handle the `-m` flag for setting directory permissions. 
+    * 
+**Functionality 3:**
+    * Produces an error message when provided with invalid input for the `-m` flag.
+        * **Invalid Input 1:**  Missing permission value after `-m`.
+        * **Invalid Input 2:**  Invalid octal permission value (e.g., 999).
+    * **Purpose:** This tests the error handling of `REDUCED_BINARY` when given incorrect input related to the `-m` flag.
+    * 
 ## Unrequired Functionality (to be removed):
 
-1. **Locale-specific formatting:** Any functionality related to locale-specific date and time representations (e.g., `%a`, `%A`, `%b`, `%B`, `%c`, `%p`, `%P`, `%r`, `%x`, `%X`).
-2. **ISO 8601 and RFC formats:** Support for outputting dates and times in ISO 8601 (`-I/--iso-8601`) and RFC 2822/3339 (`-R/--rfc-2822`, `--rfc-3339`) formats.
-3. **Setting the system date:** The ability to set the system date using the `-s/--set` flag.
-4. **Reading dates from files:** Functionality related to reading dates from files using the `-f/--file` flag.
-5. **Displaying file modification time:** The ability to display the last modification time of a file using the `-r/--reference` flag. 
+1. **Handling of flags other than `-m`:** The test cases only focus on the `-m` flag, so any other flag functionality is unnecessary.
+2. **Creating parent directories:** The test cases always attempt to create a directory "d1" directly, so the `-p` (parents) flag functionality is not being tested.
+3. **Verbose output:** The test cases do not check for verbose output using the `-v` flag.
+4. **Help and version information:** The test cases do not utilize the `--help` or `--version` flags.
+5. **Specific error message content:** The test cases only check if an error message is produced for invalid `-m` usage, not the specific content of the message. 

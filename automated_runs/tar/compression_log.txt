@@ -1,4 +1,0 @@
-Decompressed file test1.txt matched the original file
-Decompressed file test2.txt matched the original file
-Decompressed file test3.bin matched the original file
-Decompressed file test4.txt matched the original file

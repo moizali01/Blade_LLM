@@ -1,2 +1,2 @@
-date-util.c
-date.sh
+mkdir-debloated.c
+mkdir.sh

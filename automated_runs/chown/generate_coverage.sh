@@ -42,14 +42,14 @@ run_chown_and_profile() {
 }
 
 # Run the tasks and generate LLVM profiles for the specified -R flag test cases
-run_chown_and_profile "d1/" "user1" "chown_1.profraw"
+# run_chown_and_profile "d1/" "user1" "chown_1.profraw"
 run_chown_and_profile "d1/" "user1:group1" "chown_2.profraw"
 # run_chown_and_profile "d1/" ":group1" "chown_3.profraw"
 
 echo "All profiles generated."
 
 # Merge the profiles into a single profile data file
-llvm-profdata merge -output=merged.profdata chown_1.profraw chown_2.profraw
+llvm-profdata merge -output=merged.profdatachown_2.profraw
 
 echo "Merged profile data: merged.profdata"
 

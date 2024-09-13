@@ -427,7 +427,15 @@ struct exclude;
 struct exclude;
 typedef int __daddr_t;
 typedef void (*__sighandler_t)(int);
-
+struct mtget {
+  long mt_type;
+  long mt_resid;
+  long mt_dsreg;
+  long mt_gstat;
+  long mt_erreg;
+  __daddr_t mt_fileno;
+  __daddr_t mt_blkno;
+};
 struct tar_sparse_file;
 struct tar_sparse_file;
 enum sparse_scan_state { scan_begin = 0, scan_block = 1, scan_end = 2 };
@@ -845,78 +853,7 @@ void clear_read_error_count(void) {
     return;
   }
 }
-void print_total_written(void) {
-  tarlong written;
-  char bytes[sizeof(tarlong) * 8UL];
-  char abbr[((((((2UL * sizeof(uintmax_t)) * 8UL) * 302UL) / 1000UL + 1UL) *
-                  17UL -
-              16UL) +
-             3UL) +
-            1UL];
-  char rate[((((((2UL * sizeof(uintmax_t)) * 8UL) * 302UL) / 1000UL + 1UL) *
-                  17UL -
-              16UL) +
-             3UL) +
-            1UL];
-  double seconds;
-  int human_opts;
-  struct timespec now;
-  time_t tmp;
-  int tmp___0;
-  char *tmp___1;
-  char const *tmp___2;
-  char *tmp___3;
-  char *tmp___4;
-  void *__cil_tmp14;
-  void *__cil_tmp15;
-  void *__cil_tmp16;
-  char *__cil_tmp17;
-  char *__cil_tmp18;
-  char *__cil_tmp19;
-  char *__cil_tmp20;
 
-  {
-    {
-      written = prev_written + bytes_written;
-      human_opts = 240;
-      tmp___0 = clock_gettime(0, &now);
-    }
-    if (tmp___0 == 0) {
-      seconds = (double)(now.tv_sec - start_timespec.tv_sec) +
-                (double)(now.tv_nsec - start_timespec.tv_nsec) / 1e9;
-    } else {
-      {
-        tmp = time((time_t *)0);
-        seconds = (double)(tmp - start_timespec.tv_sec);
-      }
-    }
-    {
-      sprintf((char * /* __restrict  */)(bytes),
-              (char const * /* __restrict  */) "%.0f", written);
-    }
-    if ((double)0 < seconds) {
-      if (written / seconds < (tarlong)0xffffffffffffffffUL) {
-        {
-          tmp___1 = human_readable((uintmax_t)(written / seconds), rate,
-                                   human_opts, (uintmax_t)1, (uintmax_t)1);
-          tmp___2 = (char const *)tmp___1;
-        }
-      } else {
-        tmp___2 = "?";
-      }
-    } else {
-      tmp___2 = "?";
-    }
-    {
-      tmp___3 = human_readable((uintmax_t)written, abbr, human_opts,
-                               (uintmax_t)1, (uintmax_t)1);
-      tmp___4 = gettext("Total bytes written: %s (%s, %s/s)\n");
-      fprintf((FILE * /* __restrict  */)stderr,
-              (char const * /* __restrict  */)tmp___4, bytes, tmp___3, tmp___2);
-    }
-    return;
-  }
-}
 off_t current_block_ordinal(void) {
 
   { return (record_start_block + (current_block - record_start)); }
@@ -937,9 +874,13 @@ union block *find_next_block(void) {
 
   {
     if ((unsigned long)current_block == (unsigned long)record_end) {
-
-      {
-        flush_archive();
+      if (hit_eof) {
+        return ((union block *)0);
+      }
+      { flush_archive(); }
+      if ((unsigned long)current_block == (unsigned long)record_end) {
+        hit_eof = 1;
+        return ((union block *)0);
       }
     }
     return (current_block);
@@ -979,16 +920,53 @@ void xclose(int fd) {
 
   {
     { tmp___0 = close(fd); }
-    if (tmp___0 != 0) {
-      {
-        tmp = gettext("(pipe)");
-        close_error((char const *)tmp);
-      }
-    }
+
     return;
   }
 }
+static _Bool check_label_pattern(union block *label) {
+  char *string;
+  _Bool result;
+  void *tmp;
+  int tmp___0;
+  size_t tmp___1;
+  void *tmp___2;
+  int tmp___3;
+  char *__cil_tmp9;
+  char *__cil_tmp10;
 
+  {
+    {
+      tmp = memchr((void const *)(label->header.name), '\000',
+                   sizeof(label->header.name));
+    }
+    if (!tmp) {
+      return ((_Bool)0);
+    }
+    {
+      tmp___0 =
+          fnmatch(volume_label_option, (char const *)(label->header.name), 0);
+    }
+    if (tmp___0 == 0) {
+      return ((_Bool)1);
+    }
+
+    {
+      tmp___1 = strlen(volume_label_option);
+      tmp___2 = xmalloc((tmp___1 + sizeof(" Volume [1-9]*")) + 1UL);
+      string = (char *)tmp___2;
+      strcpy((char * /* __restrict  */)string,
+             (char const * /* __restrict  */)volume_label_option);
+      strcat((char * /* __restrict  */)string,
+             (char const * /* __restrict  */) " Volume [1-9]*");
+      tmp___3 =
+          fnmatch((char const *)string, (char const *)(label->header.name), 0);
+      result = (_Bool)(tmp___3 == 0);
+      free((void *)string);
+    }
+    return (result);
+  }
+}
 void open_archive(enum access_mode wanted_access) {
   int backed_up_flag;
   char *tmp;
@@ -1054,13 +1032,7 @@ void open_archive(enum access_mode wanted_access) {
         fatal_exit();
       }
     }
-    if (archive_names == 0) {
-      {
-        tmp___0 = gettext("No archive name given");
-        error(0, 0, (char const *)tmp___0);
-        fatal_exit();
-      }
-    }
+
     {
       tar_stat_destroy(&current_stat_info);
       save_name = (char *)0;
@@ -1121,18 +1093,16 @@ void open_archive(enum access_mode wanted_access) {
       switch_break: /* CIL Label */
           ;
       }
-      if ((unsigned int)wanted_access == 1U) {
-        {
-          tmp___4 = strcmp(*(archive_name_array + 0), "-");
-        }
-      }
+
     } else {
       { tmp___22 = strcmp(*(archive_name_array + 0), "-"); }
       if (tmp___22 == 0) {
         read_full_records_option = (_Bool)1;
 
         {
-
+          if ((unsigned int)wanted_access == 0U) {
+            goto case_0___0;
+          }
           if ((unsigned int)wanted_access == 1U) {
             goto case_1___0;
           }
@@ -1202,7 +1172,9 @@ void open_archive(enum access_mode wanted_access) {
             if ((unsigned int)wanted_access == 1U) {
               goto case_1___1;
             }
-
+            if ((unsigned int)wanted_access == 2U) {
+              goto case_2___1;
+            }
             goto switch_break___1;
           case_0___1: /* CIL Label */
             if (!force_local_option) {
@@ -1218,7 +1190,21 @@ void open_archive(enum access_mode wanted_access) {
                                (size_t)(rmt_path__ -
                                         (char *)*(archive_name_array + 0)));
                   }
-
+                  if (tmp___13) {
+                    {
+                      tmp___12 =
+                          open(*(archive_name_array + 0), 0,
+                               ((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
+                                   ((256 | (256 >> 3)) | ((256 >> 3) >> 3)));
+                      archive = tmp___12;
+                    }
+                  } else {
+                    {
+                      tmp___11 = rmt_open__(*(archive_name_array + 0), 0,
+                                            1 << 30, rsh_command_option);
+                      archive = tmp___11;
+                    }
+                  }
                 } else {
                   {
                     tmp___12 =
@@ -1246,91 +1232,10 @@ void open_archive(enum access_mode wanted_access) {
             }
             goto switch_break___1;
           case_1___1: /* CIL Label */
-            if (backup_option) {
-              {
-                maybe_backup_file(*(archive_name_array + 0), 1);
-                backed_up_flag = 1;
-              }
-            }
-            if (!force_local_option) {
-              {
-                rmt_path__ = strchr(*(archive_name_array + 0), ':');
-              }
-              if (rmt_path__) {
 
-              } else {
-                {
-                  tmp___16 =
-                      creat(*(archive_name_array + 0),
-                            (mode_t)(((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
-                                     ((256 | (256 >> 3)) | ((256 >> 3) >> 3))));
-                  archive = tmp___16;
-                }
-              }
-            } else {
-              {
-                tmp___16 =
-                    creat(*(archive_name_array + 0),
-                          (mode_t)(((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
-                                   ((256 | (256 >> 3)) | ((256 >> 3) >> 3))));
-                archive = tmp___16;
-              }
-            }
             goto switch_break___1;
           case_2___1: /* CIL Label */
-            if (!force_local_option) {
-              {
-                rmt_path__ = strchr(*(archive_name_array + 0), ':');
-              }
-              if (rmt_path__) {
-                if ((unsigned long)rmt_path__ >
-                    (unsigned long)*(archive_name_array + 0)) {
-                  {
-                    tmp___21 =
-                        memchr((void const *)*(archive_name_array + 0), '/',
-                               (size_t)(rmt_path__ -
-                                        (char *)*(archive_name_array + 0)));
-                  }
-                  if (tmp___21) {
-                    {
-                      tmp___20 =
-                          open(*(archive_name_array + 0), 66,
-                               ((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
-                                   ((256 | (256 >> 3)) | ((256 >> 3) >> 3)));
-                      archive = tmp___20;
-                    }
-                  } else {
-                    {
-                      tmp___19 = rmt_open__(*(archive_name_array + 0), 66,
-                                            1 << 30, rsh_command_option);
-                      archive = tmp___19;
-                    }
-                  }
-                } else {
-                  {
-                    tmp___20 =
-                        open(*(archive_name_array + 0), 66,
-                             ((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
-                                 ((256 | (256 >> 3)) | ((256 >> 3) >> 3)));
-                    archive = tmp___20;
-                  }
-                }
-              } else {
-                {
-                  tmp___20 = open(*(archive_name_array + 0), 66,
-                                  ((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
-                                      ((256 | (256 >> 3)) | ((256 >> 3) >> 3)));
-                  archive = tmp___20;
-                }
-              }
-            } else {
-              {
-                tmp___20 = open(*(archive_name_array + 0), 66,
-                                ((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
-                                    ((256 | (256 >> 3)) | ((256 >> 3) >> 3)));
-                archive = tmp___20;
-              }
-            }
+
             goto switch_break___1;
           switch_break___1: /* CIL Label */
               ;
@@ -1338,33 +1243,15 @@ void open_archive(enum access_mode wanted_access) {
         }
       }
     }
-    if (archive < 0) {
-      goto _L;
-    } else {
-      if (!(archive >= 1 << 30)) {
-        {
-          tmp___25 = sys_get_archive_stat();
-        }
-        if (!tmp___25) {
-        _L: {
-          tmp___23 = __errno_location();
-          saved_errno = *tmp___23;
-        }
 
-          {
-            tmp___24 = __errno_location();
-            *tmp___24 = saved_errno;
-            open_fatal(*(archive_name_array + 0));
-          }
-        }
-      }
-    }
     {
       sys_detect_dev_null_output();
       sys_save_archive_dev_ino();
     }
     {
-
+      if ((unsigned int)wanted_access == 2U) {
+        goto case_2___2;
+      }
       if ((unsigned int)wanted_access == 0U) {
         goto case_0___2;
       }
@@ -1415,105 +1302,7 @@ void open_archive(enum access_mode wanted_access) {
     return;
   }
 }
-void flush_write(void) {
-  int copy_back;
-  ssize_t status;
-  char *tmp;
-  int *tmp___0;
-  size_t tmp___1;
-  char *tmp___2;
-  int *tmp___3;
-  int *tmp___4;
-  int *tmp___5;
-  _Bool tmp___6;
-  int tmp___7;
-  size_t tmp___8;
-  char *tmp___9;
-  char *__cil_tmp14;
-  char *__cil_tmp15;
 
-  {
-
-    if (tape_length_option) {
-      if (tape_length_option <= bytes_written) {
-        {
-          tmp___0 = __errno_location();
-          *tmp___0 = 28;
-          status = (ssize_t)0;
-        }
-      } else {
-        goto _L___0;
-      }
-    } else {
-    _L___0: /* CIL Label */
-      if (dev_null_output) {
-        status = (ssize_t)record_size;
-      } else {
-        {
-          tmp___1 = sys_write_archive_buffer();
-          status = (ssize_t)tmp___1;
-        }
-      }
-    }
-    if ((size_t)status != record_size) {
-    }
-    if (status > 0L) {
-      records_written++;
-      bytes_written += (tarlong)status;
-    }
-    if ((size_t)status == record_size) {
-
-      return;
-    }
-
-    { tmp___6 = new_volume((enum access_mode)1); }
-
-    bytes_written = (tarlong)0;
-
-    if (volume_label_option) {
-      {
-        memset((void *)record_start, 0, (size_t)512);
-        sprintf((char * /* __restrict  */)(record_start->header.name),
-                (char const * /* __restrict  */) "%s Volume %d",
-                volume_label_option, volno);
-        time_to_chars(start_timespec.tv_sec, record_start->header.mtime,
-                      sizeof(record_start->header.mtime));
-        record_start->header.typeflag = (char)'V';
-        finish_header(&current_stat_info, record_start, (off_t)-1);
-      }
-    }
-    if (real_s_name) {
-
-      {
-        memset((void *)record_start, 0, (size_t)512);
-        strcpy((char * /* __restrict  */)(record_start->header.name),
-               (char const * /* __restrict  */)real_s_name);
-        record_start->header.typeflag = (char)'M';
-        off_to_chars(real_s_sizeleft, record_start->header.size,
-                     sizeof(record_start->header.size));
-        off_to_chars(real_s_totsize - real_s_sizeleft,
-                     record_start->oldgnu_header.offset,
-                     sizeof(record_start->oldgnu_header.offset));
-        tmp___7 = verbose_option;
-        verbose_option = 0;
-        finish_header(&current_stat_info, record_start, (off_t)-1);
-        verbose_option = tmp___7;
-      }
-    }
-    {
-      tmp___8 = sys_write_archive_buffer();
-      status = (ssize_t)tmp___8;
-    }
-    if ((size_t)status != record_size) {
-      {
-        archive_write_error(status);
-      }
-    }
-    bytes_written += (tarlong)status;
-
-    return;
-  }
-}
 __attribute__((__noreturn__)) void archive_write_error(ssize_t status);
 void archive_write_error(ssize_t status) {
   int e;
@@ -1575,7 +1364,8 @@ static void short_read(size_t status) {
       while (1) {
       while_continue: /* CIL Label */
           ;
-
+        if (!(left % 512UL != 0UL)) {
+        }
         if (status) {
           {
             while (1) {
@@ -1612,7 +1402,15 @@ static void short_read(size_t status) {
           }
           goto while_break;
         }
-
+        if (!read_full_records_option) {
+          {
+            rest = record_size - left;
+            tmp___3 = ngettext("Unaligned block (%lu byte) in archive",
+                               "Unaligned block (%lu bytes) in archive", rest);
+            error(0, 0, (char const *)tmp___3, rest);
+            fatal_exit();
+          }
+        }
         left -= status;
         more += status;
       }
@@ -1675,7 +1473,19 @@ void flush_read(void) {
     read_error_count = 0;
 
   error_loop:
-
+    if (archive >= 1 << 30) {
+      {
+        tmp___1 =
+            rmt_read__(archive - (1 << 30), record_start->buffer, record_size);
+        status = tmp___1;
+      }
+    } else {
+      {
+        tmp___2 =
+            safe_read(archive, (void *)(record_start->buffer), record_size);
+        status = tmp___2;
+      }
+    }
     if (status == record_size) {
       records_read++;
       return;
@@ -1691,19 +1501,31 @@ void flush_read(void) {
         _L___1:
           if (multi_volume_option) {
           try_volume: {
-
+            if ((unsigned int)subcommand_option == 1U) {
+              goto case_1;
+            }
+            if ((unsigned int)subcommand_option == 2U) {
+              goto case_1;
+            }
+            if ((unsigned int)subcommand_option == 8U) {
+              goto case_1;
+            }
             goto switch_default;
           case_1:   /* CIL Label */
           case_2:   /* CIL Label */
           case_8: { /* CIL Label */
             tmp___3 = new_volume((enum access_mode)2);
           }
-
+            if (!tmp___3) {
+              return;
+            }
             goto switch_break;
           switch_default: { /* CIL Label */
             tmp___4 = new_volume((enum access_mode)0);
           }
-
+            if (!tmp___4) {
+              return;
+            }
             goto switch_break;
           switch_break: /* CIL Label */
               ;
@@ -1740,12 +1562,45 @@ void flush_read(void) {
             }
             cursor = record_start;
             if ((int)cursor->header.typeflag == 86) {
+              if (volume_label_option) {
+                {
+                  tmp___10 = check_label_pattern(cursor);
+                }
+                if (!tmp___10) {
+                  {
+                    tmp___7 = quote_n(1, volume_label_option);
+                    tmp___8 = quote_n(0, (char const *)(cursor->header.name));
+                    tmp___9 = gettext("Volume %s does not match %s");
+                    error(0, 0, (char const *)tmp___9, tmp___8, tmp___7);
+                    volno--;
+                    global_volno--;
+                  }
+                  goto try_volume;
+                }
+              }
 
               cursor++;
             } else {
             }
             if (real_s_name) {
-
+              if ((int)cursor->header.typeflag != 77) {
+                goto _L;
+              } else {
+                {
+                  tmp___16 = strcmp((char const *)(cursor->header.name),
+                                    (char const *)real_s_name);
+                }
+                if (tmp___16) {
+                _L: {
+                  tmp___14 = quote((char const *)real_s_name);
+                  tmp___15 = gettext("%s is not continued on this volume");
+                  error(0, 0, (char const *)tmp___15, tmp___14);
+                  volno--;
+                  global_volno--;
+                }
+                  goto try_volume;
+                }
+              }
               {
                 s1 = uintmax_from_header((char const *)(cursor->header.size),
                                          sizeof(cursor->header.size));
@@ -1829,16 +1684,12 @@ void flush_archive(void) {
     record_start_block += record_end - record_start;
     current_block = record_start;
     record_end = record_start + blocking_factor;
-    if ((unsigned int)access_mode == 0U) {
-    }
-    {
 
-      if ((unsigned int)access_mode == 1U) {
-        goto case_1;
+    {
+      if ((unsigned int)access_mode == 0U) {
+        goto case_0;
       }
-      if ((unsigned int)access_mode == 2U) {
-        goto case_2;
-      }
+
       goto switch_break;
     case_0: { /* CIL Label */
       flush_read();
@@ -1879,11 +1730,63 @@ static void backspace_output(void) {
   {
     operation.mt_op = (short)4;
     operation.mt_count = 1;
-
+    if (archive >= 1 << 30) {
+      {
+        tmp = rmt_ioctl__(
+            archive - (1 << 30),
+            (int)((unsigned long)(((1U << 30) | (unsigned int)(109 << 8)) |
+                                  1U) |
+                  (sizeof(struct mtop) << 16)),
+            (char *)(&operation));
+        tmp___1 = tmp;
+      }
+    } else {
+      {
+        tmp___0 = ioctl(
+            archive,
+            (unsigned long)(((1U << 30) | (unsigned int)(109 << 8)) | 1U) |
+                (sizeof(struct mtop) << 16),
+            (char *)(&operation));
+        tmp___1 = tmp___0;
+      }
+    }
+    if (tmp___1 >= 0) {
+      return;
+    }
     { tmp___2 = __errno_location(); }
     if (*tmp___2 == 5) {
+      if (archive >= 1 << 30) {
+        {
+          tmp___3 = rmt_ioctl__(
+              archive - (1 << 30),
+              (int)((unsigned long)(((1U << 30) | (unsigned int)(109 << 8)) |
+                                    1U) |
+                    (sizeof(struct mtop) << 16)),
+              (char *)(&operation));
+          tmp___5 = tmp___3;
+        }
+      } else {
+        {
+          tmp___4 = ioctl(
+              archive,
+              (unsigned long)(((1U << 30) | (unsigned int)(109 << 8)) | 1U) |
+                  (sizeof(struct mtop) << 16),
+              (char *)(&operation));
+          tmp___5 = tmp___4;
+        }
+      }
     }
-
+    if (archive >= 1 << 30) {
+      {
+        tmp___6 = rmt_lseek__(archive - (1 << 30), (off_t)0, 1);
+        tmp___8 = tmp___6;
+      }
+    } else {
+      {
+        tmp___7 = lseek(archive, (off_t)0, 1);
+        tmp___8 = tmp___7;
+      }
+    }
     position = tmp___8;
     position = (off_t)((size_t)position - record_size);
     if (position < 0L) {
@@ -1900,13 +1803,7 @@ static void backspace_output(void) {
         tmp___12 = tmp___11;
       }
     }
-    if (tmp___12 != position) {
-      {
-        tmp___9 = gettext(
-            "Cannot backspace archive file; it may be unreadable without -i");
-        error(0, 0, (char const *)tmp___9);
-      }
-    }
+
     return;
   }
 }
@@ -1917,17 +1814,7 @@ void close_archive(void) {
   union block *tmp___2;
 
   {
-    if (time_to_start_writing) {
-      {
-        flush_archive();
-      }
-    } else {
-      if ((unsigned int)access_mode == 1U) {
-        {
-          flush_archive();
-        }
-      }
-    }
+
     { sys_drain_input_pipe(); }
 
     if (archive >= 1 << 30) {
@@ -1950,17 +1837,17 @@ void close_archive(void) {
       sys_wait_for_child(child_pid);
       tar_stat_destroy(&current_stat_info);
     }
-
+    if (save_name) {
+      {
+        free((void *)save_name);
+      }
+    }
     if (real_s_name) {
       {
         free((void *)real_s_name);
       }
     }
-    if (multi_volume_option) {
-      tmp___2 = record_start - 2;
-    } else {
-      tmp___2 = record_start;
-    }
+
     { free((void *)tmp___2); }
     return;
   }
@@ -2026,17 +1913,6 @@ static _Bool new_volume(enum access_mode mode) {
       }
     }
 
-    if (archive >= 1 << 30) {
-      {
-        tmp___0 = rmt_close__(archive - (1 << 30));
-        tmp___2 = tmp___0;
-      }
-    } else {
-      {
-        tmp___1 = close(archive);
-        tmp___2 = tmp___1;
-      }
-    }
     if (tmp___2 != 0) {
       {
         close_warn(*archive_name_cursor);
@@ -2052,32 +1928,9 @@ static _Bool new_volume(enum access_mode mode) {
     }
     volno++;
     archive_name_cursor++;
-    if ((unsigned long)archive_name_cursor ==
-        (unsigned long)(archive_name_array + archive_names)) {
-      archive_name_cursor = archive_name_array;
-      looped = 1;
-    }
+
   tryagain:
     if (looped) {
-      if (info_script_option) {
-
-        {
-          tmp___5 = system(info_script_option);
-        }
-        if (tmp___5 != 0) {
-          {
-            tmp___4 = gettext("`%s\' command failed");
-            error(0, 0, (char const *)tmp___4, info_script_option);
-            fatal_exit();
-          }
-        }
-      } else {
-        {
-
-        while_break: /* CIL Label */
-            ;
-        }
-      }
     }
     { tmp___31 = strcmp(*(archive_name_cursor + 0), "-"); }
     if (tmp___31 == 0) {
@@ -2211,21 +2064,7 @@ static _Bool new_volume(enum access_mode mode) {
                       (void const *)*archive_name_cursor, '/',
                       (size_t)(rmt_path__ - (char *)*archive_name_cursor));
                 }
-                if (tmp___30) {
-                  {
-                    tmp___29 =
-                        open(*archive_name_cursor, 66,
-                             ((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
-                                 ((256 | (256 >> 3)) | ((256 >> 3) >> 3)));
-                    archive = tmp___29;
-                  }
-                } else {
-                  {
-                    tmp___28 = rmt_open__(*archive_name_cursor, 66, 1 << 30,
-                                          rsh_command_option);
-                    archive = tmp___28;
-                  }
-                }
+
               } else {
                 {
                   tmp___29 = open(*archive_name_cursor, 66,
@@ -2319,7 +2158,11 @@ void diff_init(void) {
       tmp = valloc(record_size);
       diff_buffer = (char *)tmp;
     }
-
+    if (!diff_buffer) {
+      {
+        xalloc_die();
+      }
+    }
     return;
   }
 }
@@ -2328,23 +2171,7 @@ void report_difference(struct tar_stat_info *st __attribute__((__unused__)),
   va_list ap;
   char *tmp;
 
-  {
-    if (fmt) {
-      {
-        tmp = quotearg_colon((char const *)current_stat_info.file_name);
-        fprintf((FILE * /* __restrict  */)stdlis,
-                (char const * /* __restrict  */) "%s: ", tmp);
-        __builtin_va_start(ap, fmt);
-        vfprintf((FILE * /* __restrict  */)stdlis,
-                 (char const * /* __restrict  */)fmt, ap);
-        __builtin_va_end(ap);
-        fprintf((FILE * /* __restrict  */)stdlis,
-                (char const * /* __restrict  */) "\n");
-      }
-    }
-
-    return;
-  }
+  { return; }
 }
 static int process_noop(size_t size __attribute__((__unused__)),
                         char *data __attribute__((__unused__))) {
@@ -2384,7 +2211,13 @@ static int process_rawdata(size_t bytes, char *buffer___2) {
       tmp___2 =
           memcmp((void const *)buffer___2, (void const *)diff_buffer, bytes);
     }
-
+    if (tmp___2) {
+      {
+        tmp___1 = gettext("Contents differ");
+        report_difference(&current_stat_info, (char const *)tmp___1);
+      }
+      return (0);
+    }
     return (1);
   }
 }
@@ -2421,14 +2254,7 @@ static void read_and_process(off_t size, int (*processor)(size_t, char *)) {
           goto while_break;
         }
         { data_block = find_next_block(); }
-        if (!data_block) {
-          {
-            tmp = gettext("Unexpected EOF in archive");
-            error(0, 0, (char const *)tmp);
-            exit_status = 2;
-          }
-          return;
-        }
+
         { data_size = available_space_after(data_block); }
         if (data_size > (size_t)size) {
           data_size = (size_t)size;
@@ -2550,12 +2376,7 @@ void diff_archive(void) {
       set_next_block_after(current_header);
       decode_header(current_header, &current_stat_info, &current_format, 1);
     }
-    if (verbose_option) {
 
-      {
-        print_header(&current_stat_info, (off_t)-1);
-      }
-    }
     {
       if ((int)current_header->header.typeflag == 0) {
         goto case_0;
@@ -2566,16 +2387,19 @@ void diff_archive(void) {
       if ((int)current_header->header.typeflag == 83) {
         goto case_0;
       }
-      if ((int)current_header->header.typeflag == 55) {
-        goto case_0;
-      }
+
       if ((int)current_header->header.typeflag == 49) {
         goto case_49;
       }
       if ((int)current_header->header.typeflag == 50) {
         goto case_50;
       }
-
+      if ((int)current_header->header.typeflag == 51) {
+        goto case_51;
+      }
+      if ((int)current_header->header.typeflag == 52) {
+        goto case_51;
+      }
       if ((int)current_header->header.typeflag == 54) {
         goto case_51;
       }
@@ -2585,7 +2409,9 @@ void diff_archive(void) {
       if ((int)current_header->header.typeflag == 53) {
         goto really_dir;
       }
-
+      if ((int)current_header->header.typeflag == 86) {
+        goto case_86;
+      }
       if ((int)current_header->header.typeflag == 77) {
         goto case_77;
       }
@@ -2622,21 +2448,7 @@ void diff_archive(void) {
         }
         goto quit;
       }
-      if ((current_stat_info.stat.st_mode &
-           (unsigned int)(3584 |
-                          (((64 | (64 >> 3)) | ((64 >> 3) >> 3)) |
-                           (((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
-                            ((256 | (256 >> 3)) | ((256 >> 3) >> 3)))))) !=
-          (stat_data.st_mode &
-           (unsigned int)(3584 |
-                          (((64 | (64 >> 3)) | ((64 >> 3) >> 3)) |
-                           (((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
-                            ((256 | (256 >> 3)) | ((256 >> 3) >> 3))))))) {
-        {
-          tmp___4 = gettext("Mode differs");
-          report_difference(&current_stat_info, (char const *)tmp___4);
-        }
-      }
+
       { tmp___6 = sys_compare_uid(&stat_data, &current_stat_info.stat); }
       if (!tmp___6) {
         {
@@ -2651,7 +2463,12 @@ void diff_archive(void) {
           report_difference(&current_stat_info, (char const *)tmp___7);
         }
       }
-
+      if (stat_data.st_mtim.tv_sec != current_stat_info.stat.st_mtim.tv_sec) {
+        {
+          tmp___9 = gettext("Mod time differs");
+          report_difference(&current_stat_info, (char const *)tmp___9);
+        }
+      }
       if ((int)current_header->header.typeflag != 83) {
         if (stat_data.st_size != current_stat_info.stat.st_size) {
           {
@@ -2701,16 +2518,11 @@ void diff_archive(void) {
         tmp___12 = get_stat_data((char const *)current_stat_info.link_name,
                                  &link_data);
       }
-
-      { tmp___15 = sys_compare_links(&file_data, &link_data); }
-      if (!tmp___15) {
-        {
-          tmp___13 = quote((char const *)current_stat_info.link_name);
-          tmp___14 = gettext("Not linked to %s");
-          report_difference(&current_stat_info, (char const *)tmp___14,
-                            tmp___13);
-        }
+      if (!tmp___12) {
+        goto switch_break;
       }
+      { tmp___15 = sys_compare_links(&file_data, &link_data); }
+
       goto switch_break;
     case_50: { /* CIL Label */
       tmp___16 = strlen((char const *)current_stat_info.link_name);
@@ -2735,17 +2547,6 @@ void diff_archive(void) {
         }
         { report_difference(&current_stat_info, (char const *)((void *)0)); }
       } else {
-        if ((size_t)status != len) {
-          {
-            tmp___20 = gettext("Symlink differs");
-            report_difference(&current_stat_info, (char const *)tmp___20);
-          }
-        } else {
-          {
-            tmp___21 = strncmp((char const *)current_stat_info.link_name,
-                               (char const *)linkbuf, len);
-          }
-        }
       }
       goto switch_break;
     case_51:   /* CIL Label */
@@ -2754,7 +2555,9 @@ void diff_archive(void) {
       tmp___22 =
           get_stat_data((char const *)current_stat_info.file_name, &stat_data);
     }
-
+      if (!tmp___22) {
+        goto switch_break;
+      }
       if ((int)current_header->header.typeflag == 51) {
         tmp___35 = !((stat_data.st_mode & 61440U) == 8192U);
       } else {
@@ -2765,13 +2568,7 @@ void diff_archive(void) {
         }
         tmp___35 = tmp___34;
       }
-      if (tmp___35) {
-        {
-          tmp___23 = gettext("File type differs");
-          report_difference(&current_stat_info, (char const *)tmp___23);
-        }
-        goto switch_break;
-      }
+
       if ((int)current_header->header.typeflag == 51) {
         goto _L___3;
       } else {
@@ -2786,22 +2583,7 @@ void diff_archive(void) {
           }
         }
       }
-      if ((current_stat_info.stat.st_mode &
-           (unsigned int)(3584 |
-                          (((64 | (64 >> 3)) | ((64 >> 3) >> 3)) |
-                           (((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
-                            ((256 | (256 >> 3)) | ((256 >> 3) >> 3)))))) !=
-          (stat_data.st_mode &
-           (unsigned int)(3584 |
-                          (((64 | (64 >> 3)) | ((64 >> 3) >> 3)) |
-                           (((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
-                            ((256 | (256 >> 3)) | ((256 >> 3) >> 3))))))) {
-        {
-          tmp___25 = gettext("Mode differs");
-          report_difference(&current_stat_info, (char const *)tmp___25);
-        }
-        goto switch_break;
-      }
+
       goto switch_break;
     case_68: { /* CIL Label */
       tmp___26 = get_directory_contents(current_stat_info.file_name, (dev_t)0);
@@ -2886,12 +2668,7 @@ void diff_archive(void) {
         }
         goto switch_break;
       }
-      if (multi_volume_option) {
-        {
-          assign_string(&save_name, (char const *)current_stat_info.file_name);
-          save_totsize = stat_data.st_size;
-        }
-      }
+
       { read_and_process(current_stat_info.stat.st_size, &process_rawdata); }
 
       { status = close(diff_handle); }
@@ -2907,7 +2684,114 @@ void diff_archive(void) {
     return;
   }
 }
+void verify_volume(void) {
+  struct mtop operation;
+  int status;
+  off_t tmp;
+  __off_t tmp___0;
+  off_t tmp___1;
+  int *tmp___2;
+  int tmp___3;
+  int tmp___4;
+  int tmp___5;
+  int tmp___6;
+  enum read_header status___0;
+  enum read_header tmp___7;
+  int counter;
+  char *tmp___8;
 
+  {
+
+    {
+      fsync(archive);
+      ioctl(archive, (unsigned long)((unsigned int)(2 << 8) | 75U));
+      operation.mt_op = (short)2;
+      operation.mt_count = 1;
+    }
+    if (archive >= 1 << 30) {
+      {
+        tmp___5 = rmt_ioctl__(
+            archive - (1 << 30),
+            (int)((unsigned long)(((1U << 30) | (unsigned int)(109 << 8)) |
+                                  1U) |
+                  (sizeof(struct mtop) << 16)),
+            (char *)(&operation));
+        status = tmp___5;
+      }
+    } else {
+      {
+        tmp___6 = ioctl(
+            archive,
+            (unsigned long)(((1U << 30) | (unsigned int)(109 << 8)) | 1U) |
+                (sizeof(struct mtop) << 16),
+            (char *)(&operation));
+        status = tmp___6;
+      }
+    }
+    if (status < 0) {
+      {
+        tmp___2 = __errno_location();
+      }
+      if (*tmp___2 != 5) {
+        goto _L;
+      } else {
+        if (archive >= 1 << 30) {
+          {
+            tmp___3 = rmt_ioctl__(
+                archive - (1 << 30),
+                (int)((unsigned long)(((1U << 30) | (unsigned int)(109 << 8)) |
+                                      1U) |
+                      (sizeof(struct mtop) << 16)),
+                (char *)(&operation));
+            status = tmp___3;
+          }
+        } else {
+          {
+            tmp___4 = ioctl(
+                archive,
+                (unsigned long)(((1U << 30) | (unsigned int)(109 << 8)) | 1U) |
+                    (sizeof(struct mtop) << 16),
+                (char *)(&operation));
+            status = tmp___4;
+          }
+        }
+        if (status < 0) {
+        _L:
+          if (archive >= 1 << 30) {
+            {
+              tmp = rmt_lseek__(archive - (1 << 30), (off_t)0, 0);
+              tmp___1 = tmp;
+            }
+          } else {
+            {
+              tmp___0 = lseek(archive, (off_t)0, 0);
+              tmp___1 = tmp___0;
+            }
+          }
+          if (tmp___1 != 0L) {
+            {
+              seek_warn(*(archive_name_array + 0));
+            }
+            return;
+          }
+        }
+      }
+    }
+    {
+      access_mode = (enum access_mode)0;
+      now_verifying = (_Bool)1;
+      flush_read();
+    }
+    {
+
+    while_break: /* CIL Label */
+        ;
+    }
+    access_mode = (enum access_mode)1;
+    now_verifying = (_Bool)0;
+    return;
+  }
+}
 /* #pragma merger("0","002.create.o.i","") */
 extern __attribute__((__nothrow__)) unsigned int(
     __attribute__((__leaf__)) gnu_dev_major)(unsigned long long __dev)
@@ -3013,16 +2897,7 @@ static void to_octal(uintmax_t value, char *where, size_t size) {
     v = value;
     i = size;
     {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        i--;
-        *(where + i) = (char)(48UL + (v & (unsigned long)((1 << 3) - 1)));
-        v >>= 3;
-        if (!i) {
-          goto while_break;
-        }
-      }
+
     while_break: /* CIL Label */
         ;
     }
@@ -3123,7 +2998,11 @@ static void to_chars(int negative, uintmax_t value, size_t valsize,
       }
     } else {
     _L___5: /* CIL Label */
-
+      if (negative) {
+        tmp___13 = 0xffffffffffffffffUL - value;
+      } else {
+        tmp___13 = value;
+      }
       if ((size - 1UL) * 8UL < sizeof(uintmax_t) * 8UL) {
         tmp___14 = (1UL << (size - 1UL) * 8UL) - 1UL;
       } else {
@@ -3146,31 +3025,22 @@ static void to_chars(int negative, uintmax_t value, size_t valsize,
       } else {
       _L___4: /* CIL Label */
         if (negative) {
-          if (valsize * 8UL <= (size - 1UL) * 3UL) {
-            if (!warned_once) {
-              {
-                warned_once = 1;
-                tmp = gettext("Generating negative octal headers");
-                error(0, 0, (char const *)tmp);
-              }
-            }
-            *(where + (size - 1UL)) = (char)'\000';
-            if (valsize * 8UL < sizeof(uintmax_t) * 8UL) {
-              tmp___10 = (1UL << valsize * 8UL) - 1UL;
-            } else {
-              tmp___10 = (uintmax_t)-1;
-            }
-            { to_octal(value & tmp___10, where, size - 1UL); }
-          } else {
-            goto _L___3;
-          }
+
         } else {
         _L___3: /* CIL Label */
           if (base256_allowed) {
-
+            if ((size - 1UL) * 8UL < sizeof(uintmax_t) * 8UL) {
+              tmp___11 = (1UL << (size - 1UL) * 8UL) - 1UL;
+            } else {
+              tmp___11 = (uintmax_t)-1;
+            }
             maxval = tmp___11;
           } else {
-
+            if ((size - 1UL) * 3UL < sizeof(uintmax_t) * 8UL) {
+              tmp___12 = (1UL << (size - 1UL) * 3UL) - 1UL;
+            } else {
+              tmp___12 = (uintmax_t)-1;
+            }
             maxval = tmp___12;
           }
           {
@@ -3235,10 +3105,7 @@ static void to_chars(int negative, uintmax_t value, size_t valsize,
                           1UL));
               sub_string = tmp___5;
             }
-            if (negsub) {
-              sub_string--;
-              *sub_string = (char)'-';
-            }
+
             {
               tmp___6 =
                   gettext("value %s out of %s range %s..%s; substituting %s");
@@ -3268,11 +3135,7 @@ static uintmax_t gid_substitute(int *negative) {
   char *__cil_tmp4;
 
   {
-    if (!gid_nobody) {
-      {
-        tmp = gname_to_gid("nobody", &gid_nobody);
-      }
-    }
+
     r = gid_nobody;
     *negative = r < 0U;
     return ((uintmax_t)r);
@@ -3336,12 +3199,7 @@ void mode_to_chars(mode_t v, char *p, size_t s) {
               if ((64 >> 3) >> 3 == 1) {
                 if ((unsigned int)archive_format != 4U) {
                   if ((unsigned int)archive_format != 3U) {
-                    if ((unsigned int)archive_format != 6U) {
-                      negative = v < 0U;
-                      u = (uintmax_t)v;
-                    } else {
-                      goto _L___10;
-                    }
+
                   } else {
                     goto _L___10;
                   }
@@ -3366,19 +3224,46 @@ void mode_to_chars(mode_t v, char *p, size_t s) {
     } else {
     _L___10: /* CIL Label */
       negative = 0;
-
+      if (v & 2048U) {
+        tmp = 2048;
+      } else {
+        tmp = 0;
+      }
+      if (v & 1024U) {
+        tmp___0 = 1024;
+      } else {
+        tmp___0 = 0;
+      }
       if (v & 512U) {
         tmp___1 = 512;
       } else {
         tmp___1 = 0;
       }
-
+      if (v & 256U) {
+        tmp___2 = 256;
+      } else {
+        tmp___2 = 0;
+      }
+      if (v & 128U) {
+        tmp___3 = 128;
+      } else {
+        tmp___3 = 0;
+      }
       if (v & 64U) {
         tmp___4 = 64;
       } else {
         tmp___4 = 0;
       }
-
+      if (v & (unsigned int)(256 >> 3)) {
+        tmp___5 = 32;
+      } else {
+        tmp___5 = 0;
+      }
+      if (v & (unsigned int)(128 >> 3)) {
+        tmp___6 = 16;
+      } else {
+        tmp___6 = 0;
+      }
       if (v & (unsigned int)(64 >> 3)) {
         tmp___7 = 8;
       } else {
@@ -3394,7 +3279,11 @@ void mode_to_chars(mode_t v, char *p, size_t s) {
       } else {
         tmp___9 = 0;
       }
-
+      if (v & (unsigned int)((64 >> 3) >> 3)) {
+        tmp___10 = 1;
+      } else {
+        tmp___10 = 0;
+      }
       u = (uintmax_t)(((((((((((tmp | tmp___0) | tmp___1) | tmp___2) |
                              tmp___3) |
                             tmp___4) |
@@ -3422,7 +3311,14 @@ void off_to_chars(off_t v, char *p, size_t s) {
     return;
   }
 }
+void size_to_chars(size_t v, char *p, size_t s) {
+  char *__cil_tmp4;
 
+  {
+    { to_chars(0, v, sizeof(v), (uintmax_t(*)(int *))0, p, s, "size_t"); }
+    return;
+  }
+}
 void time_to_chars(time_t v, char *p, size_t s) {
   char *__cil_tmp4;
 
@@ -3473,17 +3369,6 @@ _Bool file_dumpable_p(struct tar_stat_info *st) {
     if (dev_null_output) {
       tmp = 0;
     } else {
-      if (st->archive_file_size == 0L) {
-        if ((st->stat.st_mode &
-             (unsigned int)((256 | (256 >> 3)) | ((256 >> 3) >> 3))) ==
-            (unsigned int)((256 | (256 >> 3)) | ((256 >> 3) >> 3))) {
-          tmp = 0;
-        } else {
-          tmp = 1;
-        }
-      } else {
-        tmp = 1;
-      }
     }
     return ((_Bool)tmp);
   }
@@ -3624,7 +3509,9 @@ static size_t split_long_name(char const *name, size_t length) {
   size_t i;
 
   {
-
+    if (length > 155UL) {
+      length = (size_t)157;
+    }
     i = length - 1UL;
     {
 
@@ -3662,27 +3549,7 @@ static union block *write_ustar_long_name(char const *name) {
       return ((union block *)((void *)0));
     }
     { i = split_long_name(name, length); }
-    if (i == 0UL) {
-      {
-        tmp___2 = quotearg_colon(name);
-        tmp___3 =
-            gettext("%s: file name is too long (cannot be split); not dumped");
-        error(0, 0, (char const *)tmp___3, tmp___2);
-        exit_status = 2;
-      }
-      return ((union block *)((void *)0));
-    } else {
-      if ((length - i) - 1UL > 100UL) {
-        {
-          tmp___2 = quotearg_colon(name);
-          tmp___3 = gettext(
-              "%s: file name is too long (cannot be split); not dumped");
-          error(0, 0, (char const *)tmp___3, tmp___2);
-          exit_status = 2;
-        }
-        return ((union block *)((void *)0));
-      }
-    }
+
     {
       header = find_next_block();
       memset((void *)(header->buffer), 0, sizeof(header->buffer));
@@ -3706,10 +3573,17 @@ static void write_long_link(struct tar_stat_info *st) {
       if ((unsigned int)archive_format == 4U) {
         goto case_4;
       }
+      if ((unsigned int)archive_format == 1U) {
+        goto case_1;
+      }
 
-      if ((unsigned int)archive_format == 6U) {
+      if ((unsigned int)archive_format == 5U) {
+        goto case_1;
+      }
+      if ((unsigned int)archive_format == 2U) {
         goto case_2;
       }
+
       goto switch_default;
     case_4: { /* CIL Label */
       xheader_store("linkpath", (struct tar_stat_info const *)st, (void *)0);
@@ -3749,7 +3623,9 @@ static union block *write_long_name(struct tar_stat_info *st) {
 
   {
     {
-
+      if ((unsigned int)archive_format == 4U) {
+        goto case_4;
+      }
       if ((unsigned int)archive_format == 1U) {
         goto case_1;
       }
@@ -3762,7 +3638,9 @@ static union block *write_long_name(struct tar_stat_info *st) {
       if ((unsigned int)archive_format == 2U) {
         goto case_2;
       }
-
+      if ((unsigned int)archive_format == 6U) {
+        goto case_2;
+      }
       goto switch_default;
     case_4: { /* CIL Label */
       xheader_store("path", (struct tar_stat_info const *)st, (void *)0);
@@ -3872,13 +3750,7 @@ static union block *write_extended(struct tar_stat_info *st,
   void *__cil_tmp69;
 
   {
-    if (extended_header.buffer) {
-      return (old_header);
-    } else {
-      if ((unsigned long)extended_header.stk == (unsigned long)((void *)0)) {
-        return (old_header);
-      }
-    }
+
     {
       xheader_finish(&extended_header);
       memcpy((void * /* __restrict  */)(hp.buffer),
@@ -3954,6 +3826,9 @@ union block *start_header(struct tar_stat_info *st) {
 
   {
     { header = write_header_name(st); }
+    if (!header) {
+      return ((union block *)((void *)0));
+    }
 
     if ((unsigned int)archive_format == 1U) {
       {
@@ -4047,14 +3922,41 @@ union block *start_header(struct tar_stat_info *st) {
         st->devminor = gnu_dev_minor((unsigned long long)st->stat.st_rdev);
       }
         if (st->devmajor > 2097151U) {
-
+          if ((unsigned int)archive_format == 4U) {
+            {
+              xheader_store("devmajor", (struct tar_stat_info const *)st,
+                            (void *)0);
+            }
+          } else {
+            {
+              major_to_chars((int)st->devmajor, header->header.devmajor,
+                             sizeof(header->header.devmajor));
+            }
+          }
         } else {
           {
             major_to_chars((int)st->devmajor, header->header.devmajor,
                            sizeof(header->header.devmajor));
           }
         }
-
+        if (st->devminor > 2097151U) {
+          if ((unsigned int)archive_format == 4U) {
+            {
+              xheader_store("devminor", (struct tar_stat_info const *)st,
+                            (void *)0);
+            }
+          } else {
+            {
+              major_to_chars((int)st->devminor, header->header.devminor,
+                             sizeof(header->header.devminor));
+            }
+          }
+        } else {
+          {
+            major_to_chars((int)st->devminor, header->header.devminor,
+                           sizeof(header->header.devminor));
+          }
+        }
       } else {
         {
           major_to_chars(0, header->header.devmajor,
@@ -4102,7 +4004,9 @@ union block *start_header(struct tar_stat_info *st) {
       if ((unsigned int)archive_format == 1U) {
         goto case_1;
       }
-
+      if ((unsigned int)archive_format == 2U) {
+        goto case_2;
+      }
       if ((unsigned int)archive_format == 6U) {
         goto case_2;
       }
@@ -4185,10 +4089,6 @@ void finish_header(struct tar_stat_info *st, union block *header,
   {
     if (verbose_option) {
       if ((int)header->header.typeflag != 75) {
-        if ((int)header->header.typeflag != 76) {
-          if ((int)header->header.typeflag != 120) {
-          }
-        }
       }
     }
     {
@@ -4317,12 +4217,7 @@ static void dump_regular_finish(int fd, struct tar_stat_info *st,
       {
         tmp___1 = fstat(fd, &final_stat);
       }
-      if (tmp___1 != 0) {
-        {
-          stat_diag((char const *)st->orig_file_name);
-        }
-      } else {
-      }
+
       { tmp___2 = close(fd); }
       if (tmp___2 != 0) {
         {
@@ -4383,10 +4278,83 @@ static void dump_dir0(char *directory, struct tar_stat_info *st, int top_level,
       } else {
         blk->header.typeflag = (char)'5';
       }
+      if (!incremental_option) {
+        {
+          finish_header(st, blk, block_ordinal);
+        }
+      } else {
+        if (gnu_list_name->dir_contents) {
+          {
+            block_ordinal = current_block_ordinal();
+            buffer___2 = gnu_list_name->dir_contents;
+            totsize = (off_t)0;
+          }
+          if (buffer___2) {
+            p_buffer = buffer___2;
+            {
+              while (1) {
+              while_continue: /* CIL Label */
+                  ;
+                if (!*p_buffer) {
+                  goto while_break;
+                }
+                {
+                  tmp___0 = strlen(p_buffer);
+                  size = tmp___0 + 1UL;
+                  totsize = (off_t)((size_t)totsize + size);
+                  p_buffer += size;
+                }
+              }
+            while_break: /* CIL Label */
+                ;
+            }
+          }
+          {
+            totsize++;
+            off_to_chars(totsize, blk->header.size, sizeof(blk->header.size));
+            finish_header(st, blk, block_ordinal);
+            p_buffer = buffer___2;
+            size_left = totsize;
+          }
+          {
+            while (1) {
+            while_continue___0: /* CIL Label */
+                ;
+              if (!(size_left > 0L)) {
+                goto while_break___0;
+              }
+
+              {
+                blk = find_next_block();
+                bufsize = available_space_after(blk);
+              }
+              if ((size_t)size_left < bufsize) {
+                bufsize = (size_t)size_left;
+                count = (ssize_t)(bufsize % 512UL);
+                if (count) {
+                  {
+                    memset((void *)(blk->buffer + size_left), 0,
+                           (size_t)(512L - count));
+                  }
+                }
+              }
+              {
+                memcpy((void * /* __restrict  */)(blk->buffer),
+                       (void const * /* __restrict  */)p_buffer, bufsize);
+                size_left = (off_t)((size_t)size_left - bufsize);
+                p_buffer += bufsize;
+                set_next_block_after(blk + (bufsize - 1UL) / 512UL);
+              }
+            }
+          while_break___0: /* CIL Label */
+              ;
+          }
+
+          return;
+        }
+      }
     }
-    if (!recursion_option) {
-      return;
-    }
+
     if (one_file_system_option) {
       if (!top_level) {
         if (parent_device != st->stat.st_dev) {
@@ -4498,171 +4466,6 @@ static _Bool dump_dir(struct tar_stat_info *st, int top_level,
     return ((_Bool)1);
   }
 }
-void create_archive(void) {
-  char *p;
-  size_t buffer_size;
-  char *buffer___2;
-  void *tmp;
-  char const *q;
-  _Bool tmp___0;
-  size_t plen;
-  size_t tmp___1;
-  void *tmp___2;
-  size_t tmp___3;
-  size_t qlen;
-  size_t tmp___4;
-  void *tmp___5;
-  _Bool tmp___6;
-  _Bool tmp___7;
-
-  {
-    {
-      open_archive((enum access_mode)1);
-      xheader_write_global();
-    }
-    if (incremental_option) {
-      {
-        buffer_size = (size_t)1000;
-        tmp = xmalloc(buffer_size);
-        buffer___2 = (char *)tmp;
-        collect_and_sort_names();
-      }
-      {
-        while (1) {
-        while_continue: /* CIL Label */
-            ;
-          { p = name_from_list(); }
-          if (!((unsigned long)p != (unsigned long)((void *)0))) {
-            goto while_break;
-          }
-          { tmp___0 = excluded_name((char const *)p); }
-          if (!tmp___0) {
-            {
-              dump_file(p, -1, (dev_t)0);
-            }
-          }
-        }
-      while_break: /* CIL Label */
-          ;
-      }
-      { blank_name_list(); }
-      {
-        while (1) {
-        while_continue___0: /* CIL Label */
-            ;
-          { p = name_from_list(); }
-          if (!((unsigned long)p != (unsigned long)((void *)0))) {
-            goto while_break___0;
-          }
-          { tmp___6 = excluded_name((char const *)p); }
-          if (!tmp___6) {
-            {
-              tmp___1 = strlen((char const *)p);
-              plen = tmp___1;
-            }
-            if (buffer_size <= plen) {
-              {
-
-              while_break___1: /* CIL Label */
-                  ;
-              }
-              {
-                tmp___2 = xrealloc((void *)buffer___2, buffer_size);
-                buffer___2 = (char *)tmp___2;
-              }
-            }
-            {
-              memcpy((void * /* __restrict  */)buffer___2,
-                     (void const * /* __restrict  */)p, plen);
-            }
-            if (!((int)*(buffer___2 + (plen - 1UL)) == 47)) {
-              tmp___3 = plen;
-              plen++;
-              *(buffer___2 + tmp___3) = (char)'/';
-            }
-            q = gnu_list_name->dir_contents;
-            if (q) {
-              {
-                while (1) {
-                while_continue___2: /* CIL Label */
-                    ;
-                  if (!*q) {
-                    goto while_break___2;
-                  }
-                  {
-                    tmp___4 = strlen(q);
-                    qlen = tmp___4;
-                  }
-                  if ((int const) * q == 89) {
-                    if (buffer_size < plen + qlen) {
-                      {
-                        while (1) {
-                        while_continue___3: /* CIL Label */
-                            ;
-                          buffer_size *= 2UL;
-                          if (!(buffer_size < plen + qlen)) {
-                            goto while_break___3;
-                          }
-                          goto while_continue___3;
-                        }
-                      while_break___3: /* CIL Label */
-                          ;
-                      }
-                      {
-                        tmp___5 = xrealloc((void *)buffer___2, buffer_size);
-                        buffer___2 = (char *)tmp___5;
-                      }
-                    }
-                    {
-                      strcpy((char * /* __restrict  */)(buffer___2 + plen),
-                             (char const * /* __restrict  */)(q + 1));
-                      dump_file(buffer___2, -1, (dev_t)0);
-                    }
-                  }
-                  q += qlen + 1UL;
-                }
-              while_break___2: /* CIL Label */
-                  ;
-              }
-            }
-          }
-        }
-      while_break___0: /* CIL Label */
-          ;
-      }
-      { free((void *)buffer___2); }
-    } else {
-      {
-        while (1) {
-        while_continue___4: /* CIL Label */
-            ;
-          { p = name_next(1); }
-          if (!((unsigned long)p != (unsigned long)((void *)0))) {
-            goto while_break___4;
-          }
-          { tmp___7 = excluded_name((char const *)p); }
-          if (!tmp___7) {
-            {
-              dump_file(p, 1, (dev_t)0);
-            }
-          }
-        }
-      while_break___4: /* CIL Label */
-          ;
-      }
-    }
-    {
-      write_eot();
-      close_archive();
-    }
-    if (listed_incremental_option) {
-      {
-        write_directory_file();
-      }
-    }
-    return;
-  }
-}
 
 static void unknown_file_error(char *p) {
   char *tmp;
@@ -4702,6 +4505,35 @@ static _Bool dump_hard_link(struct tar_stat_info *st) {
               hash_lookup((Hash_table const *)link_table, (void const *)(&lp));
           duplicate = (struct link *)tmp___2;
         }
+        if (duplicate) {
+          {
+            tmp = safer_name_suffix((char const *)(duplicate->name), (_Bool)1);
+            link_name = (char const *)tmp;
+            (duplicate->nlink)--;
+            block_ordinal = current_block_ordinal();
+            assign_string(&st->link_name, link_name);
+            tmp___0 = strlen(link_name);
+          }
+          if (100UL < tmp___0) {
+            {
+              write_long_link(st);
+            }
+          }
+          {
+            st->stat.st_size = (__off_t)0;
+            blk = start_header(st);
+          }
+          if (!blk) {
+            return ((_Bool)1);
+          }
+          {
+            tar_copy_str(blk->header.linkname, link_name, (size_t)100);
+            blk->header.typeflag = (char)'1';
+            finish_header(st, blk, block_ordinal);
+          }
+
+          return ((_Bool)1);
+        }
       }
     }
     return ((_Bool)0);
@@ -4716,7 +4548,41 @@ static void file_count_links(struct tar_stat_info *st) {
 
   { return; }
 }
+void check_links(void) {
+  struct link *lp;
+  void *tmp;
+  void *tmp___0;
+  char *tmp___1;
+  char *__cil_tmp5;
 
+  {
+    if (!link_table) {
+      return;
+    }
+    {
+      tmp = hash_get_first((Hash_table const *)link_table);
+      lp = (struct link *)tmp;
+    }
+    {
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!lp) {
+          goto while_break;
+        }
+
+        {
+          tmp___0 =
+              hash_get_next((Hash_table const *)link_table, (void const *)lp);
+          lp = (struct link *)tmp___0;
+        }
+      }
+    while_break: /* CIL Label */
+        ;
+    }
+    return;
+  }
+}
 static void dump_file0(struct tar_stat_info *st, char *p, int top_level,
                        dev_t parent_device) {
   union block *header;
@@ -4760,11 +4626,7 @@ static void dump_file0(struct tar_stat_info *st, char *p, int top_level,
 
   {
     block_ordinal = (off_t)-1;
-    if (interactive_option) {
-      {
-        tmp = confirm("add", (char const *)p);
-      }
-    }
+
     {
       assign_string(&st->orig_file_name, (char const *)p);
       tmp___0 = safer_name_suffix((char const *)p, (_Bool)0);
@@ -4784,32 +4646,7 @@ static void dump_file0(struct tar_stat_info *st, char *p, int top_level,
       restore_times.actime = st->stat.st_atim.tv_sec;
       restore_times.modtime = st->stat.st_mtim.tv_sec;
     }
-    if (!((st->stat.st_mode & 61440U) == 16384U)) {
-      if (st->stat.st_mtim.tv_sec < newer_mtime_option.tv_sec) {
-        goto _L___5;
-      } else {
-        if (st->stat.st_mtim.tv_sec == newer_mtime_option.tv_sec) {
-          if (st->stat.st_mtim.tv_nsec < newer_mtime_option.tv_nsec) {
-          _L___5: /* CIL Label */
-            if (!after_date_option) {
-              goto _L___4;
-            } else {
-              if (st->stat.st_ctim.tv_sec < newer_mtime_option.tv_sec) {
-                goto _L___4;
-              } else {
-                if (st->stat.st_ctim.tv_sec == newer_mtime_option.tv_sec) {
-                  if (st->stat.st_ctim.tv_nsec < newer_mtime_option.tv_nsec) {
-                  _L___4: /* CIL Label */
 
-                    return;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
     { tmp___6 = sys_file_is_archive(st); }
     if (tmp___6) {
       {
@@ -4831,7 +4668,9 @@ static void dump_file0(struct tar_stat_info *st, char *p, int top_level,
         return;
       } else {
         { tmp___7 = dump_hard_link(st); }
-
+        if (tmp___7) {
+          return;
+        }
         if ((st->stat.st_mode & 61440U) == 32768U) {
           goto _L___6;
         } else {
@@ -4844,7 +4683,23 @@ static void dump_file0(struct tar_stat_info *st, char *p, int top_level,
                 fd = open((char const *)st->orig_file_name, 0);
               }
               if (fd < 0) {
-
+                if (!top_level) {
+                  {
+                    tmp___10 = __errno_location();
+                  }
+                  if (*tmp___10 == 2) {
+                    {
+                      tmp___8 =
+                          quotearg_colon((char const *)st->orig_file_name);
+                      tmp___9 = gettext("%s: File removed before we read it");
+                      error(0, 0, (char const *)tmp___9, tmp___8);
+                    }
+                  } else {
+                    { open_diag((char const *)st->orig_file_name); }
+                  }
+                } else {
+                  { open_diag((char const *)st->orig_file_name); }
+                }
                 return;
               }
             } else {
@@ -4876,7 +4731,12 @@ static void dump_file0(struct tar_stat_info *st, char *p, int top_level,
               if ((unsigned int)status == 1U) {
                 goto case_1;
               }
-
+              if ((unsigned int)status == 2U) {
+                goto case_2;
+              }
+              if ((unsigned int)status == 3U) {
+                goto case_3;
+              }
               goto switch_break;
             case_0: /* CIL Label */
 
@@ -4976,12 +4836,7 @@ static void dump_file0(struct tar_stat_info *st, char *p, int top_level,
         }
       }
     }
-    if ((unsigned int)archive_format == 1U) {
-      {
-        unknown_file_error(p);
-      }
-      return;
-    }
+
     {
       block_ordinal = current_block_ordinal();
       st->stat.st_size = (__off_t)0;
@@ -5037,450 +4892,7 @@ static _Bool acting_as_filter;
 union block *recent_long_name;
 union block *recent_long_link;
 static off_t records_skipped;
-static void move_archive(off_t count) {
-  struct mtop operation;
-  int tmp;
-  int tmp___0;
-  int tmp___1;
-  int *tmp___2;
-  int tmp___3;
-  int tmp___4;
-  int tmp___5;
-  int tmp___6;
-  off_t position0;
-  off_t tmp___7;
-  __off_t tmp___8;
-  off_t tmp___9;
-  off_t increment;
-  off_t position;
-  off_t tmp___10;
-  __off_t tmp___11;
-  off_t tmp___12;
 
-  {
-    if (count == 0L) {
-      return;
-    }
-
-    position0 = tmp___9;
-    increment = (off_t)(record_size * (size_t)count);
-    position = position0 + increment;
-    if ((size_t)(increment / count) != record_size) {
-      {
-        seek_error_details(*(archive_name_array + 0), position);
-      }
-    } else {
-      if ((position < position0) != (increment < 0L)) {
-        {
-          seek_error_details(*(archive_name_array + 0), position);
-        }
-      } else {
-
-        if (tmp___12 != position) {
-          {
-            seek_error_details(*(archive_name_array + 0), position);
-          }
-        }
-      }
-    }
-    return;
-  }
-}
-static void write_record(int move_back_flag) {
-  union block *save_record;
-
-  {
-    save_record = record_start;
-    record_start = new_record;
-    if (acting_as_filter) {
-      {
-        archive = 1;
-        flush_write();
-        archive = 0;
-      }
-    } else {
-      {
-        move_archive((records_written + records_skipped) - records_read);
-        flush_write();
-      }
-    }
-    record_start = save_record;
-    if (move_back_flag) {
-      if (!acting_as_filter) {
-        {
-          move_archive(records_read - (records_written + records_skipped));
-        }
-      }
-    }
-    new_blocks = 0;
-    return;
-  }
-}
-static void write_recent_blocks(union block *h, size_t blocks) {
-  size_t i;
-  int tmp;
-
-  {
-    i = (size_t)0;
-    {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        if (!(i < blocks)) {
-          goto while_break;
-        }
-        tmp = new_blocks;
-        new_blocks++;
-        *(new_record + tmp) = *(h + i);
-        if (new_blocks == blocking_factor) {
-          {
-            write_record(1);
-          }
-        }
-        i++;
-      }
-    while_break: /* CIL Label */
-        ;
-    }
-    return;
-  }
-}
-static void write_recent_bytes(char *data, size_t bytes) {
-  size_t blocks;
-  size_t rest;
-
-  {
-    {
-      blocks = bytes / 512UL;
-      rest = bytes - blocks * 512UL;
-      write_recent_blocks((union block *)data, blocks);
-      memcpy((void * /* __restrict  */)((new_record + new_blocks)->buffer),
-             (void const * /* __restrict  */)(data + blocks * 512UL), rest);
-    }
-
-    new_blocks++;
-    if (new_blocks == blocking_factor) {
-      {
-        write_record(1);
-      }
-    }
-    return;
-  }
-}
-void delete_archive_members(void) {
-  enum read_header logical_status;
-  enum read_header previous_status;
-  struct name *name;
-  off_t blocks_to_skip;
-  off_t blocks_to_keep;
-  int kept_blocks_in_record;
-  int tmp;
-  enum read_header status;
-  enum read_header tmp___0;
-  char *tmp___1;
-  char *tmp___2;
-  void *tmp___3;
-  enum read_header status___0;
-  char *tmp___4;
-  int count;
-  int total_zero_blocks;
-  int zero_blocks;
-  int tmp___5;
-  uintmax_t tmp___6;
-  uintmax_t tmp___7;
-  char *__cil_tmp21;
-  char *__cil_tmp22;
-  char *__cil_tmp23;
-
-  {
-    {
-      logical_status = (enum read_header)0;
-      previous_status = (enum read_header)0;
-      blocks_to_skip = (off_t)0;
-      blocks_to_keep = (off_t)0;
-      name_gather();
-      open_archive((enum access_mode)2);
-      tmp = strcmp(*(archive_name_array + 0), "-");
-      acting_as_filter = (_Bool)(tmp == 0);
-    }
-    {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        {
-          tmp___0 = read_header((_Bool)1);
-          status = tmp___0;
-        }
-        {
-          if ((unsigned int)status == 0U) {
-            goto case_0;
-          }
-          if ((unsigned int)status == 1U) {
-            goto case_1;
-          }
-          if ((unsigned int)status == 2U) {
-            goto case_2;
-          }
-          if ((unsigned int)status == 3U) {
-            goto case_3;
-          }
-          if ((unsigned int)status == 4U) {
-            goto case_4;
-          }
-          if ((unsigned int)status == 5U) {
-            goto case_5;
-          }
-          goto switch_break;
-        case_0: { /* CIL Label */
-          abort();
-        }
-        case_1: { /* CIL Label */
-          name = name_scan((char const *)current_stat_info.file_name);
-        }
-          if ((unsigned long)name == (unsigned long)((void *)0)) {
-            {
-              skip_member();
-            }
-            goto switch_break;
-          }
-          (name->found_count)++;
-          if (occurrence_option == 0UL) {
-            tmp___6 = name->found_count;
-          } else {
-            tmp___6 = (uintmax_t)(name->found_count == occurrence_option);
-          }
-          if (!tmp___6) {
-            {
-              skip_member();
-            }
-            goto switch_break;
-          }
-        case_2: /* CIL Label */
-          logical_status = status;
-          goto switch_break;
-        case_3: /* CIL Label */
-
-        case_4: /* CIL Label */
-          logical_status = (enum read_header)4;
-          goto switch_break;
-        case_5: { /* CIL Label */
-          set_next_block_after(current_header);
-        }
-          {
-            if ((unsigned int)previous_status == 0U) {
-              goto case_0___0;
-            }
-
-            if ((unsigned int)previous_status == 3U) {
-              goto case_1___0;
-            }
-
-            if ((unsigned int)previous_status == 4U) {
-              goto case_4___0;
-            }
-            goto switch_break___0;
-          case_0___0: { /* CIL Label */
-            tmp___1 = gettext("This does not look like a tar archive");
-            error(0, 0, (char const *)tmp___1);
-          }
-          case_1___0:   /* CIL Label */
-          case_2___0:   /* CIL Label */
-          case_3___0: { /* CIL Label */
-            tmp___2 = gettext("Skipping to next header");
-            error(0, 0, (char const *)tmp___2);
-            exit_status = 2;
-          }
-          case_5___0: /* CIL Label */
-            goto switch_break___0;
-          case_4___0: { /* CIL Label */
-            abort();
-          }
-          switch_break___0: /* CIL Label */
-              ;
-          }
-          goto switch_break;
-        switch_break: /* CIL Label */
-            ;
-        }
-        previous_status = status;
-        if (!((unsigned int)logical_status == 0U)) {
-          goto while_break;
-        }
-      }
-    while_break: /* CIL Label */
-        ;
-    }
-    {
-      records_skipped = records_read - 1L;
-      tmp___3 = xmalloc(record_size);
-      new_record = (union block *)tmp___3;
-    }
-    if ((unsigned int)logical_status == 1U) {
-      goto _L___3;
-    } else {
-      if ((unsigned int)logical_status == 2U) {
-      _L___3: /* CIL Label */
-        write_archive_to_stdout = (_Bool)0;
-        new_blocks = (int)(current_block - record_start);
-        if (new_blocks) {
-          {
-            memcpy((void * /* __restrict  */)new_record,
-                   (void const * /* __restrict  */)record_start,
-                   (size_t)(new_blocks * 512));
-          }
-        }
-        if ((unsigned int)logical_status == 1U) {
-          logical_status = (enum read_header)0;
-          goto flush_file;
-        }
-        {
-          while (1) {
-          while_continue___0: /* CIL Label */
-              ;
-            if ((unsigned long)current_block == (unsigned long)record_end) {
-              {
-                flush_archive();
-              }
-            }
-            {
-              status___0 = read_header((_Bool)0);
-              xheader_decode(&current_stat_info);
-            }
-            if ((unsigned int)status___0 == 3U) {
-            }
-            if ((unsigned int)status___0 == 4U) {
-              logical_status = (enum read_header)4;
-              goto while_break___0;
-            } else {
-            }
-            if ((unsigned int)status___0 == 5U) {
-              {
-                tmp___4 = gettext("Deleting non-header from archive");
-                error(0, 0, (char const *)tmp___4);
-                exit_status = 2;
-                set_next_block_after(current_header);
-              }
-              goto while_continue___0;
-            }
-            { name = name_scan((char const *)current_stat_info.file_name); }
-            if ((unsigned long)name != (unsigned long)((void *)0)) {
-              (name->found_count)++;
-              if (occurrence_option == 0UL) {
-                tmp___7 = name->found_count;
-              } else {
-                tmp___7 = (uintmax_t)(name->found_count == occurrence_option);
-              }
-              if (tmp___7) {
-              flush_file: {
-                set_next_block_after(current_header);
-                blocks_to_skip =
-                    ((current_stat_info.stat.st_size + 512L) - 1L) / 512L;
-              }
-                {
-                  while (1) {
-                  while_continue___1: /* CIL Label */
-                      ;
-                    if (!(record_end - current_block <= blocks_to_skip)) {
-                      goto while_break___1;
-                    }
-                    {
-                      blocks_to_skip -= record_end - current_block;
-                      flush_archive();
-                    }
-                  }
-                while_break___1: /* CIL Label */
-                    ;
-                }
-                current_block += blocks_to_skip;
-                blocks_to_skip = (off_t)0;
-                goto while_continue___0;
-              }
-            }
-            if (extended_header.size) {
-              {
-                write_recent_bytes(extended_header.buffer,
-                                   extended_header.size);
-              }
-            } else {
-              {
-                write_recent_blocks(recent_long_name, recent_long_name_blocks);
-                write_recent_blocks(recent_long_link, recent_long_link_blocks);
-              }
-            }
-            {
-              *(new_record + new_blocks) = *current_header;
-              new_blocks++;
-              blocks_to_keep =
-                  ((current_stat_info.stat.st_size + 512L) - 1L) / 512L;
-              set_next_block_after(current_header);
-            }
-            if (new_blocks == blocking_factor) {
-              {
-                write_record(1);
-              }
-            }
-            kept_blocks_in_record = (int)(record_end - current_block);
-            if ((off_t)kept_blocks_in_record > blocks_to_keep) {
-              kept_blocks_in_record = (int)blocks_to_keep;
-            }
-            {
-              while (1) {
-              while_continue___2: /* CIL Label */
-                  ;
-                if (!blocks_to_keep) {
-                  goto while_break___2;
-                }
-
-                count = kept_blocks_in_record;
-                if (blocking_factor - new_blocks < count) {
-                  count = blocking_factor - new_blocks;
-                }
-                if (!count) {
-                  {
-                    abort();
-                  }
-                }
-                {
-                  memcpy((void * /* __restrict  */)(new_record + new_blocks),
-                         (void const * /* __restrict  */)current_block,
-                         (size_t)(count * 512));
-                  new_blocks += count;
-                  current_block += count;
-                  blocks_to_keep -= (off_t)count;
-                  kept_blocks_in_record -= count;
-                }
-                if (new_blocks == blocking_factor) {
-                  {
-                    write_record(1);
-                  }
-                }
-              }
-            while_break___2: /* CIL Label */
-                ;
-            }
-          }
-        while_break___0: /* CIL Label */
-            ;
-        }
-      }
-    }
-    if ((unsigned int)logical_status == 4U) {
-      total_zero_blocks = 0;
-      {
-
-      while_break___3: /* CIL Label */
-          ;
-      }
-    }
-    { free((void *)new_record); }
-
-    {
-      close_archive();
-      names_notfound();
-    }
-    return;
-  }
-}
 /* #pragma merger("0","004.extract.o.i","") */
 extern __attribute__((__nothrow__)) int(__attribute__((
     __nonnull__(1, 2), __leaf__)) stat)(char const *__restrict __file,
@@ -5564,7 +4976,14 @@ void extr_init(void) {
       xalloc_fail_func = &extract_finish;
       newdir_umask = umask((__mode_t)0);
     }
-
+    if (0 < same_permissions_option) {
+      current_umask = (mode_t)0;
+    } else {
+      {
+        umask(newdir_umask);
+        current_umask = newdir_umask;
+      }
+    }
     return;
   }
 }
@@ -5578,7 +4997,29 @@ static void set_mode(char const *file_name, struct stat const *stat_info,
   void *__cil_tmp11;
 
   {
+    if (0 < same_permissions_option) {
+      if ((unsigned int)permstatus != 2U) {
+        mode = (mode_t)stat_info->st_mode;
+        if ((unsigned int)permstatus == 1U) {
+          if (!(mode & (unsigned int)(~(
+                           ((64 | (64 >> 3)) | ((64 >> 3) >> 3)) |
+                           (((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
+                            ((256 | (256 >> 3)) | ((256 >> 3) >> 3))))))) {
+          }
+        }
+      } else {
+        goto _L___3;
+      }
+    } else {
+    _L___3: /* CIL Label */
+      if (!invert_permissions) {
+        return;
+      } else {
 
+        mode = (mode_t)(cur_info->st_mode ^
+                        (unsigned int const)invert_permissions);
+      }
+    }
     { tmp___0 = chmod(file_name, mode); }
     if (tmp___0 != 0) {
       {
@@ -5588,7 +5029,32 @@ static void set_mode(char const *file_name, struct stat const *stat_info,
     return;
   }
 }
+static void check_time(char const *file_name, time_t t) {
+  time_t now;
+  char const *tmp;
+  char *tmp___0;
+  char const *tmp___1;
+  char *tmp___2;
+  char *__cil_tmp8;
+  char *__cil_tmp9;
 
+  {
+    if (t <= 0L) {
+      {
+        tmp = tartime(t);
+        tmp___0 = gettext("%s: implausibly old time stamp %s");
+        error(0, 0, (char const *)tmp___0, file_name, tmp);
+      }
+    } else {
+      if (start_timespec.tv_sec < t) {
+        {
+          now = time((time_t *)0);
+        }
+      }
+    }
+    return;
+  }
+}
 static void set_stat(char const *file_name, struct stat const *stat_info,
                      struct stat const *cur_info, mode_t invert_permissions,
                      enum permstatus permstatus, char typeflag) {
@@ -5599,7 +5065,29 @@ static void set_stat(char const *file_name, struct stat const *stat_info,
 
   {
     if ((int)typeflag != 50) {
-
+      if (!touch_option) {
+        if ((unsigned int)permstatus != 2U) {
+          if (incremental_option) {
+            utimbuf.actime = (__time_t)stat_info->st_atim.tv_sec;
+          } else {
+            utimbuf.actime = start_timespec.tv_sec;
+          }
+          {
+            utimbuf.modtime = (__time_t)stat_info->st_mtim.tv_sec;
+            tmp = utime(file_name, (struct utimbuf const *)(&utimbuf));
+          }
+          if (tmp < 0) {
+            {
+              utime_error(file_name);
+            }
+          } else {
+            {
+              check_time(file_name, utimbuf.actime);
+              check_time(file_name, utimbuf.modtime);
+            }
+          }
+        }
+      }
       {
         set_mode(file_name, stat_info, cur_info, invert_permissions, permstatus,
                  typeflag);
@@ -5607,6 +5095,24 @@ static void set_stat(char const *file_name, struct stat const *stat_info,
     }
     if (0 < same_owner_option) {
       if ((unsigned int)permstatus != 2U) {
+        if ((int)typeflag == 50) {
+          {
+            tmp___0 = lchown(file_name, (__uid_t)stat_info->st_uid,
+                             (__gid_t)stat_info->st_gid);
+          }
+
+        } else {
+          {
+            tmp___1 = chown(file_name, (__uid_t)stat_info->st_uid,
+                            (__gid_t)stat_info->st_gid);
+          }
+          if (tmp___1 < 0) {
+            {
+              chown_error_details(file_name, (uid_t)stat_info->st_uid,
+                                  (gid_t)stat_info->st_gid);
+            }
+          }
+        }
       }
     }
     return;
@@ -5642,7 +5148,61 @@ static void delay_set_stat(char const *file_name, struct stat const *stat_info,
     return;
   }
 }
+static void repair_delayed_set_stat(char const *dir,
+                                    struct stat const *dir_stat_info) {
+  struct delayed_set_stat *data;
+  struct stat st;
+  int tmp;
+  char *tmp___0;
+  char *tmp___1;
+  void *__cil_tmp8;
+  char *__cil_tmp9;
 
+  {
+    data = delayed_set_stat_head;
+    {
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!data) {
+          goto while_break;
+        }
+        {
+          tmp = stat((char const * /* __restrict  */)(data->file_name),
+                     (struct stat * /* __restrict  */)(&st));
+        }
+        if (tmp != 0) {
+          {
+            stat_error((char const *)(data->file_name));
+          }
+          return;
+        }
+        if (st.st_dev == (__dev_t)dir_stat_info->st_dev) {
+          if (st.st_ino == (__ino_t)dir_stat_info->st_ino) {
+            data->stat_info = current_stat_info.stat;
+            data->invert_permissions =
+                (unsigned int)(((64 | (64 >> 3)) | ((64 >> 3) >> 3)) |
+                               (((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
+                                ((256 | (256 >> 3)) | ((256 >> 3) >> 3)))) &
+                (current_stat_info.stat.st_mode ^ st.st_mode);
+            data->permstatus = (enum permstatus)1;
+            return;
+          }
+        }
+        data = data->next;
+      }
+    while_break: /* CIL Label */
+        ;
+    }
+    {
+      tmp___0 = quotearg_colon(dir);
+      tmp___1 = gettext("%s: Unexpected inconsistency when making directory");
+      error(0, 0, (char const *)tmp___1, tmp___0);
+      exit_status = 2;
+    }
+    return;
+  }
+}
 static int make_directories(char *file_name) {
   char *cursor0;
   char *cursor;
@@ -5669,19 +5229,13 @@ static int make_directories(char *file_name) {
           goto __Cont;
         }
 
-        if ((int)*(cursor + -1) == 46) {
-        }
         *cursor = (char)'\000';
         mode =
             (int)((unsigned int)(((64 | (64 >> 3)) | ((64 >> 3) >> 3)) |
                                  (((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
                                   ((256 | (256 >> 3)) | ((256 >> 3) >> 3)))) &
                   ~newdir_umask);
-        if (we_are_root) {
-          invert_permissions = 0;
-        } else {
-          invert_permissions = 192 & ~mode;
-        }
+
         {
           status = mkdir((char const *)file_name,
                          (__mode_t)(mode ^ invert_permissions));
@@ -5728,7 +5282,31 @@ static int make_directories(char *file_name) {
     return (did_something);
   }
 }
+static _Bool file_newer_p(char const *file_name,
+                          struct tar_stat_info *tar_stat) {
+  struct stat st;
+  int tmp;
+  void *__cil_tmp5;
 
+  {
+    {
+      tmp = stat((char const * /* __restrict  */)file_name,
+                 (struct stat * /* __restrict  */)(&st));
+    }
+    if (tmp) {
+      {
+        stat_warn(file_name);
+      }
+      return ((_Bool)1);
+    }
+    if (!((st.st_mode & 61440U) == 16384U)) {
+      if (st.st_mtim.tv_sec >= tar_stat->stat.st_mtim.tv_sec) {
+        return ((_Bool)1);
+      }
+    }
+    return ((_Bool)0);
+  }
+}
 static int prepare_to_extract(char const *file_name) {
   int tmp;
   int *tmp___0;
@@ -5740,7 +5318,12 @@ static int prepare_to_extract(char const *file_name) {
   {
 
     {
-
+      if ((unsigned int)old_files_option == 3U) {
+        goto case_3;
+      }
+      if ((unsigned int)old_files_option == 5U) {
+        goto case_5;
+      }
       goto switch_default;
     case_3: { /* CIL Label */
       tmp = remove_any_file(file_name,
@@ -5749,17 +5332,6 @@ static int prepare_to_extract(char const *file_name) {
       if (!tmp) {
         {
           tmp___0 = __errno_location();
-        }
-        if (*tmp___0) {
-          {
-            tmp___1 = __errno_location();
-          }
-          if (*tmp___1 != 2) {
-            {
-              unlink_error(file_name);
-            }
-            return (0);
-          }
         }
       }
       goto switch_break;
@@ -5799,7 +5371,9 @@ static int maybe_recoverable(char *file_name, int *interdir_made) {
       tmp = __errno_location();
       e = *tmp;
     }
-
+    if (*interdir_made) {
+      return (0);
+    }
     { tmp___0 = __errno_location(); }
     {
       if (*tmp___0 == 17) {
@@ -5808,6 +5382,16 @@ static int maybe_recoverable(char *file_name, int *interdir_made) {
 
       goto switch_default;
     case_17: { /* CIL Label */
+      if ((unsigned int)old_files_option == 4U) {
+        goto case_4;
+      }
+      if ((unsigned int)old_files_option == 5U) {
+        goto case_5;
+      }
+
+      if ((unsigned int)old_files_option == 1U) {
+        goto case_0;
+      }
 
       goto switch_break___0;
     case_4: /* CIL Label */
@@ -5896,10 +5480,59 @@ static void apply_nonancestor_delayed_set_stat(char const *file_name,
         } else {
           if (data->file_name_len < file_name_len) {
             if (*(file_name + data->file_name_len)) {
+              if ((int const) * (file_name + data->file_name_len) == 47) {
+                goto _L___3;
+              } else {
+                if ((int const) * (file_name + (data->file_name_len - 1UL)) ==
+                    47) {
+                _L___3: { /* CIL Label */
+                  tmp___0 = memcmp((void const *)file_name,
+                                   (void const *)(data->file_name),
+                                   data->file_name_len);
+                }
+                  if (tmp___0 == 0) {
+                    goto while_break;
+                  }
+                }
+              }
             }
           }
         }
-
+        if (check_for_renamed_directories) {
+          {
+            cur_info = (struct stat const *)(&st);
+            tmp___3 = stat((char const * /* __restrict  */)(data->file_name),
+                           (struct stat * /* __restrict  */)(&st));
+          }
+          if (tmp___3 != 0) {
+            {
+              stat_error((char const *)(data->file_name));
+              skip_this_one = (_Bool)1;
+            }
+          } else {
+            if (st.st_dev == data->stat_info.st_dev) {
+              if (!(st.st_ino == data->stat_info.st_ino)) {
+                {
+                  tmp___1 = quotearg_colon((char const *)(data->file_name));
+                  tmp___2 = gettext("%s: Directory renamed before its status "
+                                    "could be extracted");
+                  error(0, 0, (char const *)tmp___2, tmp___1);
+                  exit_status = 2;
+                  skip_this_one = (_Bool)1;
+                }
+              }
+            } else {
+              {
+                tmp___1 = quotearg_colon((char const *)(data->file_name));
+                tmp___2 = gettext("%s: Directory renamed before its status "
+                                  "could be extracted");
+                error(0, 0, (char const *)tmp___2, tmp___1);
+                exit_status = 2;
+                skip_this_one = (_Bool)1;
+              }
+            }
+          }
+        }
         if (!skip_this_one) {
           {
             set_stat((char const *)(data->file_name),
@@ -6019,6 +5652,11 @@ void extract_archive(void) {
       decode_header(current_header, &current_stat_info, &current_format, 1);
     }
 
+    if (verbose_option) {
+      {
+        print_header(&current_stat_info, (off_t)-1);
+      }
+    }
     {
       file_name = safer_name_suffix((char const *)current_stat_info.file_name,
                                     (_Bool)0);
@@ -6051,7 +5689,9 @@ void extract_archive(void) {
       if ((int)typeflag == 48) {
         goto case_83;
       }
-
+      if ((int)typeflag == 55) {
+        goto case_83;
+      }
       if ((int)typeflag == 50) {
         goto case_50;
       }
@@ -6061,22 +5701,21 @@ void extract_archive(void) {
       if ((int)typeflag == 51) {
         goto case_51;
       }
-
+      if ((int)typeflag == 52) {
+        goto case_52;
+      }
+      if ((int)typeflag == 54) {
+        goto case_54;
+      }
       if ((int)typeflag == 53) {
         goto really_dir;
       }
       if ((int)typeflag == 68) {
         goto really_dir;
       }
-      if ((int)typeflag == 86) {
-        goto case_86;
-      }
 
       if ((int)typeflag == 77) {
         goto case_77;
-      }
-      if ((int)typeflag == 76) {
-        goto case_76;
       }
 
       goto switch_default;
@@ -6178,9 +5817,6 @@ void extract_archive(void) {
       }
       { skip_file(size); }
 
-      if (to_stdout_option) {
-        goto switch_break;
-      }
       { status = close(fd); }
       if (status < 0) {
         {
@@ -6198,7 +5834,9 @@ void extract_archive(void) {
     case_50: { /* CIL Label */
       tmp___11 = prepare_to_extract((char const *)file_name);
     }
-
+      if (!tmp___11) {
+        goto switch_break;
+      }
       if (absolute_names_option) {
         goto _L;
       } else {
@@ -6264,7 +5902,57 @@ void extract_archive(void) {
                                current_stat_info.link_name);
                     h = delayed_set_stat_head;
                   }
-
+                  if (h) {
+                    if (!h->after_symlinks) {
+                      {
+                        tmp___19 = strncmp((char const *)file_name,
+                                           (char const *)(h->file_name),
+                                           h->file_name_len);
+                      }
+                      if (tmp___19 == 0) {
+                        if ((int)*(file_name + h->file_name_len) == 47) {
+                          {
+                            tmp___20 = base_name((char const *)file_name);
+                          }
+                          if ((unsigned long)tmp___20 ==
+                              (unsigned long)((file_name + h->file_name_len) +
+                                              1)) {
+                            {
+                              while (1) {
+                              while_continue___1: /* CIL Label */
+                                  ;
+                                {
+                                  h->after_symlinks = (_Bool)1;
+                                  tmp___18 = stat(
+                                      (char const * /* __restrict  */)(
+                                          h->file_name),
+                                      (struct stat * /* __restrict  */)(&st));
+                                }
+                                if (tmp___18 != 0) {
+                                  {
+                                    stat_error((char const *)(h->file_name));
+                                  }
+                                } else {
+                                  h->stat_info.st_dev = st.st_dev;
+                                  h->stat_info.st_ino = st.st_ino;
+                                }
+                                h = h->next;
+                                if (h) {
+                                  if (!(!h->after_symlinks)) {
+                                    goto while_break___1;
+                                  }
+                                } else {
+                                  goto while_break___1;
+                                }
+                              }
+                            while_break___1: /* CIL Label */
+                                ;
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                   status = 0;
                 }
               }
@@ -6296,7 +5984,9 @@ void extract_archive(void) {
     case_49: { /* CIL Label */
       tmp___24 = prepare_to_extract((char const *)file_name);
     }
-
+      if (!tmp___24) {
+        goto switch_break;
+      }
     again_link: {
       tmp___25 = safer_name_suffix((char const *)current_stat_info.link_name,
                                    (_Bool)1);
@@ -6318,7 +6008,26 @@ void extract_archive(void) {
                 if (!ds) {
                   goto while_break___3;
                 }
-
+                if (ds->dev == st1.st_dev) {
+                  if (ds->ino == st1.st_ino) {
+                    if (ds->mtime == st1.st_mtim.tv_sec) {
+                      {
+                        tmp___26 = strlen((char const *)file_name);
+                        tmp___27 =
+                            xmalloc(((unsigned long)(&((struct string_list *)0)
+                                                          ->string) +
+                                     tmp___26) +
+                                    1UL);
+                        p___0 = (struct string_list *)tmp___27;
+                        strcpy((char * /* __restrict  */)(p___0->string),
+                               (char const * /* __restrict  */)file_name);
+                        p___0->next = ds->sources;
+                        ds->sources = p___0;
+                      }
+                      goto while_break___3;
+                    }
+                  }
+                }
                 ds = ds->next;
               }
             while_break___3: /* CIL Label */
@@ -6329,9 +6038,6 @@ void extract_archive(void) {
         goto switch_break;
       }
       { tmp___29 = maybe_recoverable(file_name, &interdir_made); }
-      if (tmp___29) {
-        goto again_link;
-      }
 
       {
         tmp___31 = __errno_location();
@@ -6344,13 +6050,16 @@ void extract_archive(void) {
           tmp___33 = stat((char const * /* __restrict  */)file_name,
                           (struct stat * /* __restrict  */)(&st2));
         }
-      }
-      { link_error(link_name, (char const *)file_name); }
-      if (backup_option) {
-        {
-          undo_last_backup();
+        if (tmp___33 == 0) {
+          if (st1.st_dev == st2.st_dev) {
+            if (st1.st_ino == st2.st_ino) {
+              goto switch_break;
+            }
+          }
         }
       }
+      { link_error(link_name, (char const *)file_name); }
+
       goto switch_break;
     case_51: /* CIL Label */
       current_stat_info.stat.st_mode |= 8192U;
@@ -6386,9 +6095,25 @@ void extract_archive(void) {
     case_54: { /* CIL Label */
       tmp___36 = prepare_to_extract((char const *)file_name);
     }
-
+      if (!tmp___36) {
+        goto switch_break;
+      }
       {
-
+        while (1) {
+        while_continue___4: /* CIL Label */
+            ;
+          {
+            status =
+                mkfifo((char const *)file_name, current_stat_info.stat.st_mode);
+          }
+          if (!(status != 0)) {
+            goto while_break___4;
+          }
+          { tmp___37 = maybe_recoverable(file_name, &interdir_made); }
+          if (!tmp___37) {
+            goto while_break___4;
+          }
+        }
       while_break___4: /* CIL Label */
           ;
       }
@@ -6411,6 +6136,11 @@ void extract_archive(void) {
           gnu_restore((char const *)file_name);
         }
       } else {
+        if ((int)typeflag == 68) {
+          {
+            skip_member();
+          }
+        }
       }
       if (we_are_root) {
         tmp___53 = 0;
@@ -6448,7 +6178,13 @@ void extract_archive(void) {
                                 (struct stat * /* __restrict  */)(&st___0));
               }
                 if (tmp___38 == 0) {
-
+                  if (interdir_made) {
+                    {
+                      repair_delayed_set_stat((char const *)file_name,
+                                              (struct stat const *)(&st___0));
+                    }
+                    goto switch_break;
+                  }
                   if ((st___0.st_mode & 61440U) == 16384U) {
                     mode = st___0.st_mode & ~current_umask;
                     goto directory_exists;
@@ -6467,13 +6203,6 @@ void extract_archive(void) {
           goto again_dir;
         }
         { tmp___42 = __errno_location(); }
-        if (*tmp___42 != 17) {
-          {
-            mkdir_error((char const *)file_name);
-          }
-
-          goto switch_break;
-        }
       }
     directory_exists:
       if (status == 0) {
@@ -6596,7 +6325,9 @@ static void apply_delayed_symlinks(void) {
                         {
                           tmp___0 = link(valid_source, source);
                         }
-
+                        if (!(tmp___0 == 0)) {
+                          goto _L;
+                        }
                       } else {
                       _L: { tmp = symlink((char const *)(ds->target), source); }
                         if (tmp != 0) {
@@ -6729,9 +6460,7 @@ static _Bool xheader_keyword_deleted_p(char const *kw) {
           goto while_break;
         }
         { tmp = fnmatch((char const *)kp->pattern, kw, 0); }
-        if (tmp == 0) {
-          return ((_Bool)1);
-        }
+
         kp = kp->next;
       }
     while_break: /* CIL Label */
@@ -6790,7 +6519,15 @@ static void xheader_list_append(struct keyword_list **root, char const *kw,
     return;
   }
 }
+static void xheader_list_destroy(struct keyword_list **root) {
+  struct keyword_list *kw;
+  struct keyword_list *next;
 
+  {
+
+    return;
+  }
+}
 static __attribute__((__noreturn__)) void xheader_set_single_keyword(char *kw);
 static void xheader_set_single_keyword(char *kw) {
   char *tmp;
@@ -6822,7 +6559,10 @@ static void xheader_set_keyword_equal(char *kw, char *eq) {
   {
     global = (_Bool)1;
     p = eq;
-
+    if ((int)*(eq + -1) == 58) {
+      p--;
+      global = (_Bool)0;
+    }
     {
       while (1) {
       while_continue: /* CIL Label */
@@ -6969,39 +6709,14 @@ static void to_decimal(uintmax_t value, char *where, size_t size) {
     i++;
     *(where + tmp) = (char)0;
     {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        tmp___0 = i;
-        i++;
-        *(where + tmp___0) = (char)(48UL + value % 10UL);
-        value /= 10UL;
-        if (i < size) {
-          if (!value) {
-            goto while_break;
-          }
-        } else {
-          goto while_break;
-        }
-      }
+
     while_break: /* CIL Label */
         ;
     }
     j = (size_t)0;
     i--;
     {
-      while (1) {
-      while_continue___0: /* CIL Label */
-          ;
-        if (!(j < i)) {
-          goto while_break___0;
-        }
-        c = *(where + j);
-        *(where + j) = *(where + i);
-        *(where + i) = c;
-        j++;
-        i--;
-      }
+
     while_break___0: /* CIL Label */
         ;
     }
@@ -7074,7 +6789,9 @@ static char *xheader_format_name(struct tar_stat_info *st, char const *fmt,
           if ((int const) * (p + 1) == 112) {
             goto case_112;
           }
-
+          if ((int const) * (p + 1) == 110) {
+            goto case_110;
+          }
           goto switch_break;
         case_37: /* CIL Label */
           len--;
@@ -7106,13 +6823,7 @@ static char *xheader_format_name(struct tar_stat_info *st, char const *fmt,
         }
           goto switch_break;
         case_110: /* CIL Label */
-          if (allow_n) {
-            {
-              to_decimal(global_header_count + 1UL, pidbuf, sizeof(pidbuf));
-              tmp___5 = strlen((char const *)(nbuf));
-              len += tmp___5 - 1UL;
-            }
-          }
+
           goto switch_break;
         switch_break: /* CIL Label */
             ;
@@ -7140,13 +6851,16 @@ static char *xheader_format_name(struct tar_stat_info *st, char const *fmt,
             if ((int const) * (p + 1) == 37) {
               goto case_37___0;
             }
-
+            if ((int const) * (p + 1) == 100) {
+              goto case_100___0;
+            }
+            if ((int const) * (p + 1) == 102) {
+              goto case_102___0;
+            }
             if ((int const) * (p + 1) == 112) {
               goto case_112___0;
             }
-            if ((int const) * (p + 1) == 110) {
-              goto case_110___0;
-            }
+
             goto switch_default;
           case_37___0: /* CIL Label */
             tmp___8 = q;
@@ -7216,7 +6930,18 @@ static char *xheader_format_name(struct tar_stat_info *st, char const *fmt,
         ;
     }
     {
-
+      while (1) {
+      while_continue___1: /* CIL Label */
+          ;
+        if ((unsigned long)q > (unsigned long)buf) {
+          if (!((int)*(q + -1) == 47)) {
+            goto while_break___1;
+          }
+        } else {
+          goto while_break___1;
+        }
+        q--;
+      }
     while_break___1: /* CIL Label */
         ;
     }
@@ -7380,15 +7105,7 @@ static _Bool xheader_protected_pattern_p(char const *pattern) {
   {
     p = xhdr_tab;
     {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        if (!p->keyword) {
-          goto while_break;
-        }
 
-        p++;
-      }
     while_break: /* CIL Label */
         ;
     }
@@ -7402,80 +7119,29 @@ static _Bool xheader_protected_keyword_p(char const *keyword) {
   {
     p = xhdr_tab;
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!p->keyword) {
+          goto while_break;
+        }
+        if (p->protect) {
+          {
+            tmp = strcmp((char const *)p->keyword, keyword);
+          }
+          if (tmp == 0) {
+            return ((_Bool)1);
+          }
+        }
+        p++;
+      }
     while_break: /* CIL Label */
         ;
     }
     return ((_Bool)0);
   }
 }
-static _Bool decode_record(char **p,
-                           void (*handler)(void *, char const *, char const *),
-                           void *data) {
-  size_t len;
-  char const *keyword;
-  char *start;
-  char endc;
-  char *tmp;
-  char *tmp___0;
-  char *__cil_tmp10;
-  char *__cil_tmp11;
 
-  {
-    start = *p;
-    if ((int)*(*p) == 0) {
-      return ((_Bool)0);
-    }
-    {
-      len = strtoul((char const * /* __restrict  */) * p,
-                    (char ** /* __restrict  */)p, 10);
-    }
-    if ((int)*(*p) != 32) {
-      {
-        tmp = gettext(
-            "Malformed extended header: missing whitespace after the length");
-        error(0, 0, (char const *)tmp);
-        exit_status = 2;
-      }
-      return ((_Bool)0);
-    }
-    (*p)++;
-    keyword = (char const *)*p;
-    {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        if (!((unsigned long)*p < (unsigned long)(start + len))) {
-          goto while_break;
-        }
-        if ((int)*(*p) == 61) {
-          goto while_break;
-        }
-        (*p)++;
-      }
-    while_break: /* CIL Label */
-        ;
-    }
-    if ((int)*(*p) != 61) {
-      {
-        tmp___0 = gettext("Malformed extended header: missing equal sign");
-        error(0, 0, (char const *)tmp___0);
-        exit_status = 2;
-      }
-      return ((_Bool)0);
-    }
-    {
-      *(*p) = (char)0;
-      endc = *(start + (len - 1UL));
-      *(start + (len - 1UL)) = (char)0;
-      (*handler)(data, keyword, (char const *)(*p + 1));
-      *(start + (len - 1UL)) = endc;
-      *(*p) = (char)'=';
-      *p = start + len;
-    }
-    return ((_Bool)1);
-  }
-}
 static void run_override_list(struct keyword_list *kp,
                               struct tar_stat_info *st) {
   struct xhdr_tab const *t;
@@ -7483,7 +7149,23 @@ static void run_override_list(struct keyword_list *kp,
 
   {
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!kp) {
+          goto while_break;
+        }
+        {
+          tmp = locate_handler((char const *)kp->pattern);
+          t = tmp;
+        }
+        if (t) {
+          {
+            (*(t->decoder))(st, (char const *)kp->value);
+          }
+        }
+        kp = kp->next;
+      }
     while_break: /* CIL Label */
         ;
     }
@@ -7501,16 +7183,55 @@ void xheader_decode(struct tar_stat_info *st) {
       run_override_list(keyword_global_override_list, st);
       run_override_list(global_header_override_list, st);
     }
+    if (extended_header.size) {
+      p = extended_header.buffer + 512;
+      endp = extended_header.buffer + (extended_header.size - 1UL);
+      {
 
+      while_break: /* CIL Label */
+          ;
+      }
+    }
     { run_override_list(keyword_override_list, st); }
     return;
   }
 }
 
+void xheader_decode_global(void) {
+  char *p;
+  char *endp;
+  _Bool tmp;
+
+  {
+    if (extended_header.size) {
+      {
+        p = extended_header.buffer + 512;
+        endp = extended_header.buffer + (extended_header.size - 1UL);
+        xheader_list_destroy(&global_header_override_list);
+      }
+      {
+
+      while_break: /* CIL Label */
+          ;
+      }
+    }
+    return;
+  }
+}
 static void extended_header_init(void) {
   void *tmp;
 
-  { return; }
+  {
+    if (!extended_header.stk) {
+      {
+        tmp = xmalloc(sizeof(*(extended_header.stk)));
+        extended_header.stk = (struct obstack *)tmp;
+        _obstack_begin(extended_header.stk, 0, 0, (void *(*)(long))(&xmalloc),
+                       (void (*)(void *))(&free));
+      }
+    }
+    return;
+  }
 }
 void xheader_store(char const *keyword, struct tar_stat_info const *st,
                    void *data) {
@@ -7529,6 +7250,9 @@ void xheader_store(char const *keyword, struct tar_stat_info const *st,
       return;
     } else {
       { tmp___0 = xheader_keyword_override_p(keyword); }
+      if (tmp___0) {
+        return;
+      }
     }
     {
       extended_header_init();
@@ -7537,7 +7261,48 @@ void xheader_store(char const *keyword, struct tar_stat_info const *st,
     return;
   }
 }
+void xheader_read(union block *p, size_t size) {
+  size_t j;
+  size_t nblocks;
+  void *tmp;
+  size_t len;
 
+  {
+    {
+      j = (size_t)0;
+      free((void *)extended_header.buffer);
+      size += 512UL;
+      extended_header.size = size;
+      nblocks = ((size + 512UL) - 1UL) / 512UL;
+      tmp = xmalloc(size + 1UL);
+      extended_header.buffer = (char *)tmp;
+    }
+    {
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        len = size;
+        if (len > 512UL) {
+          len = (size_t)512;
+        }
+        {
+          memcpy((void * /* __restrict  */)(extended_header.buffer + j),
+                 (void const * /* __restrict  */)(p->buffer), len);
+          set_next_block_after(p);
+          p = find_next_block();
+          j += len;
+          size -= len;
+        }
+        if (!(size > 0UL)) {
+          goto while_break;
+        }
+      }
+    while_break: /* CIL Label */
+        ;
+    }
+    return;
+  }
+}
 static size_t format_uintmax(uintmax_t val, char *buf, size_t s) {
   char *p;
   char *tmp;
@@ -7562,12 +7327,31 @@ static size_t format_uintmax(uintmax_t val, char *buf, size_t s) {
     } else {
       p = (buf + s) - 1;
       {
-
+        while (1) {
+        while_continue___0: /* CIL Label */
+            ;
+          tmp = p;
+          p--;
+          *tmp = (char)(val % 10UL + 48UL);
+          val /= 10UL;
+          if (!(val != 0UL)) {
+            goto while_break___0;
+          }
+        }
       while_break___0: /* CIL Label */
           ;
       }
       {
-
+        while (1) {
+        while_continue___1: /* CIL Label */
+            ;
+          if (!((unsigned long)p >= (unsigned long)buf)) {
+            goto while_break___1;
+          }
+          tmp___0 = p;
+          p--;
+          *tmp___0 = (char)'0';
+        }
       while_break___1: /* CIL Label */
           ;
       }
@@ -7626,7 +7410,12 @@ static void xheader_print(struct xheader *xhdr, char const *keyword,
       __o = xhdr->stk;
       __len = (int)n;
     }
-
+    if ((unsigned long)(__o->next_free + __len) >
+        (unsigned long)__o->chunk_limit) {
+      {
+        _obstack_newchunk(__o, __len);
+      }
+    }
     {
       memcpy((void * /* __restrict  */)__o->next_free,
              (void const * /* __restrict  */)(nbuf), (size_t)__len);
@@ -7647,19 +7436,19 @@ static void xheader_print(struct xheader *xhdr, char const *keyword,
       tmp___2 = strlen(keyword);
       __len___0 = (int)tmp___2;
     }
-    if ((unsigned long)(__o___1->next_free + __len___0) >
-        (unsigned long)__o___1->chunk_limit) {
-      {
-        _obstack_newchunk(__o___1, __len___0);
-      }
-    }
+
     {
       memcpy((void * /* __restrict  */)__o___1->next_free,
              (void const * /* __restrict  */)keyword, (size_t)__len___0);
       __o___1->next_free += __len___0;
       __o___2 = xhdr->stk;
     }
-
+    if ((unsigned long)(__o___2->next_free + 1) >
+        (unsigned long)__o___2->chunk_limit) {
+      {
+        _obstack_newchunk(__o___2, 1);
+      }
+    }
     {
       tmp___3 = __o___2->next_free;
       (__o___2->next_free)++;
@@ -7675,12 +7464,7 @@ static void xheader_print(struct xheader *xhdr, char const *keyword,
       __o___3->next_free += __len___1;
       __o___4 = xhdr->stk;
     }
-    if ((unsigned long)(__o___4->next_free + 1) >
-        (unsigned long)__o___4->chunk_limit) {
-      {
-        _obstack_newchunk(__o___4, 1);
-      }
-    }
+
     tmp___5 = __o___4->next_free;
     (__o___4->next_free)++;
     *tmp___5 = (char)'\n';
@@ -7697,7 +7481,17 @@ void xheader_finish(struct xheader *xhdr) {
   {
     kp = keyword_override_list;
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!kp) {
+          goto while_break;
+        }
+        {
+          code_string((char const *)kp->value, (char const *)kp->pattern, xhdr);
+          kp = kp->next;
+        }
+      }
     while_break: /* CIL Label */
         ;
     }
@@ -7712,7 +7506,9 @@ void xheader_finish(struct xheader *xhdr) {
     *tmp = (char)0;
     __o1 = xhdr->stk;
     value = (void *)__o1->object_base;
-
+    if ((unsigned long)__o1->next_free == (unsigned long)value) {
+      __o1->maybe_empty_object = 1U;
+    }
     __o1->next_free =
         (char *)0 +
         (((__o1->next_free - (char *)0) + (long)__o1->alignment_mask) &
@@ -7767,7 +7563,111 @@ static void code_string(char const *string, char const *keyword,
     return;
   }
 }
+static void decode_string(char **string, char const *arg) {
+  _Bool tmp;
 
+  {
+    if (*string) {
+      {
+        free((void *)*string);
+        *string = (char *)((void *)0);
+      }
+    }
+    { tmp = utf8_convert((_Bool)0, arg, string); }
+    if (!tmp) {
+      {
+        assign_string(string, arg);
+      }
+    }
+    return;
+  }
+}
+static void code_time(time_t t, unsigned long nano, char const *keyword,
+                      struct xheader *xhdr) {
+  char sbuf[200];
+  size_t s;
+  size_t tmp;
+  size_t tmp___0;
+  size_t tmp___1;
+  void *__cil_tmp10;
+
+  {
+    {
+      tmp = format_uintmax((uintmax_t)t, (char *)((void *)0), (size_t)0);
+      s = tmp;
+    }
+    if (s + 11UL >= sizeof(sbuf)) {
+      return;
+    }
+    {
+      format_uintmax((uintmax_t)t, sbuf, s);
+      tmp___0 = s;
+      s++;
+      sbuf[tmp___0] = (char)'.';
+      tmp___1 = format_uintmax(nano, sbuf + s, (size_t)9);
+      s += tmp___1;
+      sbuf[s] = (char)0;
+      xheader_print(xhdr, keyword, (char const *)(sbuf));
+    }
+    return;
+  }
+}
+static void decode_time(char const *arg, time_t *secs, unsigned long *nsecs) {
+  uintmax_t u;
+  char *p;
+  strtol_error tmp;
+  strtol_error tmp___0;
+  char *__cil_tmp8;
+  char *__cil_tmp9;
+
+  {
+    { tmp___0 = xstrtoumax(arg, &p, 10, &u, ""); }
+    if ((unsigned int)tmp___0 == 0U) {
+      *secs = (time_t)u;
+      if ((int)*p == 46) {
+        {
+          tmp = xstrtoumax((char const *)(p + 1), (char **)((void *)0), 10, &u,
+                           "");
+        }
+        if ((unsigned int)tmp == 0U) {
+          *nsecs = u;
+        }
+      }
+    }
+    return;
+  }
+}
+static void code_num(uintmax_t value, char const *keyword,
+                     struct xheader *xhdr) {
+  char sbuf[100];
+  size_t s;
+  size_t tmp;
+  void *__cil_tmp7;
+
+  {
+    {
+      tmp = format_uintmax(value, (char *)((void *)0), (size_t)0);
+      s = tmp;
+      format_uintmax(value, sbuf, s);
+      sbuf[s] = (char)0;
+      xheader_print(xhdr, keyword, (char const *)(sbuf));
+    }
+    return;
+  }
+}
+static void dummy_coder(struct tar_stat_info const *st
+                        __attribute__((__unused__)),
+                        char const *keyword __attribute__((__unused__)),
+                        struct xheader *xhdr __attribute__((__unused__)),
+                        void *data __attribute__((__unused__))) {
+
+  { return; }
+}
+static void dummy_decoder(struct tar_stat_info *st __attribute__((__unused__)),
+                          char const *arg __attribute__((__unused__))) {
+
+  { return; }
+}
 static void atime_coder(struct tar_stat_info const *st, char const *keyword,
                         struct xheader *xhdr,
                         void *data __attribute__((__unused__))) {
@@ -7780,7 +7680,13 @@ static void atime_coder(struct tar_stat_info const *st, char const *keyword,
     return;
   }
 }
+static void atime_decoder(struct tar_stat_info *st, char const *arg) {
 
+  {
+    { decode_time(arg, &st->stat.st_atim.tv_sec, &st->atime_nsec); }
+    return;
+  }
+}
 static void gid_coder(struct tar_stat_info const *st, char const *keyword,
                       struct xheader *xhdr,
                       void *data __attribute__((__unused__))) {
@@ -7790,7 +7696,19 @@ static void gid_coder(struct tar_stat_info const *st, char const *keyword,
     return;
   }
 }
+static void gid_decoder(struct tar_stat_info *st, char const *arg) {
+  uintmax_t u;
+  strtol_error tmp;
+  char *__cil_tmp5;
 
+  {
+    { tmp = xstrtoumax(arg, (char **)((void *)0), 10, &u, ""); }
+    if ((unsigned int)tmp == 0U) {
+      st->stat.st_gid = (__gid_t)u;
+    }
+    return;
+  }
+}
 static void gname_coder(struct tar_stat_info const *st, char const *keyword,
                         struct xheader *xhdr,
                         void *data __attribute__((__unused__))) {
@@ -7800,7 +7718,13 @@ static void gname_coder(struct tar_stat_info const *st, char const *keyword,
     return;
   }
 }
+static void gname_decoder(struct tar_stat_info *st, char const *arg) {
 
+  {
+    { decode_string(&st->gname, arg); }
+    return;
+  }
+}
 static void linkpath_coder(struct tar_stat_info const *st, char const *keyword,
                            struct xheader *xhdr,
                            void *data __attribute__((__unused__))) {
@@ -7810,7 +7734,13 @@ static void linkpath_coder(struct tar_stat_info const *st, char const *keyword,
     return;
   }
 }
+static void linkpath_decoder(struct tar_stat_info *st, char const *arg) {
 
+  {
+    { decode_string(&st->link_name, arg); }
+    return;
+  }
+}
 static void ctime_coder(struct tar_stat_info const *st, char const *keyword,
                         struct xheader *xhdr,
                         void *data __attribute__((__unused__))) {
@@ -7823,7 +7753,13 @@ static void ctime_coder(struct tar_stat_info const *st, char const *keyword,
     return;
   }
 }
+static void ctime_decoder(struct tar_stat_info *st, char const *arg) {
 
+  {
+    { decode_time(arg, &st->stat.st_ctim.tv_sec, &st->ctime_nsec); }
+    return;
+  }
+}
 static void mtime_coder(struct tar_stat_info const *st, char const *keyword,
                         struct xheader *xhdr,
                         void *data __attribute__((__unused__))) {
@@ -7836,7 +7772,13 @@ static void mtime_coder(struct tar_stat_info const *st, char const *keyword,
     return;
   }
 }
+static void mtime_decoder(struct tar_stat_info *st, char const *arg) {
 
+  {
+    { decode_time(arg, &st->stat.st_mtim.tv_sec, &st->mtime_nsec); }
+    return;
+  }
+}
 static void path_coder(struct tar_stat_info const *st, char const *keyword,
                        struct xheader *xhdr,
                        void *data __attribute__((__unused__))) {
@@ -7846,7 +7788,17 @@ static void path_coder(struct tar_stat_info const *st, char const *keyword,
     return;
   }
 }
+static void path_decoder(struct tar_stat_info *st, char const *arg) {
 
+  {
+    {
+      decode_string(&st->orig_file_name, arg);
+      decode_string(&st->file_name, arg);
+      st->had_trailing_slash = strip_trailing_slashes(st->file_name);
+    }
+    return;
+  }
+}
 static void size_coder(struct tar_stat_info const *st, char const *keyword,
                        struct xheader *xhdr,
                        void *data __attribute__((__unused__))) {
@@ -7856,7 +7808,22 @@ static void size_coder(struct tar_stat_info const *st, char const *keyword,
     return;
   }
 }
+static void size_decoder(struct tar_stat_info *st, char const *arg) {
+  uintmax_t u;
+  __off_t tmp;
+  strtol_error tmp___0;
+  char *__cil_tmp6;
 
+  {
+    { tmp___0 = xstrtoumax(arg, (char **)((void *)0), 10, &u, ""); }
+    if ((unsigned int)tmp___0 == 0U) {
+      tmp = (__off_t)u;
+      st->stat.st_size = tmp;
+      st->archive_file_size = tmp;
+    }
+    return;
+  }
+}
 static void uid_coder(struct tar_stat_info const *st, char const *keyword,
                       struct xheader *xhdr,
                       void *data __attribute__((__unused__))) {
@@ -7866,7 +7833,19 @@ static void uid_coder(struct tar_stat_info const *st, char const *keyword,
     return;
   }
 }
+static void uid_decoder(struct tar_stat_info *st, char const *arg) {
+  uintmax_t u;
+  strtol_error tmp;
+  char *__cil_tmp5;
 
+  {
+    { tmp = xstrtoumax(arg, (char **)((void *)0), 10, &u, ""); }
+    if ((unsigned int)tmp == 0U) {
+      st->stat.st_uid = (__uid_t)u;
+    }
+    return;
+  }
+}
 static void uname_coder(struct tar_stat_info const *st, char const *keyword,
                         struct xheader *xhdr,
                         void *data __attribute__((__unused__))) {
@@ -7876,7 +7855,138 @@ static void uname_coder(struct tar_stat_info const *st, char const *keyword,
     return;
   }
 }
+static void uname_decoder(struct tar_stat_info *st, char const *arg) {
 
+  {
+    { decode_string(&st->uname, arg); }
+    return;
+  }
+}
+static void sparse_size_coder(struct tar_stat_info const *st,
+                              char const *keyword, struct xheader *xhdr,
+                              void *data) {
+
+  {
+    { size_coder(st, keyword, xhdr, data); }
+    return;
+  }
+}
+static void sparse_size_decoder(struct tar_stat_info *st, char const *arg) {
+  uintmax_t u;
+  strtol_error tmp;
+  char *__cil_tmp5;
+
+  {
+    { tmp = xstrtoumax(arg, (char **)((void *)0), 10, &u, ""); }
+    if ((unsigned int)tmp == 0U) {
+      st->stat.st_size = (__off_t)u;
+    }
+    return;
+  }
+}
+static void sparse_numblocks_coder(struct tar_stat_info const *st,
+                                   char const *keyword, struct xheader *xhdr,
+                                   void *data __attribute__((__unused__))) {
+
+  {
+    { code_num((uintmax_t)st->sparse_map_avail, keyword, xhdr); }
+    return;
+  }
+}
+static void sparse_numblocks_decoder(struct tar_stat_info *st,
+                                     char const *arg) {
+  uintmax_t u;
+  void *tmp;
+  strtol_error tmp___0;
+  char *__cil_tmp6;
+
+  {
+    { tmp___0 = xstrtoumax(arg, (char **)((void *)0), 10, &u, ""); }
+    if ((unsigned int)tmp___0 == 0U) {
+      {
+        st->sparse_map_size = u;
+        tmp = calloc(st->sparse_map_size, sizeof(*(st->sparse_map + 0)));
+        st->sparse_map = (struct sp_array *)tmp;
+        st->sparse_map_avail = (size_t)0;
+      }
+    }
+    return;
+  }
+}
+static void sparse_offset_coder(struct tar_stat_info const *st,
+                                char const *keyword, struct xheader *xhdr,
+                                void *data) {
+  size_t i;
+
+  {
+    {
+      i = *((size_t *)data);
+      code_num((uintmax_t)(st->sparse_map + i)->offset, keyword, xhdr);
+    }
+    return;
+  }
+}
+static void sparse_offset_decoder(struct tar_stat_info *st, char const *arg) {
+  uintmax_t u;
+  strtol_error tmp;
+  char *__cil_tmp5;
+
+  {
+    { tmp = xstrtoumax(arg, (char **)((void *)0), 10, &u, ""); }
+
+    return;
+  }
+}
+static void sparse_numbytes_coder(struct tar_stat_info const *st,
+                                  char const *keyword, struct xheader *xhdr,
+                                  void *data) {
+  size_t i;
+
+  {
+    {
+      i = *((size_t *)data);
+      code_num((st->sparse_map + i)->numbytes, keyword, xhdr);
+    }
+    return;
+  }
+}
+static void sparse_numbytes_decoder(struct tar_stat_info *st, char const *arg) {
+  uintmax_t u;
+  void *tmp;
+  size_t tmp___0;
+  strtol_error tmp___1;
+  char *__cil_tmp7;
+
+  {
+    { tmp___1 = xstrtoumax(arg, (char **)((void *)0), 10, &u, ""); }
+
+    return;
+  }
+}
+struct xhdr_tab const xhdr_tab[17] = {
+    {"atime", &atime_coder, &atime_decoder, (_Bool)0},
+    {"comment", &dummy_coder, &dummy_decoder, (_Bool)0},
+    {"charset", &dummy_coder, &dummy_decoder, (_Bool)0},
+    {"ctime", &ctime_coder, &ctime_decoder, (_Bool)0},
+    {"gid", &gid_coder, &gid_decoder, (_Bool)0},
+    {"gname", &gname_coder, &gname_decoder, (_Bool)0},
+    {"linkpath", &linkpath_coder, &linkpath_decoder, (_Bool)0},
+    {"mtime", &mtime_coder, &mtime_decoder, (_Bool)0},
+    {"path", &path_coder, &path_decoder, (_Bool)0},
+    {"size", &size_coder, &size_decoder, (_Bool)0},
+    {"uid", &uid_coder, &uid_decoder, (_Bool)0},
+    {"uname", &uname_coder, &uname_decoder, (_Bool)0},
+    {"GNU.sparse.size", &sparse_size_coder, &sparse_size_decoder, (_Bool)1},
+    {"GNU.sparse.numblocks", &sparse_numblocks_coder, &sparse_numblocks_decoder,
+     (_Bool)1},
+    {"GNU.sparse.offset", &sparse_offset_coder, &sparse_offset_decoder,
+     (_Bool)1},
+    {"GNU.sparse.numbytes", &sparse_numbytes_coder, &sparse_numbytes_decoder,
+     (_Bool)1},
+    {(char const *)((void *)0),
+     (void (*)(struct tar_stat_info const *, char const *, struct xheader *,
+               void *data))((void *)0),
+     (void (*)(struct tar_stat_info *, char const *))((void *)0), (_Bool)0}};
 /* #pragma merger("0","006.incremen.o.i","") */
 extern void(__attribute__((__nonnull__(1, 4))) qsort)(
     void *__base, size_t __nmemb, size_t __size,
@@ -7961,11 +8071,7 @@ static struct directory *note_directory(char const *name, dev_t dev, ino_t ino,
       }
       if (directory_table) {
       _L: { tmp___1 = hash_insert(directory_table, (void const *)directory); }
-        if (!tmp___1) {
-          {
-            xalloc_die();
-          }
-        }
+
       } else {
         { xalloc_die(); }
       }
@@ -8104,7 +8210,14 @@ static void scan_path(struct obstack *stk, char *path, dev_t device) {
             }
             if (name_buffer_size <= entrylen + name_length) {
               {
-
+                while (1) {
+                while_continue___0: /* CIL Label */
+                    ;
+                  name_buffer_size += 100UL;
+                  if (!(name_buffer_size <= entrylen + name_length)) {
+                    goto while_break___0;
+                  }
+                }
               while_break___0: /* CIL Label */
                   ;
               }
@@ -8135,7 +8248,12 @@ static void scan_path(struct obstack *stk, char *path, dev_t device) {
                 tmp___6 = deref_stat(dereference_option,
                                      (char const *)name_buffer___0, &stat_data);
               }
-
+              if (tmp___6) {
+                {
+                  stat_diag((char const *)name_buffer___0);
+                }
+                goto __Cont;
+              }
               if ((stat_data.st_mode & 61440U) == 16384U) {
                 {
                   nfs = (_Bool)((stat_data.st_dev &
@@ -8145,23 +8263,7 @@ static void scan_path(struct obstack *stk, char *path, dev_t device) {
                   directory = find_directory(name_buffer___0);
                 }
                 if ((unsigned long)directory != (unsigned long)((void *)0)) {
-                  if ((int)directory->nfs & (int)nfs) {
-                    goto _L___4;
-                  } else {
-                    if (directory->device_number == stat_data.st_dev) {
-                    _L___4: /* CIL Label */
-                      if (!(directory->inode_number == stat_data.st_ino)) {
-                        goto _L___3;
-                      }
-                    } else {
-                    _L___3: /* CIL Label */
 
-                      directory->children = (enum children)2;
-                      directory->nfs = nfs;
-                      directory->device_number = stat_data.st_dev;
-                      directory->inode_number = stat_data.st_ino;
-                    }
-                  }
                   directory->found = (_Bool)1;
                 } else {
 
@@ -8170,44 +8272,10 @@ static void scan_path(struct obstack *stk, char *path, dev_t device) {
                                                stat_data.st_dev,
                                                stat_data.st_ino, nfs, (_Bool)1);
                   }
-                  if (listed_incremental_option) {
-                    tmp___17 = 2;
-                  } else {
-                    if (stat_data.st_mtim.tv_sec < newer_mtime_option.tv_sec) {
-                      tmp___17 = 2;
-                    } else {
-                      if (stat_data.st_mtim.tv_sec ==
-                          newer_mtime_option.tv_sec) {
-                        if (stat_data.st_mtim.tv_nsec <
-                            newer_mtime_option.tv_nsec) {
-                          tmp___17 = 2;
-                        } else {
-                          goto _L___5;
-                        }
-                      } else {
-                      _L___5: /* CIL Label */
-                        if (after_date_option) {
 
-                        } else {
-                          tmp___17 = 1;
-                        }
-                      }
-                    }
-                  }
                   directory->children = (enum children)tmp___17;
                 }
-                if (one_file_system_option) {
-                  if (device != stat_data.st_dev) {
-                    directory->children = (enum children)0;
-                  } else {
-                    goto _L___6;
-                  }
-                } else {
-                _L___6: /* CIL Label */
-                  if ((unsigned int)children == 2U) {
-                    directory->children = (enum children)2;
-                  }
-                }
+
                 __o___0 = stk;
                 if ((unsigned long)(__o___0->next_free + 1) >
                     (unsigned long)__o___0->chunk_limit) {
@@ -8224,55 +8292,16 @@ static void scan_path(struct obstack *stk, char *path, dev_t device) {
                 } else {
                 _L___12: /* CIL Label */
                   if ((unsigned int)children == 1U) {
-                    if (stat_data.st_mtim.tv_sec < newer_mtime_option.tv_sec) {
-                      goto _L___11;
-                    } else {
-                      if (stat_data.st_mtim.tv_sec ==
-                          newer_mtime_option.tv_sec) {
-                        if (stat_data.st_mtim.tv_nsec <
-                            newer_mtime_option.tv_nsec) {
-                        _L___11: /* CIL Label */
-                          if (!after_date_option) {
-                            goto _L___9;
-                          } else {
-                            if (stat_data.st_ctim.tv_sec <
-                                newer_mtime_option.tv_sec) {
-                              goto _L___9;
-                            } else {
-                              if (stat_data.st_ctim.tv_sec ==
-                                  newer_mtime_option.tv_sec) {
-                                if (stat_data.st_ctim.tv_nsec <
-                                    newer_mtime_option.tv_nsec) {
-                                _L___9: /* CIL Label */
-                                  __o___2 = stk;
-                                  if ((unsigned long)(__o___2->next_free + 1) >
-                                      (unsigned long)__o___2->chunk_limit) {
-                                    {
-                                      _obstack_newchunk(__o___2, 1);
-                                    }
-                                  }
-                                  tmp___13 = __o___2->next_free;
-                                  (__o___2->next_free)++;
-                                  *tmp___13 = (char)'N';
-                                } else {
-                                  goto _L___10;
-                                }
-                              } else {
-                                goto _L___10;
-                              }
-                            }
-                          }
-                        } else {
-                          goto _L___10;
-                        }
-                      } else {
-                        goto _L___10;
-                      }
-                    }
+
                   } else {
                   _L___10: /* CIL Label */
                     __o___3 = stk;
-
+                    if ((unsigned long)(__o___3->next_free + 1) >
+                        (unsigned long)__o___3->chunk_limit) {
+                      {
+                        _obstack_newchunk(__o___3, 1);
+                      }
+                    }
                     tmp___14 = __o___3->next_free;
                     (__o___3->next_free)++;
                     *tmp___14 = (char)'Y';
@@ -8282,7 +8311,12 @@ static void scan_path(struct obstack *stk, char *path, dev_t device) {
             }
             __o___4 = stk;
             __len = (int)(entrylen + 1UL);
-
+            if ((unsigned long)(__o___4->next_free + __len) >
+                (unsigned long)__o___4->chunk_limit) {
+              {
+                _obstack_newchunk(__o___4, __len);
+              }
+            }
             {
               memcpy((void * /* __restrict  */)__o___4->next_free,
                      (void const * /* __restrict  */)entry, (size_t)__len);
@@ -8298,14 +8332,23 @@ static void scan_path(struct obstack *stk, char *path, dev_t device) {
     }
     __o___5 = stk;
     __len___0 = 2;
-
+    if ((unsigned long)(__o___5->next_free + __len___0) >
+        (unsigned long)__o___5->chunk_limit) {
+      {
+        _obstack_newchunk(__o___5, __len___0);
+      }
+    }
     {
       memcpy((void * /* __restrict  */)__o___5->next_free,
              (void const * /* __restrict  */) "\000\000", (size_t)__len___0);
       __o___5->next_free += __len___0;
       free((void *)name_buffer___0);
     }
-
+    if (dirp) {
+      {
+        free((void *)dirp);
+      }
+    }
     return;
   }
 }
@@ -8342,7 +8385,10 @@ static char *sort_obstack(struct obstack *stk) {
         (char *)0 +
         (((__o1->next_free - (char *)0) + (long)__o1->alignment_mask) &
          (long)(~__o1->alignment_mask));
-
+    if (__o1->next_free - (char *)__o1->chunk >
+        __o1->chunk_limit - (char *)__o1->chunk) {
+      __o1->next_free = __o1->chunk_limit;
+    }
     __o1->object_base = __o1->next_free;
     pointer = (char *)value;
     counter = (size_t)0;
@@ -8363,9 +8409,7 @@ static char *sort_obstack(struct obstack *stk) {
     while_break: /* CIL Label */
         ;
     }
-    if (!counter) {
-      return ((char *)((void *)0));
-    }
+
     __h = stk;
     __o = __h;
     __len = (int)(sizeof(char *) * (counter + 1UL));
@@ -8377,12 +8421,17 @@ static char *sort_obstack(struct obstack *stk) {
     __o->next_free += __len;
     __o1___0 = __h;
     value___0 = (void *)__o1___0->object_base;
-
+    if ((unsigned long)__o1___0->next_free == (unsigned long)value___0) {
+      __o1___0->maybe_empty_object = 1U;
+    }
     __o1___0->next_free =
         (char *)0 +
         (((__o1___0->next_free - (char *)0) + (long)__o1___0->alignment_mask) &
          (long)(~__o1___0->alignment_mask));
-
+    if (__o1___0->next_free - (char *)__o1___0->chunk >
+        __o1___0->chunk_limit - (char *)__o1___0->chunk) {
+      __o1___0->next_free = __o1___0->chunk_limit;
+    }
     __o1___0->object_base = __o1___0->next_free;
     array = (char **)value___0;
     array_cursor = array;
@@ -8464,269 +8513,12 @@ char *get_directory_contents(char *path, dev_t device) {
       __o = &stk;
       __obj = (void *)0;
     }
-    if ((unsigned long)__obj > (unsigned long)((void *)__o->chunk)) {
-      if ((unsigned long)__obj < (unsigned long)((void *)__o->chunk_limit)) {
-        tmp = (char *)__obj;
-        __o->object_base = tmp;
-        __o->next_free = tmp;
-      } else {
-        { obstack_free(__o, __obj); }
-      }
-    } else {
-      { obstack_free(__o, __obj); }
-    }
+
     return (buffer___2);
   }
 }
 static FILE *listed_incremental_stream;
-void read_directory_file(void) {
-  int fd;
-  FILE *fp;
-  char *buf;
-  size_t bufsize;
-  char *ebuf;
-  int n;
-  long lineno;
-  unsigned long u;
-  int *tmp;
-  unsigned long tmp___0;
-  time_t t;
-  char *tmp___1;
-  char *tmp___2;
-  char *tmp___3;
-  char *tmp___4;
-  int *tmp___5;
-  int *tmp___6;
-  dev_t dev;
-  ino_t ino;
-  _Bool nfs;
-  char *strp;
-  int *tmp___7;
-  char *tmp___8;
-  char *tmp___9;
-  char *tmp___10;
-  char *tmp___11;
-  int *tmp___12;
-  int *tmp___13;
-  int *tmp___14;
-  char *tmp___15;
-  char *tmp___16;
-  char *tmp___17;
-  char *tmp___18;
-  int *tmp___19;
-  int *tmp___20;
-  __ssize_t tmp___21;
-  __ssize_t tmp___22;
-  int tmp___23;
-  char *__cil_tmp39;
-  char *__cil_tmp40;
-  char *__cil_tmp41;
-  char *__cil_tmp42;
-  char *__cil_tmp43;
-  char *__cil_tmp44;
-  char *__cil_tmp45;
-  char *__cil_tmp46;
-  char *__cil_tmp47;
-  char *__cil_tmp48;
-  char *__cil_tmp49;
-  char *__cil_tmp50;
 
-  {
-    {
-      buf = (char *)0;
-      fd = open(listed_incremental_option, 66,
-                ((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
-                    ((256 | (256 >> 3)) | ((256 >> 3) >> 3)));
-    }
-    if (fd < 0) {
-      {
-        open_error(listed_incremental_option);
-      }
-      return;
-    }
-    { fp = fdopen(fd, "r+"); }
-    if (!fp) {
-      {
-        open_error(listed_incremental_option);
-        close(fd);
-      }
-      return;
-    }
-    {
-      listed_incremental_stream = fp;
-      tmp___22 = getline((char ** /* __restrict  */)(&buf),
-                         (size_t * /* __restrict  */)(&bufsize),
-                         (FILE * /* __restrict  */)fp);
-    }
-    if (0L < tmp___22) {
-      {
-        lineno = 1L;
-        tmp = __errno_location();
-        *tmp = 0;
-        tmp___0 = strtoul((char const * /* __restrict  */)buf,
-                          (char ** /* __restrict  */)(&ebuf), 10);
-        u = tmp___0;
-        t = (time_t)u;
-      }
-      if ((unsigned long)buf == (unsigned long)ebuf) {
-        {
-          tmp___1 = gettext("Invalid time stamp");
-          tmp___2 = quotearg_colon(listed_incremental_option);
-          error(0, 0, "%s:1: %s", tmp___2, tmp___1);
-          exit_status = 2;
-        }
-      } else {
-        if (u == 0UL) {
-          {
-            tmp___6 = __errno_location();
-          }
-          if (*tmp___6 == 22) {
-            {
-              tmp___1 = gettext("Invalid time stamp");
-              tmp___2 = quotearg_colon(listed_incremental_option);
-              error(0, 0, "%s:1: %s", tmp___2, tmp___1);
-              exit_status = 2;
-            }
-          } else {
-            goto _L;
-          }
-        } else {
-        _L:
-          if ((unsigned long)t != u) {
-            {
-              tmp___3 = gettext("Time stamp out of range");
-              tmp___4 = quotearg_colon(listed_incremental_option);
-              error(0, 0, "%s:1: %s", tmp___4, tmp___3);
-              exit_status = 2;
-            }
-          } else {
-            if (u == 0xffffffffffffffffUL) {
-              {
-                tmp___5 = __errno_location();
-              }
-              if (*tmp___5 == 34) {
-                {
-                  tmp___3 = gettext("Time stamp out of range");
-                  tmp___4 = quotearg_colon(listed_incremental_option);
-                  error(0, 0, "%s:1: %s", tmp___4, tmp___3);
-                  exit_status = 2;
-                }
-              } else {
-                newer_mtime_option.tv_sec = t;
-                newer_mtime_option.tv_nsec = (__syscall_slong_t)0;
-              }
-            } else {
-              newer_mtime_option.tv_sec = t;
-              newer_mtime_option.tv_nsec = (__syscall_slong_t)0;
-            }
-          }
-        }
-      }
-      {
-        while (1) {
-        while_continue: /* CIL Label */
-            ;
-          {
-            tmp___21 = getline((char ** /* __restrict  */)(&buf),
-                               (size_t * /* __restrict  */)(&bufsize),
-                               (FILE * /* __restrict  */)fp);
-            n = (int)tmp___21;
-          }
-          if (!(0 < n)) {
-            goto while_break;
-          }
-          nfs = (_Bool)((int)*(buf + 0) == 43);
-          strp = buf + (int)nfs;
-          lineno++;
-
-          {
-            tmp___7 = __errno_location();
-            *tmp___7 = 0;
-            u = strtoul((char const * /* __restrict  */)strp,
-                        (char ** /* __restrict  */)(&ebuf), 10);
-            dev = u;
-          }
-          if ((unsigned long)strp == (unsigned long)ebuf) {
-            {
-              tmp___8 = gettext("Invalid device number");
-              tmp___9 = quotearg_colon(listed_incremental_option);
-              error(0, 0, "%s:%ld: %s", tmp___9, lineno, tmp___8);
-              exit_status = 2;
-            }
-          } else {
-            if (u == 0UL) {
-              {
-                tmp___13 = __errno_location();
-              }
-              if (*tmp___13 == 22) {
-                {
-                  tmp___8 = gettext("Invalid device number");
-                  tmp___9 = quotearg_colon(listed_incremental_option);
-                  error(0, 0, "%s:%ld: %s", tmp___9, lineno, tmp___8);
-                  exit_status = 2;
-                }
-              } else {
-                goto _L___0;
-              }
-            } else {
-            _L___0:
-              if (dev != u) {
-                {
-                  tmp___10 = gettext("Device number out of range");
-                  tmp___11 = quotearg_colon(listed_incremental_option);
-                  error(0, 0, "%s:%ld: %s", tmp___11, lineno, tmp___10);
-                  exit_status = 2;
-                }
-              } else {
-                if (u == 0xffffffffffffffffUL) {
-                  {
-                    tmp___12 = __errno_location();
-                  }
-                  if (*tmp___12 == 34) {
-                    {
-                      tmp___10 = gettext("Device number out of range");
-                      tmp___11 = quotearg_colon(listed_incremental_option);
-                      error(0, 0, "%s:%ld: %s", tmp___11, lineno, tmp___10);
-                      exit_status = 2;
-                    }
-                  }
-                }
-              }
-            }
-          }
-          {
-            strp = ebuf;
-            tmp___14 = __errno_location();
-            *tmp___14 = 0;
-            u = strtoul((char const * /* __restrict  */)strp,
-                        (char ** /* __restrict  */)(&ebuf), 10);
-            ino = u;
-          }
-          if ((unsigned long)strp == (unsigned long)ebuf) {
-            {
-              tmp___15 = gettext("Invalid inode number");
-              tmp___16 = quotearg_colon(listed_incremental_option);
-              error(0, 0, "%s:%ld: %s", tmp___16, lineno, tmp___15);
-              exit_status = 2;
-            }
-          } else {
-          }
-          {
-            strp = ebuf;
-            strp++;
-            unquote_string(strp);
-            note_directory((char const *)strp, dev, ino, nfs, (_Bool)0);
-          }
-        }
-      while_break: /* CIL Label */
-          ;
-      }
-    }
-    { tmp___23 = ferror_unlocked(fp); }
-
-    return;
-  }
-}
 static _Bool write_directory_file_entry(void *entry, void *data) {
   struct directory const *directory;
   FILE *fp;
@@ -8761,7 +8553,11 @@ static _Bool write_directory_file_entry(void *entry, void *data) {
         tmp___0 = __errno_location();
         e = *tmp___0;
       }
-
+      if (str) {
+        {
+          free((void *)str);
+        }
+      }
       {
         tmp___1 = __errno_location();
         *tmp___1 = e;
@@ -8816,13 +8612,13 @@ void write_directory_file(void) {
       }
     }
     { tmp___3 = ferror_unlocked(fp); }
-    if (tmp___3) {
+
+    { tmp___4 = fclose(fp); }
+    if (tmp___4 != 0) {
       {
-        write_error(listed_incremental_option);
+        close_error(listed_incremental_option);
       }
     }
-    { tmp___4 = fclose(fp); }
-
     return;
   }
 }
@@ -8864,11 +8660,7 @@ void gnu_restore(char const *directory_name) {
       return;
     }
     size = (size_t)current_stat_info.stat.st_size;
-    if (size != (size_t)current_stat_info.stat.st_size) {
-      {
-        xalloc_die();
-      }
-    }
+
     {
       tmp = xmalloc(size);
       archive_dir = (char *)tmp;
@@ -8908,7 +8700,41 @@ void gnu_restore(char const *directory_name) {
     }
     cur = current_dir;
     {
+      while (1) {
+      while_continue___0: /* CIL Label */
+          ;
+        if (!*cur) {
+          goto while_break___0;
+        }
+        arc = archive_dir;
+        {
+          while (1) {
+          while_continue___1: /* CIL Label */
+              ;
+            if (!*arc) {
+              goto while_break___1;
+            }
+            {
+              arc++;
+              tmp___3 = strcmp((char const *)arc, (char const *)cur);
+            }
+            if (!tmp___3) {
+              goto while_break___1;
+            }
+            {
+              tmp___2 = strlen((char const *)arc);
+              arc += tmp___2 + 1UL;
+            }
+          }
+        while_break___1: /* CIL Label */
+            ;
+        }
 
+        {
+          tmp___1 = strlen((char const *)cur);
+          cur += tmp___1 + 1UL;
+        }
+      }
     while_break___0: /* CIL Label */
         ;
     }
@@ -9032,17 +8858,14 @@ void read_and(void (*do_something)(void)) {
           if ((unsigned int)status == 0U) {
             goto case_0;
           }
-          if ((unsigned int)status == 2U) {
-            goto case_0;
-          }
 
+          if ((unsigned int)status == 1U) {
+            goto case_1;
+          }
           if ((unsigned int)status == 3U) {
             goto case_3;
           }
 
-          if ((unsigned int)status == 5U) {
-            goto case_5;
-          }
           goto switch_break;
         case_0:   /* CIL Label */
         case_2: { /* CIL Label */
@@ -9051,75 +8874,30 @@ void read_and(void (*do_something)(void)) {
         case_1: { /* CIL Label */
           tmp___1 = name_match((char const *)current_stat_info.file_name);
         }
-          if (tmp___1) {
-            if (0L <= newer_mtime_option.tv_nsec) {
-              {
-                current_stat_info.stat.st_mtim.tv_sec = time_from_header(
-                    (char const *)(current_header->header.mtime),
-                    sizeof(current_header->header.mtime));
-                current_stat_info.stat.st_mtim.tv_nsec = (__syscall_slong_t)0;
-              }
-              if (current_stat_info.stat.st_mtim.tv_sec <
-                  newer_mtime_option.tv_sec) {
-                goto _L;
-              } else {
-                if (current_stat_info.stat.st_mtim.tv_sec ==
-                    newer_mtime_option.tv_sec) {
 
-                } else {
-                  goto _L___0;
-                }
-              }
-            } else {
-            _L___0: {
-              tmp___2 =
-                  excluded_name((char const *)current_stat_info.file_name);
-            }
-              if (tmp___2) {
-              _L: {
-                if ((int)current_header->header.typeflag == 86) {
-                  goto case_86;
-                }
-                if ((int)current_header->header.typeflag == 77) {
-                  goto case_86;
-                }
-                if ((int)current_header->header.typeflag == 78) {
-                  goto case_86;
-                }
-                if ((int)current_header->header.typeflag == 53) {
-                  goto case_53;
-                }
-                goto switch_default;
-              case_86: /* CIL Label */
-              case_77: /* CIL Label */
-              case_78: /* CIL Label */
-                goto switch_break___0;
-              case_53: /* CIL Label */
-
-              switch_default: { /* CIL Label */
-                skip_member();
-              }
-                goto __Cont;
-              switch_break___0: /* CIL Label */
-                  ;
-              }
-              }
-            }
-          } else {
-            goto _L;
-          }
           { (*do_something)(); }
           goto __Cont;
         case_3: /* CIL Label */
-
-        {
-          set_next_block_after(current_header);
-        }
+          if (block_number_option) {
+            {
+              tmp___3 = current_block_ordinal();
+              tmp___4 = stringify_uintmax_t_backwards(
+                  (uintmax_t)tmp___3,
+                  buf + ((((sizeof(uintmax_t) * 8UL) * 302UL) / 1000UL + 1UL) +
+                         1UL));
+              tmp___5 = gettext("block %s: ** Block of NULs **\n");
+              fprintf((FILE * /* __restrict  */)stdlis,
+                      (char const * /* __restrict  */)tmp___5, tmp___4);
+            }
+          }
+          { set_next_block_after(current_header); }
           if (!ignore_zeros_option) {
             {
               status = read_header((_Bool)0);
             }
-
+            if ((unsigned int)status == 3U) {
+              goto switch_break;
+            }
             {
               tmp___6 = current_block_ordinal();
               tmp___7 = stringify_uintmax_t_backwards(
@@ -9135,19 +8913,7 @@ void read_and(void (*do_something)(void)) {
           status = prev_status;
           goto __Cont;
         case_4: /* CIL Label */
-          if (block_number_option) {
-            {
-              tmp___9 = current_block_ordinal();
-              tmp___10 = stringify_uintmax_t_backwards(
-                  (uintmax_t)tmp___9,
-                  buf___1 +
-                      ((((sizeof(uintmax_t) * 8UL) * 302UL) / 1000UL + 1UL) +
-                       1UL));
-              tmp___11 = gettext("block %s: ** End of File **\n");
-              fprintf((FILE * /* __restrict  */)stdlis,
-                      (char const * /* __restrict  */)tmp___11, tmp___10);
-            }
-          }
+
           goto switch_break;
         case_5: { /* CIL Label */
           set_next_block_after(current_header);
@@ -9156,7 +8922,16 @@ void read_and(void (*do_something)(void)) {
             if ((unsigned int)prev_status == 0U) {
               goto case_0___0;
             }
+            if ((unsigned int)prev_status == 3U) {
+              goto case_3___0;
+            }
+            if ((unsigned int)prev_status == 1U) {
+              goto case_3___0;
+            }
 
+            if ((unsigned int)prev_status == 5U) {
+              goto case_4___0;
+            }
             if ((unsigned int)prev_status == 2U) {
               goto case_2___0;
             }
@@ -9215,12 +8990,70 @@ void list_archive(void) {
 
   {
     { decode_header(current_header, &current_stat_info, &current_format, 0); }
-    if (verbose_option) {
-      {
-        print_header(&current_stat_info, (off_t)-1);
-      }
-    }
+
     if (incremental_option) {
+      if ((int)current_header->header.typeflag == 68) {
+        {
+          set_next_block_after(current_header);
+        }
+        if (multi_volume_option) {
+          {
+            assign_string(&save_name,
+                          (char const *)current_stat_info.file_name);
+            save_totsize = current_stat_info.stat.st_size;
+          }
+        }
+        size = current_stat_info.stat.st_size;
+        {
+          while (1) {
+          while_continue: /* CIL Label */
+              ;
+            if (!(size > 0L)) {
+              goto while_break;
+            }
+
+            { data_block = find_next_block(); }
+            if (!data_block) {
+              {
+                tmp = gettext("Unexpected EOF in archive");
+                error(0, 0, (char const *)tmp);
+                exit_status = 2;
+              }
+              goto while_break;
+            }
+            { written = available_space_after(data_block); }
+            if (written > (size_t)size) {
+              written = (size_t)size;
+            }
+            {
+              tmp___0 = __errno_location();
+              *tmp___0 = 0;
+              check = fwrite_unlocked(
+                  (void const * /* __restrict  */)(data_block->buffer),
+                  sizeof(char), written, (FILE * /* __restrict  */)stdlis);
+              set_next_block_after(
+                  (union block *)((data_block->buffer + written) - 1));
+            }
+            if (check != written) {
+              {
+                write_error_details((char const *)current_stat_info.file_name,
+                                    check, written);
+                skip_file((off_t)((size_t)size - written));
+              }
+              goto while_break;
+            }
+            size = (off_t)((size_t)size - written);
+          }
+        while_break: /* CIL Label */
+            ;
+        }
+
+        {
+          fputc_unlocked('\n', stdlis);
+          fflush_unlocked(stdlis);
+        }
+        return;
+      }
     }
 
     { skip_member(); }
@@ -9282,7 +9115,19 @@ enum read_header read_header(_Bool raw_extended_headers) {
         p = header->buffer;
         i = sizeof(*header);
         {
-
+          while (1) {
+          while_continue___0: /* CIL Label */
+              ;
+            tmp___0 = i;
+            i--;
+            if (!(tmp___0 != 0UL)) {
+              goto while_break___0;
+            }
+            unsigned_sum += (int)((unsigned char)*p);
+            tmp = p;
+            p++;
+            signed_sum += (int)((signed char)*tmp);
+          }
         while_break___0: /* CIL Label */
             ;
         }
@@ -9359,22 +9204,25 @@ enum read_header read_header(_Bool raw_extended_headers) {
                           xalloc_die();
                         }
                       } else {
-                        if (size < name_size) {
-                          {
-                            xalloc_die();
-                          }
-                        }
                       }
                       {
                         tmp___2 = xmalloc(size + 1UL);
                         header_copy = (union block *)tmp___2;
                       }
                       if ((int)header->header.typeflag == 76) {
-
+                        if (next_long_name) {
+                          {
+                            free((void *)next_long_name);
+                          }
+                        }
                         next_long_name = header_copy;
                         next_long_name_blocks = size / 512UL;
                       } else {
-
+                        if (next_long_link) {
+                          {
+                            free((void *)next_long_link);
+                          }
+                        }
                         next_long_link = header_copy;
                         next_long_link_blocks = size / 512UL;
                       }
@@ -9421,12 +9269,34 @@ enum read_header read_header(_Bool raw_extended_headers) {
                       }
                       *bp = (char)'\000';
                     } else {
+                      if ((int)header->header.typeflag == 120) {
+                        {
+                          tmp___4 = off_from_header(
+                              (char const *)(header->header.size),
+                              sizeof(header->header.size));
+                          xheader_read(header, (size_t)tmp___4);
+                        }
+                      } else {
+                        if ((int)header->header.typeflag == 103) {
+                          {
+                            tmp___5 = off_from_header(
+                                (char const *)(header->header.size),
+                                sizeof(header->header.size));
+                            xheader_read(header, (size_t)tmp___5);
+                            xheader_decode_global();
+                          }
+                        }
+                      }
                     }
                   }
                 }
               } else {
                 h = (struct posix_header const *)(&current_header->header);
-
+                if (recent_long_name) {
+                  {
+                    free((void *)recent_long_name);
+                  }
+                }
                 if (next_long_name) {
                   name = (char const *)(next_long_name->buffer + 512);
                   recent_long_name = next_long_name;
@@ -9436,20 +9306,6 @@ enum read_header read_header(_Bool raw_extended_headers) {
                   if (h->prefix[0]) {
                     {
                       tmp___8 = strcmp((char const *)(h->magic), "ustar");
-                    }
-                    if (tmp___8 == 0) {
-                      {
-                        memcpy((void * /* __restrict  */)np,
-                               (void const * /* __restrict  */)(h->prefix),
-                               sizeof(h->prefix));
-                        *(np + sizeof(h->prefix)) = (char)'\000';
-                        tmp___6 = strlen((char const *)np);
-                        np += tmp___6;
-                        tmp___7 = np;
-                        np++;
-                        *tmp___7 = (char)'/';
-                        current_header->oldgnu_header.isextended = (char)0;
-                      }
                     }
                   }
                   {
@@ -9469,6 +9325,21 @@ enum read_header read_header(_Bool raw_extended_headers) {
                       strip_trailing_slashes(current_stat_info.file_name);
                 }
 
+                if (next_long_link) {
+                  name = (char const *)(next_long_link->buffer + 512);
+                  recent_long_link = next_long_link;
+                  recent_long_link_blocks = next_long_link_blocks;
+                } else {
+                  {
+                    memcpy((void * /* __restrict  */)(namebuf),
+                           (void const * /* __restrict  */)(h->linkname),
+                           sizeof(h->linkname));
+                    namebuf[sizeof(h->linkname)] = (char)'\000';
+                    name = (char const *)(namebuf);
+                    recent_long_link = (union block *)0;
+                    recent_long_link_blocks = (size_t)0;
+                  }
+                }
                 { assign_string(&current_stat_info.link_name, name); }
                 return ((enum read_header)1);
               }
@@ -9496,18 +9367,14 @@ void decode_header(union block *header, struct tar_stat_info *stat_info,
   {
     { tmp___0 = strcmp((char const *)(header->header.magic), "ustar"); }
     if (tmp___0 == 0) {
-      if ((int)header->star_header.prefix[130] == 0) {
 
-      } else {
-      _L___6: /* CIL Label */
-        if (extended_header.size) {
-          format = (enum archive_format)4;
-        } else {
-          format = (enum archive_format)3;
-        }
-      }
     } else {
       { tmp = strcmp((char const *)(header->header.magic), "ustar  "); }
+      if (tmp == 0) {
+        format = (enum archive_format)2;
+      } else {
+        format = (enum archive_format)1;
+      }
     }
     {
       *format_pointer = format;
@@ -9549,9 +9416,63 @@ void decode_header(union block *header, struct tar_stat_info *stat_info,
     } else {
 
       if (do_user_group) {
+        if (numeric_owner_option) {
+          {
+            stat_info->stat.st_uid = uid_from_header(
+                (char const *)(header->header.uid), sizeof(header->header.uid));
+          }
+        } else {
+          if (!header->header.uname[0]) {
+            {
+              stat_info->stat.st_uid =
+                  uid_from_header((char const *)(header->header.uid),
+                                  sizeof(header->header.uid));
+            }
+          } else {
+            {
+              tmp___3 = uname_to_uid((char const *)(header->header.uname),
+                                     &stat_info->stat.st_uid);
+            }
+            if (!tmp___3) {
+              {
+                stat_info->stat.st_uid =
+                    uid_from_header((char const *)(header->header.uid),
+                                    sizeof(header->header.uid));
+              }
+            }
+          }
+        }
+        if (numeric_owner_option) {
+          {
+            stat_info->stat.st_gid = gid_from_header(
+                (char const *)(header->header.gid), sizeof(header->header.gid));
+          }
+        } else {
+          if (!header->header.gname[0]) {
+            {
+              stat_info->stat.st_gid =
+                  gid_from_header((char const *)(header->header.gid),
+                                  sizeof(header->header.gid));
+            }
+          } else {
+            {
+              tmp___4 = gname_to_gid((char const *)(header->header.gname),
+                                     &stat_info->stat.st_gid);
+            }
+            if (!tmp___4) {
+              {
+                stat_info->stat.st_gid =
+                    gid_from_header((char const *)(header->header.gid),
+                                    sizeof(header->header.gid));
+              }
+            }
+          }
+        }
       }
       {
-
+        if ((int)header->header.typeflag == 52) {
+          goto case_52;
+        }
         if ((int)header->header.typeflag == 51) {
           goto case_52;
         }
@@ -9573,12 +9494,7 @@ void decode_header(union block *header, struct tar_stat_info *stat_info,
       xheader_decode(stat_info);
       tmp___6 = sparse_member_p(stat_info);
     }
-    if (tmp___6) {
-      {
-        sparse_fixup_header(stat_info);
-        stat_info->is_sparse = (_Bool)1;
-      }
-    }
+
     return;
   }
 }
@@ -9740,14 +9656,7 @@ static uintmax_t from_header(char const *where0, size_t digs, char const *type,
         }
       }
       if (overflow) {
-        if (type) {
-          {
-            tmp___3 = gettext("Archive octal value %.*s is out of %s range");
-            error(0, 0, (char const *)tmp___3, (int)(where - where1), where1,
-                  type);
-            exit_status = 2;
-          }
-        }
+
         return ((uintmax_t)-1);
       }
     } else {
@@ -9761,7 +9670,39 @@ static uintmax_t from_header(char const *where0, size_t digs, char const *type,
           where++;
           negative = (int const) * tmp___5 == 45;
           {
-
+            while (1) {
+            while_continue___2: /* CIL Label */
+                ;
+              if ((unsigned long)where != (unsigned long)lim) {
+                dig = (int)base64_map[(unsigned char)*where];
+                if (!(dig < 64)) {
+                  goto while_break___2;
+                }
+              } else {
+                goto while_break___2;
+              }
+              if ((value << 6) >> 6 != value) {
+                {
+                  tmp___6 = __builtin_alloca(digs + 1UL);
+                  string = (char *)tmp___6;
+                  memcpy((void * /* __restrict  */)string,
+                         (void const * /* __restrict  */)where0, digs);
+                  *(string + digs) = (char)'\000';
+                }
+                if (type) {
+                  {
+                    tmp___7 = quote((char const *)string);
+                    tmp___8 = gettext(
+                        "Archive signed base-64 string %s is out of %s range");
+                    error(0, 0, (char const *)tmp___8, tmp___7, type);
+                    exit_status = 2;
+                  }
+                }
+                return ((uintmax_t)-1);
+              }
+              value = (value << 6) | (unsigned long)dig;
+              where++;
+            }
           while_break___2: /* CIL Label */
               ;
           }
@@ -9789,6 +9730,17 @@ static uintmax_t from_header(char const *where0, size_t digs, char const *type,
                   if ((unsigned long)where == (unsigned long)lim) {
                     goto while_break___3;
                   }
+                  if ((((value << 8) >> 8) | topbits) != value) {
+                    if (type) {
+                      {
+                        tmp___11 = gettext(
+                            "Archive base-256 value is out of %s range");
+                        error(0, 0, (char const *)tmp___11, type);
+                        exit_status = 2;
+                      }
+                    }
+                    return ((uintmax_t)-1);
+                  }
                 }
               while_break___3: /* CIL Label */
                   ;
@@ -9806,42 +9758,6 @@ static uintmax_t from_header(char const *where0, size_t digs, char const *type,
       if (*where) {
         {
           tmp___13 = __ctype_b_loc();
-        }
-        if (!((int const) * (*tmp___13 + (int)((unsigned char)*where)) &
-              8192)) {
-          if (type) {
-            if (!o) {
-              {
-                o = clone_quoting_options((struct quoting_options *)0);
-                set_quoting_style(o, (enum quoting_style)5);
-              }
-            }
-            {
-              while (1) {
-              while_continue___4: /* CIL Label */
-                  ;
-                if ((unsigned long)where0 != (unsigned long)lim) {
-                  if (!(!*(lim + -1))) {
-                    goto while_break___4;
-                  }
-                } else {
-                  goto while_break___4;
-                }
-                lim--;
-              }
-            while_break___4: /* CIL Label */
-                ;
-            }
-            {
-              quotearg_buffer(buf, sizeof(buf), where0, (size_t)(lim - where),
-                              (struct quoting_options const *)o);
-              tmp___12 = gettext(
-                  "Archive contains %.*s where numeric %s value expected");
-              error(0, 0, (char const *)tmp___12, (int)sizeof(buf), buf, type);
-              exit_status = 2;
-            }
-          }
-          return ((uintmax_t)-1);
         }
       }
     }
@@ -9875,7 +9791,10 @@ static uintmax_t from_header(char const *where0, size_t digs, char const *type,
         value_string--;
         *value_string = (char)'-';
       }
-
+      if (minus_minval) {
+        minval_string--;
+        *minval_string = (char)'-';
+      }
       {
         tmp___16 = stringify_uintmax_t_backwards(
             maxval,
@@ -9951,7 +9870,11 @@ mode_t mode_from_header(char const *p, size_t s) {
                         0xffffffffffffffffUL);
       u = (unsigned int)tmp;
     }
-
+    if (u & 2048U) {
+      tmp___0 = 2048;
+    } else {
+      tmp___0 = 0;
+    }
     if (u & 1024U) {
       tmp___1 = 1024;
     } else {
@@ -9962,13 +9885,36 @@ mode_t mode_from_header(char const *p, size_t s) {
     } else {
       tmp___2 = 0;
     }
-
+    if (u & 256U) {
+      tmp___3 = 256;
+    } else {
+      tmp___3 = 0;
+    }
+    if (u & 128U) {
+      tmp___4 = 128;
+    } else {
+      tmp___4 = 0;
+    }
     if (u & 64U) {
       tmp___5 = 64;
     } else {
       tmp___5 = 0;
     }
-
+    if (u & 32U) {
+      tmp___6 = 256 >> 3;
+    } else {
+      tmp___6 = 0;
+    }
+    if (u & 16U) {
+      tmp___7 = 128 >> 3;
+    } else {
+      tmp___7 = 0;
+    }
+    if (u & 8U) {
+      tmp___8 = 64 >> 3;
+    } else {
+      tmp___8 = 0;
+    }
     if (u & 4U) {
       tmp___9 = (256 >> 3) >> 3;
     } else {
@@ -10008,7 +9954,15 @@ off_t off_from_header(char const *p, size_t s) {
     return ((off_t)tmp);
   }
 }
+size_t size_from_header(char const *p, size_t s) {
+  uintmax_t tmp;
+  char *__cil_tmp4;
 
+  {
+    { tmp = from_header(p, s, "size_t", (uintmax_t)0, 0xffffffffffffffffUL); }
+    return (tmp);
+  }
+}
 time_t time_from_header(char const *p, size_t s) {
   uintmax_t tmp;
   char *__cil_tmp4;
@@ -10234,11 +10188,15 @@ void print_header(struct tar_stat_info *st, off_t block_ordinal) {
         if ((int)current_header->header.typeflag == 52) {
           goto case_52;
         }
-
+        if ((int)current_header->header.typeflag == 51) {
+          goto case_51;
+        }
         if ((int)current_header->header.typeflag == 54) {
           goto case_54;
         }
-
+        if ((int)current_header->header.typeflag == 55) {
+          goto case_55;
+        }
         goto switch_break;
       case_86: /* CIL Label */
         modes[0] = (char)'V';
@@ -10298,36 +10256,11 @@ void print_header(struct tar_stat_info *st, off_t block_ordinal) {
         decode_mode(st->stat.st_mode, modes + 1);
         time_stamp = tartime(st->stat.st_mtim.tv_sec);
       }
-      if (st->uname) {
-
-      } else {
-      _L___4: { /* CIL Label */
-        tmp___4 =
-            from_header((char const *)(current_header->header.uid),
-                        sizeof(current_header->header.uid), (char const *)0,
-                        (uintmax_t)0, 0xffffffffffffffffUL);
-        u = tmp___4;
-      }
-        if (u != 0xffffffffffffffffUL) {
-          {
-            user = stringify_uintmax_t_backwards(
-                u,
-                uform + ((((sizeof(uintmax_t) * 8UL) * 302UL) / 1000UL + 1UL) +
-                         1UL));
-          }
-        } else {
-          {
-            tmp___5 =
-                uid_from_header((char const *)(current_header->header.uid),
-                                sizeof(current_header->header.uid));
-            sprintf((char * /* __restrict  */)(uform),
-                    (char const * /* __restrict  */) "%ld", (long)tmp___5);
-            user = uform;
-          }
-        }
-      }
 
       {
+        if ((int)current_header->header.typeflag == 51) {
+          goto case_51___0;
+        }
 
         goto switch_default;
       case_51___0:   /* CIL Label */
@@ -10395,18 +10328,11 @@ void print_header(struct tar_stat_info *st, off_t block_ordinal) {
         if ((int)current_header->header.typeflag == 83) {
           goto case_0___0;
         }
-        if ((int)current_header->header.typeflag == 51) {
-          goto case_0___0;
-        }
-        if ((int)current_header->header.typeflag == 52) {
-          goto case_0___0;
-        }
+
         if ((int)current_header->header.typeflag == 53) {
           goto case_0___0;
         }
-        if ((int)current_header->header.typeflag == 54) {
-          goto case_0___0;
-        }
+
         if ((int)current_header->header.typeflag == 55) {
           goto case_0___0;
         }
@@ -10417,10 +10343,10 @@ void print_header(struct tar_stat_info *st, off_t block_ordinal) {
         if ((int)current_header->header.typeflag == 76) {
           goto case_76___0;
         }
-        if ((int)current_header->header.typeflag == 86) {
-          goto case_86___0;
-        }
 
+        if ((int)current_header->header.typeflag == 77) {
+          goto case_77___0;
+        }
         if ((int)current_header->header.typeflag == 78) {
           goto case_78___0;
         }
@@ -10545,7 +10471,25 @@ void skip_file(off_t size) {
   {
 
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!(size > 0L)) {
+          goto while_break;
+        }
+        { x = find_next_block(); }
+        if (!x) {
+          {
+            tmp = gettext("Unexpected EOF in archive");
+            error(0, 0, (char const *)tmp);
+            fatal_exit();
+          }
+        }
+        {
+          set_next_block_after(x);
+          size -= 512L;
+        }
+      }
     while_break: /* CIL Label */
         ;
     }
@@ -10628,7 +10572,17 @@ void extract_mangle(void) {
       copy = buffer___2;
       cursor = buffer___2;
     }
-
+    if ((size_t)size != (size_t)size) {
+      {
+        xalloc_die();
+      }
+    } else {
+      if ((size_t)size == 0xffffffffffffffffUL) {
+        {
+          xalloc_die();
+        }
+      }
+    }
     *(buffer___2 + size) = (char)'\000';
     {
       while (1) {
@@ -10679,7 +10633,47 @@ void extract_mangle(void) {
           *tmp___2 = (char)'\000';
           tmp___21 = strncmp((char const *)cursor, "Rename ", (size_t)7);
         }
+        if (tmp___21) {
+          {
+            tmp___20 = strncmp((char const *)cursor, "Symlink ", (size_t)8);
+          }
 
+        } else {
+          {
+            name = cursor + 7;
+            name_end = strchr((char const *)name, ' ');
+          }
+          {
+
+          while_break___2: /* CIL Label */
+              ;
+          }
+          *name_end = (char)'\000';
+          if ((int)*(next_cursor + -2) == 47) {
+            *(next_cursor + -2) = (char)'\000';
+          }
+          {
+            unquote_string(name_end + 4);
+            tmp___9 = rename((char const *)name, (char const *)(name_end + 4));
+          }
+          if (tmp___9) {
+            {
+              tmp___4 = quote_n(1, (char const *)(name_end + 4));
+              tmp___5 = quotearg_colon((char const *)name);
+              tmp___6 = gettext("%s: Cannot rename to %s");
+              tmp___7 = __errno_location();
+              error(0, *tmp___7, (char const *)tmp___6, tmp___5, tmp___4);
+              exit_status = 2;
+            }
+          } else {
+            if (verbose_option) {
+              {
+                tmp___8 = gettext("Renamed %s to %s");
+                error(0, 0, (char const *)tmp___8, name, name_end + 4);
+              }
+            }
+          }
+        }
         cursor = next_cursor;
       }
     while_break___0: /* CIL Label */
@@ -10722,7 +10716,11 @@ void assign_string(char **string, char const *value) {
   char *tmp;
 
   {
-
+    if (*string) {
+      {
+        free((void *)*string);
+      }
+    }
     if (value) {
       {
         tmp = xstrdup(value);
@@ -10768,9 +10766,7 @@ char *quote_copy_string(char const *string) {
           if (character == 10) {
             goto case_10;
           }
-          if (character == 92) {
-            goto case_10;
-          }
+
           goto switch_default;
         case_10: /* CIL Label */
         case_92: /* CIL Label */
@@ -10812,10 +10808,7 @@ char *quote_copy_string(char const *string) {
     while_break: /* CIL Label */
         ;
     }
-    if (copying) {
-      *destination = (char)'\000';
-      return (buffer___2);
-    }
+
     return ((char *)0);
   }
 }
@@ -10857,21 +10850,37 @@ int unquote_string(char *string) {
         if ((int)*source == 92) {
           source++;
           {
-
+            if ((int)*source == 92) {
+              goto case_92;
+            }
             if ((int)*source == 110) {
               goto case_110;
             }
-
+            if ((int)*source == 116) {
+              goto case_116;
+            }
             if ((int)*source == 102) {
               goto case_102;
             }
             if ((int)*source == 98) {
               goto case_98;
             }
-
-            if ((int)*source == 52) {
+            if ((int)*source == 114) {
+              goto case_114;
+            }
+            if ((int)*source == 63) {
+              goto case_63;
+            }
+            if ((int)*source == 48) {
               goto case_48;
             }
+            if ((int)*source == 49) {
+              goto case_48;
+            }
+            if ((int)*source == 50) {
+              goto case_48;
+            }
+
             if ((int)*source == 53) {
               goto case_48;
             }
@@ -10935,11 +10944,35 @@ int unquote_string(char *string) {
             tmp___6 = source;
             source++;
             value = (int)*tmp___6 - 48;
-
+            if ((int)*source < 48) {
+              tmp___7 = destination;
+              destination++;
+              *tmp___7 = (char)value;
+              goto switch_break;
+            } else {
+              if ((int)*source > 55) {
+                tmp___7 = destination;
+                destination++;
+                *tmp___7 = (char)value;
+                goto switch_break;
+              }
+            }
             tmp___8 = source;
             source++;
             value = (value * 8 + (int)*tmp___8) - 48;
-
+            if ((int)*source < 48) {
+              tmp___9 = destination;
+              destination++;
+              *tmp___9 = (char)value;
+              goto switch_break;
+            } else {
+              if ((int)*source > 55) {
+                tmp___9 = destination;
+                destination++;
+                *tmp___9 = (char)value;
+                goto switch_break;
+              }
+            }
             tmp___10 = source;
             source++;
             value = (value * 8 + (int)*tmp___10) - 48;
@@ -10979,7 +11012,9 @@ int unquote_string(char *string) {
     while_break: /* CIL Label */
         ;
     }
-
+    if ((unsigned long)source != (unsigned long)destination) {
+      *destination = (char)'\000';
+    }
     return (result);
   }
 }
@@ -10992,13 +11027,48 @@ static _Bool must_be_dot_or_slash(char const *path) {
     path += 0;
     if ((int const) * (path + 0) == 47) {
       {
-
+        while (1) {
+        while_continue: /* CIL Label */
+            ;
+          if ((int const) * (path + 1) == 47) {
+            path++;
+          } else {
+            if ((int const) * (path + 1) == 46) {
+              if ((int const) *
+                      (path + (2 + ((int const) * (path + 2) == 46))) ==
+                  47) {
+                path += 2 + ((int const) * (path + 2) == 46);
+              } else {
+                return ((_Bool)(!*(path + 1)));
+              }
+            } else {
+              return ((_Bool)(!*(path + 1)));
+            }
+          }
+        }
       while_break: /* CIL Label */
           ;
       }
     } else {
       {
+        while (1) {
+        while_continue___0: /* CIL Label */
+            ;
 
+          path += 2;
+          {
+            while (1) {
+            while_continue___1: /* CIL Label */
+                ;
+              if (!((int const) * path == 47)) {
+                goto while_break___1;
+              }
+              path++;
+            }
+          while_break___1: /* CIL Label */
+              ;
+          }
+        }
       while_break___0: /* CIL Label */
           ;
       }
@@ -11054,26 +11124,13 @@ int remove_any_file(char const *path, enum remove_option option) {
     }
     { tmp___3 = __errno_location(); }
     {
+      if (*tmp___3 == 20) {
+        goto case_20;
+      }
 
-      if (*tmp___3 == 0) {
-        goto case_0;
-      }
-      if (*tmp___3 == 17) {
-        goto case_0;
-      }
-      if (*tmp___3 == 39) {
-        goto case_0;
-      }
       goto switch_break;
     case_20: /* CIL Label */
-      if (we_are_root) {
-        {
-          tmp___4 = unlink(path);
-        }
 
-      } else {
-        tmp___5 = 0;
-      }
       return (tmp___5);
     case_0:    /* CIL Label */
     case_17:   /* CIL Label */
@@ -11131,7 +11188,8 @@ _Bool maybe_backup_file(char const *path, int this_is_the_archive) {
   char *__cil_tmp18;
 
   {
-
+    if (this_is_the_archive) {
+    }
     {
       tmp___1 = stat((char const * /* __restrict  */)path,
                      (struct stat * /* __restrict  */)(&file_stat));
@@ -11140,24 +11198,14 @@ _Bool maybe_backup_file(char const *path, int this_is_the_archive) {
       {
         tmp___0 = __errno_location();
       }
-      if (*tmp___0 == 2) {
-        return ((_Bool)1);
-      }
+
       { stat_error(path); }
       return ((_Bool)0);
     }
     if ((file_stat.st_mode & 61440U) == 16384U) {
       return ((_Bool)1);
     }
-    if (this_is_the_archive) {
-      if ((file_stat.st_mode & 61440U) == 24576U) {
-        return ((_Bool)1);
-      } else {
-        if ((file_stat.st_mode & 61440U) == 8192U) {
-          return ((_Bool)1);
-        }
-      }
-    }
+
     {
       assign_string(&before_backup_name, path);
       assign_string(&after_backup_name, (char const *)0);
@@ -11167,22 +11215,6 @@ _Bool maybe_backup_file(char const *path, int this_is_the_archive) {
     {
       tmp___9 = rename((char const *)before_backup_name,
                        (char const *)after_backup_name);
-    }
-    if (tmp___9 == 0) {
-
-      return ((_Bool)1);
-    } else {
-      {
-        tmp___5 = __errno_location();
-        e = *tmp___5;
-        tmp___6 = quote_n(1, (char const *)after_backup_name);
-        tmp___7 = quotearg_colon((char const *)before_backup_name);
-        tmp___8 = gettext("%s: Cannot rename to %s");
-        error(0, e, (char const *)tmp___8, tmp___7, tmp___6);
-        exit_status = 2;
-        assign_string(&after_backup_name, (char const *)0);
-      }
-      return ((_Bool)0);
     }
   }
 }
@@ -11244,7 +11276,41 @@ int chdir_arg(char const *dir) {
         wds++;
       }
     }
-
+    if (*(dir + 0)) {
+      {
+        while (1) {
+        while_continue: /* CIL Label */
+            ;
+          if ((int const) * (dir + 0) == 46) {
+            if (!((int const) * (dir + 1) == 47)) {
+              goto while_break;
+            }
+          } else {
+            goto while_break;
+          }
+          dir += 2;
+          {
+            while (1) {
+            while_continue___0: /* CIL Label */
+                ;
+              if (!((int const) * dir == 47)) {
+                goto while_break___0;
+              }
+              goto __Cont;
+            __Cont:
+              dir++;
+            }
+          while_break___0: /* CIL Label */
+              ;
+          }
+        }
+      while_break: /* CIL Label */
+          ;
+      }
+      if (!*(dir + ((int const) * (dir + 0) == 46))) {
+        return ((int)(wds - 1UL));
+      }
+    }
     (wd + wds)->name = dir;
     (wd + wds)->saved = 0;
     tmp___0 = wds;
@@ -11269,6 +11335,32 @@ void chdir_do(int i) {
       prev = wd + previous;
       curr = wd + i;
 
+      if (curr->saved) {
+        {
+          tmp___2 = restore_cwd((struct saved_cwd const *)(&curr->saved_cwd));
+        }
+        if (tmp___2) {
+          {
+            tmp___1 = gettext("Cannot change working directory");
+            error(0, 0, (char const *)tmp___1);
+            fatal_exit();
+          }
+        }
+      } else {
+        if (i) {
+          if (!((int const) * (curr->name + 0) == 47)) {
+            {
+              chdir_do(i - 1);
+            }
+          }
+        }
+        { tmp___3 = chdir(curr->name); }
+        if (tmp___3 != 0) {
+          {
+            chdir_fatal(curr->name);
+          }
+        }
+      }
       previous = i;
     }
     return;
@@ -11353,7 +11445,21 @@ void decode_mode(mode_t mode, char *string) {
     *tmp___3 = (char)tmp___14;
     tmp___4 = string;
     string++;
-
+    if (mode & 1024U) {
+      if (mode & (unsigned int)(64 >> 3)) {
+        tmp___15 = 's';
+      } else {
+        tmp___15 = 'S';
+      }
+      tmp___17 = tmp___15;
+    } else {
+      if (mode & (unsigned int)(64 >> 3)) {
+        tmp___16 = 'x';
+      } else {
+        tmp___16 = '-';
+      }
+      tmp___17 = tmp___16;
+    }
     *tmp___4 = (char)tmp___17;
     tmp___5 = string;
     string++;
@@ -11381,7 +11487,11 @@ void decode_mode(mode_t mode, char *string) {
       }
       tmp___22 = tmp___20;
     } else {
-
+      if (mode & (unsigned int)((64 >> 3) >> 3)) {
+        tmp___21 = 'x';
+      } else {
+        tmp___21 = '-';
+      }
       tmp___22 = tmp___21;
     }
     *tmp___7 = (char)tmp___22;
@@ -11447,7 +11557,13 @@ static void call_arg_warn(char const *call, char const *name) {
   }
 }
 __attribute__((__noreturn__)) void chdir_fatal(char const *name);
+void chdir_fatal(char const *name) {
+  char *__cil_tmp2;
 
+  {
+    { call_arg_fatal("chdir", name); }
+  }
+}
 void chmod_error_details(char const *name, mode_t mode) {
   int e;
   int *tmp;
@@ -11681,39 +11797,10 @@ void read_diag_details(char const *name, off_t offset, size_t size) {
   }
 }
 __attribute__((__noreturn__)) void read_fatal(char const *name);
-void read_fatal(char const *name) {
-  char *__cil_tmp2;
 
-  {
-    { call_arg_fatal("read", name); }
-  }
-}
 __attribute__((__noreturn__)) void
 read_fatal_details(char const *name, off_t offset, size_t size);
-void read_fatal_details(char const *name, off_t offset, size_t size) {
-  char buf[(((sizeof(uintmax_t) * 8UL) * 302UL) / 1000UL + 1UL) + 1UL];
-  int e;
-  int *tmp;
-  char *tmp___0;
-  char *tmp___1;
-  char *tmp___2;
-  void *__cil_tmp10;
 
-  {
-    {
-      tmp = __errno_location();
-      e = *tmp;
-      tmp___0 = stringify_uintmax_t_backwards(
-          (uintmax_t)offset,
-          buf + ((((sizeof(uintmax_t) * 8UL) * 302UL) / 1000UL + 1UL) + 1UL));
-      tmp___1 = quotearg_colon(name);
-      tmp___2 = ngettext("%s: Read error at byte %s, reading %lu byte",
-                         "%s: Read error at byte %s, reading %lu bytes", size);
-      error(0, e, (char const *)tmp___2, tmp___1, tmp___0, size);
-      fatal_exit();
-    }
-  }
-}
 void readlink_error(char const *name) {
   char *__cil_tmp2;
 
@@ -11732,16 +11819,7 @@ void readlink_warn(char const *name) {
 }
 void readlink_diag(char const *name) {
 
-  {
-    if (ignore_failed_read_option) {
-      {
-        readlink_warn(name);
-      }
-    } else {
-      { readlink_error(name); }
-    }
-    return;
-  }
+  { return; }
 }
 void savedir_error(char const *name) {
   char *__cil_tmp2;
@@ -11751,26 +11829,10 @@ void savedir_error(char const *name) {
     return;
   }
 }
-void savedir_warn(char const *name) {
-  char *__cil_tmp2;
 
-  {
-    { call_arg_warn("savedir", name); }
-    return;
-  }
-}
 void savedir_diag(char const *name) {
 
-  {
-    if (ignore_failed_read_option) {
-      {
-        savedir_warn(name);
-      }
-    } else {
-      { savedir_error(name); }
-    }
-    return;
-  }
+  { return; }
 }
 void seek_error(char const *name) {
   char *__cil_tmp2;
@@ -11813,10 +11875,42 @@ void seek_warn(char const *name) {
     return;
   }
 }
+void seek_warn_details(char const *name, off_t offset) {
+  char buf[(((sizeof(uintmax_t) * 8UL) * 302UL) / 1000UL + 1UL) + 1UL];
+  int e;
+  int *tmp;
+  char *tmp___0;
+  char *tmp___1;
+  char *tmp___2;
+  void *__cil_tmp9;
+  char *__cil_tmp10;
 
+  {
+    {
+      tmp = __errno_location();
+      e = *tmp;
+      tmp___0 = stringify_uintmax_t_backwards(
+          (uintmax_t)offset,
+          buf + ((((sizeof(uintmax_t) * 8UL) * 302UL) / 1000UL + 1UL) + 1UL));
+      tmp___1 = quotearg_colon(name);
+      tmp___2 = gettext("%s: Warning: Cannot seek to %s");
+      error(0, e, (char const *)tmp___2, tmp___1, tmp___0);
+    }
+    return;
+  }
+}
 void seek_diag_details(char const *name, off_t offset) {
 
-  { return; }
+  {
+    if (ignore_failed_read_option) {
+      {
+        seek_warn_details(name, offset);
+      }
+    } else {
+      { seek_error_details(name, offset); }
+    }
+    return;
+  }
 }
 void symlink_error(char const *contents, char const *name) {
   int e;
@@ -11900,14 +11994,7 @@ void utime_error(char const *name) {
     return;
   }
 }
-void waitpid_error(char const *name) {
-  char *__cil_tmp2;
 
-  {
-    { call_arg_error("waitpid", name); }
-    return;
-  }
-}
 void write_error(char const *name) {
   char *__cil_tmp2;
 
@@ -11919,7 +12006,21 @@ void write_error(char const *name) {
 void write_error_details(char const *name, size_t status, size_t size) {
   char *tmp;
 
-  { return; }
+  {
+    if (status == 0UL) {
+      {
+        write_error(name);
+      }
+    } else {
+      {
+        tmp = ngettext("%s: Wrote only %lu of %lu byte",
+                       "%s: Wrote only %lu of %lu bytes", size);
+        error(0, 0, (char const *)tmp, name, status, size);
+        exit_status = 2;
+      }
+    }
+    return;
+  }
 }
 __attribute__((__noreturn__)) void
 write_fatal_details(char const *name, ssize_t status, size_t size);
@@ -12062,27 +12163,7 @@ void gid_to_gname(gid_t gid, char **gname) {
         return;
       }
     }
-    if (!cached_gname) {
-      goto _L___3;
-    } else {
-      if (gid != cached_gid) {
-      _L___3: { /* CIL Label */
-        group = getgrgid(gid);
-      }
-        if (group) {
-          {
-            cached_gid = gid;
-            assign_string(&cached_gname, (char const *)group->gr_name);
-          }
-        } else {
-          {
-            cached_no_such_gid = gid;
-            *gname = strdup("");
-          }
-          return;
-        }
-      }
-    }
+
     { *gname = strdup((char const *)cached_gname); }
     return;
   }
@@ -12186,7 +12267,14 @@ void name_add(char const *name) {
   int tmp___0;
 
   {
-
+    if (names == allocated_names) {
+      {
+        allocated_names *= 2;
+        tmp = xrealloc((void *)name_array,
+                       sizeof(char const *) * (unsigned long)allocated_names);
+        name_array = (char const **)tmp;
+      }
+    }
     tmp___0 = names;
     names++;
     *(name_array + tmp___0) = name;
@@ -12278,7 +12366,18 @@ static int read_name_from_file(void) {
         } else {
           goto while_break;
         }
-
+        if (counter == name_buffer_length) {
+          if (name_buffer_length * 2UL < name_buffer_length) {
+            {
+              xalloc_die();
+            }
+          }
+          {
+            name_buffer_length *= 2UL;
+            tmp = xrealloc((void *)name_buffer, name_buffer_length + 2UL);
+            name_buffer = (char *)tmp;
+          }
+        }
         tmp___0 = counter;
         counter++;
         *(name_buffer + tmp___0) = (char)character;
@@ -12286,7 +12385,23 @@ static int read_name_from_file(void) {
     while_break: /* CIL Label */
         ;
     }
-
+    if (counter == 0UL) {
+      if (character == -1) {
+        return (0);
+      }
+    }
+    if (counter == name_buffer_length) {
+      if (name_buffer_length * 2UL < name_buffer_length) {
+        {
+          xalloc_die();
+        }
+      }
+      {
+        name_buffer_length *= 2UL;
+        tmp___1 = xrealloc((void *)name_buffer, name_buffer_length + 2UL);
+        name_buffer = (char *)tmp___1;
+      }
+    }
     *(name_buffer + counter) = (char)'\000';
     return (1);
   }
@@ -12334,7 +12449,11 @@ char *name_next(int change_dirs) {
               while_continue___0: /* CIL Label */
                   ;
                 name_buffer_length *= 2UL;
-
+                if (!name_buffer_length) {
+                  {
+                    xalloc_die();
+                  }
+                }
                 if (!(name_buffer_length < source_len)) {
                   goto while_break___0;
                 }
@@ -12379,7 +12498,11 @@ char *name_next(int change_dirs) {
           {
             tmp___4 = chdir((char const *)name_buffer);
           }
-
+          if (tmp___4 < 0) {
+            {
+              chdir_fatal((char const *)name_buffer);
+            }
+          }
           chdir_flag = 0;
         } else {
           if (change_dirs) {
@@ -12401,16 +12524,11 @@ char *name_next(int change_dirs) {
     while_break: /* CIL Label */
         ;
     }
-    if (name_file) {
-    }
+
     return ((char *)0);
   }
 }
-void name_close(void) {
-  int tmp;
 
-  { return; }
-}
 static struct name *buffer___0;
 static size_t allocated_size;
 static int change_dir;
@@ -12469,13 +12587,7 @@ void name_gather(void) {
             tmp___0 = name_next(0);
             dir = (char const *)tmp___0;
           }
-          if (!dir) {
-            {
-              tmp___1 = gettext("Missing file name after -C");
-              error(0, 0, (char const *)tmp___1);
-              fatal_exit();
-            }
-          }
+
           {
             tmp___2 = xstrdup(dir);
             change_dir = chdir_arg((char const *)tmp___2);
@@ -12497,11 +12609,7 @@ void name_gather(void) {
             while_continue___0: /* CIL Label */
                 ;
               allocated_size *= 2UL;
-              if (!allocated_size) {
-                {
-                  xalloc_die();
-                }
-              }
+
               if (!(allocated_size < needed_size)) {
                 goto while_break___0;
               }
@@ -12559,13 +12667,7 @@ void name_gather(void) {
                 tmp___6 = name_next(0);
                 dir___0 = (char const *)tmp___6;
               }
-              if (!dir___0) {
-                {
-                  tmp___7 = gettext("Missing file name after -C");
-                  error(0, 0, (char const *)tmp___7);
-                  fatal_exit();
-                }
-              }
+
               {
                 tmp___8 = xstrdup(dir___0);
                 change_dir___0 = chdir_arg((char const *)tmp___8);
@@ -12646,6 +12748,9 @@ struct name *addname(char const *string, int change_dir___0) {
           if ((int const) * (string + 0) == 91) {
             name->firstch = (char)0;
           } else {
+            if ((int const) * (string + 0) == 63) {
+              name->firstch = (char)0;
+            }
           }
         }
       }
@@ -12733,7 +12838,50 @@ int name_match(char const *path) {
       length = tmp;
     }
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        cursor = namelist;
+        if (!cursor) {
+          return (!files_from_option);
+        }
+        if (cursor->fake) {
+          {
+            chdir_do(cursor->change_dir);
+            namelist = (struct name *)0;
+            nametail = &namelist;
+          }
+          return (!files_from_option);
+        }
+        { cursor = namelist_match(path, length); }
+        if (cursor) {
+          if ((int const) * (path + cursor->length) == 47) {
+            if (recursion_option) {
+              if (cursor->found_count == 0UL) {
+                (cursor->found_count)++;
+              }
+            } else {
+              (cursor->found_count)++;
+            }
+          } else {
+            (cursor->found_count)++;
+          }
+          if (starting_file_option) {
+            {
+              free((void *)namelist);
+              namelist = (struct name *)0;
+              nametail = &namelist;
+            }
+          }
+          { chdir_do(cursor->change_dir); }
+          if (occurrence_option == 0UL) {
+            tmp___0 = cursor->found_count;
+          } else {
+            tmp___0 = (uintmax_t)(cursor->found_count == occurrence_option);
+          }
+          return ((int)tmp___0);
+        }
+      }
     while_break: /* CIL Label */
         ;
     }
@@ -12748,36 +12896,17 @@ _Bool all_names_found(struct tar_stat_info *p) {
     if (!p->file_name) {
       return ((_Bool)0);
     } else {
+      if (occurrence_option == 0UL) {
+        return ((_Bool)0);
+      } else {
+      }
     }
     {
       len = strlen((char const *)p->file_name);
       cursor = (struct name const *)namelist;
     }
     {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        if (!cursor) {
-          goto while_break;
-        }
-        if (cursor->regexp) {
-          return ((_Bool)0);
-        } else {
 
-          if (tmp) {
-          _L___3: /* CIL Label */
-            if (len >= (size_t)cursor->length) {
-            }
-          } else {
-            if (!cursor->fake) {
-              return ((_Bool)0);
-            } else {
-              goto _L___3;
-            }
-          }
-        }
-        cursor = (struct name const *)cursor->next;
-      }
     while_break: /* CIL Label */
         ;
     }
@@ -12840,26 +12969,7 @@ void names_notfound(void) {
     }
     namelist = (struct name *)0;
     nametail = &namelist;
-    if (same_order_option) {
-      {
-        while (1) {
-        while_continue___0: /* CIL Label */
-            ;
-          { name = name_next(1); }
-          if (!((unsigned long)name != (unsigned long)((void *)0))) {
-            goto while_break___0;
-          }
-          {
-            tmp___3 = quotearg_colon((char const *)name);
-            tmp___4 = gettext("%s: Not found in archive");
-            error(0, 0, (char const *)tmp___4, tmp___3);
-            exit_status = 2;
-          }
-        }
-      while_break___0: /* CIL Label */
-          ;
-      }
-    }
+
     return;
   }
 }
@@ -12886,12 +12996,7 @@ static struct name *merge_sort(struct name *list, int length,
         tmp = (*compare)((struct name const *)list,
                          (struct name const *)list->next);
       }
-      if (tmp > 0) {
-        result = list->next;
-        result->next = list;
-        list->next = (struct name *)0;
-        return (result);
-      }
+
       return (list);
     }
     first_list = list;
@@ -12951,7 +13056,11 @@ static struct name *merge_sort(struct name *list, int length,
     while_break___0: /* CIL Label */
         ;
     }
-
+    if (first_list) {
+      *merge_point = first_list;
+    } else {
+      *merge_point = second_list;
+    }
     return (result);
   }
 }
@@ -12987,97 +13096,7 @@ static int compare_names(struct name const *n1, struct name const *n2) {
     return (tmp___0);
   }
 }
-static void add_hierarchy_to_namelist(struct name *name, dev_t device) {
-  char *path;
-  char *buffer___2;
-  char *tmp;
-  size_t name_length;
-  size_t allocated_length;
-  char *namebuf;
-  void *tmp___0;
-  char *string;
-  size_t string_length;
-  int change_dir___0;
-  size_t tmp___1;
-  void *tmp___2;
-  struct name *tmp___3;
-  char *__cil_tmp16;
 
-  {
-    {
-      path = name->name;
-      tmp = get_directory_contents(path, device);
-      buffer___2 = tmp;
-    }
-    if (!buffer___2) {
-      name->dir_contents = "\000\000\000\000";
-    } else {
-      name_length = name->length;
-      if (name_length >= 100UL) {
-        allocated_length = name_length + 100UL;
-      } else {
-        allocated_length = (size_t)100;
-      }
-      {
-        tmp___0 = xmalloc(allocated_length + 1UL);
-        namebuf = (char *)tmp___0;
-        change_dir___0 = name->change_dir;
-        name->dir_contents = (char const *)buffer___2;
-        strcpy((char * /* __restrict  */)namebuf,
-               (char const * /* __restrict  */)path);
-      }
-      if (!((int)*(namebuf + (name_length - 1UL)) == 47)) {
-        tmp___1 = name_length;
-        name_length++;
-        *(namebuf + tmp___1) = (char)'/';
-        *(namebuf + name_length) = (char)'\000';
-      }
-      string = buffer___2;
-      {
-        while (1) {
-        while_continue: /* CIL Label */
-            ;
-          if (!*string) {
-            goto while_break;
-          }
-          { string_length = strlen((char const *)string); }
-          if ((int)*string == 68) {
-            if (allocated_length <= name_length + string_length) {
-              {
-                while (1) {
-                while_continue___0: /* CIL Label */
-                    ;
-                  allocated_length *= 2UL;
-
-                  if (!(allocated_length <= name_length + string_length)) {
-                    goto while_break___0;
-                  }
-                }
-              while_break___0: /* CIL Label */
-                  ;
-              }
-              {
-                tmp___2 = xrealloc((void *)namebuf, allocated_length + 1UL);
-                namebuf = (char *)tmp___2;
-              }
-            }
-            {
-              strcpy((char * /* __restrict  */)(namebuf + name_length),
-                     (char const * /* __restrict  */)(string + 1));
-              tmp___3 = addname((char const *)namebuf, change_dir___0);
-              add_hierarchy_to_namelist(tmp___3, device);
-            }
-          }
-          string += string_length + 1UL;
-        }
-      while_break: /* CIL Label */
-          ;
-      }
-      { free((void *)namebuf); }
-    }
-    return;
-  }
-}
 void collect_and_sort_names(void) {
   struct name *name;
   struct name *next_name;
@@ -13089,11 +13108,7 @@ void collect_and_sort_names(void) {
 
   {
     { name_gather(); }
-    if (listed_incremental_option) {
-      {
-        read_directory_file();
-      }
-    }
+
     if (!namelist) {
       {
         addname(".", 0);
@@ -13108,6 +13123,10 @@ void collect_and_sort_names(void) {
           goto while_break;
         }
         next_name = name->next;
+        if (name->found_count) {
+          goto __Cont;
+        } else {
+        }
 
         { chdir_do(name->change_dir); }
         if (name->fake) {
@@ -13123,12 +13142,7 @@ void collect_and_sort_names(void) {
           }
           goto __Cont;
         }
-        if ((statbuf.st_mode & 61440U) == 16384U) {
-          {
-            (name->found_count)++;
-            add_hierarchy_to_namelist(name, statbuf.st_dev);
-          }
-        }
+
       __Cont:
         name = next_name;
       }
@@ -13185,14 +13199,11 @@ struct name *name_scan(char const *path) {
 char *name_from_list(void) {
 
   {
-
+    if (!gnu_list_name) {
+      gnu_list_name = namelist;
+    }
     {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
 
-        gnu_list_name = gnu_list_name->next;
-      }
     while_break: /* CIL Label */
         ;
     }
@@ -13238,11 +13249,7 @@ char *new_name(char const *path, char const *name) {
       namesize = tmp___0 + 1UL;
     }
     if (pathlen) {
-      if (!((int const) * (path + (pathlen - 1UL)) == 47)) {
-        tmp___2 = 1;
-      } else {
-        tmp___2 = 0;
-      }
+
     } else {
       tmp___2 = 0;
     }
@@ -13267,13 +13274,90 @@ _Bool excluded_name(char const *name) {
     return (tmp);
   }
 }
+static unsigned int hash_string_hasher(void const *name,
+                                       unsigned int n_buckets) {
+  size_t tmp;
 
+  {
+    { tmp = hash_string((char const *)name, (size_t)n_buckets); }
+    return ((unsigned int)tmp);
+  }
+}
+static _Bool hash_string_compare(void const *name1, void const *name2) {
+  int tmp;
+
+  {
+    { tmp = strcmp((char const *)name1, (char const *)name2); }
+    return ((_Bool)(tmp == 0));
+  }
+}
+static _Bool hash_string_insert(Hash_table **table___0, char const *string) {
+  Hash_table *t;
+  char *s;
+  char *tmp;
+  char *e;
+  Hash_table *tmp___0;
+  void *tmp___1;
+
+  {
+    {
+      t = *table___0;
+      tmp = xstrdup(string);
+      s = tmp;
+    }
+    if (t) {
+      goto _L;
+    } else {
+      {
+        t = hash_initialize(
+            (size_t)0, (Hash_tuning const *)0,
+            (size_t(*)(void const *, size_t))(&hash_string_hasher),
+            &hash_string_compare, (void (*)(void *))0);
+        tmp___0 = t;
+        *table___0 = tmp___0;
+      }
+      if (tmp___0) {
+      _L: {
+        tmp___1 = hash_insert(t, (void const *)s);
+        e = (char *)tmp___1;
+      }
+        if (!e) {
+          {
+            xalloc_die();
+          }
+        }
+      } else {
+        { xalloc_die(); }
+      }
+    }
+    if ((unsigned long)e == (unsigned long)s) {
+      return ((_Bool)1);
+    } else {
+      { free((void *)s); }
+      return ((_Bool)0);
+    }
+  }
+}
 static _Bool hash_string_lookup(Hash_table const *table___0,
                                 char const *string) {
   void *tmp;
   int tmp___0;
 
-  { return ((_Bool)tmp___0); }
+  {
+    if (table___0) {
+      {
+        tmp = hash_lookup(table___0, (void const *)string);
+      }
+      if (tmp) {
+        tmp___0 = 1;
+      } else {
+        tmp___0 = 0;
+      }
+    } else {
+      tmp___0 = 0;
+    }
+    return ((_Bool)tmp___0);
+  }
 }
 static Hash_table *avoided_name_table;
 
@@ -13306,7 +13390,69 @@ char *safer_name_suffix(char const *file_name, _Bool link_target) {
   char *__cil_tmp12;
 
   {
-
+    if (absolute_names_option) {
+      p = file_name;
+    } else {
+      prefix_len = (size_t)0;
+      p = file_name + prefix_len;
+      {
+        while (1) {
+        while_continue: /* CIL Label */
+            ;
+          if (!*p) {
+            goto while_break;
+          }
+          if ((int const) * (p + 0) == 46) {
+          }
+          {
+            while (1) {
+            while_continue___0: /* CIL Label */
+                ;
+              tmp = p;
+              p++;
+              c = (char)*tmp;
+              if ((int)c == 47) {
+                goto while_break___0;
+              }
+              if (!*p) {
+                goto while_break___0;
+              }
+            }
+          while_break___0: /* CIL Label */
+              ;
+          }
+        }
+      while_break: /* CIL Label */
+          ;
+      }
+      p = file_name + prefix_len;
+      {
+        while (1) {
+        while_continue___1: /* CIL Label */
+            ;
+          if (!((int const) * p == 47)) {
+            goto while_break___1;
+          }
+          goto __Cont;
+        __Cont:
+          p++;
+        }
+      while_break___1: /* CIL Label */
+          ;
+      }
+      prefix_len = (size_t)(p - file_name);
+      if (prefix_len) {
+        {
+          tmp___0 = __builtin_alloca(prefix_len + 1UL);
+          prefix = (char *)tmp___0;
+          memcpy((void * /* __restrict  */)prefix,
+                 (void const * /* __restrict  */)file_name, prefix_len);
+          *(prefix + prefix_len) = (char)'\000';
+          tmp___2 = hash_string_insert(&prefix_table[link_target],
+                                       (char const *)prefix);
+        }
+      }
+    }
     if (!*p) {
 
       p = ".";
@@ -13341,6 +13487,24 @@ size_t stripped_prefix_len(char const *file_name, size_t num) {
         }
         slash = (_Bool)((int const) * p == 47);
         p++;
+        if (slash) {
+          num--;
+          if (num == 0UL) {
+            return ((size_t)(p - file_name));
+          }
+          {
+            while (1) {
+            while_continue___1: /* CIL Label */
+                ;
+              if (!((int const) * p == 47)) {
+                goto while_break___1;
+              }
+              p++;
+            }
+          while_break___1: /* CIL Label */
+              ;
+          }
+        }
       }
     while_break___0: /* CIL Label */
         ;
@@ -13355,7 +13519,35 @@ _Bool contains_dot_dot(char const *name) {
   {
     p = name + 0;
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if ((int const) * (p + 0) == 46) {
+          if ((int const) * (p + 1) == 46) {
+            if ((int const) * (p + 2) == 47) {
+              return ((_Bool)1);
+            } else {
+            }
+          }
+        }
+        {
+          while (1) {
+          while_continue___0: /* CIL Label */
+              ;
+            tmp = p;
+            p++;
+            if (!*tmp) {
+              return ((_Bool)0);
+            }
+            if (!(!((int const) * p == 47))) {
+              goto while_break___0;
+            }
+          }
+        while_break___0: /* CIL Label */
+            ;
+        }
+        p++;
+      }
     while_break: /* CIL Label */
         ;
     }
@@ -13534,85 +13726,7 @@ static long get_status(int handle) {
     return (-1L);
   }
 }
-static off_t get_status_off(int handle) {
-  char command_buffer[64];
-  char const *status;
-  char *tmp;
-  off_t count;
-  int negative;
-  int digit;
-  char const *tmp___0;
-  off_t c10;
-  off_t nc;
-  int tmp___1;
-  int tmp___2;
-  void *__cil_tmp13;
 
-  {
-    {
-      tmp = get_status_string(handle, command_buffer);
-      status = (char const *)tmp;
-    }
-    if (!status) {
-      return ((off_t)-1);
-    } else {
-      count = (off_t)0;
-      {
-        while (1) {
-        while_continue: /* CIL Label */
-            ;
-          if (!((int const) * status == 32)) {
-            if (!((int const) * status == 9)) {
-              goto while_break;
-            }
-          }
-          goto __Cont;
-        __Cont:
-          status++;
-        }
-      while_break: /* CIL Label */
-          ;
-      }
-      negative = (int const) * status == 45;
-      if (negative) {
-        tmp___1 = 1;
-      } else {
-      }
-      status += tmp___1;
-      {
-        while (1) {
-        while_continue___0: /* CIL Label */
-            ;
-          tmp___0 = status;
-          status++;
-          digit = (int)((int const) * tmp___0 - 48);
-          if (9U < (unsigned int)digit) {
-            goto while_break___0;
-          } else {
-            c10 = 10L * count;
-
-            if (c10 / 10L != count) {
-              return ((off_t)-1);
-            } else {
-              if (negative) {
-                tmp___2 = c10 < nc;
-              } else {
-                tmp___2 = nc < c10;
-              }
-              if (tmp___2) {
-                return ((off_t)-1);
-              }
-            }
-            count = nc;
-          }
-        }
-      while_break___0: /* CIL Label */
-          ;
-      }
-      return (count);
-    }
-  }
-}
 static void encode_oflag(char *buf, int oflag) {
   char *__cil_tmp3;
   char *__cil_tmp4;
@@ -13634,7 +13748,12 @@ static void encode_oflag(char *buf, int oflag) {
               (char const * /* __restrict  */) "%d ", oflag);
     }
     {
-
+      if ((oflag & 3) == 0) {
+        goto case_0;
+      }
+      if ((oflag & 3) == 2) {
+        goto case_2;
+      }
       if ((oflag & 3) == 1) {
         goto case_1;
       }
@@ -13667,19 +13786,14 @@ static void encode_oflag(char *buf, int oflag) {
                (char const * /* __restrict  */) "|O_CREAT");
       }
     }
-    if (oflag & 4096) {
+
+    if (oflag & 2048) {
       {
         strcat((char * /* __restrict  */)buf,
-               (char const * /* __restrict  */) "|O_DSYNC");
+               (char const * /* __restrict  */) "|O_NONBLOCK");
       }
     }
 
-    if (oflag & 512) {
-      {
-        strcat((char * /* __restrict  */)buf,
-               (char const * /* __restrict  */) "|O_TRUNC");
-      }
-    }
     return;
   }
 }
@@ -13726,7 +13840,19 @@ int rmt_open__(char const *path, int open_mode, int bias,
   {
     remote_pipe_number = 0;
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!(remote_pipe_number < 4)) {
+          goto while_break;
+        }
+        if (from_remote[remote_pipe_number][0] == -1) {
+          if (to_remote[remote_pipe_number][1] == -1) {
+            goto while_break;
+          }
+        }
+        remote_pipe_number++;
+      }
     while_break: /* CIL Label */
         ;
     }
@@ -13752,7 +13878,9 @@ int rmt_open__(char const *path, int open_mode, int bias,
           if ((int)*cursor == 64) {
             goto case_64;
           }
-
+          if ((int)*cursor == 58) {
+            goto case_58;
+          }
           goto switch_default;
         switch_default: /* CIL Label */
           goto switch_break;
@@ -13785,19 +13913,42 @@ int rmt_open__(char const *path, int open_mode, int bias,
       remote_shell_basename = (char const *)tmp___1;
       tmp___4 = pipe(to_remote[remote_pipe_number]);
     }
-
-    { status = fork(); }
-    if (status == -1) {
-      {
-        tmp___6 = __errno_location();
-        e___0 = *tmp___6;
+    if (tmp___4 == -1) {
+      goto _L;
+    } else {
+      { tmp___5 = pipe(from_remote[remote_pipe_number]); }
+      if (tmp___5 == -1) {
+      _L: {
+        tmp___2 = __errno_location();
+        e = *tmp___2;
         free((void *)path_copy);
-        tmp___7 = __errno_location();
-        *tmp___7 = e___0;
+        tmp___3 = __errno_location();
+        *tmp___3 = e;
       }
-      return (-1);
+        return (-1);
+      }
     }
+    { status = fork(); }
 
+    if (status == 0) {
+      {
+        close(0);
+        dup(to_remote[remote_pipe_number][0]);
+        close(to_remote[remote_pipe_number][0]);
+        close(to_remote[remote_pipe_number][1]);
+        close(1);
+        dup(from_remote[remote_pipe_number][1]);
+        close(from_remote[remote_pipe_number][0]);
+        close(from_remote[remote_pipe_number][1]);
+        sys_reset_uid_gid();
+      }
+
+      {
+        tmp___8 = gettext("Cannot execute remote shell");
+        tmp___9 = __errno_location();
+        error(128, *tmp___9, (char const *)tmp___8);
+      }
+    }
     {
       close(from_remote[remote_pipe_number][1]);
       close(to_remote[remote_pipe_number][0]);
@@ -13949,9 +14100,7 @@ size_t rmt_write__(int handle, char *buffer___2, size_t length) {
       if (r < 0L) {
         return ((size_t)0);
       }
-      if ((size_t)r == length) {
-        return (length);
-      }
+
       written = (size_t)r;
     }
     { _rmt_shutdown(handle, 5); }
@@ -13998,15 +14147,7 @@ off_t rmt_lseek__(int handle, off_t offset, int whence) {
       *p = (char)'-';
     }
     {
-      if (whence == 0) {
-        goto case_0;
-      }
-      if (whence == 1) {
-        goto case_1;
-      }
-      if (whence == 2) {
-        goto case_2;
-      }
+
       goto switch_default;
     case_0: /* CIL Label */
       whence = 0;
@@ -14060,7 +14201,11 @@ int rmt_ioctl__(int handle, int operation, char *argument) {
                 (sizeof(struct mtop) << 16))) {
         goto case_exp;
       }
-
+      if (operation ==
+          (int)((unsigned long)(((2U << 30) | (unsigned int)(109 << 8)) | 2U) |
+                (sizeof(struct mtget) << 16))) {
+        goto case_exp___0;
+      }
       goto switch_default;
     switch_default: { /* CIL Label */
       tmp = __errno_location();
@@ -14108,14 +14253,7 @@ int rmt_ioctl__(int handle, int operation, char *argument) {
     case_exp___0: { /* CIL Label */
       tmp___2 = do_command(handle, "S");
     }
-      if (tmp___2 == -1) {
-        return (-1);
-      } else {
-        { status = get_status(handle); }
-        if (status == -1L) {
-          return (-1);
-        }
-      }
+
       {
         while (1) {
         while_continue___0: /* CIL Label */
@@ -14146,7 +14284,9 @@ int rmt_ioctl__(int handle, int operation, char *argument) {
       while_break___0: /* CIL Label */
           ;
       }
-
+      if (((struct mtget *)argument)->mt_type < 256L) {
+        return (0);
+      }
       counter = (size_t)0;
       {
         while (1) {
@@ -14180,25 +14320,54 @@ static _Bool tar_sparse_init(struct tar_sparse_file *file) {
 
   {
     file->dumped_size = (size_t)0;
-
+    if ((file->optab)->init) {
+      {
+        tmp = (*((file->optab)->init))(file);
+      }
+      return (tmp);
+    }
     return ((_Bool)1);
   }
 }
 static _Bool tar_sparse_done(struct tar_sparse_file *file) {
   _Bool tmp;
 
-  { return ((_Bool)1); }
+  {
+    if ((file->optab)->done) {
+      {
+        tmp = (*((file->optab)->done))(file);
+      }
+      return (tmp);
+    }
+    return ((_Bool)1);
+  }
 }
 static _Bool tar_sparse_scan(struct tar_sparse_file *file,
                              enum sparse_scan_state state, void *block) {
   _Bool tmp;
 
-  { return ((_Bool)1); }
+  {
+    if ((file->optab)->scan_block) {
+      {
+        tmp = (*((file->optab)->scan_block))(file, state, block);
+      }
+      return (tmp);
+    }
+    return ((_Bool)1);
+  }
 }
 static _Bool tar_sparse_dump_region(struct tar_sparse_file *file, size_t i) {
   _Bool tmp;
 
-  { return ((_Bool)0); }
+  {
+    if ((file->optab)->dump_region) {
+      {
+        tmp = (*((file->optab)->dump_region))(file, i);
+      }
+      return (tmp);
+    }
+    return ((_Bool)0);
+  }
 }
 static _Bool tar_sparse_extract_region(struct tar_sparse_file *file, size_t i) {
   _Bool tmp;
@@ -14216,7 +14385,15 @@ static _Bool tar_sparse_extract_region(struct tar_sparse_file *file, size_t i) {
 static _Bool tar_sparse_dump_header(struct tar_sparse_file *file) {
   _Bool tmp;
 
-  { return ((_Bool)0); }
+  {
+    if ((file->optab)->dump_header) {
+      {
+        tmp = (*((file->optab)->dump_header))(file);
+      }
+      return (tmp);
+    }
+    return ((_Bool)0);
+  }
 }
 static _Bool tar_sparse_decode_header(struct tar_sparse_file *file) {
   _Bool tmp;
@@ -14263,7 +14440,15 @@ static void sparse_add_map(struct tar_sparse_file *file, struct sp_array *sp) {
   size_t tmp___1;
 
   {
-
+    if ((unsigned long)(file->stat_info)->sparse_map ==
+        (unsigned long)((void *)0)) {
+      {
+        tmp = xmalloc(21UL * sizeof(*((file->stat_info)->sparse_map + 0)));
+        (file->stat_info)->sparse_map = (struct sp_array *)tmp;
+        (file->stat_info)->sparse_map_size = (size_t)21;
+      }
+    } else {
+    }
     tmp___1 = (file->stat_info)->sparse_map_avail;
     ((file->stat_info)->sparse_map_avail)++;
     *((file->stat_info)->sparse_map + tmp___1) = *sp;
@@ -14298,7 +14483,9 @@ static _Bool sparse_scan_file(struct tar_sparse_file *file) {
       (file->stat_info)->archive_file_size = (off_t)0;
       tmp___0 = tar_sparse_scan(file, (enum sparse_scan_state)0, (void *)0);
     }
-
+    if (!tmp___0) {
+      return ((_Bool)0);
+    }
     {
       while (1) {
       while_continue: /* CIL Label */
@@ -14315,7 +14502,17 @@ static _Bool sparse_scan_file(struct tar_sparse_file *file) {
         }
         { tmp___3 = zero_block_p(buffer___1, count); }
         if (tmp___3) {
-
+          if (sp.numbytes) {
+            {
+              sparse_add_map(file, &sp);
+              sp.numbytes = (size_t)0;
+              tmp___1 =
+                  tar_sparse_scan(file, (enum sparse_scan_state)1, (void *)0);
+            }
+            if (!tmp___1) {
+              return ((_Bool)0);
+            }
+          }
         } else {
           if (sp.numbytes == 0UL) {
             sp.offset = (off_t)offset;
@@ -14326,6 +14523,9 @@ static _Bool sparse_scan_file(struct tar_sparse_file *file) {
                 (off_t)((size_t)(file->stat_info)->archive_file_size + count);
             tmp___2 = tar_sparse_scan(file, (enum sparse_scan_state)1,
                                       (void *)(buffer___1));
+          }
+          if (!tmp___2) {
+            return ((_Bool)0);
           }
         }
         {
@@ -14355,16 +14555,20 @@ static _Bool sparse_select_optab(struct tar_sparse_file *file) {
   unsigned int tmp;
 
   {
-
+    if ((unsigned int)current_format == 0U) {
+      tmp = (unsigned int)archive_format;
+    } else {
+      tmp = (unsigned int)current_format;
+    }
     {
 
-      if (tmp == 2U) {
-        goto case_2;
-      }
-      if (tmp == 6U) {
-        goto case_2;
+      if (tmp == 3U) {
+        goto case_1;
       }
 
+      if (tmp == 4U) {
+        goto case_4;
+      }
       if (tmp == 5U) {
         goto case_5;
       }
@@ -14472,7 +14676,11 @@ static _Bool sparse_extract_region(struct tar_sparse_file *file, size_t i) {
       {
         tmp___0 = sys_truncate(file->fd);
       }
-
+      if (tmp___0) {
+        {
+          truncate_warn((char const *)(file->stat_info)->orig_file_name);
+        }
+      }
     } else {
       {
         while (1) {
@@ -14535,7 +14743,16 @@ enum dump_status sparse_dump_file(int fd, struct tar_stat_info *st) {
       file.fd = fd;
       tmp = sparse_select_optab(&file);
     }
-
+    if (tmp) {
+      {
+        tmp___0 = tar_sparse_init(&file);
+      }
+      if (!tmp___0) {
+        return ((enum dump_status)3);
+      }
+    } else {
+      return ((enum dump_status)3);
+    }
     { rc___1 = sparse_scan_file(&file); }
     if (rc___1) {
       if ((file.optab)->dump_region) {
@@ -14548,7 +14765,13 @@ enum dump_status sparse_dump_file(int fd, struct tar_stat_info *st) {
             while (1) {
             while_continue: /* CIL Label */
                 ;
-
+              if (rc___1) {
+                if (!(i < (file.stat_info)->sparse_map_avail)) {
+                  goto while_break;
+                }
+              } else {
+                goto while_break;
+              }
               {
                 rc___1 = tar_sparse_dump_region(&file, i);
                 i++;
@@ -14565,7 +14788,15 @@ enum dump_status sparse_dump_file(int fd, struct tar_stat_info *st) {
                           file.dumped_size));
       tmp___1 = tar_sparse_done(&file);
     }
-
+    if (tmp___1) {
+      if (rc___1) {
+        tmp___2 = 0;
+      } else {
+        tmp___2 = 1;
+      }
+    } else {
+      tmp___2 = 1;
+    }
     return ((enum dump_status)tmp___2);
   }
 }
@@ -14584,7 +14815,9 @@ _Bool sparse_member_p(struct tar_stat_info *st) {
 
   {
     { tmp = sparse_select_optab(&file); }
-
+    if (!tmp) {
+      return ((_Bool)0);
+    }
     {
       file.stat_info = st;
       tmp___0 = tar_sparse_member_p(&file);
@@ -14630,7 +14863,9 @@ enum dump_status sparse_extract_file(int fd, struct tar_stat_info *st,
       {
         tmp___0 = tar_sparse_init(&file);
       }
-
+      if (!tmp___0) {
+        return ((enum dump_status)3);
+      }
     } else {
       return ((enum dump_status)3);
     }
@@ -14642,7 +14877,13 @@ enum dump_status sparse_extract_file(int fd, struct tar_stat_info *st,
       while (1) {
       while_continue: /* CIL Label */
           ;
-
+        if (rc___1) {
+          if (!(i < (file.stat_info)->sparse_map_avail)) {
+            goto while_break;
+          }
+        } else {
+          goto while_break;
+        }
         {
           rc___1 = tar_sparse_extract_region(&file, i);
           i++;
@@ -14657,7 +14898,11 @@ enum dump_status sparse_extract_file(int fd, struct tar_stat_info *st,
       tmp___1 = tar_sparse_done(&file);
     }
     if (tmp___1) {
-
+      if (rc___1) {
+        tmp___2 = 0;
+      } else {
+        tmp___2 = 1;
+      }
     } else {
       tmp___2 = 1;
     }
@@ -14679,7 +14924,16 @@ enum dump_status sparse_skip_file(struct tar_stat_info *st) {
       file.fd = -1;
       tmp = sparse_select_optab(&file);
     }
-
+    if (tmp) {
+      {
+        tmp___0 = tar_sparse_init(&file);
+      }
+      if (!tmp___0) {
+        return ((enum dump_status)3);
+      }
+    } else {
+      return ((enum dump_status)3);
+    }
     {
       rc___1 = tar_sparse_decode_header(&file);
       skip_file((file.stat_info)->archive_file_size);
@@ -14713,14 +14967,117 @@ static _Bool check_sparse_region(struct tar_sparse_file *file, off_t beg,
       return ((_Bool)0);
     }
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!(beg < end)) {
+          goto while_break;
+        }
+        rdsize = (size_t)(end - beg);
+        if (rdsize > 512UL) {
+          rdsize = (size_t)512;
+        }
+        {
+          memset((void *)(diff_buffer___0), 0, (size_t)512);
+          bytes_read = safe_read(file->fd, (void *)(diff_buffer___0), rdsize);
+        }
+        if (bytes_read == 0xffffffffffffffffUL) {
+          {
+            read_diag_details((char const *)(file->stat_info)->orig_file_name,
+                              beg, rdsize);
+          }
+          return ((_Bool)0);
+        }
+        { tmp___1 = zero_block_p(diff_buffer___0, bytes_read); }
+        if (!tmp___1) {
+          {
+            tmp___0 = gettext("File fragment at %lu is not a hole");
+            report_difference(file->stat_info, (char const *)tmp___0, beg);
+          }
+          return ((_Bool)0);
+        }
+        beg = (off_t)((size_t)beg + bytes_read);
+      }
     while_break: /* CIL Label */
         ;
     }
     return ((_Bool)1);
   }
 }
+static _Bool check_data_region(struct tar_sparse_file *file, size_t i) {
+  size_t size_left;
+  _Bool tmp;
+  size_t bytes_read;
+  size_t rdsize;
+  union block *blk;
+  union block *tmp___0;
+  char *tmp___1;
+  char *tmp___2;
+  int tmp___3;
+  char *__cil_tmp12;
+  char *__cil_tmp13;
 
+  {
+    {
+      tmp =
+          lseek_or_error(file, ((file->stat_info)->sparse_map + i)->offset, 0);
+    }
+    if (!tmp) {
+      return ((_Bool)0);
+    }
+    size_left = ((file->stat_info)->sparse_map + i)->numbytes;
+    {
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!(size_left > 0UL)) {
+          goto while_break;
+        }
+        if (size_left > 512UL) {
+          rdsize = (size_t)512;
+        } else {
+          rdsize = size_left;
+        }
+        {
+          tmp___0 = find_next_block();
+          blk = tmp___0;
+        }
+
+        {
+          set_next_block_after(blk);
+          bytes_read = safe_read(file->fd, (void *)(diff_buffer___0), rdsize);
+        }
+        if (bytes_read == 0xffffffffffffffffUL) {
+          {
+            read_diag_details(
+                (char const *)(file->stat_info)->orig_file_name,
+                (off_t)(((size_t)((file->stat_info)->sparse_map + i)->offset +
+                         ((file->stat_info)->sparse_map + i)->numbytes) -
+                        size_left),
+                rdsize);
+          }
+          return ((_Bool)0);
+        }
+        {
+          file->dumped_size += bytes_read;
+          size_left -= bytes_read;
+          tmp___3 = memcmp((void const *)(blk->buffer),
+                           (void const *)(diff_buffer___0), rdsize);
+        }
+        if (tmp___3) {
+          {
+            tmp___2 = gettext("Contents differ");
+            report_difference(file->stat_info, (char const *)tmp___2);
+          }
+          return ((_Bool)0);
+        }
+      }
+    while_break: /* CIL Label */
+        ;
+    }
+    return ((_Bool)1);
+  }
+}
 _Bool sparse_diff_file(int fd, struct tar_stat_info *st) {
   _Bool rc___1;
   struct tar_sparse_file file;
@@ -14740,7 +15097,16 @@ _Bool sparse_diff_file(int fd, struct tar_stat_info *st) {
       file.fd = fd;
       tmp = sparse_select_optab(&file);
     }
-
+    if (tmp) {
+      {
+        tmp___0 = tar_sparse_init(&file);
+      }
+      if (!tmp___0) {
+        return ((_Bool)1);
+      }
+    } else {
+      return ((_Bool)1);
+    }
     {
       rc___1 = tar_sparse_decode_header(&file);
       i = (size_t)0;
@@ -14749,12 +15115,29 @@ _Bool sparse_diff_file(int fd, struct tar_stat_info *st) {
       while (1) {
       while_continue: /* CIL Label */
           ;
-
+        if (rc___1) {
+          if (!(i < (file.stat_info)->sparse_map_avail)) {
+            goto while_break;
+          }
+        } else {
+          goto while_break;
+        }
         {
           tmp___1 = check_sparse_region(
               &file, offset, ((file.stat_info)->sparse_map + i)->offset);
         }
-
+        if (tmp___1) {
+          {
+            tmp___2 = check_data_region(&file, i);
+          }
+          if (tmp___2) {
+            tmp___3 = 1;
+          } else {
+            tmp___3 = 0;
+          }
+        } else {
+          tmp___3 = 0;
+        }
         rc___1 = (_Bool)tmp___3;
         offset = (off_t)((size_t)((file.stat_info)->sparse_map + i)->offset +
                          ((file.stat_info)->sparse_map + i)->numbytes);
@@ -14778,7 +15161,32 @@ static _Bool oldgnu_sparse_member_p(struct tar_sparse_file *file
 
   { return ((_Bool)((int)current_header->header.typeflag == 83)); }
 }
+static enum oldgnu_add_status oldgnu_add_sparse(struct tar_sparse_file *file,
+                                                struct sparse *s) {
+  struct sp_array sp;
 
+  {
+    if ((int)s->numbytes[0] == 0) {
+      return ((enum oldgnu_add_status)1);
+    }
+    {
+      sp.offset = off_from_header((char const *)(s->offset), sizeof(s->offset));
+      sp.numbytes =
+          size_from_header((char const *)(s->numbytes), sizeof(s->numbytes));
+    }
+    if (sp.offset < 0L) {
+      return ((enum oldgnu_add_status)2);
+    } else {
+      if ((size_t)(file->stat_info)->stat.st_size <
+          (size_t)sp.offset + sp.numbytes) {
+        return ((enum oldgnu_add_status)2);
+      } else {
+      }
+    }
+    { sparse_add_map(file, &sp); }
+    return ((enum oldgnu_add_status)0);
+  }
+}
 static _Bool oldgnu_fixup_header(struct tar_sparse_file *file) {
 
   {
@@ -14806,13 +15214,55 @@ static _Bool oldgnu_get_sparse_info(struct tar_sparse_file *file) {
     (file->stat_info)->sparse_map_size = (size_t)0;
     i = (size_t)0;
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!(i < 4UL)) {
+          goto while_break;
+        }
+        { rc = oldgnu_add_sparse(file, &h->oldgnu_header.sp[i]); }
+        if ((unsigned int)rc != 0U) {
+          goto while_break;
+        }
+        i++;
+      }
     while_break: /* CIL Label */
         ;
     }
     ext_p = (int)h->oldgnu_header.isextended;
     {
+      while (1) {
+      while_continue___0: /* CIL Label */
+          ;
 
+        { h = find_next_block(); }
+        if (!h) {
+          {
+            tmp = gettext("Unexpected EOF in archive");
+            error(0, 0, (char const *)tmp);
+            exit_status = 2;
+          }
+          return ((_Bool)0);
+        }
+        {
+          set_next_block_after(h);
+          i = (size_t)0;
+        }
+        {
+          while (1) {
+          while_continue___1: /* CIL Label */
+              ;
+
+            {
+              rc = oldgnu_add_sparse(file, &h->sparse_header.sp[i]);
+              i++;
+            }
+          }
+        while_break___1: /* CIL Label */
+            ;
+        }
+        ext_p = (int)h->sparse_header.isextended;
+      }
     while_break___0: /* CIL Label */
         ;
     }
@@ -14833,7 +15283,26 @@ static void oldgnu_store_sparse_info(struct tar_sparse_file *file,
 
   {
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (*pindex < (file->stat_info)->sparse_map_avail) {
+          if (!(sparse_size > 0UL)) {
+            goto while_break;
+          }
+        } else {
+          goto while_break;
+        }
+        {
+          off_to_chars(((file->stat_info)->sparse_map + *pindex)->offset,
+                       sp->offset, sizeof(sp->offset));
+          size_to_chars(((file->stat_info)->sparse_map + *pindex)->numbytes,
+                        sp->numbytes, sizeof(sp->numbytes));
+          sparse_size--;
+          sp++;
+          (*pindex)++;
+        }
+      }
     while_break: /* CIL Label */
         ;
     }
@@ -14853,7 +15322,9 @@ static _Bool oldgnu_dump_header(struct tar_sparse_file *file) {
       blk = start_header(file->stat_info);
       blk->header.typeflag = (char)'S';
     }
-
+    if ((file->stat_info)->sparse_map_avail > 4UL) {
+      blk->oldgnu_header.isextended = (char)1;
+    }
     {
       off_to_chars((file->stat_info)->stat.st_size, blk->oldgnu_header.realsize,
                    sizeof(blk->oldgnu_header.realsize));
@@ -14866,7 +15337,24 @@ static _Bool oldgnu_dump_header(struct tar_sparse_file *file) {
       finish_header(file->stat_info, blk, block_ordinal);
     }
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!(i < (file->stat_info)->sparse_map_avail)) {
+          goto while_break;
+        }
+        {
+          blk = find_next_block();
+          memset((void *)(blk->buffer), 0, (size_t)512);
+          oldgnu_store_sparse_info(file, &i, blk->sparse_header.sp, (size_t)21);
+          set_next_block_after(blk);
+        }
+        if (i < (file->stat_info)->sparse_map_avail) {
+          blk->sparse_header.isextended = (char)1;
+        } else {
+          goto while_break;
+        }
+      }
     while_break: /* CIL Label */
         ;
     }
@@ -14915,22 +15403,7 @@ static _Bool pax_dump_header(struct tar_sparse_file *file) {
       i = (size_t)0;
     }
     {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        if (!(i < (file->stat_info)->sparse_map_avail)) {
-          goto while_break;
-        }
-        {
-          xheader_store("GNU.sparse.offset",
-                        (struct tar_stat_info const *)file->stat_info,
-                        (void *)(&i));
-          xheader_store("GNU.sparse.numbytes",
-                        (struct tar_stat_info const *)file->stat_info,
-                        (void *)(&i));
-          i++;
-        }
-      }
+
     while_break: /* CIL Label */
         ;
     }
@@ -14992,20 +15465,18 @@ _Bool sys_get_archive_stat(void) {
 _Bool sys_file_is_archive(struct tar_stat_info *p) {
   int tmp;
 
-  {
-    if (ar_dev) {
-
-    } else {
-      tmp = 0;
-    }
-    return ((_Bool)tmp);
-  }
+  { return ((_Bool)tmp); }
 }
 void sys_save_archive_dev_ino(void) {
 
   {
     if (!(archive >= 1 << 30)) {
-
+      if ((archive_stat.st_mode & 61440U) == 32768U) {
+        ar_dev = archive_stat.st_dev;
+        ar_ino = archive_stat.st_ino;
+      } else {
+        ar_dev = (dev_t)0;
+      }
     } else {
       ar_dev = (dev_t)0;
     }
@@ -15025,23 +15496,7 @@ void sys_detect_dev_null_output(void) {
 
   {
     { tmp = strcmp(*(archive_name_array + 0), dev_null); }
-    if (tmp == 0) {
-      tmp___1 = 1;
-    } else {
-      if (!(archive >= 1 << 30)) {
-        if ((archive_stat.st_mode & 61440U) == 8192U) {
-          {
-            tmp___0 = stat((char const * /* __restrict  */)(dev_null),
-                           (struct stat * /* __restrict  */)(&dev_null_stat));
-          }
 
-        } else {
-          tmp___1 = 0;
-        }
-      } else {
-        tmp___1 = 0;
-      }
-    }
     dev_null_output = (_Bool)tmp___1;
     return;
   }
@@ -15075,13 +15530,7 @@ void sys_drain_input_pipe(void) {
                   r = tmp___0;
                 }
               }
-              if (r != 0UL) {
-                if (!(r != 0xffffffffffffffffUL)) {
-                  goto while_break;
-                }
-              } else {
-                goto while_break;
-              }
+
               goto while_continue;
             }
           while_break: /* CIL Label */
@@ -15118,12 +15567,6 @@ void sys_wait_for_child(pid_t child_pid___0) {
             goto while_break;
           }
           { tmp = __errno_location(); }
-          if (*tmp != 4) {
-            {
-              waitpid_error(use_compress_program_option);
-            }
-            goto while_break;
-          }
         }
       while_break: /* CIL Label */
           ;
@@ -15184,14 +15627,7 @@ _Bool sys_compare_gid(struct stat *a, struct stat *b) {
 _Bool sys_compare_links(struct stat *link_data, struct stat *stat_data) {
   int tmp;
 
-  {
-    if (stat_data->st_dev == link_data->st_dev) {
-
-    } else {
-      tmp = 0;
-    }
-    return ((_Bool)tmp);
-  }
+  { return ((_Bool)tmp); }
 }
 int sys_truncate(int fd) {
   off_t pos;
@@ -15208,7 +15644,20 @@ int sys_truncate(int fd) {
     return (tmp___1);
   }
 }
+void sys_reset_uid_gid(void) {
+  __uid_t tmp;
+  __gid_t tmp___0;
 
+  {
+    {
+      tmp = getuid();
+      setuid(tmp);
+      tmp___0 = getgid();
+      setgid(tmp___0);
+    }
+    return;
+  }
+}
 static int is_regular_file(char const *name) {
   struct stat stbuf;
   int *tmp;
@@ -15349,118 +15798,55 @@ pid_t sys_child_open_for_compress(void) {
         {
           rmt_path__ = strchr(*(archive_name_array + 0), ':');
         }
-        if (rmt_path__) {
 
-        } else {
-          goto _L___1;
-        }
       } else {
       _L___1: { tmp___4 = is_regular_file(*(archive_name_array + 0)); }
+        if (tmp___4) {
+
+          {
+            archive = creat(*(archive_name_array + 0),
+                            (mode_t)(((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
+                                     ((256 | (256 >> 3)) | ((256 >> 3) >> 3))));
+          }
+          if (archive < 0) {
+            {
+              tmp___0 = __errno_location();
+              saved_errno = *tmp___0;
+            }
+
+            {
+              tmp___1 = __errno_location();
+              *tmp___1 = saved_errno;
+              open_fatal(*(archive_name_array + 0));
+            }
+          }
+          {
+            xdup2(archive, 1);
+            execlp(use_compress_program_option, use_compress_program_option,
+                   (char *)0);
+            exec_fatal(use_compress_program_option);
+          }
+        }
       }
     }
     {
       xpipe(child_pipe);
       grandchild_pid = xfork();
     }
-    if (grandchild_pid == 0) {
-      {
-        tmp___5 = gettext("tar (grandchild)");
-        program_name = (char const *)tmp___5;
-        xdup2(child_pipe[1], 1);
-        xclose(child_pipe[0]);
-        execlp(use_compress_program_option, use_compress_program_option,
-               (char *)0);
-        exec_fatal(use_compress_program_option);
-      }
-    }
+
     {
       xdup2(child_pipe[0], 0);
       xclose(child_pipe[1]);
       tmp___10 = strcmp(*(archive_name_array + 0), "-");
     }
-    if (tmp___10 == 0) {
-      archive = 1;
-    } else {
 
-      if (archive < 0) {
-        {
-          open_fatal(*(archive_name_array + 0));
-        }
-      }
-    }
     {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        status = (size_t)0;
-        length = (size_t)0;
-        cursor = record_start->buffer;
-        {
-          while (1) {
-          while_continue___0: /* CIL Label */
-              ;
-            if (!(length < record_size)) {
-              goto while_break___0;
-            }
-            {
-              size = record_size - length;
-              status = safe_read(0, (void *)cursor, size);
-            }
-            if (status == 0xffffffffffffffffUL) {
-              {
-                read_fatal(use_compress_program_option);
-              }
-            }
-            if (status == 0UL) {
-              goto while_break___0;
-            }
-            length += status;
-            cursor += status;
-          }
-        while_break___0: /* CIL Label */
-            ;
-        }
-        if (status == 0UL) {
-          if (length > 0UL) {
-            {
-              memset((void *)(record_start->buffer + length), 0,
-                     record_size - length);
-              status = sys_write_archive_buffer();
-            }
-            if (status != record_size) {
-              {
-                archive_write_error((ssize_t)status);
-              }
-            }
-          }
-          goto while_break;
-        }
-        { status = sys_write_archive_buffer(); }
-        if (status != record_size) {
-          {
-            archive_write_error((ssize_t)status);
-          }
-        }
-      }
+
     while_break: /* CIL Label */
         ;
     }
     {
-      while (1) {
-      while_continue___1: /* CIL Label */
-          ;
-        { tmp___12 = waitpid(grandchild_pid, &wait_status, 0); }
-        if (!(tmp___12 == -1)) {
-          goto while_break___1;
-        }
-        { tmp___11 = __errno_location(); }
-        if (*tmp___11 != 4) {
-          {
-            waitpid_error(use_compress_program_option);
-          }
-          goto while_break___1;
-        }
-      }
+
     while_break___1: /* CIL Label */
         ;
     }
@@ -15535,14 +15921,6 @@ pid_t sys_child_open_for_uncompress(void) {
       tmp___0 = strcmp(*(archive_name_array + 0), "-");
     }
     if (tmp___0 != 0) {
-      if (!force_local_option) {
-        {
-          rmt_path__ = strchr(*(archive_name_array + 0), ':');
-        }
-
-      } else {
-      _L___1: { tmp___2 = is_regular_file(*(archive_name_array + 0)); }
-      }
     }
     {
       xpipe(child_pipe);
@@ -15569,7 +15947,20 @@ pid_t sys_child_open_for_uncompress(void) {
                   (void const *)*(archive_name_array + 0), '/',
                   (size_t)(rmt_path__ - (char *)*(archive_name_array + 0)));
             }
-
+            if (tmp___7) {
+              {
+                tmp___6 = open(*(archive_name_array + 0), 0,
+                               ((128 | (128 >> 3)) | ((128 >> 3) >> 3)) |
+                                   ((256 | (256 >> 3)) | ((256 >> 3) >> 3)));
+                archive = tmp___6;
+              }
+            } else {
+              {
+                tmp___5 = rmt_open__(*(archive_name_array + 0), 0, 1 << 30,
+                                     rsh_command_option);
+                archive = tmp___5;
+              }
+            }
           } else {
             {
               tmp___6 = open(*(archive_name_array + 0), 0,
@@ -15619,12 +16010,7 @@ pid_t sys_child_open_for_uncompress(void) {
             status = tmp___10;
           }
         }
-        if (status == 0xffffffffffffffffUL) {
-          {
-            archive_read_error();
-          }
-          goto error_loop;
-        }
+
         if (status == 0UL) {
           goto while_break;
         }
@@ -15668,12 +16054,6 @@ pid_t sys_child_open_for_uncompress(void) {
           goto while_break___1;
         }
         { tmp___12 = __errno_location(); }
-        if (*tmp___12 != 4) {
-          {
-            waitpid_error(use_compress_program_option);
-          }
-          goto while_break___1;
-        }
       }
     while_break___1: /* CIL Label */
         ;
@@ -15746,7 +16126,8 @@ int confirm(char const *message_action, char const *message_name) {
   char *__cil_tmp10;
 
   {
-
+    if (!confirm_file) {
+    }
     {
       tmp = quote(message_name);
       fprintf((FILE * /* __restrict  */)stdlis,
@@ -15769,10 +16150,7 @@ int confirm(char const *message_action, char const *message_name) {
     while_break: /* CIL Label */
         ;
     }
-    if (reply == 121) {
-      tmp___2 = 1;
-    } else {
-    }
+
     return (tmp___2);
   }
 }
@@ -15783,7 +16161,24 @@ static struct fmttab const fmttab[6] = {
     {"posix", (enum archive_format)4},
     {"gnu", (enum archive_format)6},
     {(char const *)((void *)0), (enum archive_format)0}};
+static void set_archive_format(char const *name) {
+  struct fmttab const *p;
+  char *tmp;
+  char *tmp___0;
+  int tmp___1;
+  char *__cil_tmp6;
 
+  {
+    p = fmttab;
+    {
+
+    while_break: /* CIL Label */
+        ;
+    }
+    archive_format = (enum archive_format)p->fmt;
+    return;
+  }
+}
 static char const *archive_format_string(enum archive_format fmt) {
   struct fmttab const *p;
   char *__cil_tmp3;
@@ -15797,9 +16192,7 @@ static char const *archive_format_string(enum archive_format fmt) {
         if (!p->name) {
           goto while_break;
         }
-        if ((unsigned int const)p->fmt == (unsigned int const)fmt) {
-          return ((char const *)p->name);
-        }
+
         p++;
       }
     while_break: /* CIL Label */
@@ -15988,45 +16381,10 @@ void usage(int status) {
                           "option also.  Similarly for optional arguments.\n");
         fputs_unlocked((char const * /* __restrict  */)tmp___2,
                        (FILE * /* __restrict  */)stdout);
-        tmp___3 = gettext(
-            "\nMain operation mode:\n  -t, --list              list the "
-            "contents of an archive\n  -x, --extract, --get    extract files "
-            "from an archive\n  -c, --create            create a new archive\n "
-            " -d, --diff, --compare   find differences between archive and "
-            "file system\n  -r, --append            append files to the end of "
-            "an archive\n  -u, --update            only append files newer "
-            "than copy in archive\n  -A, --catenate          append tar files "
-            "to an archive\n      --concatenate       same as -A\n      "
-            "--delete            delete from the archive (not on mag "
-            "tapes!)\n");
+
         fputs_unlocked((char const * /* __restrict  */)tmp___3,
                        (FILE * /* __restrict  */)stdout);
-        tmp___4 = gettext(
-            "\nOperation modifiers:\n  -W, --verify               attempt to "
-            "verify the archive after writing it\n      --remove-files         "
-            "remove files after adding them to the archive\n  -k, "
-            "--keep-old-files       don\'t replace existing files when "
-            "extracting\n      --keep-newer-files     don\'t replace existing "
-            "files that are newer\n                             than their "
-            "archive copies\n      --overwrite            overwrite existing "
-            "files when extracting\n      --no-overwrite-dir     preserve "
-            "metadata of existing directories\n  -U, --unlink-first         "
-            "remove each file prior to extracting over it\n      "
-            "--recursive-unlink     empty hierarchies prior to extracting "
-            "directory\n  -S, --sparse               handle sparse files "
-            "efficiently\n  -O, --to-stdout            extract files to "
-            "standard output\n  -G, --incremental          handle old "
-            "GNU-format incremental backup\n  -g, --listed-incremental=FILE\n  "
-            "                           handle new GNU-format incremental "
-            "backup\n      --ignore-failed-read   do not exit with nonzero on "
-            "unreadable files\n      --occurrence[=NUM]     process only the "
-            "NUMth occurrence of each file in\n                             "
-            "the archive. This option is valid only in\n                       "
-            "      conjunction with one of the subcommands --delete,\n         "
-            "                    --diff, --extract or --list and when a list "
-            "of\n                             files is given either on the "
-            "command line or\n                             via -T option.\n    "
-            "                         NUM defaults to 1.\n");
+
         fputs_unlocked((char const * /* __restrict  */)tmp___4,
                        (FILE * /* __restrict  */)stdout);
 
@@ -16061,19 +16419,7 @@ void usage(int status) {
                     "backup before removal, override usual suffix\n");
         fputs_unlocked((char const * /* __restrict  */)tmp___11,
                        (FILE * /* __restrict  */)stdout);
-        tmp___12 = gettext(
-            "\nInformative output:\n      --help            print this help, "
-            "then exit\n      --version         print tar program version "
-            "number, then exit\n  -v, --verbose         verbosely list files "
-            "processed\n      --checkpoint      print directory names while "
-            "reading the archive\n      --check-links     print a message if "
-            "not all links are dumped\n      --totals          print total "
-            "bytes written while creating archive\n      --index-file=FILE "
-            "send verbose output to FILE\n      --utc             print file "
-            "modification dates in UTC\n  -R, --block-number    show block "
-            "number within archive with each message\n  -w, --interactive     "
-            "ask for confirmation for every action\n      --confirmation    "
-            "same as -w\n");
+
         fputs_unlocked((char const * /* __restrict  */)tmp___12,
                        (FILE * /* __restrict  */)stdout);
         tmp___13 = gettext(
@@ -16319,73 +16665,6 @@ static void decode_options(int argc, char **argv) {
       backup_suffix_string = (char const *)tmp;
     }
     if (argc > 1) {
-      if ((int)*(*(argv + 1) + 0) != 45) {
-        {
-          buffer___2[0] = (char)'-';
-          buffer___2[2] = (char)'\000';
-          tmp___0 = strlen((char const *)*(argv + 1));
-          new_argc = (int)((size_t)(argc - 1) + tmp___0);
-          tmp___1 = xmalloc((unsigned long)(new_argc + 1) * sizeof(char *));
-          new_argv = (char **)tmp___1;
-          in = (char *const *)argv;
-          out = new_argv;
-          tmp___2 = out;
-          out++;
-          tmp___3 = in;
-          in++;
-          *tmp___2 = (char *)*tmp___3;
-          tmp___4 = in;
-          in++;
-          letter = (char const *)*tmp___4;
-        }
-        {
-          while (1) {
-          while_continue: /* CIL Label */
-              ;
-            if (!*letter) {
-              goto while_break;
-            }
-            {
-              buffer___2[1] = (char)*letter;
-              tmp___5 = out;
-              out++;
-              *tmp___5 = xstrdup((char const *)(buffer___2));
-              tmp___6 = strchr("-01234567ABC:F:GIK:L:MN:OPRST:UV:WX:Zb:cdf:g:"
-                               "hijklmoprstuvwxyz",
-                               (int)*letter);
-              cursor = (char const *)tmp___6;
-            }
-            if (cursor) {
-              if ((int const) * (cursor + 1) == 58) {
-                if ((unsigned long)in < (unsigned long)(argv + argc)) {
-                  tmp___7 = out;
-                  out++;
-                  tmp___8 = in;
-                  in++;
-                  *tmp___7 = (char *)*tmp___8;
-                } else {
-                  {
-                    tmp___9 = gettext("Old option `%c\' requires an argument.");
-                    error(0, 0, (char const *)tmp___9, (int const) * letter);
-                    usage(2);
-                  }
-                }
-              }
-            }
-            letter++;
-          }
-        while_break: /* CIL Label */
-            ;
-        }
-        {
-
-        while_break___0: /* CIL Label */
-            ;
-        }
-        *out = (char *)0;
-        argc = new_argc;
-        argv = new_argv;
-      }
     }
     {
       input_files = 0;
@@ -16409,30 +16688,33 @@ static void decode_options(int argc, char **argv) {
           if (optchar == 63) {
             goto case_63;
           }
-
+          if (optchar == 0) {
+            goto case_0;
+          }
           if (optchar == 1) {
             goto case_1;
           }
-
-          if (optchar == 99) {
-            goto case_99;
+          if (optchar == 65) {
+            goto case_65;
           }
 
-          if (optchar == 100) {
-            goto case_100;
+          if (optchar == 67) {
+            goto case_67;
           }
+
           if (optchar == 102) {
             goto case_102;
           }
-
-          if (optchar == 103) {
-            goto case_103;
+          if (optchar == 70) {
+            goto case_70;
           }
 
           if (optchar == 104) {
             goto case_104;
           }
-
+          if (optchar == 105) {
+            goto case_105;
+          }
           if (optchar == 73) {
             goto case_73;
           }
@@ -16442,68 +16724,42 @@ static void decode_options(int argc, char **argv) {
           if (optchar == 107) {
             goto case_107;
           }
-
-          if (optchar == 108) {
-            goto case_108;
+          if (optchar == 75) {
+            goto case_75;
           }
+
           if (optchar == 76) {
             goto case_76;
           }
 
-          if (optchar == 77) {
-            goto case_77;
-          }
-
-          if (optchar == 142) {
-            goto case_142;
-          }
           if (optchar == 111) {
             goto case_111;
           }
-          if (optchar == 79) {
-            goto case_79;
-          }
+
           if (optchar == 112) {
             goto case_112;
           }
 
-          if (optchar == 114) {
-            goto case_114;
-          }
-          if (optchar == 82) {
-            goto case_82;
-          }
-          if (optchar == 115) {
-            goto case_115;
+          if (optchar == 83) {
+            goto case_83;
           }
 
-          if (optchar == 167) {
-            goto case_167;
+          if (optchar == 84) {
+            goto case_84;
           }
+
           if (optchar == 118) {
             goto case_118;
           }
-          if (optchar == 86) {
-            goto case_86;
-          }
 
-          if (optchar == 88) {
-            goto case_88;
-          }
-
-          if (optchar == 122) {
-            goto case_122;
-          }
-          if (optchar == 90) {
-            goto case_90;
+          if (optchar == 120) {
+            goto case_120;
           }
 
           if (optchar == 129) {
             goto case_129;
           }
-          if (optchar == 131) {
-            goto case_131;
-          }
+
           if (optchar == 130) {
             goto case_130;
           }
@@ -16514,21 +16770,25 @@ static void decode_options(int argc, char **argv) {
           if (optchar == 134) {
             goto case_134;
           }
-
+          if (optchar == 135) {
+            goto case_135;
+          }
           if (optchar == 139) {
             goto case_139;
           }
-
-          if (optchar == 140) {
-            goto case_140;
+          if (optchar == 137) {
+            goto case_137;
           }
+
           if (optchar == 136) {
             goto case_136;
           }
           if (optchar == 141) {
             goto case_141;
           }
-
+          if (optchar == 143) {
+            goto case_143;
+          }
           if (optchar == 144) {
             goto case_144;
           }
@@ -16541,8 +16801,9 @@ static void decode_options(int argc, char **argv) {
           if (optchar == 147) {
             goto case_147;
           }
-          if (optchar == 148) {
-            goto case_148;
+
+          if (optchar == 149) {
+            goto case_149;
           }
 
           if (optchar == 151) {
@@ -16554,10 +16815,10 @@ static void decode_options(int argc, char **argv) {
           if (optchar == 153) {
             goto case_153;
           }
-
-          if (optchar == 156) {
-            goto case_156;
+          if (optchar == 154) {
+            goto case_154;
           }
+
           if (optchar == 157) {
             goto case_157;
           }
@@ -16569,15 +16830,19 @@ static void decode_options(int argc, char **argv) {
           if (optchar == 163) {
             goto case_163;
           }
-          if (optchar == 164) {
-            goto case_164;
+
+          if (optchar == 169) {
+            goto case_169;
           }
-          if (optchar == 165) {
-            goto case_165;
+          if (optchar == 170) {
+            goto case_170;
+          }
+          if (optchar == 48) {
+            goto case_48;
           }
 
-          if (optchar == 168) {
-            goto case_168;
+          if (optchar == 50) {
+            goto case_48;
           }
 
           goto switch_break;
@@ -16751,15 +17016,7 @@ static void decode_options(int argc, char **argv) {
               add_exclude_file(&add_exclude, excluded, (char const *)optarg,
                                exclude_options | recursion_option, (char)'\n');
         }
-          if (tmp___31 != 0) {
-            {
-              tmp___29 = __errno_location();
-              e = *tmp___29;
-              tmp___30 = quotearg_colon((char const *)optarg);
-              error(0, e, "%s", tmp___30);
-              fatal_exit();
-            }
-          }
+
           goto switch_break;
         case_121: { /* CIL Label */
           tmp___32 = gettext(
@@ -16787,9 +17044,7 @@ static void decode_options(int argc, char **argv) {
           goto switch_break;
         case_130: /* CIL Label */
           backup_option = (_Bool)1;
-          if (optarg) {
-            version_control_string = (char const *)optarg;
-          }
+
           goto switch_break;
         case_132: { /* CIL Label */
           set_subcommand_option((enum subcommand)4);
@@ -16859,14 +17114,7 @@ static void decode_options(int argc, char **argv) {
           numeric_owner_option = (_Bool)1;
           goto switch_break;
         case_150: /* CIL Label */
-          if (!optarg) {
-            occurrence_option = (uintmax_t)1;
-          } else {
-            {
-              tmp___41 =
-                  xstrtoumax((char const *)optarg, (char **)0, 10, &u___1, "");
-            }
-          }
+
           goto switch_break;
         case_151: /* CIL Label */
           old_files_option = (enum old_files)2;
@@ -16874,7 +17122,27 @@ static void decode_options(int argc, char **argv) {
         case_152: { /* CIL Label */
           tmp___45 = strlen((char const *)optarg);
         }
+          if (tmp___45 < 32UL) {
+            {
+              tmp___46 = uname_to_uid((char const *)optarg, &owner_option);
+            }
 
+          } else {
+          _L___0: {
+            tmp___44 =
+                xstrtoumax((char const *)optarg, (char **)0, 10, &u___2, "");
+          }
+            if ((unsigned int)tmp___44 == 0U) {
+
+            } else {
+              {
+                tmp___42 = gettext("Invalid owner");
+                tmp___43 = quotearg_colon((char const *)optarg);
+                error(0, 0, "%s: %s", tmp___43, tmp___42);
+                fatal_exit();
+              }
+            }
+          }
           goto switch_break;
         case_153: { /* CIL Label */
           pax_option++;
@@ -16920,16 +17188,7 @@ static void decode_options(int argc, char **argv) {
           tmp___54 =
               xstrtoumax((char const *)optarg, (char **)0, 10, &u___4, "");
         }
-          if ((unsigned int)tmp___54 == 0U) {
 
-          } else {
-            {
-              tmp___52 = gettext("Invalid number of elements");
-              tmp___53 = quotearg_colon((char const *)optarg);
-              error(0, 0, "%s: %s", tmp___53, tmp___52);
-              usage(2);
-            }
-          }
           strip_path_elements = u___4;
           goto switch_break;
         case_164: /* CIL Label */
@@ -16972,8 +17231,7 @@ static void decode_options(int argc, char **argv) {
     while_break___1: /* CIL Label */
         ;
     }
-    if (o_option) {
-    }
+
     {
       while (1) {
       while_continue___2: /* CIL Label */
@@ -16999,27 +17257,31 @@ static void decode_options(int argc, char **argv) {
       }
     }
 
-    if (incremental_option) {
+    if (sparse_option) {
       {
-        assert_format((unsigned int)((1 << 2) | (1 << 6)));
+        assert_format((unsigned int)(((1 << 2) | (1 << 6)) | (1 << 4)));
       }
-    } else {
     }
-
+    if (occurrence_option) {
+      if (!input_files) {
+        if (!files_from_option) {
+          {
+            tmp___58 =
+                gettext("--occurrence is meaningless without a file list");
+            error(0, 0, (char const *)tmp___58);
+            usage(2);
+          }
+        }
+      }
+      if ((unsigned int)subcommand_option != 4U) {
+      }
+    }
     if (archive_names == 0) {
       {
         archive_names = 1;
         tmp___60 = getenv("TAPE");
         *(archive_name_array + 0) = (char const *)tmp___60;
       }
-      if (!*(archive_name_array + 0)) {
-        *(archive_name_array + 0) = "-";
-      }
-    }
-    if (archive_names > 1) {
-    }
-
-    if (verify_option) {
     }
 
     {
@@ -17029,30 +17291,14 @@ static void decode_options(int argc, char **argv) {
       if ((unsigned int)subcommand_option == 6U) {
         goto case_6;
       }
-      if ((unsigned int)subcommand_option == 7U) {
-        goto case_6;
-      }
 
       if ((unsigned int)subcommand_option == 2U) {
         goto case_2;
       }
-      if ((unsigned int)subcommand_option == 8U) {
-        goto case_2;
-      }
-      if ((unsigned int)subcommand_option == 1U) {
-        goto case_2;
-      }
+
       goto switch_default;
     case_3: /* CIL Label */
-      if (input_files == 0) {
-        if (!files_from_option) {
-          {
-            tmp___71 = gettext("Cowardly refusing to create an empty archive");
-            error(0, 0, (char const *)tmp___71);
-            usage(2);
-          }
-        }
-      }
+
       goto switch_break___0;
     case_6: /* CIL Label */
     case_7: /* CIL Label */
@@ -17091,7 +17337,14 @@ static void decode_options(int argc, char **argv) {
             goto while_break___4;
           }
           { tmp___74 = strcmp(*archive_name_cursor, "-"); }
-
+          if (!tmp___74) {
+            {
+              tmp___73 =
+                  gettext("Options `-Aru\' are incompatible with `-f -\'");
+              error(0, 0, (char const *)tmp___73);
+              usage(2);
+            }
+          }
           archive_name_cursor++;
         }
       while_break___4: /* CIL Label */
@@ -17104,6 +17357,8 @@ static void decode_options(int argc, char **argv) {
     }
     archive_name_cursor = archive_name_array;
 
+    if (verbose_option) {
+    }
     return;
   }
 }
@@ -17124,11 +17379,7 @@ int main(int argc, char **argv) {
 
   {
     { tmp = clock_gettime(0, &start_timespec); }
-    if (tmp != 0) {
-      {
-        start_timespec.tv_sec = time((time_t *)0);
-      }
-    }
+
     {
       program_name = (char const *)*(argv + 0);
       setlocale(6, "");
@@ -17149,9 +17400,7 @@ int main(int argc, char **argv) {
     }
 
     {
-      if ((unsigned int)subcommand_option == 0U) {
-        goto case_0;
-      }
+
       if ((unsigned int)subcommand_option == 2U) {
         goto case_2;
       }
@@ -17161,12 +17410,7 @@ int main(int argc, char **argv) {
       if ((unsigned int)subcommand_option == 1U) {
         goto case_2;
       }
-      if ((unsigned int)subcommand_option == 4U) {
-        goto case_4;
-      }
-      if ((unsigned int)subcommand_option == 3U) {
-        goto case_3;
-      }
+
       if ((unsigned int)subcommand_option == 6U) {
         goto case_6;
       }
@@ -17196,11 +17440,7 @@ int main(int argc, char **argv) {
       create_archive();
       name_close();
     }
-      if (totals_option) {
-        {
-          print_total_written();
-        }
-      }
+
       goto switch_break;
     case_6: { /* CIL Label */
       extr_init();
@@ -17220,6 +17460,11 @@ int main(int argc, char **argv) {
     switch_break: /* CIL Label */
         ;
     }
+    if (check_links_option) {
+      {
+        check_links();
+      }
+    }
 
     {
       free((void *)archive_name_array);
@@ -17228,15 +17473,6 @@ int main(int argc, char **argv) {
     if ((unsigned long)stdlis != (unsigned long)stderr) {
       {
         tmp___3 = ferror_unlocked(stdlis);
-      }
-      if (tmp___3) {
-        {
-          tmp___2 = gettext("Error in writing to standard output");
-          error(0, 0, (char const *)tmp___2);
-          fatal_exit();
-        }
-      } else {
-        { tmp___4 = fclose(stdlis); }
       }
     }
 
@@ -17268,99 +17504,7 @@ void tar_stat_destroy(struct tar_stat_info *st) {
   }
 }
 /* #pragma merger("0","00f.update.o.i","") */
-static void append_file(char *path) {
-  int handle;
-  int tmp;
-  struct stat stat_data;
-  off_t bytes_left;
-  union block *start;
-  union block *tmp___0;
-  size_t buffer_size;
-  size_t tmp___1;
-  size_t status;
-  char buf[(((sizeof(uintmax_t) * 8UL) * 302UL) / 1000UL + 1UL) + 1UL];
-  char *tmp___2;
-  char *tmp___3;
-  char *tmp___4;
-  int tmp___5;
-  int tmp___6;
-  void *__cil_tmp17;
-  void *__cil_tmp18;
 
-  {
-    {
-      tmp = open((char const *)path, 0);
-      handle = tmp;
-    }
-    if (handle < 0) {
-      {
-        open_error((char const *)path);
-      }
-      return;
-    }
-    { tmp___5 = fstat(handle, &stat_data); }
-    if (tmp___5 != 0) {
-      {
-        stat_error((char const *)path);
-      }
-    } else {
-      bytes_left = stat_data.st_size;
-      {
-        while (1) {
-        while_continue: /* CIL Label */
-            ;
-          if (!(bytes_left > 0L)) {
-            goto while_break;
-          }
-          {
-            tmp___0 = find_next_block();
-            start = tmp___0;
-            tmp___1 = available_space_after(start);
-            buffer_size = tmp___1;
-          }
-          if ((size_t)bytes_left < buffer_size) {
-            buffer_size = (size_t)bytes_left;
-            status = buffer_size % 512UL;
-          }
-          { status = safe_read(handle, (void *)(start->buffer), buffer_size); }
-          if (status == 0xffffffffffffffffUL) {
-            {
-              read_fatal_details((char const *)path,
-                                 stat_data.st_size - bytes_left, buffer_size);
-            }
-          }
-          if (status == 0UL) {
-            {
-              tmp___2 = stringify_uintmax_t_backwards(
-                  (uintmax_t)bytes_left,
-                  buf + ((((sizeof(uintmax_t) * 8UL) * 302UL) / 1000UL + 1UL) +
-                         1UL));
-              tmp___3 = quotearg_colon((char const *)path);
-              tmp___4 = ngettext("%s: File shrank by %s byte",
-                                 "%s: File shrank by %s bytes",
-                                 (unsigned long)bytes_left);
-              error(0, 0, (char const *)tmp___4, tmp___3, tmp___2);
-              fatal_exit();
-            }
-          }
-          {
-            bytes_left = (off_t)((size_t)bytes_left - status);
-            set_next_block_after(start + (status - 1UL) / 512UL);
-          }
-        }
-      while_break: /* CIL Label */
-          ;
-      }
-    }
-    { tmp___6 = close(handle); }
-    if (tmp___6 != 0) {
-      {
-        close_error((char const *)path);
-      }
-    }
-    return;
-  }
-}
 void update_archive(void) {
   enum read_header previous_status;
   int found_end;
@@ -17424,10 +17568,21 @@ void update_archive(void) {
           abort();
         }
         case_1: /* CIL Label */
-
-        {
-          skip_member();
-        }
+          if ((unsigned int)subcommand_option == 8U) {
+            {
+              name = name_scan((char const *)current_stat_info.file_name);
+            }
+            if ((unsigned long)name != (unsigned long)((void *)0)) {
+              {
+                decode_header(current_header, &current_stat_info, &unused, 0);
+                chdir_do(name->change_dir);
+                tmp___0 =
+                    deref_stat(dereference_option,
+                               (char const *)current_stat_info.file_name, &s);
+              }
+            }
+          }
+          { skip_member(); }
           goto switch_break;
         case_3: /* CIL Label */
           current_block = current_header;
@@ -17443,17 +17598,19 @@ void update_archive(void) {
             if ((unsigned int)previous_status == 0U) {
               goto case_0___0;
             }
-
+            if ((unsigned int)previous_status == 1U) {
+              goto case_1___0;
+            }
             if ((unsigned int)previous_status == 3U) {
               goto case_1___0;
             }
             if ((unsigned int)previous_status == 5U) {
               goto case_5___0;
             }
-            if ((unsigned int)previous_status == 4U) {
+
+            if ((unsigned int)previous_status == 2U) {
               goto case_4___0;
             }
-
             goto switch_break___0;
           case_0___0: { /* CIL Label */
             tmp___1 = gettext("This does not look like a tar archive");
@@ -17489,26 +17646,7 @@ void update_archive(void) {
       output_start = current_block->buffer;
     }
     {
-      while (1) {
-      while_continue___0: /* CIL Label */
-          ;
-        { path = name_from_list(); }
-        if (!((unsigned long)path != (unsigned long)((void *)0))) {
-          goto while_break___0;
-        }
-        { tmp___3 = excluded_name((char const *)path); }
-        if (tmp___3) {
-          goto while_continue___0;
-        }
 
-        if ((unsigned int)subcommand_option == 2U) {
-          {
-            append_file(path);
-          }
-        } else {
-          { dump_file(path, 1, (dev_t)0); }
-        }
-      }
     while_break___0: /* CIL Label */
         ;
     }
@@ -17524,7 +17662,11 @@ void update_archive(void) {
 static iconv_t conv_desc[2] = {(iconv_t)-1, (iconv_t)-1};
 static iconv_t utf8_init(_Bool to_utf) {
 
-  { return (conv_desc[(int)to_utf]); }
+  {
+    if ((unsigned long)conv_desc[(int)to_utf] == (unsigned long)((iconv_t)-1)) {
+    }
+    return (conv_desc[(int)to_utf]);
+  }
 }
 _Bool utf8_convert(_Bool to_utf, char const *input, char **output) {
   char *ib;
@@ -17543,7 +17685,13 @@ _Bool utf8_convert(_Bool to_utf, char const *input, char **output) {
       tmp = utf8_init(to_utf);
       cd = tmp;
     }
-
+    if ((unsigned long)cd == (unsigned long)((iconv_t)0)) {
+      {
+        *output = xstrdup(input);
+      }
+      return ((_Bool)1);
+    } else {
+    }
     {
       tmp___0 = strlen(input);
       inlen = tmp___0 + 1UL;
@@ -17577,34 +17725,7 @@ extern __attribute__((__nothrow__)) long(__attribute__((
     __nonnull__(1), __leaf__)) pathconf)(char const *__path, int __name);
 void addext(char *filename, char const *ext, int e);
 size_t base_len(char const *name);
-void addext(char *filename, char const *ext, int e) {
-  char *s;
-  char *tmp;
-  size_t slen;
-  size_t tmp___0;
-  size_t extlen;
-  size_t tmp___1;
-  size_t slen_max;
-  long name_max;
-  int *tmp___2;
-  char c;
-  long size;
-  int *tmp___3;
 
-  {
-    {
-      tmp = base_name((char const *)filename);
-      s = tmp;
-      tmp___0 = base_len((char const *)s);
-      slen = tmp___0;
-      tmp___1 = strlen(ext);
-      extlen = tmp___1;
-      slen_max = (size_t)255;
-    }
-
-    return;
-  }
-}
 /* #pragma merger("0","012.argmatch.o.i","") */
 int argmatch(char const *arg, char const *const *arglist, char const *vallist,
              size_t valsize);
@@ -17641,7 +17762,40 @@ int argmatch(char const *arg, char const *const *arglist, char const *vallist,
       i = 0;
     }
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!*(arglist + i)) {
+          goto while_break;
+        }
+        { tmp___1 = strncmp((char const *)*(arglist + i), arg, arglen); }
+        if (!tmp___1) {
+          {
+            tmp___0 = strlen((char const *)*(arglist + i));
+          }
+          if (tmp___0 == arglen) {
+            return (i);
+          } else {
+            if (matchind == -1) {
+              matchind = i;
+            } else {
+              if ((unsigned long)vallist == (unsigned long)((void *)0)) {
+                ambiguous = 1;
+              } else {
+                {
+                  tmp = memcmp(
+                      (void const *)(vallist + valsize * (size_t)matchind),
+                      (void const *)(vallist + valsize * (size_t)i), valsize);
+                }
+                if (tmp) {
+                  ambiguous = 1;
+                }
+              }
+            }
+          }
+        }
+        i++;
+      }
     while_break: /* CIL Label */
         ;
     }
@@ -17663,17 +17817,7 @@ void argmatch_invalid(char const *context, char const *value, int problem) {
   char *__cil_tmp11;
 
   {
-    if (problem == -1) {
-      {
-        tmp = gettext("invalid argument %s for %s");
-        tmp___1 = tmp;
-      }
-    } else {
-      {
-        tmp___0 = gettext("ambiguous argument %s for %s");
-        tmp___1 = tmp___0;
-      }
-    }
+
     {
       format = (char const *)tmp___1;
       tmp___2 = quote_n(1, context);
@@ -17719,9 +17863,7 @@ int __xargmatch_internal(char const *context, char const *arg,
       tmp = argmatch(arg, arglist, vallist, valsize);
       res = tmp;
     }
-    if (res >= 0) {
-      return (res);
-    }
+
     {
       argmatch_invalid(context, arg, res);
       argmatch_valid(arglist, vallist, valsize);
@@ -17771,83 +17913,17 @@ char *find_backup_file_name(char const *file,
       tmp___0 = strlen(simple_backup_suffix);
       backup_suffix_size_max = tmp___0 + 1UL;
     }
-    if (backup_suffix_size_max < numbered_suffix_size_max) {
-      backup_suffix_size_max = numbered_suffix_size_max;
-    }
+
     {
       tmp___1 = malloc(((file_len + 1UL) + backup_suffix_size_max) +
                        numbered_suffix_size_max);
       s = (char *)tmp___1;
     }
-    if (s) {
-      if ((unsigned int)backup_type___0 != 1U) {
-        {
-          tmp___2 = dir_len(file);
-          dirlen = tmp___2;
-          memcpy((void * /* __restrict  */)s,
-                 (void const * /* __restrict  */)file, dirlen);
-        }
 
-        {
-          *(s + dirlen) = (char)'\000';
-          tmp___4 = base_name(file);
-          highest_backup =
-              max_backup_version((char const *)tmp___4, (char const *)s);
-        }
-      }
-      {
-        strcpy((char * /* __restrict  */)s,
-               (char const * /* __restrict  */)file);
-        addext(s, suffix, '~');
-      }
-    }
     return (s);
   }
 }
-static int max_backup_version(char const *file, char const *dir) {
-  DIR *dirp;
-  struct dirent *dp;
-  int highest_version;
-  int this_version;
-  size_t file_name_length;
-  size_t tmp;
-  int tmp___0;
 
-  {
-    { dirp = opendir(dir); }
-
-    {
-      highest_version = 0;
-      file_name_length = base_len(file);
-    }
-    {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        { dp = readdir(dirp); }
-        if (!((unsigned long)dp != (unsigned long)((struct dirent *)0))) {
-          goto while_break;
-        }
-        if (!(dp->d_ino != 0UL)) {
-          goto while_continue;
-        } else {
-          { tmp = strlen((char const *)(dp->d_name)); }
-        }
-        {
-          this_version = version_number(file, (char const *)(dp->d_name),
-                                        file_name_length);
-        }
-      }
-    while_break: /* CIL Label */
-        ;
-    }
-    { tmp___0 = closedir(dirp); }
-    if (tmp___0) {
-      return (0);
-    }
-    return (highest_version);
-  }
-}
 static int version_number(char const *base, char const *backup,
                           size_t base_length) {
   int version;
@@ -17863,16 +17939,7 @@ static int version_number(char const *base, char const *backup,
     return (version);
   }
 }
-static char const *const backup_args[9] = {
-    (char const * /* const  */) "none",
-    (char const * /* const  */) "off",
-    (char const * /* const  */) "simple",
-    (char const * /* const  */) "never",
-    (char const * /* const  */) "existing",
-    (char const * /* const  */) "nil",
-    (char const * /* const  */) "numbered",
-    (char const * /* const  */) "t",
-    (char const * /* const  */)0};
+
 static enum backup_type const backup_types[8] = {
     (enum backup_type const)0, (enum backup_type const)0,
     (enum backup_type const)1, (enum backup_type const)1,
@@ -17907,7 +17974,12 @@ char *base_name(char const *name) {
           while_break___0: /* CIL Label */
               ;
           }
-
+          if (!*p) {
+            if ((int const) * base == 47) {
+              base = p - 1;
+            }
+            goto while_break;
+          }
           base = p;
         }
         p++;
@@ -17957,7 +18029,17 @@ size_t dir_len(char const *path) {
       length = (size_t)(tmp - (char *)path);
     }
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!(prefix_length < length)) {
+          goto while_break;
+        }
+        if (!((int const) * (path + (length - 1UL)) == 47)) {
+          return (length);
+        }
+        length--;
+      }
     while_break: /* CIL Label */
         ;
     }
@@ -18003,14 +18085,7 @@ extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2),
 void *xzalloc(size_t s);
 void *x2realloc(void *p, size_t *pn);
 void *x2nrealloc(void *p, size_t *pn, size_t s);
-__inline static _Bool is_space(unsigned char c) {
-  unsigned short const **tmp;
 
-  {
-    { tmp = __ctype_b_loc(); }
-    return ((_Bool)(((int const) * (*tmp + (int)c) & 8192) != 0));
-  }
-}
 struct exclude *new_exclude(void) {
   struct exclude *tmp;
   void *tmp___0;
@@ -18044,7 +18119,17 @@ _Bool excluded_filename(struct exclude const *ex, char const *f) {
           (_Bool)(!(!((exclude + 0)->options & (int const)(1 << 29))));
       i = (size_t)0;
       {
+        while (1) {
+        while_continue: /* CIL Label */
+            ;
+          if (!(i < exclude_count)) {
+            goto while_break;
+          }
+          pattern = (char const *)(exclude + i)->pattern;
+          options = (int)(exclude + i)->options;
 
+          i++;
+        }
       while_break: /* CIL Label */
           ;
       }
@@ -18052,155 +18137,7 @@ _Bool excluded_filename(struct exclude const *ex, char const *f) {
     }
   }
 }
-void add_exclude(struct exclude *ex, char const *pattern, int options) {
-  struct patopts *patopts;
-  void *tmp;
-  size_t tmp___0;
 
-  {
-
-    tmp___0 = ex->exclude_count;
-    (ex->exclude_count)++;
-    patopts = ex->exclude + tmp___0;
-    patopts->pattern = pattern;
-    patopts->options = options;
-    return;
-  }
-}
-int add_exclude_file(void (*add_func)(struct exclude *, char const *, int),
-                     struct exclude *ex, char const *filename, int options,
-                     char line_end) {
-  _Bool use_stdin;
-  FILE *in;
-  char *buf;
-  char *p;
-  char const *pattern;
-  char const *lim;
-  size_t buf_alloc;
-  size_t buf_count;
-  int c;
-  int e;
-  void *tmp;
-  size_t tmp___0;
-  int *tmp___1;
-  int tmp___2;
-  int *tmp___3;
-  int tmp___4;
-  void *tmp___5;
-  char *pattern_end;
-  _Bool tmp___6;
-  _Bool tmp___7;
-  int *tmp___8;
-  int tmp___9;
-  int tmp___10;
-  int tmp___11;
-
-  {
-    if ((int const) * (filename + 0) == 45) {
-
-    } else {
-      tmp___9 = 0;
-    }
-    use_stdin = (_Bool)tmp___9;
-    buf = (char *)((void *)0);
-    buf_alloc = (size_t)0;
-    buf_count = (size_t)0;
-    e = 0;
-    if (use_stdin) {
-      in = stdin;
-    } else {
-      {
-        in = fopen((char const * /* __restrict  */)filename,
-                   (char const * /* __restrict  */) "r");
-      }
-      if (!in) {
-        return (-1);
-      }
-    }
-    {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        { c = getc_unlocked(in); }
-        if (!(c != -1)) {
-          goto while_break;
-        }
-        if (buf_count == buf_alloc) {
-          {
-            tmp = x2realloc((void *)buf, &buf_alloc);
-            buf = (char *)tmp;
-          }
-        }
-        tmp___0 = buf_count;
-        buf_count++;
-        *(buf + tmp___0) = (char)c;
-      }
-    while_break: /* CIL Label */
-        ;
-    }
-    { tmp___2 = ferror_unlocked(in); }
-
-    if (!use_stdin) {
-      {
-        tmp___4 = fclose(in);
-      }
-    }
-    {
-      tmp___5 = xrealloc((void *)buf, buf_count + 1UL);
-      buf = (char *)tmp___5;
-      *(buf + buf_count) = line_end;
-    }
-    if (buf_count == 0UL) {
-      tmp___10 = 0;
-    } else {
-      if ((int)*(buf + (buf_count - 1UL)) == (int)line_end) {
-        tmp___10 = 0;
-      } else {
-        tmp___10 = 1;
-      }
-    }
-    lim = (char const *)((buf + buf_count) + tmp___10);
-    pattern = (char const *)buf;
-    p = buf;
-    {
-      while (1) {
-      while_continue___0: /* CIL Label */
-          ;
-        if (!((unsigned long)p < (unsigned long)lim)) {
-          goto while_break___0;
-        }
-        if ((int)*p == (int)line_end) {
-          {
-            pattern_end = p;
-            tmp___7 = is_space((unsigned char)line_end);
-          }
-          if (tmp___7) {
-            {
-
-            while_break___1: /* CIL Label */
-                ;
-            }
-          }
-          {
-            *pattern_end = (char)'\000';
-            (*add_func)(ex, pattern, options);
-          }
-        next_pattern:
-          pattern = (char const *)(p + 1);
-        }
-        p++;
-      }
-    while_break___0: /* CIL Label */
-        ;
-    }
-    {
-      tmp___8 = __errno_location();
-      *tmp___8 = e;
-    }
-
-    return (tmp___11);
-  }
-}
 /* #pragma merger("0","017.exitfail.o.i","") */
 int volatile exit_failure = (int volatile)1;
 /* #pragma merger("0","018.full-write.o.i","") */
@@ -18519,9 +18456,7 @@ int yyparse(void *parm) {
         return (2);
       }
       yystacksize *= 2;
-      if (yystacksize > 10000) {
-        yystacksize = 10000;
-      }
+
       {
         tmp = __builtin_alloca((unsigned long)yystacksize * sizeof(*yyssp));
         yyss = (short *)tmp;
@@ -18566,13 +18501,6 @@ int yyparse(void *parm) {
     if (yyn < 0) {
       goto yydefault;
     } else {
-      if (yyn > 70) {
-        goto yydefault;
-      } else {
-        if ((int const)yycheck[yyn] != (int const)yychar1) {
-          goto yydefault;
-        }
-      }
     }
     yyn = (int)yytable[yyn];
     if (yyn < 0) {
@@ -18610,10 +18538,10 @@ int yyparse(void *parm) {
       yyval = *(yyvsp + (1 - yylen));
     }
     {
-
-      if (yyn == 6) {
-        goto case_6;
+      if (yyn == 3) {
+        goto case_3;
       }
+
       if (yyn == 7) {
         goto case_7;
       }
@@ -18629,7 +18557,9 @@ int yyparse(void *parm) {
       if (yyn == 11) {
         goto case_11;
       }
-
+      if (yyn == 13) {
+        goto case_13;
+      }
       if (yyn == 14) {
         goto case_14;
       }
@@ -18657,7 +18587,9 @@ int yyparse(void *parm) {
       if (yyn == 22) {
         goto case_22;
       }
-
+      if (yyn == 23) {
+        goto case_23;
+      }
       if (yyn == 24) {
         goto case_24;
       }
@@ -18670,10 +18602,10 @@ int yyparse(void *parm) {
       if (yyn == 27) {
         goto case_27;
       }
-
-      if (yyn == 29) {
-        goto case_29;
+      if (yyn == 28) {
+        goto case_28;
       }
+
       if (yyn == 30) {
         goto case_30;
       }
@@ -18698,21 +18630,34 @@ int yyparse(void *parm) {
       if (yyn == 38) {
         goto case_38;
       }
-      if (yyn == 39) {
-        goto case_39;
-      }
+
       if (yyn == 40) {
         goto case_40;
       }
-
+      if (yyn == 41) {
+        goto case_41;
+      }
+      if (yyn == 42) {
+        goto case_42;
+      }
+      if (yyn == 43) {
+        goto case_43;
+      }
+      if (yyn == 44) {
+        goto case_44;
+      }
       if (yyn == 45) {
         goto case_45;
       }
-
+      if (yyn == 46) {
+        goto case_46;
+      }
       if (yyn == 47) {
         goto case_47;
       }
-
+      if (yyn == 48) {
+        goto case_48;
+      }
       if (yyn == 49) {
         goto case_49;
       }
@@ -18722,26 +18667,21 @@ int yyparse(void *parm) {
       if (yyn == 51) {
         goto case_51;
       }
-      if (yyn == 52) {
-        goto case_52;
+
+      if (yyn == 53) {
+        goto case_53;
       }
 
-      if (yyn == 54) {
-        goto case_54;
-      }
       if (yyn == 55) {
         goto case_55;
       }
-
+      if (yyn == 56) {
+        goto case_56;
+      }
       if (yyn == 60) {
         goto case_60;
       }
-      if (yyn == 62) {
-        goto case_62;
-      }
-      if (yyn == 63) {
-        goto case_63;
-      }
+
       if (yyn == 64) {
         goto case_64;
       }
@@ -18993,7 +18933,42 @@ int yyparse(void *parm) {
       yyval.timespec.tv_nsec = (__syscall_slong_t)0;
       goto switch_break;
     case_63: /* CIL Label */
-
+      if (((parser_control *)parm)->dates_seen) {
+        if (!((parser_control *)parm)->rels_seen) {
+          if (((parser_control *)parm)->times_seen) {
+            ((parser_control *)parm)->year = (yyvsp + 0)->textintval;
+          } else {
+          }
+        } else {
+          goto _L___4;
+        }
+      } else {
+      _L___4: /* CIL Label */
+        if (4UL < (yyvsp + 0)->textintval.digits) {
+          (((parser_control *)parm)->dates_seen)++;
+          ((parser_control *)parm)->day = (yyvsp + 0)->textintval.value % 100L;
+          ((parser_control *)parm)->month =
+              ((yyvsp + 0)->textintval.value / 100L) % 100L;
+          ((parser_control *)parm)->year.value =
+              (yyvsp + 0)->textintval.value / 10000L;
+          ((parser_control *)parm)->year.digits =
+              (yyvsp + 0)->textintval.digits - 4UL;
+        } else {
+          (((parser_control *)parm)->times_seen)++;
+          if ((yyvsp + 0)->textintval.digits <= 2UL) {
+            ((parser_control *)parm)->hour = (yyvsp + 0)->textintval.value;
+            ((parser_control *)parm)->minutes = 0L;
+          } else {
+            ((parser_control *)parm)->hour =
+                (yyvsp + 0)->textintval.value / 100L;
+            ((parser_control *)parm)->minutes =
+                (yyvsp + 0)->textintval.value % 100L;
+          }
+          ((parser_control *)parm)->seconds.tv_sec = (__time_t)0;
+          ((parser_control *)parm)->seconds.tv_nsec = (__syscall_slong_t)0;
+          ((parser_control *)parm)->meridian = 2;
+        }
+      }
       goto switch_break;
     case_64: /* CIL Label */
       yyval.intval = 2L;
@@ -19042,9 +19017,7 @@ int yyparse(void *parm) {
     yyerrstatus = 3;
     goto yyerrhandle;
   yyerrdefault:
-    if ((unsigned long)yyssp == (unsigned long)yyss) {
-      goto yyabortlab;
-    }
+
     yyvsp--;
     yyssp--;
     yystate = (int)*yyssp;
@@ -19066,17 +19039,7 @@ int yyparse(void *parm) {
       }
     }
     yyn = (int)yytable[yyn];
-    if (yyn < 0) {
-      if (yyn == -32768) {
-        goto yyerrdefault;
-      }
-      yyn = -yyn;
-      goto yyreduce;
-    } else {
-      if (yyn == 0) {
-        goto yyerrdefault;
-      }
-    }
+
     if (yyn == 80) {
       goto yyacceptlab;
     }
@@ -19103,16 +19066,7 @@ static table const meridian_table[5] = {{"AM", 264, 0},
                                         {"P.M.", 264, 1},
                                         {(char const *)0, 0, 0}};
 static table const dst_table[1] = {{"DST", 258, 0}};
-static table const month_and_day_table[25] = {
-    {"JANUARY", 266, 1},    {"FEBRUARY", 266, 2}, {"MARCH", 266, 3},
-    {"APRIL", 266, 4},      {"MAY", 266, 5},      {"JUNE", 266, 6},
-    {"JULY", 266, 7},       {"AUGUST", 266, 8},   {"SEPTEMBER", 266, 9},
-    {"SEPT", 266, 9},       {"OCTOBER", 266, 10}, {"NOVEMBER", 266, 11},
-    {"DECEMBER", 266, 12},  {"SUNDAY", 259, 0},   {"MONDAY", 259, 1},
-    {"TUESDAY", 259, 2},    {"TUES", 259, 2},     {"WEDNESDAY", 259, 3},
-    {"WEDNES", 259, 3},     {"THURSDAY", 259, 4}, {"THUR", 259, 4},
-    {"THURS", 259, 4},      {"FRIDAY", 259, 5},   {"SATURDAY", 259, 6},
-    {(char const *)0, 0, 0}};
+
 static table const time_units_table[11] = {
     {"YEAR", 269, 1},   {"MONTH", 267, 1},      {"FORTNIGHT", 260, 14},
     {"WEEK", 260, 7},   {"DAY", 260, 1},        {"HOUR", 262, 1},
@@ -19126,61 +19080,24 @@ static table const relative_time_table[20] = {
     {"SEVENTH", 272, 7},  {"EIGHTH", 272, 8},     {"NINTH", 272, 9},
     {"TENTH", 272, 10},   {"ELEVENTH", 272, 11},  {"TWELFTH", 272, 12},
     {"AGO", 257, 1},      {(char const *)0, 0, 0}};
-
-static int to_hour(long hours, int meridian) {
-  long tmp;
-  int tmp___0;
-  long tmp___1;
-  int tmp___2;
-  long tmp___3;
-
-  {
-    {
-      if (meridian == 2) {
-        goto case_2;
-      }
-      if (meridian == 0) {
-        goto case_0;
-      }
-      if (meridian == 1) {
-        goto case_1;
-      }
-      goto switch_default;
-    case_2: /* CIL Label */
-      if (0L <= hours) {
-        if (hours < 24L) {
-          tmp = hours;
-        } else {
-          tmp = -1L;
-        }
-      } else {
-        tmp = -1L;
-      }
-      return ((int)tmp);
-    case_0: /* CIL Label */
-
-      return ((int)tmp___1);
-    case_1: /* CIL Label */
-
-      return ((int)tmp___3);
-    switch_default: { /* CIL Label */
-      abort();
-    }
-    switch_break: /* CIL Label */
-        ;
-    }
-  }
-}
-static long to_year(textint textyear) {
-  long year;
-  int tmp;
-
-  {
-    year = textyear.value;
-
-    return (year);
-  }
-}
+static table const time_zone_table[51] = {
+    {"GMT", 270, 0},     {"UT", 270, 0},     {"UTC", 270, 0},
+    {"WET", 270, 0},     {"WEST", 261, 0},   {"BST", 261, 0},
+    {"ART", 270, -180},  {"BRT", 270, -180}, {"BRST", 261, -180},
+    {"NST", 270, -210},  {"NDT", 261, -210}, {"AST", 270, -240},
+    {"ADT", 261, -240},  {"CLT", 270, -240}, {"CLST", 261, -240},
+    {"EST", 270, -300},  {"EDT", 261, -300}, {"CST", 270, -360},
+    {"CDT", 261, -360},  {"MST", 270, -420}, {"MDT", 261, -420},
+    {"PST", 270, -480},  {"PDT", 261, -480}, {"AKST", 270, -540},
+    {"AKDT", 261, -540}, {"HST", 270, -600}, {"HAST", 270, -600},
+    {"HADT", 261, -600}, {"SST", 270, -720}, {"WAT", 270, 60},
+    {"CET", 270, 60},    {"CEST", 261, 60},  {"MET", 270, 60},
+    {"MEZ", 270, 60},    {"MEST", 261, 60},  {"MESZ", 261, 60},
+    {"EET", 270, 120},   {"EEST", 261, 120}, {"CAT", 270, 120},
+    {"SAST", 270, 120},  {"EAT", 270, 180},  {"MSK", 270, 180},
+    {"MSD", 261, 180},   {"IST", 270, 330},  {"SGT", 270, 480},
+    {"KST", 270, 540},   {"JST", 270, 540},  {"GST", 270, 600},
+    {"NZST", 270, 720},  {"NZDT", 261, 720}, {(char const *)0, 0, 0}};
 
 static int yylex(YYSTYPE *lvalp, parser_control *pc) {
   unsigned char c;
@@ -19214,7 +19131,18 @@ static int yylex(YYSTYPE *lvalp, parser_control *pc) {
       while_continue: /* CIL Label */
           ;
         {
-
+          while (1) {
+          while_continue___0: /* CIL Label */
+              ;
+            {
+              c = (unsigned char)*(pc->input);
+              tmp = __ctype_b_loc();
+            }
+            if (!(((int const) * (*tmp + (int)c) & 8192) != 0)) {
+              goto while_break___0;
+            }
+            (pc->input)++;
+          }
         while_break___0: /* CIL Label */
             ;
         }
@@ -19238,7 +19166,9 @@ static int yylex(YYSTYPE *lvalp, parser_control *pc) {
                   }
                   (pc->input)++;
                   c = (unsigned char)*(pc->input);
-
+                  if (!((unsigned int)c - 48U <= 9U)) {
+                    goto __Cont;
+                  }
                 } else {
                   sign = 0;
                 }
@@ -19273,7 +19203,19 @@ static int yylex(YYSTYPE *lvalp, parser_control *pc) {
                 if ((int)c == 44) {
                 _L___5: /* CIL Label */
                   if ((unsigned int)*(p + 1) - 48U <= 9U) {
-
+                    if (sign < 0) {
+                      s = (time_t)(-value);
+                      if (0L < s) {
+                        return ('?');
+                      }
+                      value1___0 = (unsigned long)(-s);
+                    } else {
+                      s = (time_t)value;
+                      if (s < 0L) {
+                        return ('?');
+                      }
+                      value1___0 = (unsigned long)s;
+                    }
                     if (value != value1___0) {
                       return ('?');
                     }
@@ -19330,13 +19272,7 @@ static int yylex(YYSTYPE *lvalp, parser_control *pc) {
                     while_break___4: /* CIL Label */
                         ;
                     }
-                    if (sign < 0) {
-                      if (ns) {
-                        s--;
 
-                        ns = 1000000000 - ns;
-                      }
-                    }
                     lvalp->timespec.tv_sec = s;
                     lvalp->timespec.tv_nsec = (__syscall_slong_t)ns;
                     pc->input = p;
@@ -19353,9 +19289,7 @@ static int yylex(YYSTYPE *lvalp, parser_control *pc) {
                 _L___4: /* CIL Label */
                   if (sign < 0) {
                     lvalp->textintval.value = (long)(-value);
-                    if (0L < lvalp->textintval.value) {
-                      return ('?');
-                    }
+
                   } else {
                     lvalp->textintval.value = (long)value;
                     if (lvalp->textintval.value < 0L) {
@@ -19423,10 +19357,7 @@ static int yylex(YYSTYPE *lvalp, parser_control *pc) {
             if ((int)c == 0) {
               return ((int)c);
             }
-            if ((int)c == 40) {
-              count++;
-            } else {
-            }
+
             if (!(count != 0UL)) {
               goto while_break___6;
             }
@@ -19445,210 +19376,7 @@ static int yyerror(char *s __attribute__((__unused__))) {
 
   { return (0); }
 }
-_Bool get_date(struct timespec *result, char const *p,
-               struct timespec const *now) {
-  time_t Start;
-  long Start_ns;
-  struct tm const *tmp;
-  struct tm tm;
-  struct tm tm0;
-  parser_control pc;
-  struct timespec gettime_buffer;
-  int tmp___0;
-  struct tm *tmp___1;
-  int quarter;
-  time_t probe;
-  struct tm const *probe_tm;
-  struct tm *tmp___2;
-  int tmp___3;
-  int tmp___4;
-  long tmp___5;
-  long delta;
-  time_t t1;
-  long sum_ns;
-  long normalized_ns;
-  time_t t0;
-  long d1;
-  time_t t1___0;
-  long d2;
-  time_t t2;
-  long d3;
-  time_t t3;
-  long d4;
-  time_t t4;
-  void *__cil_tmp33;
-  int __cil_tmp34;
 
-  {
-    if (!now) {
-      {
-        tmp___0 = gettime(&gettime_buffer);
-      }
-
-      now = (struct timespec const *)(&gettime_buffer);
-    }
-    {
-      Start = (time_t)now->tv_sec;
-      Start_ns = (long)now->tv_nsec;
-      tmp___1 = localtime(&now->tv_sec);
-      tmp = (struct tm const *)tmp___1;
-    }
-    if (!tmp) {
-      return ((_Bool)0);
-    }
-    pc.input = p;
-    pc.year.value = (long)tmp->tm_year;
-    pc.year.value += 1900L;
-    pc.year.digits = (size_t)4;
-    pc.month = (long)(tmp->tm_mon + 1);
-    pc.day = (long)tmp->tm_mday;
-    pc.hour = (long)tmp->tm_hour;
-    pc.minutes = (long)tmp->tm_min;
-    pc.seconds.tv_sec = (__time_t)tmp->tm_sec;
-    pc.seconds.tv_nsec = Start_ns;
-    tm.tm_isdst = (int)tmp->tm_isdst;
-    pc.meridian = 2;
-    pc.rel_ns = 0L;
-    pc.rel_seconds = 0L;
-    pc.rel_minutes = 0L;
-    pc.rel_hour = 0L;
-    pc.rel_day = 0L;
-    pc.rel_month = 0L;
-    pc.rel_year = 0L;
-    pc.timespec_seen = (_Bool)0;
-    pc.dates_seen = (size_t)0;
-    pc.days_seen = (size_t)0;
-    pc.rels_seen = (size_t)0;
-    pc.times_seen = (size_t)0;
-    pc.local_zones_seen = (size_t)0;
-    pc.zones_seen = (size_t)0;
-    pc.local_time_zone_table[0].name = (char const *)tmp->tm_zone;
-    pc.local_time_zone_table[0].type = 263;
-    pc.local_time_zone_table[0].value = (int)tmp->tm_isdst;
-    pc.local_time_zone_table[1].name = (char const *)0;
-    quarter = 1;
-    {
-
-    while_break: /* CIL Label */
-        ;
-    }
-
-    { tmp___4 = yyparse((void *)(&pc)); }
-    if (tmp___4 != 0) {
-      return ((_Bool)0);
-    }
-    if (pc.timespec_seen) {
-      *result = pc.seconds;
-      return ((_Bool)1);
-    }
-
-    {
-      tmp___5 = to_year(pc.year);
-      tm.tm_year = (int)((tmp___5 - 1900L) + pc.rel_year);
-      tm.tm_mon = (int)((pc.month - 1L) + pc.rel_month);
-      tm.tm_mday = (int)(pc.day + pc.rel_day);
-    }
-    if (pc.times_seen) {
-      goto _L___3;
-    } else {
-      if (pc.rels_seen) {
-        if (!pc.dates_seen) {
-          if (!pc.days_seen) {
-          _L___3: { /* CIL Label */
-            tm.tm_hour = to_hour(pc.hour, pc.meridian);
-          }
-            if (tm.tm_hour < 0) {
-              return ((_Bool)0);
-            }
-            tm.tm_min = (int)pc.minutes;
-            tm.tm_sec = (int)pc.seconds.tv_sec;
-          } else {
-            tm.tm_sec = 0;
-            tm.tm_min = tm.tm_sec;
-            tm.tm_hour = tm.tm_min;
-            pc.seconds.tv_nsec = (__syscall_slong_t)0;
-          }
-        } else {
-          tm.tm_sec = 0;
-          tm.tm_min = tm.tm_sec;
-          tm.tm_hour = tm.tm_min;
-          pc.seconds.tv_nsec = (__syscall_slong_t)0;
-        }
-      } else {
-        tm.tm_sec = 0;
-        tm.tm_min = tm.tm_sec;
-        tm.tm_hour = tm.tm_min;
-        pc.seconds.tv_nsec = (__syscall_slong_t)0;
-      }
-    }
-    if (((((pc.dates_seen | pc.days_seen) | pc.times_seen) |
-          (unsigned long)pc.rel_day) |
-         (unsigned long)pc.rel_month) |
-        (unsigned long)pc.rel_year) {
-      tm.tm_isdst = -1;
-    }
-    if (pc.local_zones_seen) {
-      tm.tm_isdst = pc.local_isdst;
-    }
-    {
-      tm0 = tm;
-      Start = rpl_mktime(&tm);
-    }
-    if (Start == -1L) {
-      if (pc.zones_seen) {
-        tm = tm0;
-        if (tm.tm_year <= 70) {
-          (tm.tm_mday)++;
-          pc.time_zone += 1440L;
-        } else {
-          (tm.tm_mday)--;
-          pc.time_zone -= 1440L;
-        }
-        { Start = rpl_mktime(&tm); }
-      }
-      if (Start == -1L) {
-        return ((_Bool)0);
-      }
-    }
-    if (pc.days_seen) {
-      if (!pc.dates_seen) {
-        {
-          tm.tm_mday =
-              (int)((long)tm.tm_mday +
-                    ((long)(((pc.day_number - tm.tm_wday) + 7) % 7) +
-                     7L * (pc.day_ordinal - (long)(0L < pc.day_ordinal))));
-          tm.tm_isdst = -1;
-          Start = rpl_mktime(&tm);
-        }
-        if (Start == -1L) {
-          return ((_Bool)0);
-        }
-      }
-    }
-
-    sum_ns = pc.seconds.tv_nsec + pc.rel_ns;
-    normalized_ns = (sum_ns % 1000000000L + 1000000000L) % 1000000000L;
-    t0 = Start;
-    d1 = 3600L * pc.rel_hour;
-    t1___0 = t0 + d1;
-    d2 = 60L * pc.rel_minutes;
-    t2 = t1___0 + d2;
-    d3 = pc.rel_seconds;
-    t3 = t2 + d3;
-    d4 = (sum_ns - normalized_ns) / 1000000000L;
-    t4 = t3 + d4;
-    if ((((((d1 / 3600L ^ pc.rel_hour) | (d2 / 60L ^ pc.rel_minutes)) |
-           (long)((t1___0 < t0) ^ (d1 < 0L))) |
-          (long)((t2 < t1___0) ^ (d2 < 0L))) |
-         (long)((t3 < t2) ^ (d3 < 0L))) |
-        (long)((t4 < t3) ^ (d4 < 0L))) {
-      return ((_Bool)0);
-    }
-    result->tv_sec = t4;
-    result->tv_nsec = normalized_ns;
-    return ((_Bool)1);
-  }
-}
 /* #pragma merger("0","01a.getopt1.o.i","") */
 /* #pragma merger("0","01b.getopt.o.i","") */
 /* #pragma merger("0","01c.gettime.o.i","") */
@@ -19663,9 +19391,7 @@ int gettime(struct timespec *ts) {
 
   {
     { tmp = clock_gettime(0, ts); }
-    if (tmp == 0) {
-      return (0);
-    }
+
     {
       tmp___0 = gettimeofday((struct timeval * /* __restrict  */)(&tv),
                              (__timezone_ptr_t)0);
@@ -19763,7 +19489,19 @@ void *hash_get_next(Hash_table const *table___0, void const *entry) {
 
     cursor = bucket;
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        if (!cursor) {
+          goto while_break;
+        }
+        if ((unsigned long)cursor->data == (unsigned long)entry) {
+          if (cursor->next) {
+            return ((cursor->next)->data);
+          }
+        }
+        cursor = (struct hash_entry const *)cursor->next;
+      }
     while_break: /* CIL Label */
         ;
     }
@@ -19774,6 +19512,9 @@ void *hash_get_next(Hash_table const *table___0, void const *entry) {
         bucket++;
         if (!((unsigned long)bucket < (unsigned long)table___0->bucket_limit)) {
           goto while_break___0;
+        }
+        if (bucket->data) {
+          return ((void *)bucket->data);
         }
       }
     while_break___0: /* CIL Label */
@@ -19937,7 +19678,13 @@ Hash_table *hash_initialize(size_t candidate, Hash_tuning const *tuning,
   int tmp___3;
 
   {
-
+    if ((unsigned long)hasher == (unsigned long)((void *)0)) {
+      return ((Hash_table *)((void *)0));
+    } else {
+      if ((unsigned long)comparator == (unsigned long)((void *)0)) {
+        return ((Hash_table *)((void *)0));
+      }
+    }
     {
       tmp = malloc(sizeof(*table___0));
       table___0 = (Hash_table *)tmp;
@@ -19950,17 +19697,7 @@ Hash_table *hash_initialize(size_t candidate, Hash_tuning const *tuning,
       table___0->tuning = tuning;
       tmp___0 = check_tuning(table___0);
     }
-    if (!tmp___0) {
-      goto fail;
-    }
-    if (!tuning->is_n_buckets) {
-      new_candidate =
-          (float)((float const)candidate / tuning->growth_threshold);
-      if ((float)0xffffffffffffffffUL <= new_candidate) {
-        goto fail;
-      }
-      candidate = (size_t)new_candidate;
-    }
+
     if (sizeof(ptrdiff_t) <= sizeof(size_t)) {
       tmp___2 = -1;
     } else {
@@ -19970,7 +19707,11 @@ Hash_table *hash_initialize(size_t candidate, Hash_tuning const *tuning,
       goto fail;
     }
     { table___0->n_buckets = next_prime(candidate); }
-
+    if (sizeof(ptrdiff_t) <= sizeof(size_t)) {
+      tmp___3 = -1;
+    } else {
+      tmp___3 = -2;
+    }
     if ((size_t)tmp___3 / sizeof(*(table___0->bucket)) < table___0->n_buckets) {
       goto fail;
     }
@@ -20044,7 +19785,11 @@ static void *hash_find_entry(Hash_table *table___0, void const *entry,
       return ((void *)0);
     }
     { tmp___0 = (*(table___0->comparator))(entry, (void const *)bucket->data); }
+    if (tmp___0) {
+      data = bucket->data;
 
+      return (data);
+    }
     cursor = bucket;
     {
       while (1) {
@@ -20110,7 +19855,13 @@ void *hash_insert(Hash_table *table___0, void const *entry) {
     bucket->data = (void *)entry;
     (table___0->n_entries)++;
     (table___0->n_buckets_used)++;
-
+    if ((float const)table___0->n_buckets_used >
+        (table___0->tuning)->growth_threshold *
+            (float const)table___0->n_buckets) {
+      {
+        check_tuning(table___0);
+      }
+    }
     return ((void *)entry);
   }
 }
@@ -20128,71 +19879,9 @@ static long double adjust_value(int inexact_style, long double value) {
   uintmax_t u;
   int tmp;
 
-  {
-    if (inexact_style != 1) {
-      if (value < (long double)0xffffffffffffffffUL) {
-        u = (uintmax_t)value;
-
-        value = (long double)(u + (uintmax_t)tmp);
-      }
-    }
-    return (value);
-  }
+  { return (value); }
 }
-static char *group_number(char *number, size_t numberlen, char const *grouping,
-                          char const *thousands_sep) {
-  register char *d;
-  size_t grouplen;
-  size_t thousands_seplen;
-  size_t tmp;
-  size_t i;
-  char buf[(((2UL * sizeof(uintmax_t)) * 8UL) * 302UL) / 1000UL + 1UL];
-  unsigned char g;
-  void *__cil_tmp12;
 
-  {
-    {
-      grouplen = 0xffffffffffffffffUL;
-      tmp = strlen(thousands_sep);
-      thousands_seplen = tmp;
-      i = numberlen;
-      memcpy((void * /* __restrict  */)(buf),
-             (void const * /* __restrict  */)number, numberlen);
-      d = number + numberlen;
-    }
-    {
-      while (1) {
-      while_continue: /* CIL Label */
-          ;
-        g = (unsigned char)*grouping;
-        if (g) {
-          if ((int)g < 127) {
-            grouplen = (size_t)g;
-          } else {
-            grouplen = i;
-          }
-          grouping++;
-        }
-
-        {
-          d -= grouplen;
-          i -= grouplen;
-          memcpy((void * /* __restrict  */)d,
-                 (void const * /* __restrict  */)(buf + i), grouplen);
-        }
-
-        {
-          d -= thousands_seplen;
-          memcpy((void * /* __restrict  */)d,
-                 (void const * /* __restrict  */)thousands_sep,
-                 thousands_seplen);
-        }
-      }
-    while_break: /* CIL Label */
-        ;
-    }
-  }
-}
 char *human_readable(uintmax_t n, char *buf, int opts,
                      uintmax_t from_block_size, uintmax_t to_block_size) {
   int inexact_style;
@@ -20249,7 +19938,11 @@ char *human_readable(uintmax_t n, char *buf, int opts,
 
   {
     inexact_style = opts & 3;
-
+    if (opts & 32) {
+      tmp___8 = 1024;
+    } else {
+      tmp___8 = 1000;
+    }
     {
       base = (unsigned int)tmp___8;
       exponent = -1;
@@ -20263,8 +19956,7 @@ char *human_readable(uintmax_t n, char *buf, int opts,
       tmp___0 = strlen((char const *)l->decimal_point);
       pointlen = tmp___0;
     }
-    if (0UL < pointlen) {
-    }
+
     {
       grouping = (char const *)l->grouping;
       tmp___1 = strlen((char const *)l->thousands_sep);
@@ -20278,8 +19970,31 @@ char *human_readable(uintmax_t n, char *buf, int opts,
         3;
     p = psuffix;
     if (to_block_size <= from_block_size) {
-
+      if (from_block_size % to_block_size == 0UL) {
+        multiplier = from_block_size / to_block_size;
+        amt = n * multiplier;
+        if (amt / multiplier == n) {
+          tenths = 0;
+          rounding = 0;
+          goto use_integer_arithmetic;
+        }
+      }
     } else {
+      if (from_block_size != 0UL) {
+        if (to_block_size % from_block_size == 0UL) {
+          divisor = to_block_size / from_block_size;
+          r10 = (n % divisor) * 10UL;
+          r2 = (r10 % divisor) * 2UL;
+          amt = n / divisor;
+          tenths = (int)(r10 / divisor);
+          if (r2 < divisor) {
+            rounding = 0UL < r2;
+          } else {
+            rounding = 2 + (divisor < r2);
+          }
+          goto use_integer_arithmetic;
+        }
+      }
     }
     dto_block_size = (long double)to_block_size;
     damt = (long double)n * ((long double)from_block_size / dto_block_size);
@@ -20319,6 +20034,19 @@ char *human_readable(uintmax_t n, char *buf, int opts,
         buflen = strlen((char const *)buf);
         nonintegerlen = decimal_pointlen + 1UL;
       }
+      if ((1UL + nonintegerlen) + (size_t)(!(opts & 32)) < buflen) {
+        {
+          tmp___4 = adjust_value(inexact_style, damt * (long double)10);
+          sprintf((char * /* __restrict  */)buf,
+                  (char const * /* __restrict  */) "%.0Lf",
+                  tmp___4 / (long double)10);
+          buflen = strlen((char const *)buf);
+          nonintegerlen = (size_t)0;
+        }
+      } else {
+        if (opts & 8) {
+        }
+      }
     }
     {
       p = psuffix - buflen;
@@ -20345,16 +20073,65 @@ char *human_readable(uintmax_t n, char *buf, int opts,
               rounding = 2 + (base < r2___0 + (unsigned int)rounding);
             }
             exponent++;
+            if ((uintmax_t)base <= amt) {
+              if (!(exponent < exponent_max)) {
+                goto while_break___0;
+              }
+            } else {
+              goto while_break___0;
+            }
           }
         while_break___0: /* CIL Label */
             ;
+        }
+        if (amt < 10UL) {
+          if (inexact_style == 1) {
+            tmp___10 = 2 < rounding + (tenths & 1);
+          } else {
+
+            tmp___10 = tmp___9;
+          }
+          if (tmp___10) {
+            tenths++;
+            rounding = 0;
+            if (tenths == 10) {
+              amt++;
+              tenths = 0;
+            }
+          }
+          if (amt < 10UL) {
+            if (tenths) {
+              goto _L___3;
+            } else {
+              if (!(opts & 8)) {
+              _L___3: { /* CIL Label */
+                p--;
+                *p = (char)(48 + tenths);
+                p -= decimal_pointlen;
+                memcpy((void * /* __restrict  */)p,
+                       (void const * /* __restrict  */)decimal_point,
+                       decimal_pointlen);
+                rounding = 0;
+                tenths = rounding;
+              }
+              }
+            }
+          }
         }
       }
     }
     if (inexact_style == 1) {
       tmp___12 = 5 < tenths + (0UL < (unsigned long)rounding + (amt & 1UL));
     } else {
-
+      if (inexact_style == 0) {
+        if (0 < tenths + rounding) {
+          tmp___11 = 1;
+        } else {
+          tmp___11 = 0;
+        }
+      } else {
+        tmp___11 = 0;
+      }
       tmp___12 = tmp___11;
     }
     if (tmp___12) {
@@ -20395,14 +20172,7 @@ char *human_readable(uintmax_t n, char *buf, int opts,
         ;
     }
   do_grouping:
-    if (opts & 4) {
-      {
-        p = group_number(p, (size_t)(integerlim - (char const *)p), grouping,
-                         thousands_sep);
-      }
-    }
-    if (opts & 64) {
-    }
+
     *psuffix = (char)'\000';
     return (p);
   }
@@ -20470,7 +20240,42 @@ __inline static time_t ydhms_diff(long year1, long yday1, int hour1, int min1,
     return (seconds);
   }
 }
+static time_t guess_time_tm(long year, long yday, int hour, int min, int sec,
+                            time_t const *t, struct tm const *tp) {
+  time_t d;
+  time_t tmp;
+  time_t t1;
+  long tmp___0;
 
+  {
+    if (tp) {
+      {
+        tmp = ydhms_diff(year, yday, hour, min, sec, (int)tp->tm_year,
+                         (int)tp->tm_yday, (int)tp->tm_hour, (int)tp->tm_min,
+                         (int)tp->tm_sec);
+        d = tmp;
+        t1 = (time_t)(*t + (time_t const)d);
+      }
+      if ((t1 < (time_t)*t) == (d < 0L)) {
+        return (t1);
+      }
+    }
+    if (*t < (time_t const)((((-1L << (sizeof(time_t) * 8UL - 1UL)) +
+                              (-1L - (-1L << (sizeof(time_t) * 8UL - 1UL)))) >>
+                             1) +
+                            1L)) {
+      tmp___0 =
+          (-1L << (sizeof(time_t) * 8UL - 1UL)) +
+          (time_t)(*t == (time_t const)(-1L << (sizeof(time_t) * 8UL - 1UL)));
+    } else {
+      tmp___0 =
+          (-1L - (-1L << (sizeof(time_t) * 8UL - 1UL))) -
+          (time_t)(*t ==
+                   (time_t const)(-1L - (-1L << (sizeof(time_t) * 8UL - 1UL))));
+    }
+    return (tmp___0);
+  }
+}
 static struct tm *ranged_convert(struct tm *(*convert)(time_t const *,
                                                        struct tm *),
                                  time_t *t, struct tm *tp) {
@@ -20492,11 +20297,7 @@ static struct tm *ranged_convert(struct tm *(*convert)(time_t const *,
           while (1) {
           while_continue: /* CIL Label */
               ;
-            if (bad < 0L) {
-              tmp___0 = -1;
-            } else {
-              tmp___0 = 1;
-            }
+
             if (!(bad != ok + (time_t)tmp___0)) {
               goto while_break;
             }
@@ -20519,6 +20320,13 @@ static struct tm *ranged_convert(struct tm *(*convert)(time_t const *,
           }
         while_break: /* CIL Label */
             ;
+        }
+        if (!r) {
+          if (ok) {
+            *t = ok;
+            *tp = tm;
+            r = tp;
+          }
         }
       }
     }
@@ -20605,10 +20413,10 @@ time_t mktime_internal(struct tm *tp,
       guessed_offset = *offset;
       sec_requested = sec;
     }
-    if (sec < 0) {
-      sec = 0;
-    }
 
+    if (59 < sec) {
+      sec = 59;
+    }
     {
       t0 = ydhms_diff(year, yday, hour, min, sec, 70, 0, 0, 0,
                       (int)(-guessed_offset));
@@ -20632,25 +20440,113 @@ time_t mktime_internal(struct tm *tp,
           (min >> ALOG2_MINUTES_PER_BIENNIUM);
       approx_biennia = (int)(t0 >> ALOG2_SECONDS_PER_BIENNIUM);
       diff = approx_biennia - approx_requested_biennia;
-
+      if (diff < 0) {
+        abs_diff = -diff;
+      } else {
+        abs_diff = diff;
+      }
       time_t_max = -1L - (-1L << (sizeof(time_t) * 8UL - 1UL));
       time_t_min = -1L << (sizeof(time_t) * 8UL - 1UL);
       overflow_threshold =
           (time_t_max / 3L - time_t_min / 3L) >> ALOG2_SECONDS_PER_BIENNIUM;
+      if (overflow_threshold < (time_t)abs_diff) {
+        repaired_t0 = -1L - t0;
+        approx_biennia = (int)(repaired_t0 >> ALOG2_SECONDS_PER_BIENNIUM);
+        diff = approx_biennia - approx_requested_biennia;
+        if (diff < 0) {
+          abs_diff = -diff;
+        } else {
+          abs_diff = diff;
+        }
+        if (overflow_threshold < (time_t)abs_diff) {
+          return ((time_t)-1);
+        }
+        guessed_offset += repaired_t0 - t0;
+        t0 = repaired_t0;
+      }
     }
     t2 = t0;
     t1 = t2;
     t = t1;
     dst2 = 0;
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        {
+          tmp___0 = ranged_convert(convert, &t, &tm);
+          gt = guess_time_tm(year, yday, hour, min, sec, (time_t const *)(&t),
+                             (struct tm const *)tmp___0);
+        }
+        if (!(t != gt)) {
+          goto while_break;
+        }
+        if (t == t1) {
+          if (t != t2) {
+            if (tm.tm_isdst < 0) {
+              goto offset_found;
+            } else {
+              if (isdst < 0) {
+                tmp___3 = dst2 <= (tm.tm_isdst != 0);
+              } else {
+                tmp___3 = (isdst != 0) != (tm.tm_isdst != 0);
+              }
+              if (tmp___3) {
+                goto offset_found;
+              } else {
+                goto _L___4;
+              }
+            }
+          } else {
+            goto _L___4;
+          }
+        } else {
+        _L___4: /* CIL Label */
+          remaining_probes--;
+          if (remaining_probes == 0) {
+            return ((time_t)-1);
+          }
+        }
+        t1 = t2;
+        t2 = t;
+        t = gt;
+        dst2 = tm.tm_isdst != 0;
+      }
     while_break: /* CIL Label */
         ;
     }
+    if (isdst != tm.tm_isdst) {
+      if (0 <= isdst) {
+        if (0 <= tm.tm_isdst) {
+          stride = 601200;
+          duration_max = 536454000;
+          delta_bound = duration_max / 2 + stride;
+          delta = stride;
+          {
 
+          while_break___0: /* CIL Label */
+              ;
+          }
+        }
+      }
+    }
   offset_found:
     *offset = (guessed_offset + t) - t0;
+    if (sec_requested != tm.tm_sec) {
 
+      {
+        sec_adjustment = tmp___4 - sec;
+        t1 = t + (time_t)sec_requested;
+        t2 = t1 + (time_t)sec_adjustment;
+        tmp___1 = (*convert)((time_t const *)(&t), &tm);
+      }
+
+      if ((((t1 < t) != (sec_requested < 0)) |
+           ((t2 < t1) != (sec_adjustment < 0))) |
+          tmp___2) {
+        return ((time_t)-1);
+      }
+    }
     *tp = tm;
     return (t);
   }
@@ -20683,7 +20579,9 @@ static struct mode_change *make_node_op_equals(mode_t new_mode) {
       tmp = malloc(sizeof(struct mode_change));
       p = (struct mode_change *)tmp;
     }
-
+    if ((unsigned long)p == (unsigned long)((void *)0)) {
+      return (p);
+    }
     p->next = (struct mode_change *)((void *)0);
     p->op = (char)'=';
     p->flags = (char)0;
@@ -20698,7 +20596,14 @@ static void mode_append_entry(struct mode_change **head,
   struct mode_change *tmp;
 
   {
-
+    if ((unsigned long)*head == (unsigned long)((void *)0)) {
+      tmp = e;
+      *tail = tmp;
+      *head = tmp;
+    } else {
+      (*tail)->next = e;
+      *tail = e;
+    }
     return;
   }
 }
@@ -20745,7 +20650,19 @@ struct mode_change *mode_compile(char const *mode_string,
     if ((unsigned int)tmp == 0U) {
 
       if (256 >> 3 == 32) {
+        if (128 >> 3 == 16) {
+          if (64 >> 3 == 8) {
+            if ((256 >> 3) >> 3 == 4) {
 
+            } else {
+              goto _L___7;
+            }
+          } else {
+            goto _L___7;
+          }
+        } else {
+          goto _L___7;
+        }
       } else {
       _L___7: /* CIL Label */
         if (octal_value & 2048UL) {
@@ -20758,7 +20675,11 @@ struct mode_change *mode_compile(char const *mode_string,
         } else {
           tmp___3 = 0;
         }
-
+        if (octal_value & 512UL) {
+          tmp___4 = 512;
+        } else {
+          tmp___4 = 0;
+        }
         if (octal_value & 256UL) {
           tmp___5 = 256;
         } else {
@@ -20774,13 +20695,21 @@ struct mode_change *mode_compile(char const *mode_string,
         } else {
           tmp___7 = 0;
         }
-
+        if (octal_value & 32UL) {
+          tmp___8 = 256 >> 3;
+        } else {
+          tmp___8 = 0;
+        }
         if (octal_value & 16UL) {
           tmp___9 = 128 >> 3;
         } else {
           tmp___9 = 0;
         }
-
+        if (octal_value & 8UL) {
+          tmp___10 = 64 >> 3;
+        } else {
+          tmp___10 = 0;
+        }
         if (octal_value & 4UL) {
           tmp___11 = (256 >> 3) >> 3;
         } else {
@@ -20791,7 +20720,11 @@ struct mode_change *mode_compile(char const *mode_string,
         } else {
           tmp___12 = 0;
         }
-
+        if (octal_value & 1UL) {
+          tmp___13 = (64 >> 3) >> 3;
+        } else {
+          tmp___13 = 0;
+        }
         tmp___14 = (unsigned long)((
             mode_t)(((((((((((tmp___2 | tmp___3) | tmp___4) | tmp___5) |
                            tmp___6) |
@@ -20881,11 +20814,6 @@ struct mode_change *mode_compile(char const *mode_string,
           while_continue___1: /* CIL Label */
               ;
             if (!((int const) * mode_string == 61)) {
-              if (!((int const) * mode_string == 43)) {
-                if (!((int const) * mode_string == 45)) {
-                  goto while_break___1;
-                }
-              }
             }
             {
               tmp___0 = malloc(sizeof(struct mode_change));
@@ -20900,7 +20828,27 @@ struct mode_change *mode_compile(char const *mode_string,
             change->next = (struct mode_change *)((void *)0);
             change->op = (char)*mode_string;
             affected_masked = affected_bits;
+            if (!who_specified_p) {
+              if ((int const) * mode_string == 61) {
+                tmp___15 = 1;
+              } else {
+                tmp___15 = 0;
+              }
+              if (ops_to_mask & (unsigned int)tmp___15) {
+                {
+                  tmp___1 = make_node_op_equals((mode_t)0);
+                  p___0 = tmp___1;
+                }
+                if ((unsigned long)p___0 == (unsigned long)((void *)0)) {
+                  return ((struct mode_change *)1);
+                }
+                { mode_append_entry(&head, &tail, p___0); }
+              }
+            }
 
+            if (ops_to_mask & (unsigned int)tmp___17) {
+              affected_masked &= ~umask_value;
+            }
             {
               change->affected = affected_masked;
               change->value = (mode_t)0;
@@ -20917,12 +20865,8 @@ struct mode_change *mode_compile(char const *mode_string,
                   if ((int const) * mode_string == 119) {
                     goto case_119;
                   }
-
-                  if ((int const) * mode_string == 115) {
-                    goto case_115;
-                  }
-                  if ((int const) * mode_string == 116) {
-                    goto case_116;
+                  if ((int const) * mode_string == 88) {
+                    goto case_88;
                   }
 
                   if ((int const) * mode_string == 103) {
@@ -20956,12 +20900,16 @@ struct mode_change *mode_compile(char const *mode_string,
                   change->value |= 512U & affected_masked;
                   goto switch_break___0;
                 case_117___0: /* CIL Label */
-
+                  if (change->value) {
+                    goto invalid;
+                  }
                   change->value = (mode_t)448;
                   change->flags = (char)((int)change->flags | 2);
                   goto switch_break___0;
                 case_103___0: /* CIL Label */
-
+                  if (change->value) {
+                    goto invalid;
+                  }
                   change->value = (mode_t)(448 >> 3);
                   change->flags = (char)((int)change->flags | 2);
                   goto switch_break___0;
@@ -21023,19 +20971,80 @@ mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
         }
         if ((int const)changes->flags & 2) {
           value = newmode & (unsigned int)changes->value;
-
+          if (changes->value & 448U) {
+            if (value & 256U) {
+              tmp = (256 >> 3) | ((256 >> 3) >> 3);
+            } else {
+              tmp = 0;
+            }
+            if (value & 128U) {
+              tmp___0 = (128 >> 3) | ((128 >> 3) >> 3);
+            } else {
+              tmp___0 = 0;
+            }
+            if (value & 64U) {
+              tmp___1 = (64 >> 3) | ((64 >> 3) >> 3);
+            } else {
+              tmp___1 = 0;
+            }
+            value |= (unsigned int)((tmp | tmp___0) | tmp___1);
+          } else {
+            if (changes->value & (unsigned int const)(448 >> 3)) {
+              if (value & (unsigned int)(256 >> 3)) {
+                tmp___2 = 256 | ((256 >> 3) >> 3);
+              } else {
+                tmp___2 = 0;
+              }
+              if (value & (unsigned int)(128 >> 3)) {
+                tmp___3 = 128 | ((128 >> 3) >> 3);
+              } else {
+                tmp___3 = 0;
+              }
+              if (value & (unsigned int)(64 >> 3)) {
+                tmp___4 = 64 | ((64 >> 3) >> 3);
+              } else {
+                tmp___4 = 0;
+              }
+              value |= (unsigned int)((tmp___2 | tmp___3) | tmp___4);
+            } else {
+              if (value & (unsigned int)((256 >> 3) >> 3)) {
+                tmp___5 = 256 | (256 >> 3);
+              } else {
+                tmp___5 = 0;
+              }
+              if (value & (unsigned int)((128 >> 3) >> 3)) {
+                tmp___6 = 128 | (128 >> 3);
+              } else {
+                tmp___6 = 0;
+              }
+              if (value & (unsigned int)((64 >> 3) >> 3)) {
+                tmp___7 = 64 | (64 >> 3);
+              } else {
+                tmp___7 = 0;
+              }
+              value |= (unsigned int)((tmp___5 | tmp___6) | tmp___7);
+            }
+          }
           value &= (unsigned int)changes->affected;
         } else {
           value = (mode_t)changes->value;
+          if ((int const)changes->flags & 1) {
+            if (!((oldmode & 61440U) == 16384U)) {
+              if ((newmode &
+                   (unsigned int)((64 | (64 >> 3)) | ((64 >> 3) >> 3))) == 0U) {
+                value &= (unsigned int)(~((64 | (64 >> 3)) | ((64 >> 3) >> 3)));
+              }
+            }
+          }
         }
         {
           if ((int const)changes->op == 61) {
             goto case_61;
           }
-
-          if ((int const)changes->op == 45) {
-            goto case_45;
+          if ((int const)changes->op == 43) {
+            goto case_43;
           }
+
           goto switch_break;
         case_61: /* CIL Label */
           newmode = (newmode & (unsigned int)(~changes->affected)) | value;
@@ -21105,7 +21114,15 @@ extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) mbrtowc)(
     mbstate_t *__restrict __p);
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) iswprint)(
     wint_t __wc);
-
+char const *const quoting_style_args[8] = {
+    (char const * /* const  */) "literal",
+    (char const * /* const  */) "shell",
+    (char const * /* const  */) "shell-always",
+    (char const * /* const  */) "c",
+    (char const * /* const  */) "escape",
+    (char const * /* const  */) "locale",
+    (char const * /* const  */) "clocale",
+    (char const * /* const  */)0};
 enum quoting_style const quoting_style_vals[7] = {
     (enum quoting_style const)0, (enum quoting_style const)1,
     (enum quoting_style const)2, (enum quoting_style const)3,
@@ -21180,7 +21197,11 @@ static char const *gettext_quote(char const *msgid, enum quoting_style s) {
       tmp = gettext(msgid);
       translation = (char const *)tmp;
     }
-
+    if ((unsigned long)translation == (unsigned long)msgid) {
+      if ((unsigned int)s == 6U) {
+        translation = "\"";
+      }
+    }
     return (translation);
   }
 }
@@ -21232,7 +21253,13 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
       unibyte_locale = tmp == 1UL;
     }
     {
+      if ((unsigned int)quoting_style == 3U) {
+        goto case_3;
+      }
 
+      if ((unsigned int)quoting_style == 5U) {
+        goto case_5;
+      }
       if ((unsigned int)quoting_style == 6U) {
         goto case_5;
       }
@@ -21339,7 +21366,9 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
         }
         c = (unsigned char)*(arg + i);
         {
-
+          if ((int)c == 0) {
+            goto case_0;
+          }
           if ((int)c == 63) {
             goto case_63;
           }
@@ -21349,115 +21378,140 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
           if ((int)c == 8) {
             goto case_8;
           }
-
+          if ((int)c == 12) {
+            goto case_12;
+          }
           if ((int)c == 10) {
             goto case_10;
           }
           if ((int)c == 13) {
             goto case_13;
           }
-
+          if ((int)c == 9) {
+            goto case_9;
+          }
           if ((int)c == 11) {
             goto case_11;
           }
           if ((int)c == 92) {
             goto case_92;
           }
-
+          if ((int)c == 123) {
+            goto case_123;
+          }
+          if ((int)c == 125) {
+            goto case_123;
+          }
           if ((int)c == 35) {
             goto case_35;
           }
-
+          if ((int)c == 126) {
+            goto case_35;
+          }
           if ((int)c == 32) {
             goto case_32;
           }
+          if ((int)c == 33) {
+            goto case_32;
+          }
 
-          if ((int)c == 34) {
-            goto case_32;
-          }
-          if ((int)c == 36) {
-            goto case_32;
-          }
-          if ((int)c == 38) {
-            goto case_32;
-          }
           if ((int)c == 40) {
             goto case_32;
           }
           if ((int)c == 41) {
             goto case_32;
           }
-
+          if ((int)c == 42) {
+            goto case_32;
+          }
           if ((int)c == 59) {
             goto case_32;
           }
-
+          if ((int)c == 60) {
+            goto case_32;
+          }
           if ((int)c == 61) {
             goto case_32;
           }
           if ((int)c == 62) {
             goto case_32;
           }
-          if ((int)c == 91) {
-            goto case_32;
-          }
-          if ((int)c == 94) {
-            goto case_32;
-          }
+
           if ((int)c == 96) {
             goto case_32;
           }
-          if ((int)c == 124) {
-            goto case_32;
-          }
+
           if ((int)c == 39) {
             goto case_39___0;
           }
           if ((int)c == 37) {
             goto case_37;
           }
-
+          if ((int)c == 43) {
+            goto case_37;
+          }
+          if ((int)c == 44) {
+            goto case_37;
+          }
           if ((int)c == 45) {
             goto case_37;
           }
-          if ((int)c == 46) {
+
+          if ((int)c == 47) {
             goto case_37;
           }
-
           if ((int)c == 48) {
             goto case_37;
           }
-
+          if ((int)c == 49) {
+            goto case_37;
+          }
+          if ((int)c == 50) {
+            goto case_37;
+          }
           if ((int)c == 51) {
             goto case_37;
           }
-
+          if ((int)c == 52) {
+            goto case_37;
+          }
           if ((int)c == 53) {
             goto case_37;
           }
-          if ((int)c == 54) {
+
+          if ((int)c == 55) {
             goto case_37;
           }
-
           if ((int)c == 56) {
             goto case_37;
           }
-
+          if ((int)c == 57) {
+            goto case_37;
+          }
           if ((int)c == 58) {
             goto case_37;
           }
           if ((int)c == 65) {
             goto case_37;
           }
-
+          if ((int)c == 66) {
+            goto case_37;
+          }
+          if ((int)c == 67) {
+            goto case_37;
+          }
           if ((int)c == 68) {
             goto case_37;
           }
-
+          if ((int)c == 69) {
+            goto case_37;
+          }
           if ((int)c == 70) {
             goto case_37;
           }
-
+          if ((int)c == 71) {
+            goto case_37;
+          }
           if ((int)c == 72) {
             goto case_37;
           }
@@ -21467,7 +21521,15 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
           if ((int)c == 74) {
             goto case_37;
           }
-
+          if ((int)c == 75) {
+            goto case_37;
+          }
+          if ((int)c == 76) {
+            goto case_37;
+          }
+          if ((int)c == 77) {
+            goto case_37;
+          }
           if ((int)c == 78) {
             goto case_37;
           }
@@ -21477,28 +21539,34 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
           if ((int)c == 80) {
             goto case_37;
           }
-
+          if ((int)c == 81) {
+            goto case_37;
+          }
           if ((int)c == 82) {
             goto case_37;
           }
           if ((int)c == 83) {
             goto case_37;
           }
-
-          if ((int)c == 85) {
+          if ((int)c == 84) {
             goto case_37;
           }
+
           if ((int)c == 86) {
             goto case_37;
           }
-
+          if ((int)c == 87) {
+            goto case_37;
+          }
           if ((int)c == 88) {
             goto case_37;
           }
           if ((int)c == 89) {
             goto case_37;
           }
-
+          if ((int)c == 90) {
+            goto case_37;
+          }
           if ((int)c == 93) {
             goto case_37;
           }
@@ -21514,19 +21582,26 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
           if ((int)c == 99) {
             goto case_37;
           }
-
-          if ((int)c == 101) {
+          if ((int)c == 100) {
             goto case_37;
           }
 
+          if ((int)c == 102) {
+            goto case_37;
+          }
           if ((int)c == 103) {
             goto case_37;
           }
-
-          if ((int)c == 105) {
+          if ((int)c == 104) {
             goto case_37;
           }
 
+          if ((int)c == 107) {
+            goto case_37;
+          }
+          if ((int)c == 108) {
+            goto case_37;
+          }
           if ((int)c == 109) {
             goto case_37;
           }
@@ -21536,14 +21611,28 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
           if ((int)c == 111) {
             goto case_37;
           }
-          if ((int)c == 112) {
+
+          if ((int)c == 113) {
+            goto case_37;
+          }
+          if ((int)c == 114) {
+            goto case_37;
+          }
+          if ((int)c == 115) {
             goto case_37;
           }
 
-          if ((int)c == 116) {
+          if ((int)c == 117) {
             goto case_37;
           }
-          if ((int)c == 117) {
+
+          if ((int)c == 119) {
+            goto case_37;
+          }
+          if ((int)c == 120) {
+            goto case_37;
+          }
+          if ((int)c == 121) {
             goto case_37;
           }
 
@@ -21553,81 +21642,14 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
           goto switch_break___0;
         case_63: { /* CIL Label */
 
+          if ((unsigned int)quoting_style == 3U) {
+            goto case_3___0;
+          }
           goto switch_default___0;
         case_1: /* CIL Label */
           goto use_shell_always_quoting_style;
         case_3___0: /* CIL Label */
           if (i + 2UL < argsize) {
-            if ((int const) * (arg + (i + 1UL)) == 63) {
-              {
-                if ((int const) * (arg + (i + 2UL)) == 33) {
-                  goto case_33;
-                }
-                if ((int const) * (arg + (i + 2UL)) == 39) {
-                  goto case_33;
-                }
-                if ((int const) * (arg + (i + 2UL)) == 40) {
-                  goto case_33;
-                }
-                if ((int const) * (arg + (i + 2UL)) == 41) {
-                  goto case_33;
-                }
-                if ((int const) * (arg + (i + 2UL)) == 45) {
-                  goto case_33;
-                }
-                if ((int const) * (arg + (i + 2UL)) == 47) {
-                  goto case_33;
-                }
-                if ((int const) * (arg + (i + 2UL)) == 60) {
-                  goto case_33;
-                }
-
-                goto switch_break___2;
-              case_33: /* CIL Label */
-              case_39: /* CIL Label */
-              case_40: /* CIL Label */
-              case_41: /* CIL Label */
-              case_45: /* CIL Label */
-              case_47: /* CIL Label */
-              case_60: /* CIL Label */
-              case_61: /* CIL Label */
-              case_62: /* CIL Label */
-                c = (unsigned char)*(arg + (i + 2UL));
-                i += 2UL;
-                {
-                  while (1) {
-                  while_continue___8: /* CIL Label */
-                      ;
-                    if (len < buffersize) {
-                      *(buffer___2 + len) = (char)'?';
-                    }
-                    len++;
-                    goto while_break___8;
-                  }
-                while_break___8: /* CIL Label */
-                    ;
-                }
-                {
-
-                while_break___9: /* CIL Label */
-                    ;
-                }
-                {
-                  while (1) {
-                  while_continue___10: /* CIL Label */
-                      ;
-
-                    len++;
-                    goto while_break___10;
-                  }
-                while_break___10: /* CIL Label */
-                    ;
-                }
-                goto switch_break___2;
-              switch_break___2: /* CIL Label */
-                  ;
-              }
-            }
           }
           goto switch_break___1;
         switch_default___0: /* CIL Label */
@@ -21665,11 +21687,18 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
             goto use_shell_always_quoting_style;
           }
         c_escape:
-
+          if (backslash_escapes) {
+            c = esc;
+            goto store_escape;
+          }
           goto switch_break___0;
         case_123: /* CIL Label */
         case_125: /* CIL Label */
-
+          if (argsize == 0xffffffffffffffffUL) {
+            tmp___8 = (int const) * (arg + 1) == 0;
+          } else {
+            tmp___8 = argsize == 1UL;
+          }
           if (!tmp___8) {
             goto switch_break___0;
           }
@@ -21694,7 +21723,9 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
         case_94:     /* CIL Label */
         case_96:     /* CIL Label */
         case_124:    /* CIL Label */
-
+          if ((unsigned int)quoting_style == 1U) {
+            goto use_shell_always_quoting_style;
+          }
           goto switch_break___0;
         case_39___0: { /* CIL Label */
           if ((unsigned int)quoting_style == 1U) {
@@ -21705,7 +21736,15 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
         case_1___0: /* CIL Label */
           goto use_shell_always_quoting_style;
         case_2___0: { /* CIL Label */
-
+          while (1) {
+          while_continue___11: /* CIL Label */
+              ;
+            if (len < buffersize) {
+              *(buffer___2 + len) = (char)'\'';
+            }
+            len++;
+            goto while_break___11;
+          }
         while_break___11: /* CIL Label */
             ;
         }
@@ -21715,7 +21754,15 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
               ;
           }
           {
-
+            while (1) {
+            while_continue___13: /* CIL Label */
+                ;
+              if (len < buffersize) {
+                *(buffer___2 + len) = (char)'\'';
+              }
+              len++;
+              goto while_break___13;
+            }
           while_break___13: /* CIL Label */
               ;
           }
@@ -21811,7 +21858,11 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
               m = (size_t)0;
               printable = 1;
             }
-
+            if (argsize == 0xffffffffffffffffUL) {
+              {
+                argsize = strlen(arg);
+              }
+            }
             {
               while (1) {
               while_continue___14: /* CIL Label */
@@ -21854,6 +21905,49 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
                   while_continue___17: /* CIL Label */
                       ;
                     if (backslash_escapes) {
+                      if (!printable) {
+                        {
+                          while (1) {
+                          while_continue___18: /* CIL Label */
+                              ;
+                            if (len < buffersize) {
+                              *(buffer___2 + len) = (char)'\\';
+                            }
+                            len++;
+                            goto while_break___18;
+                          }
+                        while_break___18: /* CIL Label */
+                            ;
+                        }
+                        {
+                          while (1) {
+                          while_continue___19: /* CIL Label */
+                              ;
+                            if (len < buffersize) {
+                              *(buffer___2 + len) = (char)(48 + ((int)c >> 6));
+                            }
+                            len++;
+                            goto while_break___19;
+                          }
+                        while_break___19: /* CIL Label */
+                            ;
+                        }
+                        {
+                          while (1) {
+                          while_continue___20: /* CIL Label */
+                              ;
+                            if (len < buffersize) {
+                              *(buffer___2 + len) =
+                                  (char)(48 + (((int)c >> 3) & 7));
+                            }
+                            len++;
+                            goto while_break___20;
+                          }
+                        while_break___20: /* CIL Label */
+                            ;
+                        }
+                        c = (unsigned char)(48 + ((int)c & 7));
+                      }
                     }
                     if (ilim <= i + 1UL) {
                       goto while_break___17;
@@ -21885,7 +21979,10 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
             ;
         }
         if (backslash_escapes) {
-
+          if (!(o___0->quote_these_too[(unsigned long)c / (sizeof(int) * 8UL)] &
+                (1 << (unsigned long)c % (sizeof(int) * 8UL)))) {
+            goto store_c;
+          }
         } else {
           goto store_c;
         }
@@ -21920,11 +22017,6 @@ static size_t quotearg_buffer_restyled(char *buffer___2, size_t buffersize,
     while_break___3: /* CIL Label */
         ;
     }
-    if (i == 0UL) {
-      if ((unsigned int)quoting_style == 1U) {
-        goto use_shell_always_quoting_style;
-      }
-    }
 
     if (len < buffersize) {
       *(buffer___2 + len) = (char)'\000';
@@ -21947,7 +22039,11 @@ size_t quotearg_buffer(char *buffer___2, size_t buffersize, char const *arg,
   int *tmp___1;
 
   {
-
+    if (o___0) {
+      p = o___0;
+    } else {
+      p = (struct quoting_options const *)(&default_quoting_options);
+    }
     {
       tmp = __errno_location();
       e = *tmp;
@@ -21991,7 +22087,16 @@ static char *quotearg_n_options(int n, char const *arg, size_t argsize,
 
     if (nslots <= n0) {
       n1 = n0 + 1U;
-
+      if (sizeof(ptrdiff_t) <= sizeof(size_t)) {
+        tmp___5 = -1;
+      } else {
+        tmp___5 = -2;
+      }
+      if ((size_t)tmp___5 / sizeof(*slotvec) < (size_t)n1) {
+        {
+          xalloc_die();
+        }
+      }
       if ((unsigned long)slotvec == (unsigned long)(&slotvec0)) {
         {
           tmp___0 = xmalloc(sizeof(*slotvec));
@@ -22017,7 +22122,11 @@ static char *quotearg_n_options(int n, char const *arg, size_t argsize,
     if (size <= qsize) {
       size = qsize + 1UL;
       (slotvec + n)->size = size;
-
+      if ((unsigned long)val != (unsigned long)(slot0)) {
+        {
+          free((void *)val);
+        }
+      }
       {
         tmp___3 = xmalloc(size);
         val = (char *)tmp___3;
@@ -22113,7 +22222,9 @@ size_t safe_read(int fd, void *buf, size_t count) {
   int *tmp;
 
   {
-
+    if (count > 2147483647UL) {
+      count = (size_t)2147475456;
+    }
     {
       while (1) {
       while_continue: /* CIL Label */
@@ -22143,9 +22254,7 @@ size_t safe_write(int fd, void const *buf, size_t count) {
   int *tmp;
 
   {
-    if (count > 2147483647UL) {
-      count = (size_t)2147475456;
-    }
+
     {
       while (1) {
       while_continue: /* CIL Label */
@@ -22181,6 +22290,9 @@ int save_cwd(struct saved_cwd *cwd) {
     if (have_working_fchdir) {
       {
         cwd->desc = open(".", 65536);
+      }
+      if (cwd->desc < 0) {
+        return (1);
       }
     }
     if (!have_working_fchdir) {
@@ -22355,11 +22467,7 @@ void xalloc_die(void) {
   char *tmp;
 
   {
-    if (xalloc_fail_func) {
-      {
-        (*xalloc_fail_func)();
-      }
-    }
+
     {
       tmp = gettext(xalloc_msg_memory_exhausted);
       error((int)exit_failure, 0, "%s", tmp);
@@ -22520,7 +22628,45 @@ extern __attribute__((__nothrow__)) long(__attribute__((
     __nonnull__(1), __leaf__)) strtol)(char const *__restrict __nptr,
                                        char **__restrict __endptr, int __base);
 /* #pragma merger("0","02d.xstrtoul.o.i","") */
+static strtol_error bkm_scale___0(unsigned long *x, int scale_factor) {
 
+  {
+    if (0xffffffffffffffffUL / (unsigned long)scale_factor < *x) {
+      *x = 0xffffffffffffffffUL;
+      return ((strtol_error)1);
+    }
+    *x *= (unsigned long)scale_factor;
+    return ((strtol_error)0);
+  }
+}
+static strtol_error bkm_scale_by_power___0(unsigned long *x, int base,
+                                           int power) {
+  strtol_error err;
+  strtol_error tmp;
+  int tmp___0;
+
+  {
+    err = (strtol_error)0;
+    {
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        tmp___0 = power;
+        power--;
+        if (!tmp___0) {
+          goto while_break;
+        }
+        {
+          tmp = bkm_scale___0(x, base);
+          err = (strtol_error)((unsigned int)err | (unsigned int)tmp);
+        }
+      }
+    while_break: /* CIL Label */
+        ;
+    }
+    return (err);
+  }
+}
 strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
                       unsigned long *val, char const *valid_suffixes) {
   char *t_ptr;
@@ -22561,19 +22707,141 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
     while_break: /* CIL Label */
         ;
     }
-
+    if ((int const) * q == 45) {
+      return ((strtol_error)4);
+    }
     {
       tmp___1 = __errno_location();
       *tmp___1 = 0;
       tmp = strtoul((char const * /* __restrict  */)s,
                     (char ** /* __restrict  */)p, strtol_base);
     }
+    if ((unsigned long)*p == (unsigned long)s) {
+      if (valid_suffixes) {
 
-    if (!valid_suffixes) {
-      *val = tmp;
-      return (err);
+      } else {
+        return ((strtol_error)4);
+      }
+    } else {
+      { tmp___4 = __errno_location(); }
     }
 
+    if ((int)*(*p) != 0) {
+      {
+        base = 1024;
+        suffixes = 1;
+        tmp___5 = strchr(valid_suffixes, (int)*(*p));
+      }
+      if (!tmp___5) {
+        *val = tmp;
+        return ((strtol_error)((unsigned int)err | 2U));
+      }
+      { tmp___6 = strchr(valid_suffixes, '0'); }
+
+      {
+        if ((int)*(*p) == 98) {
+          goto case_98;
+        }
+        if ((int)*(*p) == 66) {
+          goto case_66___0;
+        }
+
+        if ((int)*(*p) == 71) {
+          goto case_71;
+        }
+        if ((int)*(*p) == 103) {
+          goto case_71;
+        }
+        if ((int)*(*p) == 107) {
+          goto case_107;
+        }
+        if ((int)*(*p) == 75) {
+          goto case_107;
+        }
+        if ((int)*(*p) == 77) {
+          goto case_77;
+        }
+        if ((int)*(*p) == 109) {
+          goto case_77;
+        }
+
+        if ((int)*(*p) == 84) {
+          goto case_84;
+        }
+
+        if ((int)*(*p) == 119) {
+          goto case_119;
+        }
+        if ((int)*(*p) == 89) {
+          goto case_89;
+        }
+        if ((int)*(*p) == 90) {
+          goto case_90;
+        }
+        goto switch_default;
+      case_98: { /* CIL Label */
+        overflow = bkm_scale___0(&tmp, 512);
+      }
+        goto switch_break___0;
+      case_66___0: { /* CIL Label */
+        overflow = bkm_scale___0(&tmp, 1024);
+      }
+        goto switch_break___0;
+      case_99: /* CIL Label */
+        overflow = (strtol_error)0;
+        goto switch_break___0;
+      case_69: { /* CIL Label */
+        overflow = bkm_scale_by_power___0(&tmp, base, 6);
+      }
+        goto switch_break___0;
+      case_71:    /* CIL Label */
+      case_103: { /* CIL Label */
+        overflow = bkm_scale_by_power___0(&tmp, base, 3);
+      }
+        goto switch_break___0;
+      case_107:  /* CIL Label */
+      case_75: { /* CIL Label */
+        overflow = bkm_scale_by_power___0(&tmp, base, 1);
+      }
+        goto switch_break___0;
+      case_77:    /* CIL Label */
+      case_109: { /* CIL Label */
+        overflow = bkm_scale_by_power___0(&tmp, base, 2);
+      }
+        goto switch_break___0;
+      case_80: { /* CIL Label */
+        overflow = bkm_scale_by_power___0(&tmp, base, 5);
+      }
+        goto switch_break___0;
+      case_84:    /* CIL Label */
+      case_116: { /* CIL Label */
+        overflow = bkm_scale_by_power___0(&tmp, base, 4);
+      }
+        goto switch_break___0;
+      case_119: { /* CIL Label */
+        overflow = bkm_scale___0(&tmp, 2);
+      }
+        goto switch_break___0;
+      case_89: { /* CIL Label */
+        overflow = bkm_scale_by_power___0(&tmp, base, 8);
+      }
+        goto switch_break___0;
+      case_90: { /* CIL Label */
+        overflow = bkm_scale_by_power___0(&tmp, base, 7);
+      }
+        goto switch_break___0;
+      switch_default: /* CIL Label */
+        *val = tmp;
+        return ((strtol_error)((unsigned int)err | 2U));
+      switch_break___0: /* CIL Label */
+          ;
+      }
+      err = (strtol_error)((unsigned int)err | (unsigned int)overflow);
+      *p += suffixes;
+      if (*(*p)) {
+        err = (strtol_error)((unsigned int)err | 2U);
+      }
+    }
     *val = tmp;
     return (err);
   }
@@ -22586,7 +22854,10 @@ uintmax_t(__attribute__((__leaf__)) strtoumax)(char const *__restrict __nptr,
 static strtol_error bkm_scale___1(uintmax_t *x, int scale_factor) {
 
   {
-
+    if (0xffffffffffffffffUL / (unsigned long)scale_factor < *x) {
+      *x = 0xffffffffffffffffUL;
+      return ((strtol_error)1);
+    }
     *x *= (uintmax_t)scale_factor;
     return ((strtol_error)0);
   }
@@ -22599,7 +22870,19 @@ static strtol_error bkm_scale_by_power___1(uintmax_t *x, int base, int power) {
   {
     err = (strtol_error)0;
     {
-
+      while (1) {
+      while_continue: /* CIL Label */
+          ;
+        tmp___0 = power;
+        power--;
+        if (!tmp___0) {
+          goto while_break;
+        }
+        {
+          tmp = bkm_scale___1(x, base);
+          err = (strtol_error)((unsigned int)err | (unsigned int)tmp);
+        }
+      }
     while_break: /* CIL Label */
         ;
     }
@@ -22635,7 +22918,11 @@ strtol_error xstrtoumax(char const *s, char **ptr, int strtol_base,
                       117U, "xstrtoumax");
       }
     }
-
+    if (ptr) {
+      p = ptr;
+    } else {
+      p = &t_ptr;
+    }
     q = s;
     {
       while (1) {
@@ -22657,7 +22944,20 @@ strtol_error xstrtoumax(char const *s, char **ptr, int strtol_base,
       tmp = strtoumax((char const * /* __restrict  */)s,
                       (char ** /* __restrict  */)p, strtol_base);
     }
+    if ((unsigned long)*p == (unsigned long)s) {
 
+    } else {
+      { tmp___4 = __errno_location(); }
+      if (*tmp___4 != 0) {
+        {
+          tmp___3 = __errno_location();
+        }
+        if (*tmp___3 != 34) {
+          return ((strtol_error)4);
+        }
+        err = (strtol_error)1;
+      }
+    }
     if (!valid_suffixes) {
       *val = tmp;
       return (err);
@@ -22675,12 +22975,13 @@ strtol_error xstrtoumax(char const *s, char **ptr, int strtol_base,
       { tmp___6 = strchr(valid_suffixes, '0'); }
       if (tmp___6) {
         {
+          if ((int)*(*(p + 0) + 1) == 105) {
+            goto case_105;
+          }
 
           goto switch_break;
         case_105: /* CIL Label */
-          if ((int)*(*(p + 0) + 2) == 66) {
-            suffixes += 2;
-          }
+
           goto switch_break;
         case_66: /* CIL Label */
         case_68: /* CIL Label */
@@ -22692,22 +22993,38 @@ strtol_error xstrtoumax(char const *s, char **ptr, int strtol_base,
         }
       }
       {
-
-        if ((int)*(*p) == 66) {
-          goto case_66___0;
+        if ((int)*(*p) == 98) {
+          goto case_98;
         }
 
         if ((int)*(*p) == 69) {
           goto case_69;
         }
-
+        if ((int)*(*p) == 71) {
+          goto case_71;
+        }
         if ((int)*(*p) == 103) {
           goto case_71;
         }
         if ((int)*(*p) == 107) {
           goto case_107;
         }
+        if ((int)*(*p) == 75) {
+          goto case_107;
+        }
+        if ((int)*(*p) == 77) {
+          goto case_77;
+        }
+        if ((int)*(*p) == 109) {
+          goto case_77;
+        }
 
+        if ((int)*(*p) == 84) {
+          goto case_84;
+        }
+        if ((int)*(*p) == 116) {
+          goto case_84;
+        }
         if ((int)*(*p) == 119) {
           goto case_119;
         }
