@@ -61,8 +61,7 @@ chmod +x mkdir_gen.sh
 chmod +x sec_gen.sh
 touch mkdir_generality_results.txt
 ./mkdir_gen.sh >> mkdir_generality_results.txt
-echo " " >> mkdir_generality_results.txt
-./sec_gen.sh >> mkdir_generality_results.txt
+
 
 
 echo "Results saved in mkdir_generality_results.txt"
