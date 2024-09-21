@@ -26,6 +26,10 @@ def find_function_boundaries(lines, start_line):
     curly_braces_start = function_start
     while '{' not in lines[curly_braces_start] and curly_braces_start < len(lines):
         curly_braces_start += 1
+        
+     # edge case where the opening and closing bracket are on the same line
+    if "}" in lines[curly_braces_start]:
+        return function_start, curly_braces_start + 1
 
     for i in range(curly_braces_start, len(lines)):
         line = lines[i]

@@ -44,6 +44,7 @@ run_test() {
   local command_original="$3"
   local setup_command="$4"
   local cleanup_command="$5"
+  local timeout_duration="10s"  # Default timeout of 10 seconds, adjust as needed
  
   TOTAL_TESTS=$((TOTAL_TESTS + 1))
   echo "Running test: $description"
@@ -51,38 +52,40 @@ run_test() {
   # Setup test environment if needed
   eval "$setup_command"
 
-  # Run and capture output from both debloated and original
-  output_debloat=$(eval "$command_debloat" 2>&1)
-  if [[ $? -ne 0 ]]; then
+  # Run and capture output from debloated with timeout
+  output_debloat=$(timeout $timeout_duration bash -c "$command_debloat" 2>&1)
+  exit_code=$?
+  if [[ $exit_code -eq 124 ]]; then
+    output_debloat="Error: Command timed out after $timeout_duration"
+  elif [[ $exit_code -ne 0 ]]; then
     output_debloat="Error: $output_debloat"
   fi
   local debloated_ls=$(ls -a $TEST_DIR)
+  
   eval "$cleanup_command"
   eval "$setup_command"
-  output_original=$(eval "$command_original" 2>&1)
-  if [[ $? -ne 0 ]]; then
+  
+  # Run and capture output from original with timeout
+  output_original=$(timeout $timeout_duration bash -c "$command_original" 2>&1)
+  exit_code=$?
+  if [[ $exit_code -eq 124 ]]; then
+    output_original="Error: Command timed out after $timeout_duration"
+  elif [[ $exit_code -ne 0 ]]; then
     output_original="Error: $output_original"
   fi
   local original_ls=$(ls -a $TEST_DIR)
  
   # Compare outputs
-  # remove binary name from the error and keep the remaining error
-  # output_debloat=$(echo "$output_debloat" | sed "s/.*debloated_rm: //")
-  # output_original=$(echo "$output_original" | sed "s/.*original_rm: //")
-  # if [[ "$output_debloat" == "$output_original" ]]; then
   if [[ "$debloated_ls" == "$original_ls" ]]; then
     echo "Pass"
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
-    echo "Fail: $description ">>failed_tests.txt
-    echo "Debloated ls: $debloated_ls"
-    echo "Original ls: $original_ls"
-  fi
-  # else
-    # echo "Fail: "
+    echo "Fail: $description" >> failed_tests.txt
+    # echo "Debloated ls: $debloated_ls"
+    # echo "Original ls: $original_ls"
     # echo "Debloated Output: $output_debloat"
     # echo "Original Output: $output_original"
-  # fi
+  fi
   echo
 
   # Cleanup test environment if needed
@@ -125,8 +128,8 @@ run_test "Remove multiple files" \
   "rm -f $TEST_DIR/test_file_{2..10}"
 
 run_test "Remove directory recursively" \
-  "$DEBLOATED_RM -rf $DEEP_DIR" \
-  "$ORIGINAL_RM -rf $DEEP_DIR" \
+  "$DEBLOATED_RM -rf $DEEP_DIR/" \
+  "$ORIGINAL_RM -rf $DEEP_DIR/" \
   "mkdir -p $DEEP_DIR; for i in \$(seq 1 10); do mkdir -p \"$DEEP_DIR/dir_\$i\"; touch \"$DEEP_DIR/dir_\$i/file_\$i.txt\"; done" \
   "rm -rf $DEEP_DIR"
 
@@ -154,8 +157,8 @@ run_test "Remove files with spaces in names" \
   "rm -f '$TEST_DIR/file with spaces 1.txt' '$TEST_DIR/file with spaces 2.txt'"
 
 run_test "Remove deeply nested directory" \
-  "$DEBLOATED_RM -rf $TEST_DIR/deep_nested_dir" \
-  "$ORIGINAL_RM -rf $TEST_DIR/deep_nested_dir" \
+  "$DEBLOATED_RM -rf $TEST_DIR/deep_nested_dir/" \
+  "$ORIGINAL_RM -rf $TEST_DIR/deep_nested_dir/" \
   "mkdir -p $TEST_DIR/deep_nested_dir; for i in \$(seq 1 100); do mkdir -p \"$TEST_DIR/deep_nested_dir/dir_\$i\"; touch \"$TEST_DIR/deep_nested_dir/dir_\$i/file_\$i.txt\"; done" \
   "rm -rf $TEST_DIR/deep_nested_dir"
 
@@ -178,8 +181,8 @@ run_test "Remove empty directory" \
   "rm -rf $TEST_DIR/empty_dir"
 
 run_test "Remove directory with hidden files" \
-  "$DEBLOATED_RM -rf $TEST_DIR/hidden_dir" \
-  "$ORIGINAL_RM -rf $TEST_DIR/hidden_dir" \
+  "$DEBLOATED_RM -rf $TEST_DIR/hidden_dir/" \
+  "$ORIGINAL_RM -rf $TEST_DIR/hidden_dir/" \
   "mkdir -p $TEST_DIR/hidden_dir; touch $TEST_DIR/hidden_dir/.hidden_file" \
   "rm -rf $TEST_DIR/hidden_dir"
 
@@ -190,14 +193,14 @@ run_test "Remove read-only files" \
   "chmod +w $TEST_DIR/read_only_file >& /dev/null; rm -f $TEST_DIR/read_only_file"
 
 run_test "Remove files in read-only directory" \
-  "$DEBLOATED_RM -rf $TEST_DIR/read_only_dir" \
-  "$ORIGINAL_RM -rf $TEST_DIR/read_only_dir" \
+  "$DEBLOATED_RM -rf $TEST_DIR/read_only_dir/" \
+  "$ORIGINAL_RM -rf $TEST_DIR/read_only_dir/" \
   "mkdir -p $TEST_DIR/read_only_dir; touch $TEST_DIR/read_only_dir/file1; chmod -w $TEST_DIR/read_only_dir" \
   "chmod +w $TEST_DIR/read_only_dir >& /dev/null; rm -rf $TEST_DIR/read_only_dir"
 
 run_test "Remove files in nested read-only directory" \
-  "$DEBLOATED_RM -rf $TEST_DIR/nested_read_only_dir" \
-  "$ORIGINAL_RM -rf $TEST_DIR/nested_read_only_dir" \
+  "$DEBLOATED_RM -rf $TEST_DIR/nested_read_only_dir/" \
+  "$ORIGINAL_RM -rf $TEST_DIR/nested_read_only_dir/" \
   "mkdir -p $TEST_DIR/nested_read_only_dir/subdir; touch $TEST_DIR/nested_read_only_dir/subdir/file; chmod -w $TEST_DIR/nested_read_only_dir/subdir" \
   "chmod +w $TEST_DIR/nested_read_only_dir/subdir >& /dev/null; rm -rf $TEST_DIR/nested_read_only_dir"
 
@@ -208,8 +211,8 @@ run_test "Remove files with null character in name" \
   "rm -f '$TEST_DIR/file_with_null\0character'"
 
 run_test "Remove directory with subdirectories and files" \
-  "$DEBLOATED_RM -rf $TEST_DIR/subdirs" \
-  "$ORIGINAL_RM -rf $TEST_DIR/subdirs" \
+  "$DEBLOATED_RM -rf $TEST_DIR/subdirs/" \
+  "$ORIGINAL_RM -rf $TEST_DIR/subdirs/" \
   "mkdir -p $TEST_DIR/subdirs/subdir1 $TEST_DIR/subdirs/subdir2; touch $TEST_DIR/subdirs/subdir1/file1.txt $TEST_DIR/subdirs/subdir2/file2.txt" \
   "rm -rf $TEST_DIR/subdirs"
 
@@ -220,8 +223,8 @@ run_test "Remove files with special permissions" \
   "chmod -s $TEST_DIR/special_perms_file >& /dev/null; rm -f $TEST_DIR/special_perms_file"
 
 run_test "Remove files in a directory with sticky bit set" \
-  "$DEBLOATED_RM -rf $TEST_DIR/sticky_bit_dir" \
-  "$ORIGINAL_RM -rf $TEST_DIR/sticky_bit_dir" \
+  "$DEBLOATED_RM -rf $TEST_DIR/sticky_bit_dir/" \
+  "$ORIGINAL_RM -rf $TEST_DIR/sticky_bit_dir/" \
   "mkdir -p $TEST_DIR/sticky_bit_dir; chmod +t $TEST_DIR/sticky_bit_dir; touch $TEST_DIR/sticky_bit_dir/file" \
   "chmod -t $TEST_DIR/sticky_bit_dir >& /dev/null; rm -rf $TEST_DIR/sticky_bit_dir"
 
@@ -238,8 +241,8 @@ run_test "Remove files using absolute paths" \
   "rm -f $TEST_DIR/test_file_3.txt"
 
 run_test "Remove directory containing only empty subdirectories" \
-  "$DEBLOATED_RM -rf $TEST_DIR/empty_subdirs" \
-  "$ORIGINAL_RM -rf $TEST_DIR/empty_subdirs" \
+  "$DEBLOATED_RM -rf $TEST_DIR/empty_subdirs/" \
+  "$ORIGINAL_RM -rf $TEST_DIR/empty_subdirs/" \
   "mkdir -p $TEST_DIR/empty_subdirs/subdir1 $TEST_DIR/empty_subdirs/subdir2" \
   "rm -rf $TEST_DIR/empty_subdirs"
 run_test "Remove file with spaces in name" \
@@ -297,16 +300,22 @@ run_test "Remove file in directory with no execute permissions" \
   "chmod +x '$TEST_DIR/no_exec_dir' >& /dev/null"
 
 run_test "Remove directory with mixed permission files" \
-  "$DEBLOATED_RM -rf '$TEST_DIR/mixed_perms'" \
-  "$ORIGINAL_RM -rf '$TEST_DIR/mixed_perms'" \
+  "$DEBLOATED_RM -rf '$TEST_DIR/mixed_perms/'" \
+  "$ORIGINAL_RM -rf '$TEST_DIR/mixed_perms/'" \
   "mkdir '$TEST_DIR/mixed_perms' && touch '$TEST_DIR/mixed_perms/file1' '$TEST_DIR/mixed_perms/file2' '$TEST_DIR/mixed_perms/file3' && chmod 000 '$TEST_DIR/mixed_perms/file1' && chmod 444 '$TEST_DIR/mixed_perms/file2' && chmod 222 '$TEST_DIR/mixed_perms/file3'" \
   "rm -rf '$TEST_DIR/mixed_perms'"
 
-run_test "Remove file with name starting with dash" \
+run_test "Remove file with name starting with double dash" \
   "$DEBLOATED_RM -f '$TEST_DIR/--file-with-dash'" \
   "$ORIGINAL_RM -f '$TEST_DIR/--file-with-dash'" \
   "touch '$TEST_DIR/--file-with-dash'" \
   "rm -f '$TEST_DIR/--file-with-dash'"
+
+run_test "Remove file with name starting with single dash" \
+  "$DEBLOATED_RM -f '$TEST_DIR/-file-with-dash'" \
+  "$ORIGINAL_RM -f '$TEST_DIR/-file-with-dash'" \
+  "touch '$TEST_DIR/-file-with-dash'" \
+  "rm -f '$TEST_DIR/-file-with-dash'"
 
 run_test "Remove directory with no-write subdirectories" \
   "$DEBLOATED_RM -rf '$TEST_DIR/parent_dir'" \
@@ -315,10 +324,10 @@ run_test "Remove directory with no-write subdirectories" \
   "rm -rf '$TEST_DIR/parent_dir'"
 
 run_test "Remove multiple files and directories" \
-  "$DEBLOATED_RM -rf '$TEST_DIR/file1' '$TEST_DIR/dir1' '$TEST_DIR/file2' '$TEST_DIR/dir2'" \
-  "$ORIGINAL_RM -rf '$TEST_DIR/file1' '$TEST_DIR/dir1' '$TEST_DIR/file2' '$TEST_DIR/dir2'" \
+  "$DEBLOATED_RM -rf '$TEST_DIR/file1' '$TEST_DIR/dir1/' '$TEST_DIR/file2' '$TEST_DIR/dir2'" \
+  "$ORIGINAL_RM -rf '$TEST_DIR/file1' '$TEST_DIR/dir1/' '$TEST_DIR/file2' '$TEST_DIR/dir2'" \
   "touch '$TEST_DIR/file1' '$TEST_DIR/file2' && mkdir '$TEST_DIR/dir1' '$TEST_DIR/dir2'" \
-  "rm -rf '$TEST_DIR/file1' '$TEST_DIR/dir1' '$TEST_DIR/file2' '$TEST_DIR/dir2'"
+  "rm -rf '$TEST_DIR/file1' '$TEST_DIR/dir1/' '$TEST_DIR/file2' '$TEST_DIR/dir2'"
 
 run_test "Remove file with newline in name" \
   "$DEBLOATED_RM -f '$TEST_DIR/file\nwith\nnewlines'" \
@@ -416,16 +425,16 @@ run_test "Remove file with multiple carriage returns in name" \
   "rm -f '$TEST_DIR/file\r\rwith\r\rmultiple\r\rcarriage\r\nreturns'"
 
 run_test "Remove directory with multiple carriage returns in name" \
-  "$DEBLOATED_RM -rf '$TEST_DIR/dir\r\rwith\r\rmultiple\r\rcarriage\r\nreturns'" \
-  "$ORIGINAL_RM -rf '$TEST_DIR/dir\r\rwith\r\rmultiple\r\rcarriage\r\nreturns'" \
-  "mkdir -p '$TEST_DIR/dir\r\rwith\r\rmultiple\r\rcarriage\r\nreturns'" \
-  "rm -rf '$TEST_DIR/dir\r\rwith\r\rmultiple\r\rcarriage\r\nreturns'"
+  "$DEBLOATED_RM -rf '$TEST_DIR/dir\r\rwith\r\rmultiple\r\rcarriage\r\nreturns/'" \
+  "$ORIGINAL_RM -rf '$TEST_DIR/dir\r\rwith\r\rmultiple\r\rcarriage\r\nreturns/'" \
+  "mkdir -p '$TEST_DIR/dir\r\rwith\r\rmultiple\r\rcarriage\r\nreturns/'" \
+  "rm -rf '$TEST_DIR/dir\r\rwith\r\rmultiple\r\rcarriage\r\nreturns/'"
 
 run_test "Remove file and directory with null character in name" \
-  "$DEBLOATED_RM -rf '$TEST_DIR/file\0with\0null\0character' '$TEST_DIR/dir\0with\0null\0character'" \
-  "$ORIGINAL_RM -rf '$TEST_DIR/file\0with\0null\0character' '$TEST_DIR/dir\0with\0null\0character'" \
-  "touch '$TEST_DIR/file\0with\0null\0character' && mkdir '$TEST_DIR/dir\0with\0null\0character'" \
-  "rm -rf '$TEST_DIR/file\0with\0null\0character' '$TEST_DIR/dir\0with\0null\0character'"
+  "$DEBLOATED_RM -rf '$TEST_DIR/file\0with\0null\0character' '$TEST_DIR/dir\0with\0null\0character/'" \
+  "$ORIGINAL_RM -rf '$TEST_DIR/file\0with\0null\0character' '$TEST_DIR/dir\0with\0null\0character/'" \
+  "touch '$TEST_DIR/file\0with\0null\0character' && mkdir '$TEST_DIR/dir\0with\0null\0character/'" \
+  "rm -rf '$TEST_DIR/file\0with\0null\0character' '$TEST_DIR/dir\0with\0null\0character/'"
 
 run_test "Remove file and directories with mixed special characters in name" \
   "$DEBLOATED_RM -rf '$TEST_DIR/file!@#$%^&*.txt' '$TEST_DIR/file\nwith\nnewlines' '$TEST_DIR/file\r\rwith\r\rmultiple\r\rcarriage\r\nreturns' '$TEST_DIR/file\vwith\vvertical\vtab' '$TEST_DIR/file\fwith\fform\ffeed' '$TEST_DIR/file\bwith\backspace' '$TEST_DIR/file\awith\abell' '$TEST_DIR/file\rwith\rcarriage\rreturn' '$TEST_DIR/file	with	tab' '$TEST_DIR/file  with  multiple  spaces' '$TEST_DIR/file_with_null\0character' '$TEST_DIR/file\0with\0null\0character'" \
