@@ -1,7 +1,7 @@
 #!/bin/bash
 
-ORIGINAL_FILE="uniq-og.c"
 DEBLOATED_FILE="uniq-covl.c"
+ORIGINAL_FILE="uniq-og.c"
 CC=clang
 DEBLOATED_UNIQ="./debloated_uniq"
 ORIGINAL_UNIQ="./original_uniq"
@@ -42,24 +42,6 @@ compile() {
     echo "Error: One or both of the executables not found!"
     exit 1
   fi
-}
-
-# Function to generate a random string
-generate_random_string() {
-    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1
-}
-
-# Function to generate a file with unique random lines
-generate_unique_random_lines() {
-    local num_lines=$1
-    local output_file=$2
-    
-    for i in $(seq 1 $num_lines); do
-        generate_random_string >> "$output_file"
-    done
-    
-    # Sort and remove any potential duplicates (extremely unlikely, but just to be sure)
-    sort -u "$output_file" -o "$output_file"
 }
 
 # Function to run a single test case
@@ -300,7 +282,6 @@ robustness_cases() {
   done  
 
 }
-
 
 # Clean up test environment
 cleanup() {
