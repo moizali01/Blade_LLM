@@ -7,7 +7,7 @@ REDUCED_FILE=$DIR/bzip2-util.c
 ORIGINAL_BINARY=$DIR/original_binary
 REDUCED_BINARY=$DIR/reduced_binary
 CC=clang
-TIMEOUT_LIMIT="-k 10 10"
+TIMEOUT_LIMIT="-k 1 1"
 LOG=$DIR/log
 
 TOTAL_TESTS=0
