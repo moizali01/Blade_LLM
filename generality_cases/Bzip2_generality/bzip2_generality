@@ -3,7 +3,7 @@
 PROGRAM_NAME=bzip2-8.16
 DIR=$(pwd)
 ORIGINAL_FILE=$DIR/bzip2-org.c
-REDUCED_FILE=$DIR/bzip2-util.c
+REDUCED_FILE=$DIR/bzip2-org.c
 ORIGINAL_BINARY=$DIR/original_binary
 REDUCED_BINARY=$DIR/reduced_binary
 CC=clang
@@ -211,6 +211,46 @@ function security_cases() {
     echo "Running test: Multiple files"
     run_functionality 0 ${files[@]}
     
+    mkdir -p no_read_dir
+    mkdir -p sticky_dir
+
+    # Create files and set permissions
+    echo -e "apple\nbanana\ncherry" > readonly_file
+    chmod 444 readonly_file
+
+    echo -e "apple\nbanana\ncherry" > no_read_dir/file
+    chmod 000 no_read_dir
+
+    echo -e "apple\nbanana\ncherry" > setuid_file
+    chmod u+s setuid_file
+
+    echo -e "apple\nbanana\ncherry" > setgid_file
+    chmod g+s setgid_file
+
+    echo -e "apple\nbanana\ncherry" > sticky_dir/file
+    chmod +t sticky_dir
+
+    # Large buffer overflow input
+    echo -e "$(printf '%0.s1' {1..1000000})\n$(printf '%0.s2' {1..1000000})" > buffer_overflow
+
+    # Potential format string input
+    echo -e "%s\n%s\n%s\n%s" > format_string
+
+
+    # Running tests for bzip2
+    for file in "readonly_file" \
+                "no_read_dir/file" \
+                "setuid_file" \
+                "setgid_file" \
+                "sticky_dir/file" \
+                "buffer_overflow" \
+                "format_string" 
+    do
+        echo "Running test $file"
+        run_functionality 1 $file
+        rm -rf $file
+    done
+    rm -rf sticky_dir no_read_dir
 }
 function robustness_cases() {
     echo "=========================="
@@ -257,6 +297,14 @@ function robustness_cases() {
     rm -rf temp_dir
     rm -rf new_file.txt new_file.txt.bz2
     
+    touch file.txt
+    flags=(-h -z -k -f -t -c -q -v -L -V -s -1 -2 -3 -4 -5 -6 -7 -8 -9 --help --license --version )
+      for flag in ${flags[@]}; do
+        echo "Running test: Invalid Flags"
+        run_robustness "Invalid Flags" \
+        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY $flag file.txt > $DIR/temp_output.txt; }"
+    done
+    rm file.txt
 }
 
 function clean_env() {
