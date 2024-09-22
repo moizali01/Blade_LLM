@@ -1,0 +1,269 @@
+Starting the code block removal process.
+
+Removed lines 11693-11694 from the original file.
+Removed lines 11668-11670 from the original file.
+Removed lines 11464-11465 from the original file.
+Removed lines 11412-11414 from the original file.
+Removed lines 11381-11382 from the original file.
+Removed lines 10602-10604 from the original file.
+Removed lines 10277-10279 from the original file.
+Removed lines 10257-10258 from the original file.
+Removed lines 10208-10210 from the original file.
+Removed lines 10203-10204 from the original file.
+Removed lines 9808-9809 from the original file.
+Removed lines 9734-9736 from the original file.
+Removed lines 9708-9709 from the original file.
+Removed lines 9681-9683 from the original file.
+Retained lines 9354-9368 in the original file as tests did not pass.
+Retained lines 9345-9348 in the original file as tests did not pass.
+Retained lines 9340-9342 in the original file as tests did not pass.
+Removed lines 9106-9111 from the original file.
+Removed lines 9084-9086 from the original file.
+Retained lines 8949-9019 in the original file as tests did not pass.
+Retained lines 8920-8946 in the original file as tests did not pass.
+Retained lines 8878-8886 in the original file as tests did not pass.
+Removed lines 8802-8804 from the original file.
+Removed lines 8615-8616 from the original file.
+Removed lines 8569-8602 from the original file.
+Removed lines 8530-8534 from the original file.
+Removed lines 8525-8526 from the original file.
+Removed lines 8395-8401 from the original file.
+Removed lines 8318-8351 from the original file.
+Removed lines 8286-8287 from the original file.
+Removed lines 8242-8244 from the original file.
+Removed lines 8217-8218 from the original file.
+Removed lines 8194-8195 from the original file.
+Removed lines 8156-8158 from the original file.
+Retained lines 8101-8102 in the original file as tests did not pass.
+Removed lines 7890-7976 from the original file.
+Removed lines 7880-7881 from the original file.
+Removed lines 7863-7871 from the original file.
+Removed lines 7834-7835 from the original file.
+Removed lines 7830-7833 from the original file.
+Removed lines 7825-7828 from the original file.
+Retained lines 7799-7806 in the original file as tests did not pass.
+Retained lines 7580-7797 in the original file as tests did not pass.
+Retained lines 7238-7579 in the original file as tests did not pass.
+Removed lines 7233-7235 from the original file.
+Retained lines 7175-7203 in the original file as tests did not pass.
+Retained lines 7167-7168 in the original file as tests did not pass.
+Retained lines 6939-6940 in the original file as tests did not pass.
+Removed lines 6785-6936 from the original file.
+Removed lines 6714-6721 from the original file.
+Removed lines 6702-6703 from the original file.
+Removed lines 6700-6701 from the original file.
+Removed lines 6697-6699 from the original file.
+Removed lines 6694-6695 from the original file.
+Removed lines 6692-6693 from the original file.
+Removed lines 6626-6675 from the original file.
+Removed lines 6579-6589 from the original file.
+Removed lines 6550-6552 from the original file.
+Removed lines 6540-6541 from the original file.
+Removed lines 6531-6533 from the original file.
+Removed lines 6403-6404 from the original file.
+Retained lines 6389-6395 in the original file as tests did not pass.
+Retained lines 6362-6384 in the original file as tests did not pass.
+Retained lines 6325-6329 in the original file as tests did not pass.
+Retained lines 6306-6309 in the original file as tests did not pass.
+Retained lines 6230-6287 in the original file as tests did not pass.
+Removed lines 6222-6226 from the original file.
+Retained lines 6195-6198 in the original file as tests did not pass.
+Removed lines 6187-6188 from the original file.
+Retained lines 6176-6181 in the original file as tests did not pass.
+Removed lines 6119-6137 from the original file.
+Removed lines 6090-6111 from the original file.
+Removed lines 6081-6083 from the original file.
+Removed lines 6063-6064 from the original file.
+Removed lines 6050-6055 from the original file.
+Removed lines 6042-6044 from the original file.
+Removed lines 6035-6036 from the original file.
+Removed lines 6024-6025 from the original file.
+Removed lines 6016-6019 from the original file.
+Removed lines 6008-6013 from the original file.
+Removed lines 5985-6003 from the original file.
+Removed lines 5977-5978 from the original file.
+Removed lines 5972-5974 from the original file.
+Removed lines 5960-5964 from the original file.
+Removed lines 5922-5923 from the original file.
+Removed lines 5914-5915 from the original file.
+Removed lines 5902-5911 from the original file.
+Removed lines 5884-5885 from the original file.
+Removed lines 5803-5807 from the original file.
+Removed lines 5718-5721 from the original file.
+Removed lines 5695-5698 from the original file.
+Removed lines 5690-5691 from the original file.
+Removed lines 5685-5686 from the original file.
+Removed lines 5681-5684 from the original file.
+Removed lines 5668-5671 from the original file.
+Removed lines 5663-5664 from the original file.
+Removed lines 5655-5658 from the original file.
+Removed lines 5647-5652 from the original file.
+Removed lines 5624-5625 from the original file.
+Removed lines 5601-5608 from the original file.
+Removed lines 5558-5561 from the original file.
+Removed lines 5553-5554 from the original file.
+Removed lines 5545-5548 from the original file.
+Removed lines 5537-5542 from the original file.
+Removed lines 5478-5495 from the original file.
+Removed lines 5275-5429 from the original file.
+Removed lines 5247-5262 from the original file.
+Removed lines 5236-5237 from the original file.
+Removed lines 5228-5229 from the original file.
+Removed lines 5224-5225 from the original file.
+Removed lines 5185-5206 from the original file.
+Removed lines 5174-5176 from the original file.
+Removed lines 5158-5163 from the original file.
+Removed lines 5154-5155 from the original file.
+Removed lines 5152-5153 from the original file.
+Removed lines 5091-5105 from the original file.
+Removed lines 5017-5066 from the original file.
+Removed lines 5000-5009 from the original file.
+Retained lines 4976-4988 in the original file as tests did not pass.
+Removed lines 4929-4970 from the original file.
+Retained lines 4899-4928 in the original file as tests did not pass.
+Removed lines 4888-4894 from the original file.
+Retained lines 4875-4885 in the original file as tests did not pass.
+Removed lines 4872-4873 from the original file.
+Retained lines 4870-4871 in the original file as tests did not pass.
+Removed lines 4833-4840 from the original file.
+Removed lines 4821-4830 from the original file.
+Removed lines 4818-4819 from the original file.
+Removed lines 4794-4797 from the original file.
+Removed lines 4764-4781 from the original file.
+Removed lines 4759-4760 from the original file.
+Retained lines 4746-4755 in the original file as tests did not pass.
+Retained lines 4723-4744 in the original file as tests did not pass.
+Removed lines 4720-4721 from the original file.
+Removed lines 4711-4712 from the original file.
+Retained lines 4708-4710 in the original file as tests did not pass.
+Retained lines 4702-4707 in the original file as tests did not pass.
+Retained lines 4620-4697 in the original file as tests did not pass.
+Removed lines 4611-4612 from the original file.
+Removed lines 4601-4606 from the original file.
+Removed lines 4585-4586 from the original file.
+Removed lines 4571-4572 from the original file.
+Removed lines 4566-4567 from the original file.
+Removed lines 4557-4558 from the original file.
+Removed lines 4547-4549 from the original file.
+Removed lines 4517-4541 from the original file.
+Removed lines 4474-4516 from the original file.
+Removed lines 4448-4449 from the original file.
+Removed lines 4432-4436 from the original file.
+Removed lines 4423-4424 from the original file.
+Retained lines 4387-4418 in the original file as tests did not pass.
+Removed lines 4383-4384 from the original file.
+Retained lines 4371-4372 in the original file as tests did not pass.
+Retained lines 4368-4369 in the original file as tests did not pass.
+Removed lines 4365-4366 from the original file.
+Removed lines 4360-4362 from the original file.
+Removed lines 4351-4352 from the original file.
+Removed lines 4345-4347 from the original file.
+Removed lines 4341-4342 from the original file.
+Removed lines 4308-4318 from the original file.
+Removed lines 4292-4293 from the original file.
+Removed lines 4287-4288 from the original file.
+Removed lines 4256-4280 from the original file.
+Retained lines 4245-4251 in the original file as tests did not pass.
+Removed lines 4238-4242 from the original file.
+Removed lines 4233-4234 from the original file.
+Retained lines 4231-4232 in the original file as tests did not pass.
+Removed lines 4226-4227 from the original file.
+Removed lines 4219-4222 from the original file.
+Removed lines 4205-4207 from the original file.
+Retained lines 4190-4196 in the original file as tests did not pass.
+Removed lines 4167-4188 from the original file.
+Removed lines 4123-4162 from the original file.
+Retained lines 4058-4099 in the original file as tests did not pass.
+Removed lines 4048-4052 from the original file.
+Removed lines 4029-4034 from the original file.
+Removed lines 4009-4015 from the original file.
+Removed lines 3976-4006 from the original file.
+Removed lines 3961-3962 from the original file.
+Removed lines 3948-3952 from the original file.
+Removed lines 3935-3937 from the original file.
+Retained lines 3911-3931 in the original file as tests did not pass.
+Removed lines 3884-3905 from the original file.
+Removed lines 3848-3881 from the original file.
+Removed lines 3834-3845 from the original file.
+Retained lines 3825-3833 in the original file as tests did not pass.
+Removed lines 3823-3824 from the original file.
+Removed lines 3817-3820 from the original file.
+Removed lines 3813-3815 from the original file.
+Removed lines 3807-3811 from the original file.
+Removed lines 3677-3801 from the original file.
+Removed lines 3664-3669 from the original file.
+Removed lines 3629-3663 from the original file.
+Removed lines 3616-3623 from the original file.
+Removed lines 3588-3607 from the original file.
+Retained lines 3566-3573 in the original file as tests did not pass.
+Removed lines 3550-3564 from the original file.
+Removed lines 3517-3519 from the original file.
+Removed lines 3508-3511 from the original file.
+Removed lines 3487-3506 from the original file.
+Removed lines 3466-3471 from the original file.
+Removed lines 3454-3457 from the original file.
+Removed lines 3449-3450 from the original file.
+Removed lines 3435-3438 from the original file.
+Removed lines 3426-3431 from the original file.
+Removed lines 3367-3407 from the original file.
+Removed lines 3354-3355 from the original file.
+Removed lines 3343-3352 from the original file.
+Removed lines 3336-3337 from the original file.
+Removed lines 3326-3328 from the original file.
+Removed lines 3311-3318 from the original file.
+Removed lines 3292-3300 from the original file.
+Removed lines 3273-3280 from the original file.
+Removed lines 3258-3261 from the original file.
+Removed lines 3247-3248 from the original file.
+Removed lines 3183-3188 from the original file.
+Removed lines 3162-3167 from the original file.
+Removed lines 3151-3161 from the original file.
+Removed lines 3142-3145 from the original file.
+Retained lines 3134-3135 in the original file as tests did not pass.
+Removed lines 3119-3122 from the original file.
+Removed lines 3102-3103 from the original file.
+Removed lines 3099-3100 from the original file.
+Removed lines 3026-3062 from the original file.
+Removed lines 3015-3021 from the original file.
+Removed lines 2937-2984 from the original file.
+Removed lines 2923-2936 from the original file.
+Removed lines 2742-2920 from the original file.
+Removed lines 2731-2734 from the original file.
+Retained lines 2726-2727 in the original file as tests did not pass.
+Removed lines 2709-2712 from the original file.
+Removed lines 2707-2708 from the original file.
+Removed lines 2705-2706 from the original file.
+Removed lines 2682-2702 from the original file.
+Removed lines 2667-2674 from the original file.
+Removed lines 2663-2664 from the original file.
+Removed lines 2648-2649 from the original file.
+Removed lines 2603-2638 from the original file.
+Removed lines 2596-2598 from the original file.
+Removed lines 2576-2579 from the original file.
+Removed lines 2563-2567 from the original file.
+Removed lines 2554-2557 from the original file.
+Removed lines 2525-2539 from the original file.
+Removed lines 2500-2503 from the original file.
+Removed lines 2440-2461 from the original file.
+Removed lines 2403-2439 from the original file.
+Removed lines 2388-2391 from the original file.
+Removed lines 2365-2370 from the original file.
+Removed lines 2333-2337 from the original file.
+Removed lines 2076-2314 from the original file.
+Removed lines 1653-2034 from the original file.
+Removed lines 1536-1649 from the original file.
+Removed lines 1520-1521 from the original file.
+Removed lines 1490-1496 from the original file.
+Removed lines 1337-1464 from the original file.
+Removed lines 995-1280 from the original file.
+Removed lines 971-982 from the original file.
+Removed lines 816-970 from the original file.
+Removed lines 796-807 from the original file.
+Removed lines 763-768 from the original file.
+Removed lines 735-742 from the original file.
+Removed lines 721-728 from the original file.
+Removed lines 681-700 from the original file.
+Retained lines 665-671 in the original file as tests did not pass.
+Removed lines 629-635 from the original file.
+
+Code block removal process completed.
