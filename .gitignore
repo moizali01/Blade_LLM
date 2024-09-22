@@ -55,3 +55,4 @@ generality_cases/sort/test_files/
 functionality_files/
 security_cases/
 robustness_cases/
+cov_files/
