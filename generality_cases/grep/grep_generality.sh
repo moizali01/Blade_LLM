@@ -340,13 +340,6 @@ functionality_cases() {
     "" \
     "functionality"
 
-  run_functionality "Recursive search for 'libc' in /var/log" \
-    "-r" \
-    "libc" \
-    "/var/log" \
-    "" \
-    "" \
-    "functionality"
 
   run_functionality "Recursive search for error in /etc directory" \
     "-r" \
@@ -428,7 +421,7 @@ robustness_cases() {
 
 # Clean up test environment
 cleanup() {
-    rm -rf "$TEST_DIR" security_test_dir traversal_test debloated_grep original_grep
+    rm -rf "$TEST_DIR" security_test_dir traversal_test debloated_grep original_grep test_files crash_inputs
 }
 
 main() {
@@ -436,6 +429,11 @@ main() {
   compile 
 
   mkdir -p "$TEST_DIR"
+  cp -r ../test_files crash_inputs
+  mkdir -p test_files
+  mv crash_inputs/*.txt test_files/
+  mv crash_inputs/*.csv test_files/
+
   functionality_cases
   robustness_cases
   

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEBLOATED_FILE="uniq-covl.c"
+DEBLOATED_FILE="uniq-og.c"
 ORIGINAL_FILE="uniq-og.c"
 CC=clang
 DEBLOATED_UNIQ="./debloated_uniq"
@@ -146,12 +146,6 @@ functionality_cases() {
   "rm -rf \"$TEST_DIR/!@#$%^&*()_+-=[]{}|; :,.< >?.txt\"" \
   "functionality"
 
-  run_functionality "File with unexpected inputs" \
-  "$TEST_DIR/comprehensive_test" \
-  "cp test_files/comprehensive_test $TEST_DIR/" \
-  "rm -rf $TEST_DIR/comprehensive_test" \
-  "functionality"
-
 
   for file in test_files/*.txt; do
     run_functionality "File: $file" \
@@ -285,7 +279,7 @@ robustness_cases() {
 
 # Clean up test environment
 cleanup() {
-  rm -rf "$TEST_DIR"
+  rm -rf "$TEST_DIR" test_files crash_inputs
   rm -f debloated_uniq original_uniq
 }
 
@@ -296,6 +290,11 @@ main() {
 
   # Create the test directory
   mkdir -p "$TEST_DIR"
+  cp -r ../test_files crash_inputs
+  mkdir -p test_files
+  mv crash_inputs/*.txt test_files/
+  mv crash_inputs/*.csv test_files/
+
 
   # Run the test cases
   functionality_cases

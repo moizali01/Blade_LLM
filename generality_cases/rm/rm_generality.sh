@@ -294,8 +294,8 @@ robustness_cases() {
 
 # Clean up test environment
 cleanup() {
-  rm -rf "$TEST_DIR"
-  rm -f debloated_rm original_rm
+  rm -rf "$TEST_DIR" test_files
+  rm -f debloated_rm original_rm 
 }
 
 main() {
@@ -303,6 +303,7 @@ main() {
   compile
 
   mkdir -p $TEST_DIR
+  cp -r ../test_files .
   # Run the test cases
   functionality_cases
   security_cases
