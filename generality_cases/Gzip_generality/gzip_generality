@@ -29,11 +29,11 @@ function compile() {
 
 function run_functionality() {
     ((TOTAL_TESTS++))
-
+    
     echo "CASE: $TOTAL_TESTS" >>${LOG} 2>&1
-    sec_flag="$1"      
-    shift                  
-    files=("$@") 
+    sec_flag="$1"
+    shift
+    files=("$@")
     if [ -n "$sec_flag" ] && [ "$sec_flag" -eq 1 ]; then
         ((TOTAL_SECURITY++))
     else
@@ -48,17 +48,17 @@ function run_functionality() {
         filename=$(basename "$file")
         cp -p "$file" "comparison/original_$filename"
     done
-
+    
     local compression_debloated="compression_debloated.txt"
     { timeout ${TIMEOUT_LIMIT} ${REDUCED_BINARY} temp/*; } &>>${compression_debloated}
     local a=$?
     if [[ $a -ne 0 ]]; then
         echo "Compression failed: ${files[@]}" >>${LOG} 2>&1
-
+        
         rm -rf temp comparison ${compression_debloated} ${decompression_original}  >/dev/null 2>&1
         return 1
     fi
-
+    
     local debloated_compressed_files=$(ls temp)
     if find temp -type f ! -name "*.gz" | grep -q .; then
         echo "Not all files are .gz: ${files[@]}" >>${LOG} 2>&1
@@ -67,7 +67,7 @@ function run_functionality() {
     else
         echo "All files are .gz" >>${LOG} 2>&1
     fi
-
+    
     local decompression_original="decompression_original.txt"
     { timeout ${TIMEOUT_LIMIT} ${ORIGINAL_BINARY} -d temp/*; } &>>${decompression_original}
     local b=$?
@@ -86,18 +86,18 @@ function run_functionality() {
     else
         echo "There are no .gz files" >>${LOG} 2>&1
     fi
-
+    
     for file in temp/*; do
         filename=$(basename "$file")
         cp -p "$file" "comparison/debloated_$filename"
     done
-
+    
     for file in $files; do
         filename=$(basename "$file")
-
+        
         # Determine file type (more robust than relying on extensions alone)
         filetype=$(file -b --mime-type "$file")
-
+        
         if [[ $filetype =~ ^text/ ]]; then
             # Text file comparison using diff
             if diff "comparison/original_$filename" "comparison/debloated_$filename" >/dev/null; then
@@ -118,7 +118,7 @@ function run_functionality() {
             fi
         fi
     done
-
+    
     if [ -n "$sec_flag" ] && [ "$sec_flag" -eq 1 ]; then
         ((TOTAL_SECURITY_PASSED++))
     else
@@ -155,7 +155,7 @@ function functionality_cases() {
     echo "Functionality Related Tests" >>${LOG} 2>&1
     
     local functionality_files="functionality_files"
-
+    
     for file in $functionality_files/*; do
         echo "Running test $file" >>${LOG} 2>&1
         run_functionality 0 $file
@@ -171,7 +171,7 @@ function functionality_cases() {
     files=("${files[@]/#/functionality_files/}")
     echo "Running test: Multiple files" >>${LOG} 2>&1
     run_functionality 0 ${files[@]}
-
+    
     #5 files
     files=($(ls $functionality_files | shuf -n 5))
     files=("${files[@]/#/functionality_files/}")
@@ -203,35 +203,35 @@ function security_cases() {
     files=("${files[@]/#/security_cases/}")
     echo "Running test: Multiple files" >>${LOG} 2>&1
     run_functionality 1 ${files[@]}
-
+    
     files=($(ls $security_dir | shuf -n 5))
     files=("${files[@]/#/security_cases/}")
     echo "Running test: Multiple files" >>${LOG} 2>&1
     run_functionality 1 ${files[@]}
-
+    
     mkdir -p sticky_dir
-
+    
     echo -e "apple\nbanana\ncherry" > setuid_file
     chmod u+s setuid_file
-
+    
     echo -e "apple\nbanana\ncherry" > setgid_file
     chmod g+s setgid_file
-
+    
     echo -e "apple\nbanana\ncherry" > sticky_dir/file
     chmod +t sticky_dir
-
+    
     # Large buffer overflow input
     echo -e "$(printf '%0.s1' {1..1000000})\n$(printf '%0.s2' {1..1000000})" > buffer_overflow
-
+    
     # Potential format string input
     echo -e "%s\n%s\n%s\n%s" > format_string
-
-
+    
+    
     for file in "setuid_file" \
-                "setgid_file" \
-                "sticky_dir/file" \
-                "buffer_overflow" \
-                "format_string" 
+    "setgid_file" \
+    "sticky_dir/file" \
+    "buffer_overflow" \
+    "format_string"
     do
         echo "Running test $file" >>${LOG} 2>&1
         run_functionality 1 $file
@@ -246,45 +246,49 @@ function robustness_cases() {
     echo "==========================">>${LOG} 2>&1
     local robustness_dir="robustness_cases"
     for file in $robustness_dir/*; do
+        cp -p $file $DIR
+        #use the copied file
+        file=$(basename $file)
         echo "Running test $file">>${LOG} 2>&1
         run_robustness "Robustness test file: $file" \
         "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY $file > $DIR/temp_output.txt; }"
+        rm -rf $file *.gz >/dev/null 2>&1
     done
-
+    
     touch new_file.txt
     echo "Running test: Invalid Flag">>${LOG} 2>&1
     run_robustness "Invalid Flag" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -a new_file.txt > $DIR/temp_output.txt; }"
-
+    "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -a new_file.txt > $DIR/temp_output.txt; }"
+    
     echo "Running test: No arguments">>${LOG} 2>&1
     run_robustness "No arguments " \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -a > $DIR/temp_output.txt; }" 
-
+    "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -a > $DIR/temp_output.txt; }"
+    
     echo "Running test: -R flag">>${LOG} 2>&1
     run_robustness "Invalid Flag" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -R new_file.txt > $DIR/temp_output.txt; }"
+    "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -R new_file.txt > $DIR/temp_output.txt; }"
     
     echo "Running test: -z flag">>${LOG} 2>&1
     run_robustness "Invalid Flag" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -z new_file.txt > $DIR/temp_output.txt; }"
+    "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -z new_file.txt > $DIR/temp_output.txt; }"
     
     echo "Running test Non Existent file">>${LOG} 2>&1
     run_robustness "Non Existent file" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY Nonexistent.txt > $DIR/temp_output.txt; }"
+    "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY Nonexistent.txt > $DIR/temp_output.txt; }"
     
     gzip new_file.txt
     echo "Running test: decompression flag">>${LOG} 2>&1
     run_robustness "Invalid Flag" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -d new_file.txt.gz > $DIR/temp_output.txt; }"
-
+    "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -d new_file.txt.gz > $DIR/temp_output.txt; }"
+    
     #pass a dir
     mkdir temp_dir
     echo "Running test: Directory">>${LOG} 2>&1
     run_robustness "Invalid Flag" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY temp_dir > $DIR/temp_output.txt; }"
+    "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY temp_dir > $DIR/temp_output.txt; }"
     rm -rf temp_dir
     rm -rf new_file.txt new_file.txt.gz
-
+    
     flags=(-h -z -k -f -t -c -q -v -L -V -s -1 -2 -3 -4 -5 -6 -7 -8 -9 --help --license --version )
     for flag in ${flags[@]}; do
         touch file.txt
@@ -301,9 +305,9 @@ function security_cases_run() {
     
     echo "CASE: $TOTAL_TESTS" >>${LOG} 2>&1
     
-    sec_flag="$1"       
+    sec_flag="$1"
     shift
-    files=("$@") 
+    files=("$@")
     
     rm -rf temp comparison ${compression_debloated} ${decompression_original} >/dev/null 2>&1
     mkdir -p temp >/dev/null 2>&1
@@ -311,26 +315,26 @@ function security_cases_run() {
     for file in "${files[@]}"; do
         cp -p "${file}" "temp/"
     done
-
+    
     local compression_debloated="compression_debloated.txt"
     { timeout ${TIMEOUT_LIMIT} ${ORIGINAL_BINARY} temp/*; } &>>${compression_debloated}
     local a=$?
-
+    
     local decompression_original="decompression_original.txt"
     { timeout ${TIMEOUT_LIMIT} ${REDUCED_BINARY} temp/*; } &>>${decompression_original}
     local b=$?
-
+    
     if [ $a -ne $b ]; then
         echo "Test failed:" >>${LOG} 2>&1
         cat $compression_debloated >>${LOG} 2>&1
         cat $decompression_original >>${LOG} 2>&1
         return
     fi
-        
+    
     sed -i '/reduced_binary/d' $compression_debloated
     sed -i '/original_binary/d' $decompression_original
     
-    if diff $compression_debloated $decompression_original > /dev/null; then 
+    if diff $compression_debloated $decompression_original > /dev/null; then
         echo "Decompressed file matched the original file" >/dev/null 2>&1
     else
         echo "Error: Decompressed file does not match the original file: $file"
@@ -338,14 +342,14 @@ function security_cases_run() {
         return 1
     fi
     ((TOTAL_SECURITY_PASSED++))
-
+    
     echo "Success" >>${LOG} 2>&1
     echo "" >>${LOG} 2>&1
     rm -rf temp comparison ${compression_debloated} ${decompression_original}  >/dev/null 2>&1
     return 0
-
-
-
+    
+    
+    
 }
 function clean_env() {
     cd $DIR

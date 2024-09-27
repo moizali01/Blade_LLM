@@ -3,7 +3,7 @@
 PROGRAM_NAME=gzip-8.16
 DIR=$(pwd)
 ORIGINAL_FILE=$DIR/gzip-org.c
-REDUCED_FILE=$DIR/gzip-cov.c
+REDUCED_FILE=$DIR/copy.c
 ORIGINAL_BINARY=$DIR/original_binary
 REDUCED_BINARY=$DIR/reduced_binary
 CC=clang
@@ -146,7 +146,6 @@ function run_robustness() {
         return
     fi
     
-    
 }
 
 function functionality_cases() {
@@ -179,6 +178,7 @@ function functionality_cases() {
     run_functionality 0 ${files[@]}
     return 0
 }
+
 function security_cases() {
     #Non Existent file
     echo "==========================" >>${LOG} 2>&1
@@ -240,42 +240,32 @@ function security_cases() {
     rm -rf sticky_dir
     return 0
 }
+
 function robustness_cases() {
     echo "==========================">>${LOG} 2>&1
     echo "Robustness Related Tests">>${LOG} 2>&1
     echo "==========================">>${LOG} 2>&1
     local robustness_dir="robustness_cases"
     for file in $robustness_dir/*; do
+            cp -p $file $DIR
+        #use the copied file
+        file=$(basename $file)
         echo "Running test $file">>${LOG} 2>&1
         run_robustness "Robustness test file: $file" \
         "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -d $file > $DIR/temp_output.txt; }"
+        rm -rf $file *.gz temp_output.txt
     done
 
     touch new_file.txt
-    echo "Running test: Invalid Flag">>${LOG} 2>&1
-    run_robustness "Invalid Flag" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -a new_file.txt > $DIR/temp_output.txt; }"
 
     echo "Running test: No arguments">>${LOG} 2>&1
     run_robustness "No arguments " \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -a > $DIR/temp_output.txt; }" 
+        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -x > $DIR/temp_output.txt; }" 
 
-    echo "Running test: -R flag">>${LOG} 2>&1
-    run_robustness "Invalid Flag" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -R new_file.txt > $DIR/temp_output.txt; }"
-    
-    echo "Running test: -z flag">>${LOG} 2>&1
-    run_robustness "Invalid Flag" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -z new_file.txt > $DIR/temp_output.txt; }"
-    
     echo "Running test Non Existent file">>${LOG} 2>&1
     run_robustness "Non Existent file" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -d Nonexistent.txt > $DIR/temp_output.txt; }"
+        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY Nonexistent.txt > $DIR/temp_output.txt; }"
     
-    echo "Running test: decompression flag">>${LOG} 2>&1
-    run_robustness "Invalid Flag" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY new_file.txt > $DIR/temp_output.txt; }"
-
     #pass a dir
     mkdir temp_dir
     echo "Running test: Directory">>${LOG} 2>&1
@@ -284,13 +274,13 @@ function robustness_cases() {
     rm -rf temp_dir
     rm -rf new_file.txt new_file.txt.gz
     
-    flags=(-h -z -k -f -t -c -q -v -L -V -s -1 -2 -3 -4 -5 -6 -7 -8 -9 --help --license --version )
+    flags=(-d -a -R -h -z -k -f -t -c -q -v -L -V -s -1 -2 -3 -4 -5 -6 -7 -8 -9 --help --license --version )
     for flag in ${flags[@]}; do
         touch file.txt
         echo "Running test: Invalid Flags">>${LOG} 2>&1
         run_robustness "Invalid Flags" \
         "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY $flag file.txt > $DIR/temp_output.txt; }"
-        rm file.txt file.txt.bz2 >/dev/null 2>&1
+        rm file.txt file.txt.gz >/dev/null 2>&1
     done
 }
 
@@ -310,14 +300,21 @@ function main() {
     robustness_cases
     
     clean_env
+    #if all test passed == totaltets
+    local total_passed=$((TOTAL_FUNCTIONALITY_PASSED + TOTAL_SECURITY_PASSED + TOTAL_ROBUSTNESS_PASSED))
+    echo "Total tests: $TOTAL_TESTS">>${LOG} 2>&1
+    echo "==========================">>${LOG} 2>&1
+    echo "Total functionality tests Passed: $TOTAL_FUNCTIONALITY_PASSED/$TOTAL_FUNCTIONALITY">>${LOG} 2>&1
+    echo "Total security tests Passed: $TOTAL_SECURITY_PASSED/$TOTAL_SECURITY">>${LOG} 2>&1
+    echo "Total robustness tests Passed: $TOTAL_ROBUSTNESS_PASSED/$TOTAL_ROBUSTNESS">>${LOG} 2>&1
+    echo "==========================">>${LOG} 2>&1
+    echo "Total tests Passed: $((TOTAL_FUNCTIONALITY_PASSED + TOTAL_SECURITY_PASSED + TOTAL_ROBUSTNESS_PASSED))/$((TOTAL_FUNCTIONALITY + TOTAL_SECURITY + TOTAL_ROBUSTNESS))">>${LOG} 2>&1
     
-    echo "Total tests: $TOTAL_TESTS"
-    echo "=========================="
-    echo "Total functionality tests Passed: $TOTAL_FUNCTIONALITY_PASSED/$TOTAL_FUNCTIONALITY"
-    echo "Total security tests Passed: $TOTAL_SECURITY_PASSED/$TOTAL_SECURITY"
-    echo "Total robustness tests Passed: $TOTAL_ROBUSTNESS_PASSED/$TOTAL_ROBUSTNESS"
-    echo "=========================="
-    echo "Total tests Passed: $((TOTAL_FUNCTIONALITY_PASSED + TOTAL_SECURITY_PASSED + TOTAL_ROBUSTNESS_PASSED))/$((TOTAL_FUNCTIONALITY + TOTAL_SECURITY + TOTAL_ROBUSTNESS))"
+    if [ $total_passed -eq $TOTAL_TESTS ]; then
+        echo "All tests passed successfully."
+    else
+        return 0
+    fi
     return 0
 }
 

@@ -23,7 +23,7 @@ Class 5: <whether the purpose of this code is unclear without further context or
 Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
 Final Verdict: <assigned class> (1-5)
 
-The code belongs to tthe Gzip core utility. Gzip compression functionality uses Deflate algorithm for decompression.
+The code belongs to tthe Gzip core utility. Gzip decompression functionality uses Deflate algorithm for decompression.
 Required Functionality:
 1. Gzip is used only with the -d flag to compress all kind of files with varying extensions.
 2. Retain the data integrity after decompression and make sure the decompression occurs successfully. 
@@ -77,9 +77,8 @@ Target Code:
 
 Make sure to evaluate on the basis of the following:
 1. Prevention against the security vulnerabilities mentioned in the security list.
-2. Deompression of all kinds of files with -d flag.
-3. Retaining the data integrity of the decompressed file.
-4. Prevent the program workflow from being disrupted by being careful of jump/goto statements.
+2. Retaining the data integrity of the decompressed file.
+3. Prevent the program workflow from being disrupted by being careful of jump/goto statements.
 
 Make sure to cater to ALL edge cases for the functionalites mentioned. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 

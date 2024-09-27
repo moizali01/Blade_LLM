@@ -3,7 +3,7 @@
 PROGRAM_NAME=bzip2-8.16
 DIR=$(pwd)
 ORIGINAL_FILE=$DIR/bzip2-org.c
-REDUCED_FILE=$DIR/bzip2-util.c
+REDUCED_FILE=$DIR/bzip2-covl.c
 ORIGINAL_BINARY=$DIR/original_binary
 REDUCED_BINARY=$DIR/reduced_binary
 CC=clang
@@ -246,9 +246,13 @@ function robustness_cases() {
     echo "==========================">>${LOG} 2>&1
     local robustness_dir="robustness_cases"
     for file in $robustness_dir/*; do
+        cp -p $file $DIR
+        #use the copied file
+        file=$(basename $file)
         echo "Running test $file">>${LOG} 2>&1
         run_robustness "Robustness test file: $file" \
         "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -d $file > $DIR/temp_output.txt; }"
+        rm -rf $file *.bz2
     done
 
     touch new_file.txt
