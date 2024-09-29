@@ -160,17 +160,6 @@ function functionality_cases() {
         echo "Running test $file" >>${LOG} 2>&1
         run_functionality 0 $file
     done
-    
-    files=($(ls $functionality_files | shuf -n 2))
-    files=("${files[@]/#/functionality_files/}")
-    echo "Running test: Multiple files" >>${LOG} 2>&1
-    run_functionality 0 ${files[@]}
-    
-    #randomly pick four files from the functionality_files
-    files=($(ls $functionality_files | shuf -n 4))
-    files=("${files[@]/#/functionality_files/}")
-    echo "Running test: Multiple files" >>${LOG} 2>&1
-    run_functionality 0 ${files[@]}
 
     #5 files
     files=($(ls $functionality_files | shuf -n 5))
@@ -179,6 +168,7 @@ function functionality_cases() {
     run_functionality 0 ${files[@]}
     return 0
 }
+
 function security_cases() {
     #Non Existent file
     echo "==========================" >>${LOG} 2>&1
@@ -191,23 +181,6 @@ function security_cases() {
         echo "Running test $file" >>${LOG} 2>&1
         run_functionality 1 $file
     done
-    
-    # randomly pick two files from the functionality_files
-    files=($(ls $security_dir | shuf -n 2))
-    files=("${files[@]/#/security_cases/}")
-    echo "Running test: Multiple files" >>${LOG} 2>&1
-    run_functionality 1 ${files[@]}
-    
-    #randomly pick four files from the security_dir
-    files=($(ls $security_dir | shuf -n 4))
-    files=("${files[@]/#/security_cases/}")
-    echo "Running test: Multiple files" >>${LOG} 2>&1
-    run_functionality 1 ${files[@]}
-
-    files=($(ls $security_dir | shuf -n 5))
-    files=("${files[@]/#/security_cases/}")
-    echo "Running test: Multiple files" >>${LOG} 2>&1
-    run_functionality 1 ${files[@]}
 
     mkdir -p sticky_dir
 

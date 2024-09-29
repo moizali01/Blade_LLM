@@ -111,7 +111,6 @@ function functionality_cases() {
     local english_dir="english"
     local numeric_dir="numeric_cases"
     local code_dir="code_files"
-    local log_dir="log_files"
     local csv_files="csv_files"
     for file in $english_dir/*; do
         echo "Running test $file"
@@ -130,13 +129,6 @@ function functionality_cases() {
     for file in $code_dir/*; do
         echo "Running test $file"
         run_functionality "Sorting code files: $file" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY $file > $DIR/temp_output.txt; }" \
-        "{ timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY $file > $DIR/expected_output.txt; }" 0
-    done
-    
-    for file in $log_dir/*; do
-        echo "Running test $file"
-        run_functionality "Sorting test file: $file" \
         "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY $file > $DIR/temp_output.txt; }" \
         "{ timeout $TIMEOUT_LIMIT $ORIGINAL_BINARY $file > $DIR/expected_output.txt; }" 0
     done

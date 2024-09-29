@@ -51,8 +51,7 @@ generality_results.txt
 log
 log.txt
 
-generality_cases/sort/test_files/
-generality_cases/test_files/
+test_files/
 functionality_files/
 security_cases/
 robustness_cases/
