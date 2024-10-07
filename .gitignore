@@ -6,7 +6,9 @@
 *.dll
 *.so
 a.out
-
+benchmark/cands
+benchmark/*.c
+benchmark/*.orig
 # Ignore build artifacts
 /build/
 /dist/
@@ -55,3 +57,5 @@ generality_cases/sort/test_files/
 functionality_files/
 security_cases/
 robustness_cases/
+
+compression_tests/

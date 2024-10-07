@@ -4,6 +4,7 @@ import pysqlite3
 sys.modules['sqlite3'] = pysqlite3
 
 import os
+import re
 import time
 import warnings
 import ollama
@@ -57,6 +58,9 @@ class QAClass:
     _embeddings = None
     _db = None
 
+    def __init__(self):
+        self.timestamp = ""
+
     @classmethod
     def initialize_embeddings_and_db(cls):
         if cls._embeddings is None or cls._db is None:
@@ -71,14 +75,6 @@ class QAClass:
             file_path = "original.txt"
             with open(file_path, "r") as f:
                 docs = f.read()
-
-            # code_splitter=CodeSplitter(language="c", parser=get_parser("c"), max_chars=1500)
-            # splits = code_splitter.split_text(docs)
-            # new_splits = [split for split in splits if len(split) > 4]
-            # new_splits2 = doc_merger(new_splits)
-            # documents = [Document(page_content=split) for split in new_splits2]
-            # os.environ["VOYAGE_API_KEY"] = os.environ.get("VOYAGE_API_KEY")
-            # cls._embeddings = VoyageAIEmbeddings(model="voyage-code-2")
 
             splits = get_code_chunks(docs)
             new_splits = [split for split in splits if len(split) > 2]
@@ -100,6 +96,56 @@ class QAClass:
         # return response['message']['content']
         return response.json()['response']
 
+    # gemini model definition and call
+    def call_gemini(self,prompt):
+
+        safe = [
+            {
+                "category": "HARM_CATEGORY_HARASSMENT",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_HATE_SPEECH",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                "threshold": "BLOCK_NONE",
+            },
+            {
+                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                "threshold": "BLOCK_NONE",
+            },
+        ]
+        genai.configure(api_key=os.environ.get("GENAI_API_KEY"))
+        generation_config = {
+        "temperature": 0.1,
+        "top_p": 0.95,
+        "top_k": 64,
+        "max_output_tokens": 8192,
+        "response_mime_type": "text/plain",
+        }
+        model = genai.GenerativeModel(
+        model_name="gemini-1.5-pro",
+        generation_config=generation_config,
+        safety_settings = safe
+        # See https://ai.google.dev/gemini-api/docs/safety-settings
+        )
+        llm = model.start_chat(history=[])
+
+        response = None
+        try_count = 0
+        while try_count < 3:
+            try:
+                response = llm.send_message(prompt).text
+                break
+            except Exception as e:
+                print("Error: ", e)
+                time.sleep(5)
+                try_count += 1
+                print("Retrying No. ", try_count)
+
+        return response
 
     def combine_docs(self, docs):
         return "\n\n".join(f"Snippet.{i+1}:\n\n{doc.page_content}" for i, doc in enumerate(docs))
@@ -146,40 +192,7 @@ class QAClass:
         #     )
 
         # 2. ***** Gemini *****
-
-        safe = [
-            {
-                "category": "HARM_CATEGORY_HARASSMENT",
-                "threshold": "BLOCK_NONE",
-            },
-            {
-                "category": "HARM_CATEGORY_HATE_SPEECH",
-                "threshold": "BLOCK_NONE",
-            },
-            {
-                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                "threshold": "BLOCK_NONE",
-            },
-            {
-                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-                "threshold": "BLOCK_NONE",
-            },
-        ]
-        genai.configure(api_key=os.environ.get("GENAI_API_KEY"))
-        generation_config = {
-        "temperature": 0.1,
-        "top_p": 0.95,
-        "top_k": 64,
-        "max_output_tokens": 8192,
-        "response_mime_type": "text/plain",
-        }
-        model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
-        generation_config=generation_config,
-        safety_settings = safe
-        # See https://ai.google.dev/gemini-api/docs/safety-settings
-        )
-        llm = model.start_chat(history=[])
+        llm = self.call_gemini
 
         # 3. ***** Local LLM (Ollama) *****
 
@@ -201,33 +214,128 @@ class QAClass:
 
             def run(self, query, context_query, coverage, fifty_clean):
 
-                # compressor = VoyageAIRerank(
-                #     model="rerank-1", voyageai_api_key=os.environ["VOYAGE_API_KEY"], top_k=10
-                # )
-
                 # define retriever
                 retriever = self.outer_instance._db.as_retriever(search_type="similarity", search_kwargs={"k": 4})
 
-                # make compression retrieval
-                # compression_retriever = ContextualCompressionRetriever(
-                #     base_compressor=compressor, base_retriever=retriever
-                # )
-                retrieved_docs = retriever.invoke(context_query)
+                # Use similarity_search_with_score instead of invoke
+                retrieved_docs_with_scores = self.outer_instance._db.similarity_search_with_score(context_query, k=4)
 
-                formatted_context = self.outer_instance.combine_docs(retrieved_docs)
+                retrieved_docs = [doc for doc, _ in retrieved_docs_with_scores]
+                similarity_scores = [score for _, score in retrieved_docs_with_scores]
+
+
+                # Sort both lists based on similarity scores in descending order
+                sorted_pairs = sorted(zip(retrieved_docs, similarity_scores), key=lambda x: x[1], reverse=True)
+
+                # Unzip the sorted pairs
+                retrieved_docs, similarity_scores = zip(*sorted_pairs)
 
                 if len(query.splitlines()) > 10:
-                    formatted_context_2 = formatted_context
+                    formatted_context_2 = self.outer_instance.combine_docs(retrieved_docs)
                 else:
-                    formatted_context_2 = "Snippet.0: \n\n" + fifty_clean + "\n\n" + formatted_context
+                    formatted_context_2 = "Snippet.0: \n\n" + fifty_clean + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
                 
                 return self.outer_instance.call_llm(query, formatted_context_2, coverage, llm)
 
 
         return CustomQAChain(self)
     
-
+    # need to make three calls to LLM, 1) relevance of context, 2) generality and 3) security
     def call_llm(self, query, formatted_context, coverage, llm):
+
+        # if coverage:
+        #     with open('../LLM_Util/prompt_in_coverage.txt', 'r') as file:
+        #         prompt_template = file.read()
+        # else:
+        #     with open('../LLM_Util/prompt_not_in_coverage.txt', 'r') as file:
+        #         prompt_template = file.read()
+
+        # prompt = prompt_template.format(sec_list=sec_list, formatted_context=formatted_context, query=query)
+        # prompt_to_send = prompt
+
+        # Classify the context as relevant or not. If not, retain
+        print("Checking Relevance")
+        relevance = self.check_relevance(query, formatted_context, llm)
+        print(relevance)
+        if relevance == "no":
+            return "final verdict: class 4"
+        else:
+            # query functionality
+            print("Checking Functionality")
+            functionality = self.check_functionality(query, formatted_context, llm, coverage)
+            print(functionality)
+            # retain since it is needed for required functionality
+            if functionality == "yes":
+                return "final verdict: class 4"
+            else:
+                # query security
+                print("Checking Security")
+                security = self.check_security(query, formatted_context, llm, coverage)
+                print(security)
+                # retain since it is needed for required security
+                if security == "yes":
+                    return "final verdict: class 4"
+                else:
+                    return "final verdict: class 1"
+                
+
+    # function to check relevance of context with query
+    def check_relevance(self, query, formatted_context, llm):
+        
+        with open("../LLM_Util/check_relevance_prompt.txt", 'r') as file:
+            prompt_template = file.read()
+
+        prompt = prompt_template.format(context=formatted_context, query=query)
+
+        response = llm(prompt)
+
+        # save response to cands/multiagent/security
+        file_name = "../LLM_Util/cands/multiagent/relevance/relevance" + "_time_"+ str(self.timestamp) + ".blade.c.txt"
+        with open(file_name, 'w') as file:
+            file.write(response)
+
+
+        # parse response to get "yes" or "no"
+        match = re.search(r'\b(yes|no)\b', response.lower().strip())
+        if match is not None:
+            return match.group(1).lower()
+        else:
+            return "no"
+
+    def check_functionality(self, query, formatted_context, llm, coverage):
+        with open("../LLM_Util/functionality_prompt.txt", 'r') as file:
+            prompt_template = file.read()
+
+        in_cov_statement = "This code snippet included in the code execution path for the required functionality, therefore verify if the given code snippet is important for required functionality of the program."
+        not_cov_statement = "This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for the required functionality of the program."
+
+        with open("../LLM_Util/req_list.txt", 'r') as file:
+            req_list = file.read()
+
+        cov_info = in_cov_statement if coverage else not_cov_statement
+
+        prompt = prompt_template.format(context=formatted_context, query=query, coverage_info=cov_info, req_list=req_list)
+
+        response = llm(prompt)
+
+        # save response to cands/multiagent/functionality
+        file_name = "../LLM_Util/cands/multiagent/functionality/functionality" + "_time_"+ str(self.timestamp) + ".blade.c.txt"
+        with open(file_name, 'w') as file:
+            file.write(response)
+
+
+        # parse response to get "yes" or "no"
+        match = self.extract_imp_score_new_prompt(response)
+        if match is not None:
+            if match == 9:
+                return "yes"
+            elif match == 1:
+                return "no"
+
+        # retain if there is any issue in extracting importance score
+        return "yes"
+
+    def check_security(self, query, formatted_context, llm, coverage):
 
         if os.path.exists("../LLM_Util/sec_list.txt"):
             with open("../LLM_Util/sec_list.txt", 'r') as file:
@@ -238,65 +346,40 @@ class QAClass:
             print(sec_list)
             print("Sec List Read")
 
-        if coverage:
-            with open('../LLM_Util/prompt_in_coverage.txt', 'r') as file:
-                prompt_template = file.read()
-        else:
-            with open('../LLM_Util/prompt_not_in_coverage.txt', 'r') as file:
-                prompt_template = file.read()
+        with open("../LLM_Util/security_prompt.txt", 'r') as file:
+            prompt_template = file.read()
 
-        prompt = prompt_template.format(sec_list=sec_list, formatted_context=formatted_context, query=query)
-        prompt_to_send = prompt
+        in_cov_statement = "This code snippet included in the code execution path for the required functionality, therefore verify if the given code snippet is important for any of the listed potential security vulnerabilities in the program."
+        not_cov_statement = "This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for any of the listed potential security vulnerabilities in the program."
 
-        # UNCOMMENT YOUR REQUIRED LLM BELOW
+        cov_info = in_cov_statement if coverage else not_cov_statement
 
-        # 1. GEMINI
-        # if it fails try 3 times
-        try_count = 0
-        while try_count < 3:
-            try:
-                response = llm.send_message(prompt_to_send).text
-                break
-            except:
-                time.sleep(5)
-                try_count += 1
-                print("Retrying No. ", try_count)
+        prompt = prompt_template.format(context=formatted_context, query=query, coverage_info=cov_info, sec_list=sec_list)
 
+        response = llm(prompt)
 
-        # 2. GPT (via Azure AI Search)
-        # response = llm(prompt_to_send)
+        # save response to cands/multiagent/security
+        file_name = "../LLM_Util/cands/multiagent/security/security" + "_time_"+ str(self.timestamp) + ".blade.c.txt"
+        with open(file_name, 'w') as file:
+            file.write(response)
 
-        # 3. Local LLM (via Ollama)
-        # response = llm(prompt_to_send)
-        
+        # parse response to get "yes" or "no"
+        match = self.extract_imp_score_new_prompt(response)
+        if match is not None:
+            if match == 9:
+                return "yes"
+            elif match == 1:
+                return "no"
 
-        ### Two-pass approach ####
+        # retain if there is any issue in extracting importance score
+        return "yes"
 
-        # gemini
-        # response = llm.send_message(prompt_to_send).text
-
-        # # response = llm(prompt_to_send)
-        # with open('../LLM_Util/prompt_second.txt', 'r') as file:
-        #     prompt_template = file.read()
-
-        # # save response1 to a file
-        # now = datetime.now()
-        # formatted_time = now.strftime("%H-%M-%S-%f")[:-3]
-        # with open(f'../LLM_Util/cands/response_firstpass/response_time_{str(formatted_time)}.txt', 'w') as file:
-        #     file.write(response)
-        
-        # prompt = prompt_template.format(response1=response, formatted_context=formatted_context, query=query)
-
-        # response2 = llm(prompt)
-        # response2 = llm.send_message(prompt).text
-        # return response2
-
-        return response
-
-    def invoke(self, query, prompt_type, context_query, fifty_clean):
+    def invoke(self, query, prompt_type, context_query, fifty_clean, passed_time):
         # Retrieve documents based on context query
         print("Querying: ", query)
         # print("Context Retrived from DB: ", formatted_context)
+
+        self.timestamp = passed_time
 
         if prompt_type == 'generality':
             return self.llm_chain.run(query, context_query, False, fifty_clean)
@@ -309,21 +392,29 @@ class QAClass:
         with open(code_path, 'r') as file:
             code = file.read()
 
-        sec_prompt = f"""The program to analyze is a core utility in linux. 
+        with open("../LLM_Util/req_list.txt", 'r') as file:
+            req_list = file.read()
 
-Make a list in bullet points to list down the exception and security related issues that must be kept in mind while testing this program. Do not include anything else in your response to this message. Do not include any point regarding the generality or the flags of the program. Make sure that the list is concise and under 20 points in total.
+        sec_prompt = f"""The program to analyze is a core Linux utility. Your task is to analyze the provided program code and the list of **required functionality** to generate a concise list of potential security vulnerabilities that could affect the required functionality. 
 
-Here is the entire program code for the utility: 
+### Instructions:
+- Consider security and exception-related issues such as buffer overflows, race conditions, input validation issues, improper use of system calls, privilege escalation, and resource management vulnerabilities.
+- Focus only on vulnerabilities that could impact the **required functionality**. 
+- Address security concerns related to **input validation**, **boundary checking**, **memory management**, and **handling of special file types**.
+- Do not include points related to excluded or unrequired functionality.
+- **Do not** discuss generality, flags, or unrelated features of the program.
+- Ensure the list is limited to a maximum of **20 concise bullet points**.
 
+### Reference Information:
+{req_list}
+
+- **Program Code**: 
 ########
-
 {code}
-
 ########
 
-Make a list in bullet points to list down the exception and security related issues that must be kept in mind while testing this program. Do not include anything else in your response to this message. Do not include any point regarding the generality or the flags of the program. Make sure that the list is concise and under **20 points** in total.
-
-"""      
+### Output:
+- Provide a list of bullet points, each describing a potential security vulnerability or exception that should be tested in the context of the **required functionality** only, including issues related to input validation, memory usage, boundary checks, race conditions, and resource handling. Make sure the list is concise and limited to a maximum of 20 bullet points."""      
         safe = [
             {
                 "category": "HARM_CATEGORY_HARASSMENT",
@@ -352,7 +443,7 @@ Make a list in bullet points to list down the exception and security related iss
         "response_mime_type": "text/plain",
         }
         model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
+        model_name="gemini-1.5-pro",
         generation_config=generation_config,
         safety_settings = safe
         # See https://ai.google.dev/gemini-api/docs/safety-settings
@@ -366,3 +457,39 @@ Make a list in bullet points to list down the exception and security related iss
             file.write(sec_list)
 
         return sec_list
+
+
+    def extract_imp_score_new_prompt(self,text): 
+
+        # Convert the text to lowercase
+        lower_text = text.lower()
+        target = "final verdict"
+
+        # Find the position of "importance score"
+        start_index = lower_text.find(target)
+        if start_index == -1:
+            return None  # "Importance Score" not found
+
+        # Move the start index to the end of "importance score"
+        start_index += len(target)
+
+        # Find the next newline character after "importance score"
+        end_index = text.find('\n', start_index)
+        if end_index == -1:
+            end_index = len(text)  # if no newline, go to the end of the text
+
+        # Extract the substring between "importance score" and the newline
+        substring = text[start_index:end_index]
+
+        # Find the number in the substring
+        import re
+        match = re.search(r'\b([0-9]|[1-9][0-9]|100)\b', substring)
+        if match:
+            assigned_class = int(match.group(0))
+            # removal class
+            if assigned_class < 3:
+                return 1
+            else:
+                return 9
+        else:
+            return None  # No number found

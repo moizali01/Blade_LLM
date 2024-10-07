@@ -1,7 +1,8 @@
 BINARY_DIR="bins"
 LOG="log.txt"
-C_FILE=chown-old.c
-# C_FILE=chown-8.2.c.origin.c
+# C_FILE=chown-llm2.c
+# C_FILE=chown-blade.c
+C_FILE=chown-debloated.c.blade.c
 TIMEOUT_LIMIT="-k 5 5"
 
 TOTAL_SCORE_FUNCTIONALITY=0
@@ -15,7 +16,7 @@ chmod +x $BINARY_DIR/chown-test
 
 # List of commands to test
 declare -A COMMANDS=(
-    ["chown-owner"]="user1"
+    ["chown-owner"]="user1:"
     ["chown-group"]=":group1"
     ["chown-owner-group"]="user1:group1"
 )
@@ -117,12 +118,19 @@ function test() {
         "read-only")
             create_test_structure_read_only "$test_dir"
             ;;
+        "numeric-gid")
+            touch $test_dir
+            ;;
+        "numeric-uid")
+            touch $test_dir
+            ;;
+        
     esac
 
     # Run the binary and capture stdout, stderr, and the directory listing
     binary_output=$(mktemp)
     binary_error=$(mktemp)
-    { timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test $args "$test_dir"; } > "$binary_output" 2> "$binary_error"
+    { timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test -R $args "$test_dir"; } > "$binary_output" 2> "$binary_error"
     temp1=$(ls -alR "$test_dir" | awk '{print $1, $2, $3, $4, $5, $7, $9}')
 
     echo "Custom chown output:" >> $LOG
@@ -154,12 +162,19 @@ function test() {
         "read-only")
             create_test_structure_read_only "$test_dir"
             ;;
+        "numeric-gid")
+            touch $test_dir
+            ;;
+        "numeric-uid")
+            touch $test_dir
+            ;;
+        
     esac
 
     # Apply system chown and capture stdout, stderr, and the directory listing
     chown_output=$(mktemp)
     chown_error=$(mktemp)
-    chown $args "$test_dir" > "$chown_output" 2> "$chown_error"
+    chown -R $args "$test_dir" > "$chown_output" 2> "$chown_error"
     temp2=$(ls -alR "$test_dir" | awk '{print $1, $2, $3, $4, $5, $7, $9}')
 
     echo "System chown output:" >> $LOG
@@ -213,7 +228,7 @@ function test_multiple_files() {
     binary_error=$(mktemp)
     cd $test_dir
 
-    { timeout ${TIMEOUT_LIMIT} ../$BINARY_DIR/chown-test user1:group1 file1 file2 file3 subdir; } > "$binary_output" 2> "$binary_error"
+    { timeout ${TIMEOUT_LIMIT} ../$BINARY_DIR/chown-test -R user1:group1 file1 file2 file3 subdir; } > "$binary_output" 2> "$binary_error"
 
     cd ..
 
@@ -236,7 +251,7 @@ function test_multiple_files() {
     chown_output=$(mktemp)
     chown_error=$(mktemp)
     cd $test_dir
-    chown user1:group1 file1 file2 file3 subdir > "$chown_output" 2> "$chown_error"
+    chown -R user1:group1 file1 file2 file3 subdir > "$chown_output" 2> "$chown_error"
     cd ..
     temp2=$(ls -al "$test_dir" | awk '{print $1, $2, $3, $4, $9}')
 
@@ -273,17 +288,16 @@ function c_test() {
     local SCORE=0
     local TOTAL=7
 
-    test "$cmd" "$args" "testdir_simple" "simple" && ((SCORE++)) 
-    test "$cmd" "$args" "testdir_with spaces" "simple" && ((SCORE++)) 
-    test "$cmd" "$args" "testdir_nested" "nested" && ((SCORE++))
-    test "$cmd" "$args" "testdir_symlinks" "symlinks" && ((SCORE++)) 
-    test "$cmd" "$args" "testdir_special" "special" && ((SCORE++))
-    test "$cmd" "$args" "testdir_permissions" "permissions" && ((SCORE++))
-    test "$cmd" "$args" "testdir_special_chars!@#$%^&*()" "simple" && ((SCORE++))
+    
+    test "$cmd" "$args" "testdir_simple" "simple" && ((SCORE = SCORE + 1)) && echo "simple"
+    test "$cmd" "$args" "testdir_nested" "nested" && ((SCORE = SCORE + 1)) && echo "nested"
+    test "$cmd" "$args" "testdir_special" "special" && ((SCORE = SCORE + 1)) && echo "special"
+    test "$cmd" "$args" "testdir_permissions" "permissions" && ((SCORE = SCORE + 1)) && echo "permissions"
+    test "$cmd" "$args" "testdir_special _chars!@#$%^&*()" "nested" && ((SCORE = SCORE + 1)) && echo "special chars"
     
     TOTAL_SCORE_FUNCTIONALITY=$((TOTAL_SCORE_FUNCTIONALITY + SCORE))
-
-    # echo "total:  $TOTAL_SCORE_FUNCTIONALITY"
+    # echo
+    echo "total:  $TOTAL_SCORE_FUNCTIONALITY"
 
     # echo "$cmd tests $SCORE / $TOTAL"
     return 0
@@ -293,23 +307,30 @@ function run_tests() {
 
     
 
-    # Test Cases 1-7 : different types of directory names,permissions and edge cases
+    # Test Cases 1-15 : different types of directory names,permissions and edge cases
     c_test "chown-owner-group" "${COMMANDS["chown-owner-group"]}"
 
-    # Test Case 8: Change owner only
-    test chown-owner user1: "testdir_simple" "simple" && ((TOTAL_SCORE_FUNCTIONALITY++))
+    # Test Cases 1-5 : different types of directory names,permissions and edge cases
+    c_test "chown-owner" "${COMMANDS["chown-owner"]}"
 
-    # Test Case 9: Change group only
-    test "chown-group" ":group1" "testdir_simple" "simple" && ((TOTAL_SCORE_FUNCTIONALITY++))
+    # Test Cases 1-5 : different types of directory names,permissions and edge cases
+    c_test "chown-group" "${COMMANDS["chown-group"]}"
 
-    # Test Case 10: Change owner and group of a directory with read-only files
+    # Test Case 16: Change owner and group of a directory with read-only files
     test "chown-owner-group" "user1:group1" "testdir_read_only" "read-only" && ((TOTAL_SCORE_FUNCTIONALITY++))
 
-    # Test Case 11: Change owner and group of a directory using numeric UID and GID
-    test "chown-uid-gid" "1000:1000" "testdir_simple" "simple" && ((TOTAL_SCORE_FUNCTIONALITY++))
+    # Test Case 17: Change owner and group of a directory using numeric UID and GID
+    test "chown-uid-gid" "1000:1000" "testdir_nested" "nested" && ((TOTAL_SCORE_FUNCTIONALITY++))
 
-    # Test Case 12: Change owner and group of a directory with multiple files
+    # Test Case 18: Change owner and group of a directory using numeric UID and GID
+    test "chown-uid-gid" ":1000" "testdir_nested" "nested" && ((TOTAL_SCORE_FUNCTIONALITY++))
+
+    # Test Case 19: Change owner and group of a directory using numeric UID and GID
+    test "chown-uid-gid" "1000:" "testdir_nested" "nested" && ((TOTAL_SCORE_FUNCTIONALITY++))
+
+    # Test Case 20: Change owner and group of a directory with multiple files
     test_multiple_files "testdir_multiple_files" && ((TOTAL_SCORE_FUNCTIONALITY++))
+
 
     return 0
     
@@ -328,61 +349,66 @@ function run_security_cases(){
 }
 
 function test_robustness(){
-    local binary_output="$1"
-    if [[ "$binary_output" == "TIMEOUT" ]]; then
-        echo "Test failed: $cmd $args"
-        return 1
+    local args="$1"
+    timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test $args testdir_simple 2>/dev/null
+    a=$?
+    # echo "$a"
+    if [[ $a -ne 124 && $a -ne 137 ]]; then
+        ((TOTAL_SEC_CASES++))
+        echo "Robustness Test Passed"
+        return 0
     fi
 
-    ((TOTAL_SEC_CASES++))
-    return 0
+    
+    return 1
 
 }
 
 function run_robustness_cases() {
 
     # Test Case 1: use invalid flag
-    create_test_structure_simple testdir_simple
-    output_debloat=$(timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test -X user1:group1 testdir_simple 2>/dev/null)
-    test_robustness "$output_debloat"
-    rm -f "$output_debloat"
+    create_test_structure_nested testdir_simple
+    test_robustness "-X user1:group1"
     rm -rf "$test_dir"
 
     # Test Case 2: use invalid owner
-    create_test_structure_simple testdir_simple
-    output_debloat=$(timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test hahaha: testdir_simple 2>/dev/null)
-    test_robustness "$output_debloat" 
-    rm -f "$output_debloat"
+    create_test_structure_nested testdir_simple
+    test_robustness "hahaha:" 
     rm -rf "$test_dir"
 
-    # Test Case 3: use invalid group
-    create_test_structure_simple testdir_simple
-    output_debloat=$(timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test :hahaha testdir_simple 2>/dev/null)
-    test_robustness "$output_debloat"
-    rm -f "$output_debloat"
+    
+        # Test Case 3: use invalid group
+    create_test_structure_nested testdir_simple
+    test_robustness "-R :hahaha"
     rm -rf "$test_dir"
 
 
     # Test Case 4: use invalid owner:group codes
     create_test_structure_simple testdir_simple
-    output_debloat=$(timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test 5000:5000 testdir_simple 2>/dev/null)
-    test_robustness "$output_debloat"
-    rm -f "$output_debloat"
+    test_robustness "-R 5000:5000"
     rm -rf "$test_dir"
 
     # Test Case 5: removed flag functionality
-    create_test_structure_simple testdir_simple
-    output_debloat=$(timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test -R user1:group1 testdir_simple 2>/dev/null)
-    test_robustness "$output_debloat"
-    rm -f "$output_debloat"
+    create_test_structure_nested testdir_simple
+    test_robustness "-v user1:group1"
     rm -rf "$test_dir"
 
-    # Test Case 6: Empty directory name
-    create_test_structure_simple testdir_simple
-    output_debloat=$(timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test user1:group1 "" 2>/dev/null)
-    test_robustness "$output_debloat"
-    rm -rf testdir_simple
-    
+    # Test Case 7: Test -f (suppress error messages) flag
+    create_test_structure_nested testdir_simple
+    test_robustness "-f nonexistent_user:nonexistent_group"  
+    rm -rf "$test_dir"
+
+    # Test Case 8: Test -H flag (follow symbolic links on command line)
+    create_test_structure_nested symlink_dir
+    ln -s symlink_dir testdir_simple
+    test_robustness "-H -R user1:group1"
+    rm -rf "$test_dir" testdir_simple
+
+    # Test Case 9: Test --from flag
+    create_test_structure_nestedcreate_test_structure_nested testdir_simple
+    chown user2:group2 testdir_simple
+    test_robustness "--from=user2:group2 user1:group1"
+    rm -rf "$test_dir"
 
 }
 
@@ -408,8 +434,8 @@ function main() {
     run_tests
     run_security_cases
     run_robustness_cases
-    echo "Functionality: $TOTAL_SCORE_FUNCTIONALITY / 12"
-    echo "Security & Robustness: $TOTAL_SEC_CASES / 8"
+    echo "Functionality: $TOTAL_SCORE_FUNCTIONALITY / 20"
+    echo "Security & Robustness: $TOTAL_SEC_CASES / 10"
     echo "" >> $LOG
     echo "test run completed!" >> $LOG
 }

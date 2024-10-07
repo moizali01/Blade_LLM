@@ -52,10 +52,27 @@ struct dev_ino {
   ino_t st_ino;
   dev_t st_dev;
 };
-
+struct cycle_check_state {
+  struct dev_ino dev_ino;
+  size_t chdir_counter;
+  unsigned long magic;
+};
 struct _ftsent;
 struct _ftsent;
-
+struct __anonstruct_FTS_26 {
+  struct _ftsent *fts_cur;
+  struct _ftsent *fts_child;
+  struct _ftsent **fts_array;
+  dev_t fts_dev;
+  char *fts_path;
+  int fts_rfd;
+  size_t fts_pathlen;
+  int fts_nitems;
+  int (*fts_compar)(void const *, void const *);
+  int fts_options;
+  Hash_table *active_dir_ht;
+  struct cycle_check_state *cycle_state;
+};
 typedef struct __anonstruct_FTS_26 FTS;
 struct _ftsent {
   struct _ftsent *fts_cycle;
@@ -87,7 +104,11 @@ struct _IO_FILE;
 struct _IO_FILE;
 typedef struct _IO_FILE FILE;
 typedef void _IO_lock_t;
-
+struct _IO_marker {
+  struct _IO_marker *_next;
+  struct _IO_FILE *_sbuf;
+  int _pos;
+};
 struct _IO_FILE {
   int _flags;
   char *_IO_read_ptr;
@@ -196,15 +217,49 @@ struct __anonstruct_char_directive_30 {
   int arg_index;
 };
 typedef struct __anonstruct_char_directive_30 char_directive;
-
+struct __anonstruct_char_directives_31 {
+  unsigned int count;
+  char_directive *dir;
+  unsigned int max_width_length;
+  unsigned int max_precision_length;
+};
 typedef struct __anonstruct_char_directives_31 char_directives;
 typedef long __suseconds_t;
-
+struct timeval {
+  __time_t tv_sec;
+  __suseconds_t tv_usec;
+};
 typedef __gid_t gid_t;
 typedef __uid_t uid_t;
-
+struct passwd {
+  char *pw_name;
+  char *pw_passwd;
+  __uid_t pw_uid;
+  __gid_t pw_gid;
+  char *pw_gecos;
+  char *pw_dir;
+  char *pw_shell;
+};
+struct group {
+  char *gr_name;
+  char *gr_passwd;
+  __gid_t gr_gid;
+  char **gr_mem;
+};
 typedef void *iconv_t;
-
+struct tm {
+  int tm_sec;
+  int tm_min;
+  int tm_hour;
+  int tm_mday;
+  int tm_mon;
+  int tm_year;
+  int tm_wday;
+  int tm_yday;
+  int tm_isdst;
+  long tm_gmtoff;
+  char const *tm_zone;
+};
 union __anonunion___value_16 {
   unsigned int __wch;
   char __wchb[4];
@@ -233,7 +288,17 @@ struct sha_ctx {
 };
 typedef int __clockid_t;
 typedef __clockid_t clockid_t;
-
+struct timezone {
+  int tz_minuteswest;
+  int tz_dsttime;
+};
+struct dirent {
+  __ino_t d_ino;
+  __off_t d_off;
+  unsigned short d_reclen;
+  unsigned char d_type;
+  char d_name[256];
+};
 struct __dirstream;
 struct __dirstream;
 typedef struct __dirstream DIR;
@@ -243,14 +308,32 @@ struct saved_cwd {
 };
 typedef int __int32_t;
 typedef int __pid_t;
-
+struct __exit_status {
+  short e_termination;
+  short e_exit;
+};
 struct __anonstruct_ut_tv_27 {
   __int32_t tv_sec;
   __int32_t tv_usec;
 };
-
+struct utmpx {
+  short ut_type;
+  __pid_t ut_pid;
+  char ut_line[32];
+  char ut_id[4];
+  char ut_user[32];
+  char ut_host[256];
+  struct __exit_status ut_exit;
+  __int32_t ut_session;
+  struct __anonstruct_ut_tv_27 ut_tv;
+  __int32_t ut_addr_v6[4];
+  char __glibc_reserved[20];
+};
 typedef struct utmpx STRUCT_UTMP;
-
+struct tokenbuffer {
+  long size;
+  char *buffer;
+};
 typedef struct tokenbuffer token_buffer;
 struct quoting_options;
 struct quoting_options;
@@ -289,7 +372,15 @@ struct mode_change {
   mode_t value;
   struct mode_change *next;
 };
-
+struct md5_ctx {
+  md5_uint32 A;
+  md5_uint32 B;
+  md5_uint32 C;
+  md5_uint32 D;
+  md5_uint32 total[2];
+  md5_uint32 buflen;
+  char buffer[128];
+};
 struct ptr_list {
   char *dirname_end;
   struct ptr_list *next;
@@ -310,7 +401,37 @@ union __anonunion_id_22 {
   uid_t u;
   gid_t g;
 };
-
+struct userid {
+  union __anonunion_id_22 id;
+  char *name;
+  struct userid *next;
+};
+struct lconv {
+  char *decimal_point;
+  char *thousands_sep;
+  char *grouping;
+  char *int_curr_symbol;
+  char *currency_symbol;
+  char *mon_decimal_point;
+  char *mon_thousands_sep;
+  char *mon_grouping;
+  char *positive_sign;
+  char *negative_sign;
+  char int_frac_digits;
+  char frac_digits;
+  char p_cs_precedes;
+  char p_sep_by_space;
+  char n_cs_precedes;
+  char n_sep_by_space;
+  char p_sign_posn;
+  char n_sign_posn;
+  char int_p_cs_precedes;
+  char int_p_sep_by_space;
+  char int_n_cs_precedes;
+  char int_n_sep_by_space;
+  char int_p_sign_posn;
+  char int_n_sign_posn;
+};
 struct hash_entry {
   void *data;
   struct hash_entry *next;
@@ -375,13 +496,23 @@ struct __anonstruct_parser_control_25 {
   table local_time_zone_table[3];
 };
 typedef struct __anonstruct_parser_control_25 parser_control;
-
+union YYSTYPE {
+  int intval;
+  textint textintval;
+};
 typedef union YYSTYPE YYSTYPE;
-
+union yyalloc {
+  short yyss;
+  YYSTYPE yyvs;
+};
 typedef signed char yysigned_char;
 typedef unsigned int __u_int;
 typedef __u_int u_int;
-
+struct Active_dir {
+  dev_t dev;
+  ino_t ino;
+  FTSENT *fts_ent;
+};
 struct __anonstruct___fsid_t_2 {
   int __val[2];
 };
@@ -418,7 +549,11 @@ struct patopts {
   char const *pattern;
   int options;
 };
-
+struct exclude {
+  struct patopts *exclude;
+  size_t exclude_alloc;
+  size_t exclude_count;
+};
 typedef unsigned int __socklen_t;
 typedef unsigned int uint32_t;
 typedef uint32_t in_addr_t;
@@ -442,13 +577,39 @@ extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1), __leaf
 extern __attribute__((__nothrow__)) int *(__attribute__((__leaf__)) __errno_location)(void)__attribute__((__const__));
 extern __attribute__((__nothrow__)) unsigned long(__attribute__((__nonnull__(1), __leaf__)) strtoul)(char const *__restrict __nptr, char **__restrict __endptr, int __base);
 strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long *val, char const *valid_suffixes);
+static strtol_error bkm_scale___0(unsigned long *x, int scale_factor) {
 
+  {
+    if (0xffffffffffffffffUL / (unsigned long)scale_factor < *x) {
+      *x = 0xffffffffffffffffUL;
+      return ((strtol_error)1);
+    }
+    *x *= (unsigned long)scale_factor;
+    return ((strtol_error)0);
+  }
+}
 static strtol_error bkm_scale_by_power___0(unsigned long *x, int base, int power) {
   strtol_error err;
+  strtol_error tmp;
+  int tmp___0;
 
   {
     err = (strtol_error)0;
-    { ; }
+    {
+      while (1) {
+        ;
+        tmp___0 = power;
+        power--;
+        if (!tmp___0) {
+          goto while_break;
+        }
+        {
+          tmp = bkm_scale___0(x, base);
+          err = (strtol_error)((unsigned int)err | (unsigned int)tmp);
+        }
+      };
+    }
+  while_break:;
     return (err);
   }
 }
@@ -460,6 +621,9 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
   char const *q;
   unsigned short const **tmp___0;
   int *tmp___1;
+  char *tmp___2;
+  int *tmp___3;
+  int *tmp___4;
   int base;
   int suffixes;
   strtol_error overflow;
@@ -483,14 +647,54 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
       p = &t_ptr;
     }
     q = s;
-    { ; }
-
+    {
+      while (1) {
+        ;
+        { tmp___0 = __ctype_b_loc(); }
+        if (!((int const) * (*tmp___0 + (int)((unsigned char)*q)) & 8192)) {
+          goto while_break;
+        }
+        q++;
+      };
+    }
+  while_break:;
+    if ((int const) * q == 45) {
+      return ((strtol_error)4);
+    }
     {
       tmp___1 = __errno_location();
       *tmp___1 = 0;
       tmp = strtoul((char const * /* __restrict  */)s, (char ** /* __restrict  */)p, strtol_base);
     }
-
+    if ((unsigned long)*p == (unsigned long)s) {
+      if (valid_suffixes) {
+        if (*(*p)) {
+          {
+            tmp___2 = strchr(valid_suffixes, (int)*(*p));
+          }
+          if (tmp___2) {
+            tmp = 1UL;
+          } else {
+            return ((strtol_error)4);
+          }
+        } else {
+          return ((strtol_error)4);
+        }
+      } else {
+        return ((strtol_error)4);
+      }
+    } else {
+      { tmp___4 = __errno_location(); }
+      if (*tmp___4 != 0) {
+        {
+          tmp___3 = __errno_location();
+        }
+        if (*tmp___3 != 34) {
+          return ((strtol_error)4);
+        }
+        err = (strtol_error)1;
+      }
+    }
     if (!valid_suffixes) {
       *val = tmp;
       return (err);
@@ -501,9 +705,39 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
         suffixes = 1;
         tmp___5 = strchr(valid_suffixes, (int)*(*p));
       }
-
+      if (!tmp___5) {
+        *val = tmp;
+        return ((strtol_error)((unsigned int)err | 2U));
+      }
       { tmp___6 = strchr(valid_suffixes, '0'); }
-
+      if (tmp___6) {
+        if ((int)*(*(p + 0) + 1) == 105) {
+          goto case_105;
+        }
+        if ((int)*(*(p + 0) + 1) == 68) {
+          goto case_68;
+        }
+        if ((int)*(*(p + 0) + 1) == 66) {
+          goto case_68;
+        }
+        goto switch_break;
+      case_105:
+        if ((int)*(*(p + 0) + 2) == 66) {
+          suffixes += 2;
+        }
+        goto switch_break;
+      case_68:
+        base = 1000;
+        suffixes++;
+        goto switch_break;
+      switch_break:;
+      }
+      if ((int)*(*p) == 98) {
+        goto case_98;
+      }
+      if ((int)*(*p) == 66) {
+        goto case_66___0;
+      }
       if ((int)*(*p) == 99) {
         goto case_99;
       }
@@ -528,11 +762,21 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
       if ((int)*(*p) == 77) {
         goto case_109;
       }
-
+      if ((int)*(*p) == 80) {
+        goto case_80;
+      }
+      if ((int)*(*p) == 116) {
+        goto case_116;
+      }
       if ((int)*(*p) == 84) {
         goto case_116;
       }
-
+      if ((int)*(*p) == 119) {
+        goto case_119;
+      }
+      if ((int)*(*p) == 89) {
+        goto case_89;
+      }
       if ((int)*(*p) == 90) {
         goto case_90;
       }
@@ -598,13 +842,18 @@ extern __attribute__((__nothrow__, __noreturn__)) void(__attribute__((__leaf__))
 extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1, 2), __leaf__)) memcpy)(void *__restrict __dest, void const *__restrict __src, size_t __n);
 extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1), __leaf__)) memset)(void *__s, int __c, size_t __n);
 void (*xalloc_fail_func)(void) = (void (*)(void))0;
-
+char const xalloc_msg_memory_exhausted[17] = {(char const)'m', (char const)'e', (char const)'m', (char const)'o', (char const)'r', (char const)'y', (char const)' ', (char const)'e',   (char const)'x',
+                                              (char const)'h', (char const)'a', (char const)'u', (char const)'s', (char const)'t', (char const)'e', (char const)'d', (char const)'\000'};
 __attribute__((__noreturn__)) void xalloc_die(void);
 void xalloc_die(void) {
   char *tmp;
 
   {
-
+    if (xalloc_fail_func) {
+      {
+        (*xalloc_fail_func)();
+      }
+    }
     {
       tmp = gettext(xalloc_msg_memory_exhausted);
       error((int)exit_failure, 0, "%s", tmp);
@@ -617,7 +866,11 @@ __inline static void *xnmalloc_inline(size_t n, size_t s) {
   int tmp;
 
   {
-
+    if (sizeof(ptrdiff_t) <= sizeof(size_t)) {
+      tmp = -1;
+    } else {
+      tmp = -2;
+    }
     if ((size_t)tmp / s < n) {
       {
         xalloc_die();
@@ -679,13 +932,23 @@ char *xgetcwd(void);
 char *xgetcwd(void) {
   char *cwd;
   char *tmp;
+  int *tmp___0;
 
   {
     {
       tmp = rpl_getcwd((char *)((void *)0), (size_t)0);
       cwd = tmp;
     }
-
+    if (!cwd) {
+      {
+        tmp___0 = __errno_location();
+      }
+      if (*tmp___0 == 12) {
+        {
+          xalloc_die();
+        }
+      }
+    }
     return (cwd);
   }
 }
@@ -698,7 +961,151 @@ char const *version_etc_copyright;
 void version_etc_va(FILE *stream, char const *command_name, char const *package, char const *version, va_list authors);
 void version_etc(FILE *stream, char const *command_name, char const *package, char const *version, ...);
 char const *version_etc_copyright = "Copyright (C) 2004 Free Software Foundation, Inc.";
+void version_etc_va(FILE *stream, char const *command_name, char const *package, char const *version, va_list authors) {
+  unsigned int n_authors;
+  va_list tmp_authors;
+  char const *tmp___0;
+  char *tmp___1;
+  char *tmp___2;
+  char *tmp___3;
+  char *tmp___4;
+  char *tmp___5;
+  char *tmp___6;
+  char *tmp___7;
+  char *tmp___8;
+  char *tmp___9;
+  char *tmp___10;
+  char *tmp___11;
 
+  {
+    {
+      __builtin_va_copy(tmp_authors, authors);
+      n_authors = 0U;
+    }
+    {
+      while (1) {
+        ;
+        { tmp___0 = __builtin_va_arg(tmp_authors, char const *); }
+        if (!((unsigned long)tmp___0 != (unsigned long)((void *)0))) {
+          goto while_break;
+        }
+        n_authors++;
+      };
+    }
+  while_break:;
+    if (command_name) {
+      {
+        fprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */) "%s (%s) %s\n", command_name, package, version);
+      }
+    } else {
+      { fprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */) "%s %s\n", package, version); }
+    }
+    if (n_authors == 0U) {
+      goto case_0;
+    }
+    if (n_authors == 1U) {
+      goto case_1;
+    }
+    if (n_authors == 2U) {
+      goto case_2;
+    }
+    if (n_authors == 3U) {
+      goto case_3;
+    }
+    if (n_authors == 4U) {
+      goto case_4;
+    }
+    if (n_authors == 5U) {
+      goto case_5;
+    }
+    if (n_authors == 6U) {
+      goto case_6;
+    }
+    if (n_authors == 7U) {
+      goto case_7;
+    }
+    if (n_authors == 8U) {
+      goto case_8;
+    }
+    if (n_authors == 9U) {
+      goto case_9;
+    }
+    goto switch_default;
+  case_0: { abort(); }
+  case_1: {
+    tmp___1 = gettext("Written by %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___1), authors);
+  }
+    goto switch_break;
+  case_2: {
+    tmp___2 = gettext("Written by %s and %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___2), authors);
+  }
+    goto switch_break;
+  case_3: {
+    tmp___3 = gettext("Written by %s, %s, and %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___3), authors);
+  }
+    goto switch_break;
+  case_4: {
+    tmp___4 = gettext("Written by %s, %s, %s,\nand %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___4), authors);
+  }
+    goto switch_break;
+  case_5: {
+    tmp___5 = gettext("Written by %s, %s, %s,\n%s, and %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___5), authors);
+  }
+    goto switch_break;
+  case_6: {
+    tmp___6 = gettext("Written by %s, %s, %s,\n%s, %s, and %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___6), authors);
+  }
+    goto switch_break;
+  case_7: {
+    tmp___7 = gettext("Written by %s, %s, %s,\n%s, %s, %s, and %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___7), authors);
+  }
+    goto switch_break;
+  case_8: {
+    tmp___8 = gettext("Written by %s, %s, %s,\n%s, %s, %s, %s,\nand %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___8), authors);
+  }
+    goto switch_break;
+  case_9: {
+    tmp___9 = gettext("Written by %s, %s, %s,\n%s, %s, %s, %s,\n%s, and %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___9), authors);
+  }
+    goto switch_break;
+  switch_default: {
+    tmp___10 = gettext("Written by %s, %s, %s,\n%s, %s, %s, %s,\n%s, %s, and others.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___10), authors);
+  }
+    goto switch_break;
+  switch_break: {
+    __builtin_va_end(authors);
+    putc_unlocked('\n', stream);
+    fputs_unlocked((char const * /* __restrict  */)version_etc_copyright, (FILE * /* __restrict  */)stream);
+    putc_unlocked('\n', stream);
+    tmp___11 = gettext("This is free software; see the source for copying conditions. "
+                       " There is NO\nwarranty; not even for MERCHANTABILITY or "
+                       "FITNESS FOR A PARTICULAR PURPOSE.\n");
+    fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___11), (FILE * /* __restrict  */)stream);
+  }
+    return;
+  }
+}
+void version_etc(FILE *stream, char const *command_name, char const *package, char const *version, ...) {
+  va_list authors;
+
+  {
+    {
+      __builtin_va_start(authors, version);
+      version_etc_va(stream, command_name, package, version, authors);
+    }
+    return;
+  }
+}
 extern __attribute__((__nothrow__)) int snprintf(char *__restrict __s, size_t __maxlen, char const *__restrict __format, ...);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) utimes)(char const *__file, struct timeval const *__tvp);
 extern __attribute__((__nothrow__)) int sprintf(char *__restrict __s, char const *__restrict __format, ...);
@@ -812,10 +1219,20 @@ int save_cwd(struct saved_cwd *cwd) {
   {
     cwd->desc = -1;
     cwd->name = (char *)((void *)0);
-
+    if (have_working_fchdir) {
+      {
+        cwd->desc = open(".", 65536);
+      }
+      if (cwd->desc < 0) {
+        return (1);
+      }
+    }
     if (!have_working_fchdir) {
       {
         cwd->name = xgetcwd();
+      }
+      if ((unsigned long)cwd->name == (unsigned long)((void *)0)) {
+        return (1);
       }
     }
     return (0);
@@ -839,7 +1256,19 @@ int restore_cwd(struct saved_cwd const *cwd) {
 }
 void free_cwd(struct saved_cwd *cwd) {
 
-  { return; }
+  {
+    if (cwd->desc >= 0) {
+      {
+        close(cwd->desc);
+      }
+    }
+    if (cwd->name) {
+      {
+        rpl_free((void *)cwd->name);
+      }
+    }
+    return;
+  }
 }
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) stat)(char const *__restrict __file, struct stat *__restrict __buf);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) memcmp)(void const *__s1, void const *__s2, size_t __n) __attribute__((__pure__));
@@ -855,9 +1284,19 @@ int same_name(char const *source, char const *dest) {
   size_t dest_baselen;
   size_t tmp___2;
   _Bool identical_basenames;
+  int tmp___3;
   int tmp___4;
   _Bool compare_dirs;
   _Bool same;
+  struct stat source_dir_stats;
+  struct stat dest_dir_stats;
+  char *source_dirname;
+  char *dest_dirname;
+  int *tmp___5;
+  int tmp___6;
+  int *tmp___7;
+  int tmp___8;
+  int tmp___9;
 
   {
     {
@@ -870,11 +1309,55 @@ int same_name(char const *source, char const *dest) {
       tmp___2 = base_len(dest_basename);
       dest_baselen = tmp___2;
     }
-
+    if (source_baselen == dest_baselen) {
+      {
+        tmp___3 = memcmp((void const *)source_basename, (void const *)dest_basename, dest_baselen);
+      }
+      if (tmp___3 == 0) {
+        tmp___4 = 1;
+      } else {
+        tmp___4 = 0;
+      }
+    } else {
+      tmp___4 = 0;
+    }
     identical_basenames = (_Bool)tmp___4;
     compare_dirs = identical_basenames;
     same = (_Bool)0;
-
+    if (compare_dirs) {
+      {
+        source_dirname = dir_name(source);
+        dest_dirname = dir_name(dest);
+        tmp___6 = stat((char const * /* __restrict  */)((char const *)source_dirname), (struct stat * /* __restrict  */)(&source_dir_stats));
+      }
+      if (tmp___6) {
+        {
+          tmp___5 = __errno_location();
+          error(1, *tmp___5, "%s", source_dirname);
+        }
+      }
+      { tmp___8 = stat((char const * /* __restrict  */)((char const *)dest_dirname), (struct stat * /* __restrict  */)(&dest_dir_stats)); }
+      if (tmp___8) {
+        {
+          tmp___7 = __errno_location();
+          error(1, *tmp___7, "%s", dest_dirname);
+        }
+      }
+      if (source_dir_stats.st_ino == dest_dir_stats.st_ino) {
+        if (source_dir_stats.st_dev == dest_dir_stats.st_dev) {
+          tmp___9 = 1;
+        } else {
+          tmp___9 = 0;
+        }
+      } else {
+        tmp___9 = 0;
+      }
+      {
+        same = (_Bool)tmp___9;
+        rpl_free((void *)source_dirname);
+        rpl_free((void *)dest_dirname);
+      }
+    }
     return ((int)same);
   }
 }
@@ -924,7 +1407,23 @@ int set_char_quoting(struct quoting_options *o, char c, int i) {
     return (r);
   }
 }
+static char const *gettext_quote(char const *msgid, enum quoting_style s) {
+  char const *translation;
+  char *tmp;
 
+  {
+    {
+      tmp = gettext(msgid);
+      translation = (char const *)tmp;
+    }
+    if ((unsigned long)translation == (unsigned long)msgid) {
+      if ((unsigned int)s == 6U) {
+        translation = "\"";
+      }
+    }
+    return (translation);
+  }
+}
 static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char const *arg, size_t argsize, enum quoting_style quoting_style, struct quoting_options const *o) {
   size_t i;
   size_t len;
@@ -937,7 +1436,20 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
   char const *tmp___0;
   char const *right;
   char const *tmp___1;
+  unsigned char c;
+  unsigned char esc;
+  int tmp___2;
+  size_t m;
+  int printable;
   unsigned short const **tmp___3;
+  mbstate_t mbstate;
+  wchar_t w;
+  size_t bytes;
+  size_t tmp___4;
+  int tmp___5;
+  int tmp___6;
+  size_t ilim;
+  int tmp___7;
   size_t tmp___8;
 
   {
@@ -949,7 +1461,21 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       tmp = __ctype_get_mb_cur_max();
       unibyte_locale = tmp == 1UL;
     }
-
+    if ((unsigned int)quoting_style == 3U) {
+      goto case_3;
+    }
+    if ((unsigned int)quoting_style == 4U) {
+      goto case_4;
+    }
+    if ((unsigned int)quoting_style == 6U) {
+      goto case_6;
+    }
+    if ((unsigned int)quoting_style == 5U) {
+      goto case_6;
+    }
+    if ((unsigned int)quoting_style == 2U) {
+      goto case_2;
+    }
     goto switch_default;
   case_3: {
     while (1) {
@@ -967,6 +1493,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
     quote_string = "\"";
     quote_string_len = (size_t)1;
     goto switch_break;
+  case_4:
     backslash_escapes = 1;
     goto switch_break;
   case_6: {
@@ -983,7 +1510,18 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if (!*quote_string) {
           goto while_break___0;
         }
-        { ; }
+        {
+          while (1) {
+            ;
+
+            if (len < buffersize) {
+              *(buffer + len) = (char)*quote_string;
+            }
+            len++;
+            goto while_break___1;
+          };
+        }
+      while_break___1:
         quote_string++;
       };
     }
@@ -1012,8 +1550,779 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
     goto switch_break;
   switch_break:
     i = (size_t)0;
-    { ; }
+    {
+      while (1) {
+        ;
 
+        if (argsize == 0xffffffffffffffffUL) {
+          tmp___7 = (int const) * (arg + i) == 0;
+        } else {
+          tmp___7 = i == argsize;
+        }
+        if (tmp___7) {
+          goto while_break___3;
+        }
+        if (backslash_escapes) {
+          if (quote_string_len) {
+            if (i + quote_string_len <= argsize) {
+              {
+                tmp___2 = memcmp((void const *)(arg + i), (void const *)quote_string, quote_string_len);
+              }
+              if (tmp___2 == 0) {
+                {
+                  while (1) {
+                    ;
+
+                    if (len < buffersize) {
+                      *(buffer + len) = (char)'\\';
+                    }
+                    len++;
+                    goto while_break___4;
+                  };
+                }
+              while_break___4:;
+              }
+            }
+          }
+        }
+        c = (unsigned char)*(arg + i);
+        if ((int)c == 0) {
+          goto case_0;
+        }
+        if ((int)c == 63) {
+          goto case_63;
+        }
+        if ((int)c == 7) {
+          goto case_7;
+        }
+        if ((int)c == 8) {
+          goto case_8;
+        }
+        if ((int)c == 12) {
+          goto case_12;
+        }
+        if ((int)c == 10) {
+          goto case_10;
+        }
+        if ((int)c == 13) {
+          goto case_13;
+        }
+        if ((int)c == 9) {
+          goto case_9;
+        }
+        if ((int)c == 11) {
+          goto case_11;
+        }
+        if ((int)c == 92) {
+          goto case_92;
+        }
+        if ((int)c == 126) {
+          goto case_126;
+        }
+        if ((int)c == 35) {
+          goto case_126;
+        }
+        if ((int)c == 124) {
+          goto case_124;
+        }
+        if ((int)c == 96) {
+          goto case_124;
+        }
+        if ((int)c == 94) {
+          goto case_124;
+        }
+        if ((int)c == 91) {
+          goto case_124;
+        }
+        if ((int)c == 62) {
+          goto case_124;
+        }
+        if ((int)c == 60) {
+          goto case_124;
+        }
+        if ((int)c == 59) {
+          goto case_124;
+        }
+        if ((int)c == 42) {
+          goto case_124;
+        }
+        if ((int)c == 41) {
+          goto case_124;
+        }
+        if ((int)c == 40) {
+          goto case_124;
+        }
+        if ((int)c == 38) {
+          goto case_124;
+        }
+        if ((int)c == 36) {
+          goto case_124;
+        }
+        if ((int)c == 34) {
+          goto case_124;
+        }
+        if ((int)c == 33) {
+          goto case_124;
+        }
+        if ((int)c == 32) {
+          goto case_124;
+        }
+        if ((int)c == 39) {
+          goto case_39___0;
+        }
+        if ((int)c == 125) {
+          goto case_125;
+        }
+        if ((int)c == 123) {
+          goto case_125;
+        }
+        if ((int)c == 122) {
+          goto case_125;
+        }
+        if ((int)c == 121) {
+          goto case_125;
+        }
+        if ((int)c == 120) {
+          goto case_125;
+        }
+        if ((int)c == 119) {
+          goto case_125;
+        }
+        if ((int)c == 118) {
+          goto case_125;
+        }
+        if ((int)c == 117) {
+          goto case_125;
+        }
+        if ((int)c == 116) {
+          goto case_125;
+        }
+        if ((int)c == 115) {
+          goto case_125;
+        }
+        if ((int)c == 114) {
+          goto case_125;
+        }
+        if ((int)c == 113) {
+          goto case_125;
+        }
+        if ((int)c == 112) {
+          goto case_125;
+        }
+        if ((int)c == 111) {
+          goto case_125;
+        }
+        if ((int)c == 110) {
+          goto case_125;
+        }
+        if ((int)c == 109) {
+          goto case_125;
+        }
+        if ((int)c == 108) {
+          goto case_125;
+        }
+        if ((int)c == 107) {
+          goto case_125;
+        }
+        if ((int)c == 106) {
+          goto case_125;
+        }
+        if ((int)c == 105) {
+          goto case_125;
+        }
+        if ((int)c == 104) {
+          goto case_125;
+        }
+        if ((int)c == 103) {
+          goto case_125;
+        }
+        if ((int)c == 102) {
+          goto case_125;
+        }
+        if ((int)c == 101) {
+          goto case_125;
+        }
+        if ((int)c == 100) {
+          goto case_125;
+        }
+        if ((int)c == 99) {
+          goto case_125;
+        }
+        if ((int)c == 98) {
+          goto case_125;
+        }
+        if ((int)c == 97) {
+          goto case_125;
+        }
+        if ((int)c == 95) {
+          goto case_125;
+        }
+        if ((int)c == 93) {
+          goto case_125;
+        }
+        if ((int)c == 90) {
+          goto case_125;
+        }
+        if ((int)c == 89) {
+          goto case_125;
+        }
+        if ((int)c == 88) {
+          goto case_125;
+        }
+        if ((int)c == 87) {
+          goto case_125;
+        }
+        if ((int)c == 86) {
+          goto case_125;
+        }
+        if ((int)c == 85) {
+          goto case_125;
+        }
+        if ((int)c == 84) {
+          goto case_125;
+        }
+        if ((int)c == 83) {
+          goto case_125;
+        }
+        if ((int)c == 82) {
+          goto case_125;
+        }
+        if ((int)c == 81) {
+          goto case_125;
+        }
+        if ((int)c == 80) {
+          goto case_125;
+        }
+        if ((int)c == 79) {
+          goto case_125;
+        }
+        if ((int)c == 78) {
+          goto case_125;
+        }
+        if ((int)c == 77) {
+          goto case_125;
+        }
+        if ((int)c == 76) {
+          goto case_125;
+        }
+        if ((int)c == 75) {
+          goto case_125;
+        }
+        if ((int)c == 74) {
+          goto case_125;
+        }
+        if ((int)c == 73) {
+          goto case_125;
+        }
+        if ((int)c == 72) {
+          goto case_125;
+        }
+        if ((int)c == 71) {
+          goto case_125;
+        }
+        if ((int)c == 70) {
+          goto case_125;
+        }
+        if ((int)c == 69) {
+          goto case_125;
+        }
+        if ((int)c == 68) {
+          goto case_125;
+        }
+        if ((int)c == 67) {
+          goto case_125;
+        }
+        if ((int)c == 66) {
+          goto case_125;
+        }
+        if ((int)c == 65) {
+          goto case_125;
+        }
+        if ((int)c == 61) {
+          goto case_125;
+        }
+        if ((int)c == 58) {
+          goto case_125;
+        }
+        if ((int)c == 57) {
+          goto case_125;
+        }
+        if ((int)c == 56) {
+          goto case_125;
+        }
+        if ((int)c == 55) {
+          goto case_125;
+        }
+        if ((int)c == 54) {
+          goto case_125;
+        }
+        if ((int)c == 53) {
+          goto case_125;
+        }
+        if ((int)c == 52) {
+          goto case_125;
+        }
+        if ((int)c == 51) {
+          goto case_125;
+        }
+        if ((int)c == 50) {
+          goto case_125;
+        }
+        if ((int)c == 49) {
+          goto case_125;
+        }
+        if ((int)c == 48) {
+          goto case_125;
+        }
+        if ((int)c == 47) {
+          goto case_125;
+        }
+        if ((int)c == 46) {
+          goto case_125;
+        }
+        if ((int)c == 45) {
+          goto case_125;
+        }
+        if ((int)c == 44) {
+          goto case_125;
+        }
+        if ((int)c == 43) {
+          goto case_125;
+        }
+        if ((int)c == 37) {
+          goto case_125;
+        }
+        goto switch_default___2;
+      case_0:
+        if (backslash_escapes) {
+          {
+            while (1) {
+              ;
+
+              if (len < buffersize) {
+                *(buffer + len) = (char)'\\';
+              }
+              len++;
+              goto while_break___5;
+            };
+          }
+        while_break___5:;
+          {
+            while (1) {
+              ;
+
+              if (len < buffersize) {
+                *(buffer + len) = (char)'0';
+              }
+              len++;
+              goto while_break___6;
+            };
+          }
+        while_break___6:;
+          {
+            while (1) {
+              ;
+
+              if (len < buffersize) {
+                *(buffer + len) = (char)'0';
+              }
+              len++;
+              goto while_break___7;
+            };
+          }
+        while_break___7:
+          c = (unsigned char)'0';
+        }
+        goto switch_break___0;
+      case_63:
+        if ((unsigned int)quoting_style == 1U) {
+          goto case_1;
+        }
+        if ((unsigned int)quoting_style == 3U) {
+          goto case_3___0;
+        }
+        goto switch_default___0;
+      case_1:
+        goto use_shell_always_quoting_style;
+      case_3___0:
+        if (i + 2UL < argsize) {
+          if ((int const) * (arg + (i + 1UL)) == 63) {
+            if ((int const) * (arg + (i + 2UL)) == 62) {
+              goto case_62;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 61) {
+              goto case_62;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 60) {
+              goto case_62;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 47) {
+              goto case_62;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 45) {
+              goto case_62;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 41) {
+              goto case_62;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 40) {
+              goto case_62;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 39) {
+              goto case_62;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 33) {
+              goto case_62;
+            }
+            goto switch_break___2;
+          case_62:
+            c = (unsigned char)*(arg + (i + 2UL));
+            i += 2UL;
+            {
+              while (1) {
+                ;
+
+                if (len < buffersize) {
+                  *(buffer + len) = (char)'?';
+                }
+                len++;
+                goto while_break___8;
+              };
+            }
+          while_break___8:;
+            {
+              while (1) {
+                ;
+
+                if (len < buffersize) {
+                  *(buffer + len) = (char)'\\';
+                }
+                len++;
+                goto while_break___9;
+              };
+            }
+          while_break___9:;
+            {
+              while (1) {
+                ;
+
+                if (len < buffersize) {
+                  *(buffer + len) = (char)'?';
+                }
+                len++;
+                goto while_break___10;
+              };
+            }
+          while_break___10:;
+            goto switch_break___2;
+          switch_break___2:;
+          }
+        }
+        goto switch_break___1;
+      switch_default___0:
+        goto switch_break___1;
+      switch_break___1:;
+        goto switch_break___0;
+      case_7:
+        esc = (unsigned char)'a';
+        goto c_escape;
+      case_8:
+        esc = (unsigned char)'b';
+        goto c_escape;
+      case_12:
+        esc = (unsigned char)'f';
+        goto c_escape;
+      case_10:
+        esc = (unsigned char)'n';
+        goto c_and_shell_escape;
+      case_13:
+        esc = (unsigned char)'r';
+        goto c_and_shell_escape;
+      case_9:
+        esc = (unsigned char)'t';
+        goto c_and_shell_escape;
+      case_11:
+        esc = (unsigned char)'v';
+        goto c_escape;
+      case_92:
+        esc = c;
+        goto c_and_shell_escape;
+      c_and_shell_escape:
+        if ((unsigned int)quoting_style == 1U) {
+          goto use_shell_always_quoting_style;
+        }
+      c_escape:
+        if (backslash_escapes) {
+          c = esc;
+          goto store_escape;
+        }
+        goto switch_break___0;
+      case_126:
+        if (i != 0UL) {
+          goto switch_break___0;
+        }
+      case_124:
+        if ((unsigned int)quoting_style == 1U) {
+          goto use_shell_always_quoting_style;
+        }
+        goto switch_break___0;
+      case_39___0:
+        if ((unsigned int)quoting_style == 1U) {
+          goto case_1___0;
+        }
+        if ((unsigned int)quoting_style == 2U) {
+          goto case_2___0;
+        }
+        goto switch_default___1;
+      case_1___0:
+        goto use_shell_always_quoting_style;
+      case_2___0: {
+        while (1) {
+          ;
+
+          if (len < buffersize) {
+            *(buffer + len) = (char)'\'';
+          }
+          len++;
+          goto while_break___11;
+        };
+      }
+      while_break___11:;
+        {
+          while (1) {
+            ;
+
+            if (len < buffersize) {
+              *(buffer + len) = (char)'\\';
+            }
+            len++;
+            goto while_break___12;
+          };
+        }
+      while_break___12:;
+        {
+          while (1) {
+            ;
+
+            if (len < buffersize) {
+              *(buffer + len) = (char)'\'';
+            }
+            len++;
+            goto while_break___13;
+          };
+        }
+      while_break___13:;
+        goto switch_break___3;
+      switch_default___1:
+        goto switch_break___3;
+      switch_break___3:;
+        goto switch_break___0;
+      case_125:
+        goto switch_break___0;
+      switch_default___2:
+        if (unibyte_locale) {
+          {
+            m = (size_t)1;
+            tmp___3 = __ctype_b_loc();
+            printable = (int)((int const) * (*tmp___3 + (int)c) & 16384);
+          }
+        } else {
+          {
+            memset((void *)(&mbstate), 0, sizeof(mbstate));
+            m = (size_t)0;
+            printable = 1;
+          }
+          if (argsize == 0xffffffffffffffffUL) {
+            {
+              argsize = strlen(arg);
+            }
+          }
+          {
+            while (1) {
+              ;
+              {
+                tmp___4 = mbrtowc((wchar_t * /* __restrict  */)(&w), (char const * /* __restrict  */)(arg + (i + m)), argsize - (i + m), (mbstate_t * /* __restrict  */)(&mbstate));
+                bytes = tmp___4;
+              }
+              if (bytes == 0UL) {
+                goto while_break___14;
+              } else {
+                if (bytes == 0xffffffffffffffffUL) {
+                  printable = 0;
+                  goto while_break___14;
+                } else {
+                  if (bytes == 0xfffffffffffffffeUL) {
+                    printable = 0;
+                    {
+                      while (1) {
+                        ;
+
+                        if (i + m < argsize) {
+                          if (!*(arg + (i + m))) {
+                            goto while_break___15;
+                          }
+                        } else {
+                          goto while_break___15;
+                        }
+                        m++;
+                      };
+                    }
+                  while_break___15:;
+                    goto while_break___14;
+                  } else {
+                    { tmp___5 = iswprint((wint_t)w); }
+                    if (!tmp___5) {
+                      printable = 0;
+                    }
+                    m += bytes;
+                  }
+                }
+              }
+              { tmp___6 = mbsinit((mbstate_t const *)(&mbstate)); }
+              if (tmp___6) {
+                goto while_break___14;
+              }
+            };
+          }
+        while_break___14:;
+        }
+        if (1UL < m) {
+          goto _L;
+        } else {
+          if (backslash_escapes) {
+            if (!printable) {
+            _L:
+              ilim = i + m;
+              {
+                while (1) {
+                  ;
+
+                  if (backslash_escapes) {
+                    if (!printable) {
+                      {
+                        while (1) {
+                          ;
+
+                          if (len < buffersize) {
+                            *(buffer + len) = (char)'\\';
+                          }
+                          len++;
+                          goto while_break___17;
+                        };
+                      }
+                    while_break___17:;
+                      {
+                        while (1) {
+                          ;
+
+                          if (len < buffersize) {
+                            *(buffer + len) = (char)(48 + ((int)c >> 6));
+                          }
+                          len++;
+                          goto while_break___18;
+                        };
+                      }
+                    while_break___18:;
+                      {
+                        while (1) {
+                          ;
+
+                          if (len < buffersize) {
+                            *(buffer + len) = (char)(48 + (((int)c >> 3) & 7));
+                          }
+                          len++;
+                          goto while_break___19;
+                        };
+                      }
+                    while_break___19:
+                      c = (unsigned char)(48 + ((int)c & 7));
+                    }
+                  }
+                  if (ilim <= i + 1UL) {
+                    goto while_break___16;
+                  }
+                  {
+                    while (1) {
+                      ;
+
+                      if (len < buffersize) {
+                        *(buffer + len) = (char)c;
+                      }
+                      len++;
+                      goto while_break___20;
+                    };
+                  }
+                while_break___20:
+                  i++;
+                  c = (unsigned char)*(arg + i);
+                };
+              }
+            while_break___16:;
+              goto store_c;
+            }
+          }
+        }
+      switch_break___0:;
+        if (backslash_escapes) {
+          if (!(o->quote_these_too[(unsigned long)c / (sizeof(int) * 8UL)] & (1 << (unsigned long)c % (sizeof(int) * 8UL)))) {
+            goto store_c;
+          }
+        } else {
+          goto store_c;
+        }
+      store_escape: {
+        while (1) {
+          ;
+
+          if (len < buffersize) {
+            *(buffer + len) = (char)'\\';
+          }
+          len++;
+          goto while_break___21;
+        };
+      }
+      while_break___21:;
+      store_c: {
+        while (1) {
+          ;
+
+          if (len < buffersize) {
+            *(buffer + len) = (char)c;
+          }
+          len++;
+          goto while_break___22;
+        };
+      }
+      while_break___22:
+        i++;
+      };
+    }
+  while_break___3:;
+    if (quote_string) {
+      {
+        while (1) {
+          ;
+
+          if (!*quote_string) {
+            goto while_break___23;
+          }
+          {
+            while (1) {
+              ;
+
+              if (len < buffersize) {
+                *(buffer + len) = (char)*quote_string;
+              }
+              len++;
+              goto while_break___24;
+            };
+          }
+        while_break___24:
+          quote_string++;
+        };
+      }
+    while_break___23:;
+    }
     if (len < buffersize) {
       *(buffer + len) = (char)'\000';
     }
@@ -1270,6 +2579,8 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
   int who_specified_p;
   struct mode_change *change;
   void *tmp___12;
+  struct mode_change *p___0;
+  struct mode_change *tmp___13;
   int tmp___14;
   int tmp___15;
   int tmp___16;
@@ -1280,7 +2591,9 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
       tmp___11 = xstrtoul(mode_string___0, (char **)((void *)0), 8, &octal_value, "");
     }
     if ((unsigned int)tmp___11 == 0U) {
-
+      if (octal_value != (octal_value & 4095UL)) {
+        return ((struct mode_change *)0);
+      }
       if (256 >> 3 == 32) {
         if (128 >> 3 == 16) {
           if (64 >> 3 == 8) {
@@ -1340,7 +2653,11 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
         } else {
           tmp___5 = 0;
         }
-
+        if (octal_value & 16UL) {
+          tmp___6 = 128 >> 3;
+        } else {
+          tmp___6 = 0;
+        }
         if (octal_value & 8UL) {
           tmp___7 = 64 >> 3;
         } else {
@@ -1364,7 +2681,9 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
         mode = (mode_t)(((((((((((tmp | tmp___0) | tmp___1) | tmp___2) | tmp___3) | tmp___4) | tmp___5) | tmp___6) | tmp___7) | tmp___8) | tmp___9) | tmp___10);
       }
       { p = make_node_op_equals(mode); }
-
+      if ((unsigned long)p == (unsigned long)((void *)0)) {
+        return ((struct mode_change *)1);
+      }
       { mode_append_entry(&head, &tail, p); }
       return (head);
     }
@@ -1455,11 +2774,25 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
               } else {
                 tmp___14 = 0;
               }
+              if (ops_to_mask & (unsigned int)tmp___14) {
+                {
+                  tmp___13 = make_node_op_equals((mode_t)0);
+                  p___0 = tmp___13;
+                }
+                if ((unsigned long)p___0 == (unsigned long)((void *)0)) {
+                  return ((struct mode_change *)1);
+                }
+                { mode_append_entry(&head, &tail, p___0); }
+              }
             }
             if ((int const) * mode_string___0 == 61) {
               tmp___16 = 1;
             } else {
-
+              if ((int const) * mode_string___0 == 43) {
+                tmp___15 = 2;
+              } else {
+                tmp___15 = 4;
+              }
               tmp___16 = tmp___15;
             }
             if (ops_to_mask & (unsigned int)tmp___16) {
@@ -1494,7 +2827,9 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
                 if ((int const) * mode_string___0 == 116) {
                   goto case_116;
                 }
-
+                if ((int const) * mode_string___0 == 117) {
+                  goto case_117___0;
+                }
                 if ((int const) * mode_string___0 == 103) {
                   goto case_103___0;
                 }
@@ -1519,7 +2854,10 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
               case_116:
                 change->value |= 512U & affected_masked;
                 goto switch_break___0;
-
+              case_117___0:
+                if (change->value) {
+                  goto invalid;
+                }
                 change->value = (mode_t)448;
                 change->flags = (char)((int)change->flags | 2);
                 goto switch_break___0;
@@ -1609,7 +2947,11 @@ mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
               } else {
                 tmp___2 = 0;
               }
-
+              if (value & (unsigned int)(128 >> 3)) {
+                tmp___3 = 128 | ((128 >> 3) >> 3);
+              } else {
+                tmp___3 = 0;
+              }
               if (value & (unsigned int)(64 >> 3)) {
                 tmp___4 = 64 | ((64 >> 3) >> 3);
               } else {
@@ -1617,7 +2959,21 @@ mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
               }
               value |= (unsigned int)((tmp___2 | tmp___3) | tmp___4);
             } else {
-
+              if (value & (unsigned int)((256 >> 3) >> 3)) {
+                tmp___5 = 256 | (256 >> 3);
+              } else {
+                tmp___5 = 0;
+              }
+              if (value & (unsigned int)((128 >> 3) >> 3)) {
+                tmp___6 = 128 | (128 >> 3);
+              } else {
+                tmp___6 = 0;
+              }
+              if (value & (unsigned int)((64 >> 3) >> 3)) {
+                tmp___7 = 64 | (64 >> 3);
+              } else {
+                tmp___7 = 0;
+              }
               value |= (unsigned int)((tmp___5 | tmp___6) | tmp___7);
             }
           }
@@ -1635,13 +2991,20 @@ mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
         if ((int const)changes->op == 61) {
           goto case_61;
         }
-
+        if ((int const)changes->op == 43) {
+          goto case_43;
+        }
+        if ((int const)changes->op == 45) {
+          goto case_45;
+        }
         goto switch_break;
       case_61:
         newmode = (newmode & (unsigned int)(~changes->affected)) | value;
         goto switch_break;
+      case_43:
         newmode |= value;
         goto switch_break;
+      case_45:
         newmode &= ~value;
         goto switch_break;
       switch_break:
@@ -1653,9 +3016,24 @@ mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
   }
 }
 void mode_free(struct mode_change *changes) {
+  register struct mode_change *next;
 
   {
-    { ; }
+    {
+      while (1) {
+        ;
+
+        if (!changes) {
+          goto while_break;
+        }
+        {
+          next = changes->next;
+          rpl_free((void *)changes);
+          changes = next;
+        }
+      };
+    }
+  while_break:;
     return;
   }
 }
@@ -1682,6 +3060,8 @@ int make_dir(char const *dir, char const *dirpath, mode_t mode, int *created_dir
   int *tmp___0;
   char const *tmp___1;
   char *tmp___2;
+  char const *tmp___3;
+  char *tmp___4;
   int tmp___5;
 
   {
@@ -1702,6 +3082,15 @@ int make_dir(char const *dir, char const *dirpath, mode_t mode, int *created_dir
           tmp___2 = gettext("cannot create directory %s");
           error(0, saved_errno, (char const *)tmp___2, tmp___1);
           fail = 1;
+        }
+      } else {
+        if (!((stats.st_mode & 61440U) == 16384U)) {
+          {
+            tmp___3 = quote(dirpath);
+            tmp___4 = gettext("%s exists but is not a directory");
+            error(0, 0, (char const *)tmp___4, tmp___3);
+            fail = 1;
+          }
         }
       }
     }
@@ -1729,9 +3118,16 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
   void *tmp___1;
   int tmp___2;
   int tmp___3;
+  int tmp___4;
   int newly_created_dir;
   int fail;
+  int _saved_errno;
+  int *tmp___5;
+  char *tmp___6;
+  int *tmp___7;
+  int *tmp___8;
   int tmp___9;
+  char const *tmp___10;
   char const *tmp___11;
   char *tmp___12;
   int *tmp___13;
@@ -1742,17 +3138,40 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
   int *tmp___17;
   int tmp___18;
   int tmp___19;
+  struct ptr_list *new;
+  void *tmp___20;
   char const *tmp___21;
   char *tmp___22;
   int *tmp___23;
+  int _saved_errno___1;
+  int *tmp___24;
+  char *tmp___25;
+  int *tmp___26;
+  int *tmp___27;
   int tmp___28;
   int tmp___29;
   char *tmp___30;
+  int _saved_errno___2;
+  int *tmp___31;
+  char *tmp___32;
+  int *tmp___33;
+  int *tmp___34;
+  int tmp___35;
   int tmp___36;
+  char const *tmp___37;
+  char const *tmp___38;
+  char *tmp___39;
+  int *tmp___40;
+  int tmp___41;
   char const *tmp___42;
   char *tmp___43;
   int *tmp___44;
   int tmp___45;
+  int _saved_errno___3;
+  int *tmp___46;
+  char *tmp___47;
+  int *tmp___48;
+  int *tmp___49;
   int tmp___50;
   char const *tmp___51;
   char *tmp___52;
@@ -1761,6 +3180,14 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
   char const *dirpath___0;
   char const *tmp___55;
   char *tmp___56;
+  char const *tmp___57;
+  char *tmp___58;
+  int *tmp___59;
+  int tmp___60;
+  char const *tmp___61;
+  char *tmp___62;
+  int *tmp___63;
+  int tmp___64;
   int tmp___65;
 
   {
@@ -1782,13 +3209,54 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
       if ((parent_mode & 192) != 192) {
         tmp_mode = 448;
         re_protect = 1;
+      } else {
+        if (owner != 4294967295U) {
+          goto _L;
+        } else {
+          if (group != 4294967295U) {
+          _L:
+            if ((parent_mode & 3584) != 0) {
+              tmp_mode = 448;
+              re_protect = 1;
+            } else {
+              tmp_mode = parent_mode;
+              re_protect = 0;
+            }
+          } else {
+            tmp_mode = parent_mode;
+            re_protect = 0;
+          }
+        }
       }
       { tmp___2 = save_cwd(&cwd); }
-
+      if (tmp___2) {
+        tmp___3 = 0;
+      } else {
+        tmp___3 = 1;
+      }
       do_chdir = tmp___3;
-
+      if (do_chdir) {
+        if ((int)*dirpath == 47) {
+          {
+            tmp___4 = chdir("/");
+          }
+          if (tmp___4 < 0) {
+            do_chdir = 0;
+          }
+        }
+      }
       slash = dirpath;
-      { ; }
+      {
+        while (1) {
+          ;
+
+          if (!((int)*slash == 47)) {
+            goto while_break;
+          }
+          slash++;
+        };
+      }
+    while_break:;
       {
         while (1) {
           ;
@@ -1819,7 +3287,19 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
                       {
                         tmp___9 = restore_cwd((struct saved_cwd const *)(&cwd));
                       }
-
+                      if (tmp___9 != 0) {
+                        {
+                          tmp___5 = __errno_location();
+                          _saved_errno = *tmp___5;
+                          tmp___6 = gettext("failed to return to initial working directory");
+                          tmp___7 = __errno_location();
+                          error(0, *tmp___7, (char const *)tmp___6);
+                          free_cwd(&cwd);
+                          tmp___8 = __errno_location();
+                          *tmp___8 = _saved_errno;
+                        }
+                        return (1);
+                      }
                       { free_cwd(&cwd); }
                     }
                     goto while_break___2;
@@ -1833,7 +3313,12 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
             return (1);
           }
           if (newly_created_dir) {
-
+            if (verbose_fmt_string) {
+              {
+                tmp___10 = quote((char const *)dirpath);
+                error(0, 0, verbose_fmt_string, tmp___10);
+              }
+            }
             if (owner != 4294967295U) {
               goto _L___0;
             } else {
@@ -1862,7 +3347,8 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
                               {
                                 tmp___14 = __errno_location();
                                 _saved_errno___0 = *tmp___14;
-
+                                tmp___15 = gettext("failed to return to "
+                                                   "initial working directory");
                                 tmp___16 = __errno_location();
                                 error(0, *tmp___16, (char const *)tmp___15);
                                 free_cwd(&cwd);
@@ -1883,6 +3369,15 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
                 while_break___3:;
                   return (1);
                 }
+              }
+            }
+            if (re_protect) {
+              {
+                tmp___20 = __builtin_alloca(sizeof(struct ptr_list));
+                new = (struct ptr_list *)tmp___20;
+                new->dirname_end = slash;
+                new->next = leading_dirs;
+                leading_dirs = new;
               }
             }
           }
@@ -1909,7 +3404,20 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
                         {
                           tmp___28 = restore_cwd((struct saved_cwd const *)(&cwd));
                         }
-
+                        if (tmp___28 != 0) {
+                          {
+                            tmp___24 = __errno_location();
+                            _saved_errno___1 = *tmp___24;
+                            tmp___25 = gettext("failed to return to initial "
+                                               "working directory");
+                            tmp___26 = __errno_location();
+                            error(0, *tmp___26, (char const *)tmp___25);
+                            free_cwd(&cwd);
+                            tmp___27 = __errno_location();
+                            *tmp___27 = _saved_errno___1;
+                          }
+                          return (1);
+                        }
                         { free_cwd(&cwd); }
                       }
                       goto while_break___6;
@@ -1947,7 +3455,66 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
         umask(oldmask);
         tmp___36 = make_dir((char const *)basename_dir, (char const *)dirpath, (mode_t)mode, (int *)((void *)0));
       }
+      if (tmp___36) {
+        {
+          while (1) {
+            ;
+            { umask(oldmask); }
+            {
+              while (1) {
+                ;
 
+                if (do_chdir) {
+                  {
+                    tmp___35 = restore_cwd((struct saved_cwd const *)(&cwd));
+                  }
+                  if (tmp___35 != 0) {
+                    {
+                      tmp___31 = __errno_location();
+                      _saved_errno___2 = *tmp___31;
+                      tmp___32 = gettext("failed to return to initial working directory");
+                      tmp___33 = __errno_location();
+                      error(0, *tmp___33, (char const *)tmp___32);
+                      free_cwd(&cwd);
+                      tmp___34 = __errno_location();
+                      *tmp___34 = _saved_errno___2;
+                    }
+                    return (1);
+                  }
+                  { free_cwd(&cwd); }
+                }
+                goto while_break___9;
+              };
+            }
+          while_break___9:;
+            goto while_break___8;
+          };
+        }
+      while_break___8:;
+        return (1);
+      }
+      if ((unsigned long)verbose_fmt_string != (unsigned long)((void *)0)) {
+        {
+          tmp___37 = quote((char const *)dirpath);
+          error(0, 0, verbose_fmt_string, tmp___37);
+        }
+      }
+      if (owner != 4294967295U) {
+        goto _L___1;
+      } else {
+        if (group != 4294967295U) {
+        _L___1: { tmp___41 = chown((char const *)basename_dir, owner, group); }
+          if (tmp___41) {
+            {
+              tmp___38 = quote((char const *)dirpath);
+              tmp___39 = gettext("cannot change owner and/or group of %s");
+              tmp___40 = __errno_location();
+              error(0, *tmp___40, (char const *)tmp___39, tmp___38);
+              retval = 1;
+            }
+          }
+        }
+      }
       if (mode & ~((448 | (448 >> 3)) | ((448 >> 3) >> 3))) {
         {
           tmp___45 = chmod((char const *)basename_dir, (__mode_t)mode);
@@ -1970,7 +3537,19 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
             {
               tmp___50 = restore_cwd((struct saved_cwd const *)(&cwd));
             }
-
+            if (tmp___50 != 0) {
+              {
+                tmp___46 = __errno_location();
+                _saved_errno___3 = *tmp___46;
+                tmp___47 = gettext("failed to return to initial working directory");
+                tmp___48 = __errno_location();
+                error(0, *tmp___48, (char const *)tmp___47);
+                free_cwd(&cwd);
+                tmp___49 = __errno_location();
+                *tmp___49 = _saved_errno___3;
+              }
+              return (1);
+            }
             { free_cwd(&cwd); }
           }
           goto while_break___10;
@@ -2011,6 +3590,34 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
           error(0, 0, (char const *)tmp___56, tmp___55);
         }
         return (1);
+      }
+      if (!preserve_existing) {
+        if (owner != 4294967295U) {
+          goto _L___2;
+        } else {
+          if (group != 4294967295U) {
+          _L___2: { tmp___60 = chown(dirpath___0, owner, group); }
+            if (tmp___60) {
+              {
+                tmp___57 = quote(dirpath___0);
+                tmp___58 = gettext("cannot change owner and/or group of %s");
+                tmp___59 = __errno_location();
+                error(0, *tmp___59, (char const *)tmp___58, tmp___57);
+                retval = 1;
+              }
+            }
+          }
+        }
+        { tmp___64 = chmod(dirpath___0, (__mode_t)mode); }
+        if (tmp___64) {
+          {
+            tmp___61 = quote(dirpath___0);
+            tmp___62 = gettext("cannot change permissions of %s");
+            tmp___63 = __errno_location();
+            error(0, *tmp___63, (char const *)tmp___62, tmp___61);
+            retval = 1;
+          }
+        }
       }
     }
     return (retval);
@@ -2121,11 +3728,17 @@ static unsigned char const yystos[66] = {(unsigned char const)0,  (unsigned char
                                          (unsigned char const)33, (unsigned char const)21, (unsigned char const)18, (unsigned char const)18, (unsigned char const)17, (unsigned char const)33};
 static table const meridian_table[5] = {{"AM", 265, 0}, {"A.M.", 265, 0}, {"PM", 265, 1}, {"P.M.", 265, 1}, {(char const *)0, 0, 0}};
 static table const dst_table[1] = {{"DST", 259, 0}};
-
+static table const month_and_day_table[25] = {{"JANUARY", 267, 1}, {"FEBRUARY", 267, 2}, {"MARCH", 267, 3},     {"APRIL", 267, 4},     {"MAY", 267, 5},    {"JUNE", 267, 6},     {"JULY", 267, 7},       {"AUGUST", 267, 8}, {"SEPTEMBER", 267, 9},
+                                              {"SEPT", 267, 9},    {"OCTOBER", 267, 10}, {"NOVEMBER", 267, 11}, {"DECEMBER", 267, 12}, {"SUNDAY", 260, 0}, {"MONDAY", 260, 1},   {"TUESDAY", 260, 2},    {"TUES", 260, 2},   {"WEDNESDAY", 260, 3},
+                                              {"WEDNES", 260, 3},  {"THURSDAY", 260, 4}, {"THUR", 260, 4},      {"THURS", 260, 4},     {"FRIDAY", 260, 5}, {"SATURDAY", 260, 6}, {(char const *)0, 0, 0}};
 static table const time_units_table[11] = {{"YEAR", 270, 1}, {"MONTH", 268, 1}, {"FORTNIGHT", 261, 14}, {"WEEK", 261, 7}, {"DAY", 261, 1}, {"HOUR", 263, 1}, {"MINUTE", 266, 1}, {"MIN", 266, 1}, {"SECOND", 269, 1}, {"SEC", 269, 1}, {(char const *)0, 0, 0}};
 static table const relative_time_table[20] = {{"TOMORROW", 261, 1}, {"YESTERDAY", 261, -1}, {"TODAY", 261, 0},   {"NOW", 261, 0},    {"LAST", 273, -1}, {"THIS", 273, 0},   {"NEXT", 273, 1},      {"FIRST", 273, 1},    {"THIRD", 273, 3}, {"FOURTH", 273, 4},
                                               {"FIFTH", 273, 5},    {"SIXTH", 273, 6},      {"SEVENTH", 273, 7}, {"EIGHTH", 273, 8}, {"NINTH", 273, 9}, {"TENTH", 273, 10}, {"ELEVENTH", 273, 11}, {"TWELFTH", 273, 12}, {"AGO", 258, 1},   {(char const *)0, 0, 0}};
-
+static table const time_zone_table[51] = {{"GMT", 271, 0},    {"UT", 271, 0},      {"UTC", 271, 0},     {"WET", 271, 0},     {"WEST", 262, 0},    {"BST", 262, 0},     {"ART", 271, -180},     {"BRT", 271, -180}, {"BRST", 262, -180}, {"NST", 271, -210}, {"NDT", 262, -210},
+                                          {"AST", 271, -240}, {"ADT", 262, -240},  {"CLT", 271, -240},  {"CLST", 262, -240}, {"EST", 271, -300},  {"EDT", 262, -300},  {"CST", 271, -360},     {"CDT", 262, -360}, {"MST", 271, -420},  {"MDT", 262, -420}, {"PST", 271, -480},
+                                          {"PDT", 262, -480}, {"AKST", 271, -540}, {"AKDT", 262, -540}, {"HST", 271, -600},  {"HAST", 271, -600}, {"HADT", 262, -600}, {"SST", 271, -720},     {"WAT", 271, 60},   {"CET", 271, 60},    {"CEST", 262, 60},  {"MET", 271, 60},
+                                          {"MEZ", 271, 60},   {"MEST", 262, 60},   {"MESZ", 262, 60},   {"EET", 271, 120},   {"EEST", 262, 120},  {"CAT", 271, 120},   {"SAST", 271, 120},     {"EAT", 271, 180},  {"MSK", 271, 180},   {"MSD", 262, 180},  {"IST", 271, 330},
+                                          {"SGT", 271, 480},  {"KST", 271, 540},   {"JST", 271, 540},   {"GST", 271, 600},   {"NZST", 271, 720},  {"NZDT", 262, 720},  {(char const *)0, 0, 0}};
 static table const military_table[26] = {{"A", 271, -60}, {"B", 271, -120}, {"C", 271, -180}, {"D", 271, -240}, {"E", 271, -300}, {"F", 271, -360}, {"G", 271, -420}, {"H", 271, -480}, {"I", 271, -540}, {"K", 271, -600}, {"L", 271, -660}, {"M", 271, -720}, {"N", 271, 60},
                                          {"O", 271, 120}, {"P", 271, 180},  {"Q", 271, 240},  {"R", 271, 300},  {"S", 271, 360},  {"T", 271, 420},  {"U", 271, 480},  {"V", 271, 540},  {"W", 271, 600},  {"X", 271, 660},  {"Y", 271, 720},  {"Z", 271, 0},    {(char const *)0, 0, 0}};
 extern char *getcwd(char *buf, size_t size);
@@ -2142,12 +3755,17 @@ char *(__attribute__((__leaf__)) rpl_getcwd)(char *buf, size_t size) {
       tmp = getcwd(buf, size);
       cwd = tmp;
     }
-
+    if ((unsigned long)cwd == (unsigned long)((void *)0)) {
+      return ((char *)((void *)0));
+    }
     { tmp___0 = strlen((char const *)cwd); }
     if (tmp___0 <= 3839UL) {
       return (cwd);
     } else {
       { tmp___1 = same_name((char const *)cwd, "."); }
+      if (tmp___1) {
+        return (cwd);
+      }
     }
     {
       rpl_free((void *)cwd);
@@ -2184,6 +3802,60 @@ extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf
 extern int fnmatch(char const *__pattern, char const *__name, int __flags);
 extern int fcntl(int __fd, int __cmd, ...);
 size_t dir_len(char const *path);
+size_t dir_len(char const *path) {
+  size_t prefix_length;
+  size_t length;
+  char *tmp;
+
+  {
+    {
+      prefix_length = (size_t)0;
+      tmp = base_name(path);
+      length = (size_t)(tmp - (char *)path);
+    }
+    {
+      while (1) {
+        ;
+
+        if (!(prefix_length < length)) {
+          goto while_break;
+        }
+        if (!((int const) * (path + (length - 1UL)) == 47)) {
+          return (length);
+        }
+        length--;
+      };
+    }
+  while_break:;
+    return (prefix_length + (size_t)((int const) * (path + prefix_length) == 47));
+  }
+}
+char *dir_name(char const *path) {
+  size_t length;
+  size_t tmp;
+  int append_dot;
+  char *newpath;
+  void *tmp___0;
+  size_t tmp___1;
+
+  {
+    {
+      tmp = dir_len(path);
+      length = tmp;
+      append_dot = length == 0UL;
+      tmp___0 = xmalloc((length + (size_t)append_dot) + 1UL);
+      newpath = (char *)tmp___0;
+      memcpy((void * /* __restrict  */)((void *)newpath), (void const * /* __restrict  */)((void const *)path), length);
+    }
+    if (append_dot) {
+      tmp___1 = length;
+      length++;
+      *(newpath + tmp___1) = (char)'.';
+    }
+    *(newpath + length) = (char)0;
+    return (newpath);
+  }
+}
 char const diacrit_base[256];
 char const diacrit_diac[256];
 char const diacrit_base[256] = {
@@ -2225,6 +3897,8 @@ void close_stdout(void) {
   int e;
   int tmp___0;
   int tmp___1;
+  size_t tmp___2;
+  int *tmp___3;
   int tmp___4;
   char const *write_error;
   char *tmp___5;
@@ -2238,9 +3912,21 @@ void close_stdout(void) {
       tmp___0 = -1;
     }
     e = tmp___0;
-
+    if (e) {
+      {
+        tmp___2 = __fpending(stdout);
+      }
+      if (tmp___2 == 0UL) {
+        return;
+      }
+    }
     { tmp___4 = fclose(stdout); }
-
+    if (tmp___4 != 0) {
+      {
+        tmp___3 = __errno_location();
+        e = *tmp___3;
+      }
+    }
     if (0 <= e) {
       {
         tmp___5 = gettext("write error");
@@ -2269,7 +3955,36 @@ char *base_name(char const *name) {
   {
     base = name + 0;
     p = base;
-    { ; }
+    {
+      while (1) {
+        ;
+
+        if (!*p) {
+          goto while_break;
+        }
+        if ((int const) * p == 47) {
+          {
+            while (1) {
+              ;
+              p++;
+              if (!((int const) * p == 47)) {
+                goto while_break___0;
+              }
+            };
+          }
+        while_break___0:;
+          if (!*p) {
+            if ((int const) * base == 47) {
+              base = p - 1;
+            }
+            goto while_break;
+          }
+          base = p;
+        }
+        p++;
+      };
+    }
+  while_break:;
     return ((char *)base);
   }
 }
@@ -2278,7 +3993,23 @@ size_t base_len(char const *name) {
 
   {
     { len = strlen(name); }
-    { ; }
+    {
+      while (1) {
+        ;
+
+        if (1UL < len) {
+          if (!((int const) * (name + (len - 1UL)) == 47)) {
+            goto while_break;
+          }
+        } else {
+          goto while_break;
+        }
+        goto __Cont;
+      __Cont:
+        len--;
+      };
+    }
+  while_break:;
     return (len);
   }
 }
@@ -2300,9 +4031,43 @@ char *program_name;
 static int create_parents;
 static struct option const longopts[6] = {{"mode", 1, (int *)((void *)0), 'm'}, {"parents", 0, (int *)((void *)0), 'p'}, {"verbose", 0, (int *)((void *)0), 'v'}, {"help", 0, (int *)0, -130}, {"version", 0, (int *)0, -131}, {(char const *)((void *)0), 0, (int *)((void *)0), 0}};
 void usage(int status) {
+  char *tmp;
+  char *tmp___0;
+  char *tmp___1;
+  char *tmp___2;
+  char *tmp___3;
+  char *tmp___4;
+  char *tmp___5;
+  char *tmp___6;
 
   {
-
+    if (status != 0) {
+      {
+        tmp = gettext("Try `%s --help\' for more information.\n");
+        fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */)((char const *)tmp), program_name);
+      }
+    } else {
+      {
+        tmp___0 = gettext("Usage: %s [OPTION] DIRECTORY...\n");
+        printf((char const * /* __restrict  */)((char const *)tmp___0), program_name);
+        tmp___1 = gettext("Create the DIRECTORY(ies), if they do not already exist.\n\n");
+        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___1), (FILE * /* __restrict  */)stdout);
+        tmp___2 = gettext("Mandatory arguments to long options are mandatory "
+                          "for short options too.\n");
+        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___2), (FILE * /* __restrict  */)stdout);
+        tmp___3 = gettext("  -m, --mode=MODE   set permission mode (as in chmod), not "
+                          "rwxrwxrwx - umask\n  -p, --parents     no error if existing, make "
+                          "parent directories as needed\n  -v, --verbose     print a message "
+                          "for each created directory\n");
+        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___3), (FILE * /* __restrict  */)stdout);
+        tmp___4 = gettext("      --help     display this help and exit\n");
+        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___4), (FILE * /* __restrict  */)stdout);
+        tmp___5 = gettext("      --version  output version information and exit\n");
+        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___5), (FILE * /* __restrict  */)stdout);
+        tmp___6 = gettext("\nReport bugs to <%s>.\n");
+        printf((char const * /* __restrict  */)((char const *)tmp___6), "bug-coreutils@gnu.org");
+      }
+    }
     { exit(status); }
   }
 }
@@ -2314,11 +4079,14 @@ int main(int argc, char **argv) {
   int errors;
   int optc;
   char *tmp;
+  char *tmp___0;
   mode_t umask_value;
   __mode_t tmp___1;
   struct mode_change *change;
   struct mode_change *tmp___2;
   __mode_t tmp___3;
+  char const *tmp___4;
+  char *tmp___5;
   int fail;
   char *dir;
   char const *dir___0;
@@ -2349,13 +4117,28 @@ int main(int argc, char **argv) {
         if (!(optc != -1)) {
           goto while_break;
         }
-
+        if (optc == 0) {
+          goto case_0;
+        }
+        if (optc == 112) {
+          goto case_112;
+        }
         if (optc == 109) {
           goto case_109;
         }
-
+        if (optc == 118) {
+          goto case_118;
+        }
+        if (optc == -130) {
+          goto case_neg_130;
+        }
+        if (optc == -131) {
+          goto case_neg_131;
+        }
         goto switch_default;
+      case_0:
         goto switch_break;
+      case_112:
         create_parents = 1;
         goto switch_break;
       case_109:
@@ -2378,6 +4161,13 @@ int main(int argc, char **argv) {
       };
     }
   while_break:;
+    if (optind == argc) {
+      {
+        tmp___0 = gettext("too few arguments");
+        error(0, 0, (char const *)tmp___0);
+        usage(1);
+      }
+    }
     {
       newmode = (mode_t)((448 | (448 >> 3)) | ((448 >> 3) >> 3));
       tmp___1 = umask((__mode_t)0);
@@ -2392,7 +4182,19 @@ int main(int argc, char **argv) {
         tmp___3 = umask((__mode_t)0);
         newmode &= ~tmp___3;
       }
-
+      if ((unsigned long)change == (unsigned long)((struct mode_change *)0)) {
+        {
+          tmp___4 = quote(specified_mode);
+          tmp___5 = gettext("invalid mode %s");
+          error(1, 0, (char const *)tmp___5, tmp___4);
+        }
+      } else {
+        if ((unsigned long)change == (unsigned long)((struct mode_change *)1)) {
+          {
+            xalloc_die();
+          }
+        }
+      }
       { newmode = mode_adjust(newmode, (struct mode_change const *)change); }
     }
     {

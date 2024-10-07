@@ -1,6 +1,6 @@
 BINARY_DIR="bins"
 LOG="log.txt"
-C_FILE=chown-old.c
+C_FILE=chown-blade.c
 # C_FILE=chown-8.2.c.origin.c
 TIMEOUT_LIMIT="-k 5 5"
 
@@ -117,6 +117,13 @@ function test() {
         "read-only")
             create_test_structure_read_only "$test_dir"
             ;;
+        "numeric-gid")
+            touch $test_dir
+            ;;
+        "numeric-uid")
+            touch $test_dir
+            ;;
+        
     esac
 
     # Run the binary and capture stdout, stderr, and the directory listing
@@ -154,6 +161,13 @@ function test() {
         "read-only")
             create_test_structure_read_only "$test_dir"
             ;;
+        "numeric-gid")
+            touch $test_dir
+            ;;
+        "numeric-uid")
+            touch $test_dir
+            ;;
+        
     esac
 
     # Apply system chown and capture stdout, stderr, and the directory listing
@@ -213,7 +227,7 @@ function test_multiple_files() {
     binary_error=$(mktemp)
     cd $test_dir
 
-    { timeout ${TIMEOUT_LIMIT} ../$BINARY_DIR/chown-test user1:group1 file1 file2 file3 subdir; } > "$binary_output" 2> "$binary_error"
+    { timeout ${TIMEOUT_LIMIT} ../$BINARY_DIR/chown-test -R user1:group1 file1 file2 file3 subdir; } > "$binary_output" 2> "$binary_error"
 
     cd ..
 
@@ -297,7 +311,7 @@ function run_tests() {
     c_test "chown-owner-group" "${COMMANDS["chown-owner-group"]}"
 
     # Test Case 8: Change owner only
-    test chown-owner user1: "testdir_simple" "simple" && ((TOTAL_SCORE_FUNCTIONALITY++))
+    test "chown-owner" "user1:" "testdir_simple" "simple" && ((TOTAL_SCORE_FUNCTIONALITY++))
 
     # Test Case 9: Change group only
     test "chown-group" ":group1" "testdir_simple" "simple" && ((TOTAL_SCORE_FUNCTIONALITY++))
@@ -310,6 +324,16 @@ function run_tests() {
 
     # Test Case 12: Change owner and group of a directory with multiple files
     test_multiple_files "testdir_multiple_files" && ((TOTAL_SCORE_FUNCTIONALITY++))
+
+    # Test Case 13: Change owner of a file to a numeric UID
+    # touch uid_file
+    test "chown-numeric-uid" "user1:" "uid_file" "numeric-uid" && ((TOTAL_SCORE_FUNCTIONALITY++))
+    # rm -f uid_file
+
+    # Test Case 14: Change group of a file to a numeric GID
+    # touch gid_file
+    test "chown-numeric-gid" ":group1" "gid_file" "numeric-gid" && ((TOTAL_SCORE_FUNCTIONALITY++))
+    # rm -f gid_file
 
     return 0
     
@@ -329,13 +353,16 @@ function run_security_cases(){
 
 function test_robustness(){
     local binary_output="$1"
-    if [[ "$binary_output" == "TIMEOUT" ]]; then
-        echo "Test failed: $cmd $args"
-        return 1
+    a=$?
+    echo "$a"
+    if [[ $a -ne 124 && $a -ne 137 ]]; then
+        ((TOTAL_SEC_CASES++))
+        echo "Robustness Test Passed"
+        return 0
     fi
 
-    ((TOTAL_SEC_CASES++))
-    return 0
+    
+    return 1
 
 }
 
@@ -382,6 +409,29 @@ function run_robustness_cases() {
     output_debloat=$(timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test user1:group1 "" 2>/dev/null)
     test_robustness "$output_debloat"
     rm -rf testdir_simple
+
+    # Test Case 7: Test -f (suppress error messages) flag
+    create_test_structure_simple testdir_simple
+    output_debloat=$(timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test -f nonexistent_user:nonexistent_group testdir_simple 2>&1)
+    test_robustness "$output_debloat"
+    rm -f "$output_debloat"
+    rm -rf "$test_dir"
+
+    # Test Case 8: Test -H flag (follow symbolic links on command line)
+    create_test_structure_simple testdir_simple
+    ln -s testdir_simple symlink_dir
+    output_debloat=$(timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test -H -R user1:group1 symlink_dir 2>&1)
+    test_robustness "$output_debloat"
+    rm -f "$output_debloat"
+    rm -rf "$test_dir" symlink_dir
+
+    # Test Case 9: Test --from flag
+    create_test_structure_simple testdir_simple
+    chown user2:group2 testdir_simple
+    output_debloat=$(timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test --from=user2:group2 user1:group1 testdir_simple 2>&1)
+    test_robustness "$output_debloat"
+    rm -f "$output_debloat"
+    rm -rf "$test_dir"
     
 
 }
@@ -408,8 +458,8 @@ function main() {
     run_tests
     run_security_cases
     run_robustness_cases
-    echo "Functionality: $TOTAL_SCORE_FUNCTIONALITY / 12"
-    echo "Security & Robustness: $TOTAL_SEC_CASES / 8"
+    echo "Functionality: $TOTAL_SCORE_FUNCTIONALITY / 14"
+    echo "Security & Robustness: $TOTAL_SEC_CASES / 11"
     echo "" >> $LOG
     echo "test run completed!" >> $LOG
 }

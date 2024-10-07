@@ -13,14 +13,16 @@ LOG=$DIR/log.txt
 function run() {
     # Cleanup and setup
     rm -rf testdir
-    mkdir -p testdir
+    mkdir -p testdir/d1/d2
+    touch testdir/d1/d2/temp2
+    touch testdir/d1/temp
     touch testdir/file1
     touch testdir/file2
 
     # Run the reduced binary and capture output, error, and directory listing
     reduced_output=$(mktemp)
     reduced_error=$(mktemp)
-    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY $1 testdir >"$reduced_output" 2>"$reduced_error"; } >&$LOG || exit 1
+    { timeout $TIMEOUT_LIMIT $REDUCED_BINARY -R $1 testdir >"$reduced_output" 2>"$reduced_error"; } >&$LOG || exit 1
     r=$?
     if [[ $r -ne 0 ]]; then
         return 1
@@ -29,14 +31,16 @@ function run() {
 
     # Cleanup and setup again
     rm -rf testdir
-    mkdir -p testdir
+    mkdir -p testdir/d1/d2
+    touch testdir/d1/d2/temp2
+    touch testdir/d1/temp
     touch testdir/file1
     touch testdir/file2
 
     # Run the original binary and capture output, error, and directory listing
     original_output=$(mktemp)
     original_error=$(mktemp)
-    $ORIGINAL_BINARY $1 testdir >"$original_output" 2>"$original_error"
+    $ORIGINAL_BINARY -R $1 testdir >"$original_output" 2>"$original_error"
     temp2=$(ls -al testdir 2>/dev/null | cut -d ' ' -f 1,3,4)
 
     # Cleanup directory

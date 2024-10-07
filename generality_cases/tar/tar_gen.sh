@@ -2,7 +2,7 @@
 
 PROGRAM_NAME=tar
 DIR=${PWD}
-C_FILE=${DIR}/tar-org.c
+C_FILE=${DIR}/tar-cov.c
 REDUCED_BINARY=${DIR}/${PROGRAM_NAME}.rbin
 ORG_BINARY=${DIR}/${PROGRAM_NAME}.bin
 ORG_FILE=${DIR}/tar-org.c
@@ -442,20 +442,33 @@ function execute_tests_security() {
     echo "Running test: Multiple files"
     run_functionality_single_folder ${files[@]} && ((SECURITY_PASSED_COUNT++))
     ((SECURITY_TOTAL_TESTS++))
+
+    files=($(ls $SECURITY_DIR | shuf -n 5))
+    files=("${files[@]/#/${SECURITY_DIR}/}")
+    echo "Running test: Multiple files"
+    run_functionality_nested_folders ${files[@]} && ((SECURITY_PASSED_COUNT++))
+    ((SECURITY_TOTAL_TESTS++))
     
 }
 
 function run_robustness() {
     ((ROBUSTNESS_TOTAL_TESTS++))
-    description="$1"
-    command="$2"
+    
+    description=$1
+    command=$2
+    
     echo -e "CASE: $TOTAL_TESTS, $description" >>${LOG} 2>&1
-    output_debloat=$(timeout "$TIMEOUT_LIMIT" bash -c "$command" 2>&1 | sed "s|$REDUCED_BINARY: ||") || output_debloat="TIMEOUT"
-    if [[ "$output_debloat" == "TIMEOUT" ]]; then
+    eval "$command" >>${LOG} 2>&1
+    a=$?
+    echo $a
+    if [[ $a -ne 124 && $a -ne 137 ]]; then
+        ((ROBUSTNESS_PASSED_COUNT++))
+        return 0
+    else
         echo "Test failed: $description" >>${LOG} 2>&1
-        return
+        return 1
     fi
-    ((ROBUSTNESS_PASSED_COUNT++))
+    
 }
 
 function robustness_cases() {
@@ -473,55 +486,65 @@ function robustness_cases() {
         echo "Running test $file"
         run_robustness "Robustness test file: $file" \
         "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -cf $tar_archive -C $robustness_dir $(basename $file); }"
+        rm -rf temp $tar_archive
     done
 
     echo "Running test: Invalid Flag"
     run_robustness "Invalid Flag" \
     "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -X $tar_archive -C temp .; }"
+    rm -rf temp $tar_archive
 
     echo "Running test: No arguments"
     run_robustness "No arguments" \
     "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY; }"
+    rm -rf temp $tar_archive
 
     echo "Running test: Non-existent file"
     run_robustness "Non-existent file" \
     "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -cf $tar_archive nonexistent.txt; }"
+    rm -rf temp $tar_archive
 
     echo "Running test: Extract non-existent archive"
     run_robustness "Extract non-existent archive" \
     "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -xf nonexistent.tar; }"
+    rm -rf temp $tar_archive
 
     echo "Running test: Create archive from directory"
     run_robustness "Create archive from directory" \
     "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -cf $tar_archive temp; }"
+    rm -rf temp $tar_archive
 
     flags=(-v -z -j -W --help --version)
     for flag in "${flags[@]}"; do
         echo "Running test: Various Flags"
         run_robustness "Various Flags" \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY $flag -cf $tar_archive -C temp .; }"
+        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY $flag $tar_archive -C temp .; }"
+        rm -rf temp $tar_archive
     done
 
     # Test with different compression options
-    compression_flags=(-a -z -j -J)
+    compression_flags=(a z j J)
     for flag in "${compression_flags[@]}"; do
         echo "Running test: Compression Flag $flag"
         run_robustness "Compression Flag $flag" \
         "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -c$flag $tar_archive -C temp .; }"
+        rm -rf temp $tar_archive
     done
 
     # Test extraction
     echo "Running test: Extract archive"
     run_robustness "Extract archive" \
     "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -xf $tar_archive; }"
+    rm -rf temp $tar_archive
 
     # Test listing contents
     echo "Running test: List archive contents"
     run_robustness "List archive contents" \
     "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -tf $tar_archive; }"
+    rm -rf temp $tar_archive
 
     # Clean up
-    rm -rf temp $tar_archive
+    # rm -rf temp $tar_archive
 }
 
 
@@ -540,7 +563,9 @@ function main() {
     else
         echo "Some tests failed"
     fi
-
+    
+    echo "Total Passed: $(($FUNCTIONALITY_PASSED_COUNT + $SECURITY_PASSED_COUNT + $ROBUSTNESS_PASSED_COUNT))"
+    echo "Total Tests: $(($FUNCTIONALITY_TOTAL_TESTS + $SECURITY_TOTAL_TESTS + $ROBUSTNESS_TOTAL_TESTS))"
     rm -rf temp
     clean_env
 }

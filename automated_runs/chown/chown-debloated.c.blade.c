@@ -46,11 +46,7 @@ struct hash_table;
 struct hash_table;
 struct hash_table;
 typedef struct hash_table Hash_table;
-struct F_triple {
-  char *name;
-  ino_t st_ino;
-  dev_t st_dev;
-};
+
 struct __dirstream;
 struct __dirstream;
 struct __dirstream;
@@ -82,12 +78,7 @@ struct mbchar {
   wchar_t wc;
   char buf[24];
 };
-struct mbuiter_multi {
-  _Bool in_shift;
-  mbstate_t state;
-  _Bool next_done;
-  struct mbchar cur;
-};
+
 typedef struct mbuiter_multi mbui_iterator_t;
 typedef __gid_t gid_t;
 typedef __uid_t uid_t;
@@ -238,9 +229,7 @@ struct hash_table {
   void (*data_freer)(void *);
   struct hash_entry *free_entry_list;
 };
-struct __anonstruct___fsid_t_1 {
-  int __val[2];
-};
+
 typedef struct __anonstruct___fsid_t_1 __fsid_t;
 typedef unsigned long __fsblkcnt_t;
 typedef unsigned long __fsfilcnt_t;
@@ -250,20 +239,7 @@ struct Active_dir {
   ino_t ino;
   FTSENT *fts_ent;
 };
-struct statfs {
-  __fsword_t f_type;
-  __fsword_t f_bsize;
-  __fsblkcnt_t f_blocks;
-  __fsblkcnt_t f_bfree;
-  __fsblkcnt_t f_bavail;
-  __fsfilcnt_t f_files;
-  __fsfilcnt_t f_ffree;
-  __fsid_t f_fsid;
-  __fsword_t f_namelen;
-  __fsword_t f_frsize;
-  __fsword_t f_flags;
-  __fsword_t f_spare[4];
-};
+
 struct LCO_ent {
   dev_t st_dev;
   _Bool opt_ok;
@@ -296,13 +272,16 @@ extern __attribute__((__nothrow__)) int *(
 extern int close(int __fd);
 extern int(__attribute__((__nonnull__(1))) open)(char const *__file,
                                                  int __oflag, ...);
-
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) tolower)(
+    int __c);
 extern __attribute__((__nothrow__))
 size_t(__attribute__((__nonnull__(1), __leaf__)) strlen)(char const *__s)
     __attribute__((__pure__));
 extern int fclose(FILE *__stream);
 int dup_safer(int fd);
-
+extern __attribute__((__nothrow__)) int(__attribute__((
+    __nonnull__(1, 2), __leaf__)) strcmp)(char const *__s1, char const *__s2)
+    __attribute__((__pure__));
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2),
                                                        __leaf__)) strncmp)(
     char const *__s1, char const *__s2, size_t __n) __attribute__((__pure__));
@@ -310,7 +289,8 @@ __attribute__((__noreturn__)) void xalloc_die(void);
 extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) malloc)(
     size_t __size) __attribute__((__malloc__));
 char *last_component(char const *name);
-
+extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) gettext)(
+    char const *__msgid) __attribute__((__format_arg__(1)));
 void *hash_lookup(Hash_table const *table___0, void const *entry);
 void *(__attribute__((__warn_unused_result__)) hash_insert)(
     Hash_table *table___0, void const *entry);
@@ -330,6 +310,11 @@ DIR *rpl_fdopendir(int fd) {
   {
     tmp = fstat(fd, &st);
 
+    if (!((st.st_mode & 61440U) == 16384U)) {
+      tmp___0 = __errno_location();
+      *tmp___0 = 20;
+      return ((DIR *)((void *)0));
+    }
     tmp___1 = fdopendir(fd);
     return (tmp___1);
   }
@@ -342,29 +327,61 @@ int fd_safer(int fd) {
   int *tmp___0;
   int *tmp___1;
 
-  { return (fd); }
+  {
+    if (0 <= fd) {
+      if (fd <= 2) {
+        tmp = dup_safer(fd);
+        f = tmp;
+        tmp___0 = __errno_location();
+        e = *tmp___0;
+        close(fd);
+        tmp___1 = __errno_location();
+        *tmp___1 = e;
+        fd = f;
+      }
+    }
+    return (fd);
+  }
 }
 int volatile exit_failure;
 int volatile exit_failure = (int volatile)1;
-
+extern __attribute__((__nothrow__)) unsigned short const **(
+    __attribute__((__leaf__)) __ctype_b_loc)(void)__attribute__((__const__));
 extern __attribute__((__nothrow__)) int(
     __attribute__((__leaf__)) ferror_unlocked)(FILE *__stream);
-
+extern __attribute__((__nothrow__))
+size_t(__attribute__((__leaf__)) __ctype_get_mb_cur_max)(void);
 extern __attribute__((__nothrow__)) void(__attribute__((__leaf__)) free)(
     void *__ptr);
-
+extern
+    __attribute__((__nothrow__,
+                   __noreturn__)) void(__attribute__((__leaf__)) abort)(void);
 extern __attribute__((__nothrow__)) void *(__attribute__((
     __nonnull__(1), __leaf__)) memset)(void *__s, int __c, size_t __n);
 extern __attribute__((__nothrow__)) char *(
     __attribute__((__nonnull__(1), __leaf__)) strchr)(char const *__s, int __c)
     __attribute__((__pure__));
-
+extern __attribute__((__nothrow__)) char *(
+    __attribute__((__nonnull__(1), __leaf__)) strrchr)(char const *__s, int __c)
+    __attribute__((__pure__));
 int mbscasecmp(char const *s1, char const *s2);
-
+extern __attribute__((__nothrow__))
+wint_t(__attribute__((__leaf__)) towlower)(wint_t __wc);
 size_t hash_string(char const *string, size_t n_buckets);
-
+Hash_table *(__attribute__((__warn_unused_result__)) hash_initialize)(
+    size_t candidate, Hash_tuning const *tuning,
+    size_t (*hasher)(void const *, size_t),
+    _Bool (*comparator)(void const *, void const *),
+    void (*data_freer)(void *));
 void hash_free(Hash_table *table___0);
-
+extern __attribute__((__nothrow__, __noreturn__)) void(__attribute__((
+    __leaf__)) __assert_fail)(char const *__assertion, char const *__file,
+                              unsigned int __line, char const *__function);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) mbsinit)(
+    mbstate_t const *__ps) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) mbrtowc)(
+    wchar_t *__restrict __pwc, char const *__restrict __s, size_t __n,
+    mbstate_t *__restrict __p);
 unsigned int const is_basic_table[8];
 
 size_t strnlen1(char const *string, size_t maxlen);
@@ -379,7 +396,9 @@ int dup_safer(int fd) {
     return (tmp);
   }
 }
-
+extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1, 2),
+                                                          __leaf__)) memcpy)(
+    void *__restrict __dest, void const *__restrict __src, size_t __n);
 extern __attribute__((__nothrow__)) int(__attribute__((
     __nonnull__(1, 2), __leaf__)) stat)(char const *__restrict __file,
                                         struct stat *__restrict __buf);
@@ -388,59 +407,6 @@ extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fchown)(
 char const diacrit_base[256];
 char const diacrit_diac[256];
 
-char const diacrit_diac[256] = {
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)4,
-    (char const)0, (char const)3, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)6, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)3, (char const)2, (char const)4,
-    (char const)6, (char const)5, (char const)8, (char const)1, (char const)7,
-    (char const)3, (char const)2, (char const)4, (char const)5, (char const)3,
-    (char const)2, (char const)4, (char const)5, (char const)0, (char const)6,
-    (char const)3, (char const)2, (char const)4, (char const)6, (char const)5,
-    (char const)0, (char const)9, (char const)3, (char const)2, (char const)4,
-    (char const)5, (char const)2, (char const)0, (char const)0, (char const)3,
-    (char const)2, (char const)4, (char const)6, (char const)5, (char const)8,
-    (char const)1, (char const)7, (char const)3, (char const)2, (char const)4,
-    (char const)5, (char const)3, (char const)2, (char const)4, (char const)5,
-    (char const)0, (char const)6, (char const)3, (char const)2, (char const)4,
-    (char const)6, (char const)5, (char const)0, (char const)9, (char const)3,
-    (char const)2, (char const)4, (char const)5, (char const)2, (char const)0,
-    (char const)0};
 void cycle_check_init(struct cycle_check_state *state);
 _Bool cycle_check(struct cycle_check_state *state, struct stat const *sb);
 __inline static _Bool is_zero_or_power_of_two(uintmax_t i) {
@@ -460,9 +426,17 @@ _Bool cycle_check(struct cycle_check_state *state, struct stat const *sb) {
 
   {
 
+    if (state->chdir_counter) {
+    }
     (state->chdir_counter)++;
     tmp = is_zero_or_power_of_two(state->chdir_counter);
-
+    if (tmp) {
+      if (state->chdir_counter == 0UL) {
+        return ((_Bool)1);
+      }
+      state->dev_ino.st_dev = (dev_t)sb->st_dev;
+      state->dev_ino.st_ino = (ino_t)sb->st_ino;
+    }
     return ((_Bool)0);
   }
 }
@@ -515,7 +489,25 @@ int close_stream(FILE *stream) {
     prev_fail = (_Bool)(tmp___0 != 0);
     tmp___1 = fclose(stream);
     fclose_fail = (_Bool)(tmp___1 != 0);
-
+    if (prev_fail) {
+      goto _L___0;
+    } else {
+      if (fclose_fail) {
+        if (some_pending) {
+          goto _L___0;
+        } else {
+          tmp___3 = __errno_location();
+          if (*tmp___3 != 9) {
+          _L___0:
+            if (!fclose_fail) {
+              tmp___2 = __errno_location();
+              *tmp___2 = 0;
+            }
+            return (-1);
+          }
+        }
+      }
+    }
     return (0);
   }
 }
@@ -534,10 +526,13 @@ int set_cloexec_flag(int desc, _Bool value) {
     return (-1);
   }
 }
-
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fchdir)(
+    int __fd);
 extern int(__attribute__((__nonnull__(2))) openat)(int __fd, char const *__file,
                                                    int __oflag, ...);
-
+extern __attribute__((__nothrow__)) void *(__attribute__((
+    __nonnull__(1), __leaf__)) memchr)(void const *__s, int __c, size_t __n)
+    __attribute__((__pure__));
 extern __attribute__((__nothrow__)) void *(__attribute__((
     __nonnull__(1, 2), __leaf__)) memmove)(void *__dest, void const *__src,
                                            size_t __n);
@@ -546,73 +541,31 @@ extern __attribute__((__nothrow__)) int(__attribute__((
                                          struct stat *__restrict __buf);
 size_t triple_hash(void const *x, size_t table_size);
 _Bool triple_compare_ino_str(void const *x, void const *y);
-char *last_component(char const *name) {
-  char const *base;
-  char const *p;
-  _Bool saw_slash;
 
-  {
-    base = name + 0;
-    saw_slash = (_Bool)0;
-    while (1) {
-
-      base++;
-    }
-  while_break:
-    p = base;
-    while (1) {
-
-      p++;
-    }
-  while_break___0:;
-    return ((char *)base);
-  }
-}
 char const *simple_backup_suffix;
 void (*argmatch_die)(void);
-
+extern __attribute__((__nothrow__)) int(__attribute__((
+    __nonnull__(1, 2), __leaf__)) memcmp)(void const *__s1, void const *__s2,
+                                          size_t __n) __attribute__((__pure__));
 extern int(__attribute__((__nonnull__(1))) closedir)(DIR *__dirp);
 extern struct dirent *(__attribute__((__nonnull__(1))) readdir)(DIR *__dirp);
 DIR *opendir_safer(char const *name);
 char const *simple_backup_suffix = "~";
-
+extern int fprintf(FILE *__restrict __stream, char const *__restrict __format,
+                   ...);
 char *quotearg_n_style(int n, enum quoting_style s, char const *arg);
 char const *quote_n(int n, char const *name);
 __attribute__((__noreturn__)) void usage(int status);
-
+extern __attribute__((__nothrow__)) void *(__attribute__((
+    __warn_unused_result__, __leaf__)) realloc)(void *__ptr, size_t __size);
 __inline static void *xnmalloc(size_t n, size_t s) __attribute__((__malloc__));
 __inline static void *xnmalloc(size_t n, size_t s) __attribute__((__malloc__));
-__inline static void *xnmalloc(size_t n, size_t s) {
-  int tmp;
-  void *tmp___0;
 
-  {
-    if (sizeof(ptrdiff_t) <= sizeof(size_t)) {
-      tmp = -1;
-    } else {
-      tmp = -2;
-    }
-
-    tmp___0 = xmalloc(n * s);
-    return (tmp___0);
-  }
-}
 strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
                       unsigned long *val, char const *valid_suffixes);
 extern __attribute__((__nothrow__)) unsigned long(__attribute__((
     __nonnull__(1), __leaf__)) strtoul)(char const *__restrict __nptr,
                                         char **__restrict __endptr, int __base);
-static strtol_error bkm_scale___0(unsigned long *x, int scale_factor) {
-
-  {
-    if (0xffffffffffffffffUL / (unsigned long)scale_factor < *x) {
-      *x = 0xffffffffffffffffUL;
-      return ((strtol_error)1);
-    }
-    *x *= (unsigned long)scale_factor;
-    return ((strtol_error)0);
-  }
-}
 
 strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
                       unsigned long *val, char const *valid_suffixes) {
@@ -635,101 +588,16 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
 
   {
     err = (strtol_error)0;
-    if (0 <= strtol_base) {
 
-    } else {
-      __assert_fail("0 <= strtol_base && strtol_base <= 36",
-                    "/home/khheo/project/program-reduce/benchmark/"
-                    "coreutils-8.2/lib/xstrtol.c",
-                    83U, "xstrtoul");
-    }
-    if (ptr) {
-      p = ptr;
-    } else {
-      p = &t_ptr;
-    }
     q = s;
     ch = (unsigned char)*q;
-    while (1) {
-      tmp___0 = __ctype_b_loc();
 
-      q++;
-      ch = (unsigned char)*q;
-    }
   while_break:;
 
     tmp___1 = __errno_location();
     *tmp___1 = 0;
     tmp = strtoul(s, p, strtol_base);
-    if ((unsigned long)*p == (unsigned long)s) {
-      if (valid_suffixes) {
 
-      } else {
-        return ((strtol_error)4);
-      }
-    } else {
-      tmp___4 = __errno_location();
-      if (*tmp___4 != 0) {
-        tmp___3 = __errno_location();
-
-        err = (strtol_error)1;
-      }
-    }
-    if (!valid_suffixes) {
-      *val = tmp;
-      return (err);
-    }
-    if ((int)*(*p) != 0) {
-      base = 1024;
-      suffixes = 1;
-      tmp___5 = strchr(valid_suffixes, (int)*(*p));
-
-      tmp___6 = strchr(valid_suffixes, '0');
-
-      goto switch_default;
-    case_98:
-      overflow = bkm_scale___0(&tmp, 512);
-      goto switch_break___0;
-    case_66___0:
-      overflow = bkm_scale___0(&tmp, 1024);
-      goto switch_break___0;
-    case_99:
-      overflow = (strtol_error)0;
-      goto switch_break___0;
-    case_69:
-      overflow = bkm_scale_by_power___0(&tmp, base, 6);
-      goto switch_break___0;
-    case_71:
-      overflow = bkm_scale_by_power___0(&tmp, base, 3);
-      goto switch_break___0;
-    case_107:
-      overflow = bkm_scale_by_power___0(&tmp, base, 1);
-      goto switch_break___0;
-    case_77:
-      overflow = bkm_scale_by_power___0(&tmp, base, 2);
-      goto switch_break___0;
-    case_80:
-      overflow = bkm_scale_by_power___0(&tmp, base, 5);
-      goto switch_break___0;
-    case_84:
-      overflow = bkm_scale_by_power___0(&tmp, base, 4);
-      goto switch_break___0;
-    case_119:
-      overflow = bkm_scale___0(&tmp, 2);
-      goto switch_break___0;
-    case_89:
-      overflow = bkm_scale_by_power___0(&tmp, base, 8);
-      goto switch_break___0;
-    case_90:
-      overflow = bkm_scale_by_power___0(&tmp, base, 7);
-      goto switch_break___0;
-    switch_default:
-      *val = tmp;
-      return ((strtol_error)((unsigned int)err | 2U));
-    switch_break___0:
-      err = (strtol_error)((unsigned int)err | (unsigned int)overflow);
-      *p += suffixes;
-    }
     *val = tmp;
     return (err);
   }
@@ -745,23 +613,11 @@ void *xmalloc(size_t n) {
   {
     tmp = malloc(n);
     p = tmp;
-    if (!p) {
-    }
-    return (p);
-  }
-}
-void *xrealloc(void *p, size_t n) {
 
-  {
-    p = realloc(p, n);
-    if (!p) {
-      if (n != 0UL) {
-        xalloc_die();
-      }
-    }
     return (p);
   }
 }
+
 void *xmemdup(void const *p, size_t s) __attribute__((__malloc__));
 void *xmemdup(void const *p, size_t s) {
   void *tmp;
@@ -788,7 +644,8 @@ __attribute__((__nothrow__))
 FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
     char *const *argv, int options,
     int (*compar)(FTSENT const **, FTSENT const **));
-
+FTS *xfts_open(char *const *argv, int options,
+               int (*compar)(FTSENT const **, FTSENT const **));
 _Bool cycle_warning_required(FTS const *fts, FTSENT const *ent);
 FTS *xfts_open(char *const *argv, int options,
                int (*compar)(FTSENT const **, FTSENT const **)) {
@@ -799,11 +656,7 @@ FTS *xfts_open(char *const *argv, int options,
   {
     tmp = fts_open(argv, options | 512, compar);
     fts = tmp;
-    if ((unsigned long)fts == (unsigned long)((void *)0)) {
-      tmp___0 = __errno_location();
 
-      xalloc_die();
-    }
     return (fts);
   }
 }
@@ -812,11 +665,23 @@ _Bool cycle_warning_required(FTS const *fts, FTSENT const *ent) {
 
   {
     if (fts->fts_options & 16) {
-
+      if (!(fts->fts_options & 1)) {
+        tmp = 1;
+      } else {
+        goto _L;
+      }
     } else {
     _L:
       if (fts->fts_options & 16) {
-
+        if (fts->fts_options & 1) {
+          if (ent->fts_level != 0L) {
+            tmp = 1;
+          } else {
+            tmp = 0;
+          }
+        } else {
+          tmp = 0;
+        }
       } else {
         tmp = 0;
       }
@@ -825,15 +690,7 @@ _Bool cycle_warning_required(FTS const *fts, FTSENT const *ent) {
   }
 }
 __attribute__((__noreturn__)) void xalloc_die(void);
-void xalloc_die(void) {
-  char *tmp;
 
-  {
-    tmp = gettext("memory exhausted");
-    error((int)exit_failure, 0, "%s", tmp);
-    abort();
-  }
-}
 extern int printf(char const *__restrict __format, ...);
 extern int fputs_unlocked(char const *__restrict __s,
                           FILE *__restrict __stream);
@@ -841,23 +698,14 @@ char const version_etc_copyright[47];
 void version_etc_arn(FILE *stream, char const *command_name,
                      char const *package, char const *version,
                      char const *const *authors, size_t n_authors);
+void version_etc_va(FILE *stream, char const *command_name, char const *package,
+                    char const *version, va_list authors);
+void version_etc(FILE *stream, char const *command_name, char const *package,
+                 char const *version, ...) __attribute__((__sentinel__));
 
 void version_etc(FILE *stream, char const *command_name, char const *package,
                  char const *version, ...) __attribute__((__sentinel__));
 
-char const version_etc_copyright[47] = {
-    (char const)'C', (char const)'o', (char const)'p',   (char const)'y',
-    (char const)'r', (char const)'i', (char const)'g',   (char const)'h',
-    (char const)'t', (char const)' ', (char const)'%',   (char const)'s',
-    (char const)' ', (char const)'%', (char const)'d',   (char const)' ',
-    (char const)'F', (char const)'r', (char const)'e',   (char const)'e',
-    (char const)' ', (char const)'S', (char const)'o',   (char const)'f',
-    (char const)'t', (char const)'w', (char const)'a',   (char const)'r',
-    (char const)'e', (char const)' ', (char const)'F',   (char const)'o',
-    (char const)'u', (char const)'n', (char const)'d',   (char const)'a',
-    (char const)'t', (char const)'i', (char const)'o',   (char const)'n',
-    (char const)',', (char const)' ', (char const)'I',   (char const)'n',
-    (char const)'c', (char const)'.', (char const)'\000'};
 char const *parse_user_spec(char const *spec, uid_t *uid, gid_t *gid,
                             char **username, char **groupname);
 extern void endpwent(void);
@@ -953,11 +801,7 @@ static char const *parse_with_separator(char const *spec, char const *separator,
               xstrtoul((char const *)u, (char **)((void *)0), 10, &tmp___2, "");
           if ((unsigned int)tmp___3 == 0U) {
             if (tmp___2 <= 4294967295UL) {
-              if ((uid_t)tmp___2 != 4294967295U) {
-                unum = (uid_t)tmp___2;
-              } else {
-                error_msg = E_invalid_user;
-              }
+
             } else {
               error_msg = E_invalid_user;
             }
@@ -968,6 +812,13 @@ static char const *parse_with_separator(char const *spec, char const *separator,
       } else {
         unum = pwd->pw_uid;
         if ((unsigned long)g == (unsigned long)((void *)0)) {
+          if ((unsigned long)separator != (unsigned long)((void *)0)) {
+            gnum = pwd->pw_gid;
+            grp = getgrgid(gnum);
+
+            gname = xstrdup((char const *)tmp___5);
+            endgrent();
+          }
         }
       }
       endpwent();
@@ -984,11 +835,7 @@ static char const *parse_with_separator(char const *spec, char const *separator,
           tmp___8 = xstrtoul(g, (char **)((void *)0), 10, &tmp___7, "");
           if ((unsigned int)tmp___8 == 0U) {
             if (tmp___7 <= 4294967295UL) {
-              if ((gid_t)tmp___7 != 4294967295U) {
-                gnum = (gid_t)tmp___7;
-              } else {
-                error_msg = E_invalid_group;
-              }
+
             } else {
               error_msg = E_invalid_group;
             }
@@ -1032,6 +879,17 @@ char const *parse_user_spec(char const *spec, uid_t *uid, gid_t *gid,
     tmp___0 = parse_with_separator(spec, colon, uid, gid, username, groupname);
     error_msg = tmp___0;
     if (!colon) {
+      if (error_msg) {
+        tmp___1 = (char const *)strchr(spec, '.');
+        dot = tmp___1;
+        if (dot) {
+          tmp___2 =
+              parse_with_separator(spec, dot, uid, gid, username, groupname);
+          if (!tmp___2) {
+            error_msg = (char const *)((void *)0);
+          }
+        }
+      }
     }
     return (error_msg);
   }
@@ -1048,27 +906,7 @@ char *(__attribute__((__warn_unused_result__)) umaxtostr)(uintmax_t i,
     return (p);
   }
 }
-#pragma weak pthread_key_create
-#pragma weak pthread_getspecific
-#pragma weak pthread_setspecific
-#pragma weak pthread_key_delete
-#pragma weak pthread_self
-#pragma weak pthread_cancel
-size_t strnlen1(char const *string, size_t maxlen) {
-  char const *end;
-  char const *tmp;
 
-  {
-    tmp = (char const *)memchr((void const *)string, '\000', maxlen);
-    end = tmp;
-    if ((unsigned long)end != (unsigned long)((void *)0)) {
-      return ((size_t)((end - string) + 1L));
-    } else {
-      return (maxlen);
-    }
-  }
-}
-int open_safer(char const *file, int flags, ...);
 struct dev_ino *get_root_dev_ino(struct dev_ino *root_d_i);
 
 reg_syntax_t rpl_re_syntax_options;
@@ -1084,20 +922,18 @@ __inline static char *xcharalloc(size_t n) {
   void *tmp___0;
   void *tmp___1;
 
-  {
-    if (sizeof(char) == 1UL) {
-      tmp = xmalloc(n);
-      tmp___1 = tmp;
-    } else {
-      tmp___0 = xnmalloc(n, sizeof(char));
-      tmp___1 = tmp___0;
-    }
-    return ((char *)tmp___1);
-  }
+  { return ((char *)tmp___1); }
 }
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) iswprint)(
     wint_t __wc);
-
+char const *const quoting_style_args[9] = {
+    "literal", "shell",   "shell-always", "c", "c-maybe", "escape",
+    "locale",  "clocale", (char const *)0};
+enum quoting_style const quoting_style_vals[8] = {
+    (enum quoting_style const)0, (enum quoting_style const)1,
+    (enum quoting_style const)2, (enum quoting_style const)3,
+    (enum quoting_style const)4, (enum quoting_style const)5,
+    (enum quoting_style const)6, (enum quoting_style const)7};
 static struct quoting_options default_quoting_options;
 int set_char_quoting(struct quoting_options *o, char c, int i) {
   unsigned char uc;
@@ -1127,17 +963,7 @@ quoting_options_from_style(enum quoting_style style) {
     return (o);
   }
 }
-static char const *gettext_quote(char const *msgid, enum quoting_style s) {
-  char const *translation;
-  char const *tmp;
 
-  {
-    tmp = (char const *)gettext(msgid);
-    translation = tmp;
-
-    return (translation);
-  }
-}
 static size_t
 quotearg_buffer_restyled(char *buffer, size_t buffersize, char const *arg,
                          size_t argsize, enum quoting_style quoting_style,
@@ -1179,9 +1005,6 @@ quotearg_buffer_restyled(char *buffer, size_t buffersize, char const *arg,
     unibyte_locale = (_Bool)(tmp == 1UL);
     elide_outer_quotes = (_Bool)((flags & 2) != 0);
 
-    if ((unsigned int)quoting_style == 0U) {
-      goto case_0;
-    }
     goto switch_default;
   case_4:
     quoting_style = (enum quoting_style)3;
@@ -1220,9 +1043,6 @@ quotearg_buffer_restyled(char *buffer, size_t buffersize, char const *arg,
 
   while_break___3:;
 
-    if (len < buffersize) {
-      *(buffer + len) = (char)'\000';
-    }
     return (len);
   force_outer_quoting_style:
     tmp___7 = quotearg_buffer_restyled(
@@ -1257,31 +1077,7 @@ static char *quotearg_n_options(int n, char const *arg, size_t argsize,
     e = *tmp;
     n0 = (unsigned int)n;
     sv = slotvec;
-    if (n < 0) {
-      abort();
-    }
-    if (nslots <= n0) {
-      n1 = (size_t)(n0 + 1U);
-      preallocated = (_Bool)((unsigned long)sv == (unsigned long)(&slotvec0));
-      if (sizeof(ptrdiff_t) <= sizeof(size_t)) {
-        tmp___0 = -1;
-      } else {
-        tmp___0 = -2;
-      }
 
-      if (preallocated) {
-        tmp___1 = (struct slotvec *)((void *)0);
-      } else {
-        tmp___1 = sv;
-      }
-      sv = (struct slotvec *)xrealloc((void *)tmp___1, n1 * sizeof(*sv));
-      slotvec = sv;
-      if (preallocated) {
-        *sv = slotvec0;
-      }
-      memset((void *)(sv + nslots), 0, (n1 - (size_t)nslots) * sizeof(*sv));
-      nslots = (unsigned int)n1;
-    }
     size = (sv + n)->size;
     val = (sv + n)->val;
     flags = (int)(options->flags | 1);
@@ -1290,7 +1086,18 @@ static char *quotearg_n_options(int n, char const *arg, size_t argsize,
         (unsigned int const *)(options->quote_these_too),
         (char const *)options->left_quote, (char const *)options->right_quote);
     qsize = tmp___2;
+    if (size <= qsize) {
+      size = qsize + 1UL;
+      (sv + n)->size = size;
 
+      val = xcharalloc(size);
+      (sv + n)->val = val;
+      quotearg_buffer_restyled(val, size, arg, argsize,
+                               (enum quoting_style)options->style, flags,
+                               (unsigned int const *)(options->quote_these_too),
+                               (char const *)options->left_quote,
+                               (char const *)options->right_quote);
+    }
     tmp___3 = __errno_location();
     *tmp___3 = e;
     return (val);
@@ -1369,6 +1176,9 @@ void set_program_name(char const *argv0) {
 
     slash = (char const *)strrchr(argv0, '/');
 
+    if (base - argv0 >= 7L) {
+      tmp___0 = strncmp(base - 7, "/.libs/", (size_t)7);
+    }
     program_name = argv0;
     program_invocation_name = (char *)argv0;
     return;
@@ -1425,11 +1235,7 @@ int openat_safer(int fd, char const *file, int flags, ...) {
 
   {
     mode = (mode_t)0;
-    if (flags & 64) {
-      __builtin_va_start(ap, flags);
-      mode = __builtin_va_arg(ap, mode_t);
-      __builtin_va_end(ap);
-    }
+
     tmp = openat(fd, file, flags, mode);
     tmp___0 = fd_safer(tmp);
     return (tmp___0);
@@ -1449,62 +1255,17 @@ int open_safer(char const *file, int flags, ...) {
     return (tmp___0);
   }
 }
-int mbscasecmp(char const *s1, char const *s2) {
-  mbui_iterator_t iter1;
-  mbui_iterator_t iter2;
-  int cmp;
-  wint_t tmp;
-  wint_t tmp___0;
-  int tmp___1;
-  int tmp___2;
-  int tmp___4;
-  int tmp___5;
-  int tmp___7;
-  int tmp___8;
-  int tmp___9;
-  int tmp___10;
-  int tmp___11;
-  int tmp___12;
-  int tmp___13;
-  int tmp___14;
-  int tmp___15;
-  int tmp___16;
-  unsigned char const *p1;
-  unsigned char const *p2;
-  unsigned char c1;
-  unsigned char c2;
-  int tmp___18;
-  unsigned short const **tmp___19;
-  int tmp___21;
-  unsigned short const **tmp___22;
-  size_t tmp___25;
 
-  { tmp___25 = __ctype_get_mb_cur_max(); }
-}
-
+unsigned int const is_basic_table[8] = {
+    (unsigned int const)6656, (unsigned int const)4294967279U,
+    (unsigned int const)4294967294U, (unsigned int const)2147483646};
+extern __attribute__((__nothrow__, __noreturn__)) void(
+    __attribute__((__leaf__)) exit)(int __status);
 extern int optind;
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) getopt_long)(
+    int ___argc, char *const *___argv, char const *__shortopts,
+    struct option const *__longopts, int *__longind);
 
-#pragma weak pthread_mutex_init
-#pragma weak pthread_mutex_lock
-#pragma weak pthread_mutex_unlock
-#pragma weak pthread_mutex_destroy
-#pragma weak pthread_rwlock_init
-#pragma weak pthread_rwlock_rdlock
-#pragma weak pthread_rwlock_wrlock
-#pragma weak pthread_rwlock_unlock
-#pragma weak pthread_rwlock_destroy
-#pragma weak pthread_once
-#pragma weak pthread_cond_init
-#pragma weak pthread_cond_wait
-#pragma weak pthread_cond_signal
-#pragma weak pthread_cond_broadcast
-#pragma weak pthread_cond_destroy
-#pragma weak pthread_mutexattr_init
-#pragma weak pthread_mutexattr_settype
-#pragma weak pthread_mutexattr_destroy
-#pragma weak pthread_self
-#pragma weak pthread_cancel
-extern struct passwd *getpwuid(__uid_t __uid);
 void i_ring_init(I_ring *ir, int default_val);
 int i_ring_push(I_ring *ir, int val);
 int i_ring_pop(I_ring *ir);
@@ -1517,14 +1278,7 @@ void i_ring_init(I_ring *ir, int default_val) {
     ir->ir_front = 0U;
     ir->ir_back = 0U;
     i = 0;
-    while (1) {
 
-      if (!(i < 4)) {
-        goto while_break;
-      }
-      ir->ir_data[i] = default_val;
-      i++;
-    }
   while_break:
     ir->ir_default_val = default_val;
     return;
@@ -1534,92 +1288,59 @@ _Bool i_ring_empty(I_ring const *ir) {
 
   { return ((_Bool)ir->ir_empty); }
 }
+int i_ring_push(I_ring *ir, int val) {
+  unsigned int dest_idx;
+  int old_val;
 
+  {
+    dest_idx = (ir->ir_front + (unsigned int)(!ir->ir_empty)) % 4U;
+    old_val = ir->ir_data[dest_idx];
+    ir->ir_data[dest_idx] = val;
+    ir->ir_front = dest_idx;
+
+    ir->ir_empty = (_Bool)0;
+    return (old_val);
+  }
+}
 int i_ring_pop(I_ring *ir) {
   int top_val;
   _Bool tmp;
 
   {
     tmp = i_ring_empty((I_ring const *)ir);
-    if (tmp) {
-      abort();
-    }
+
     top_val = ir->ir_data[ir->ir_front];
     ir->ir_data[ir->ir_front] = ir->ir_default_val;
-
+    if (ir->ir_front == ir->ir_back) {
+      ir->ir_empty = (_Bool)1;
+    } else {
+      ir->ir_front = ((ir->ir_front + 4U) - 1U) % 4U;
+    }
     return (top_val);
   }
 }
-
+_Bool(__attribute__((__warn_unused_result__)) hash_rehash)(
+    Hash_table *table___0, size_t candidate);
 void *hash_delete(Hash_table *table___0, void const *entry);
-__inline static size_t rotr_sz(size_t x, int n) {
 
-  {}
-}
 static struct hash_tuning const default_tuning = {
     (float)0.0, (float)1.0, (float)0.8, (float)1.414, (_Bool)0};
 
-size_t hash_string(char const *string, size_t n_buckets) {
-  size_t value;
-  unsigned char ch;
-
-  {
-    value = (size_t)0;
-
-  while_break:;
-    return (value);
-  }
-}
-static _Bool is_prime(size_t candidate) {
-  size_t divisor;
-  size_t square;
-  int tmp;
-
-  {
-    divisor = (size_t)3;
-    square = divisor * divisor;
-
-  while_break:;
-
-    return ((_Bool)tmp);
-  }
-}
 static size_t next_prime(size_t candidate) {
   _Bool tmp;
 
   {
-    if (candidate < 10UL) {
-      candidate = (size_t)10;
-    }
+
     candidate |= 1UL;
     while (1) {
 
-      if (0xffffffffffffffffUL != candidate) {
-        tmp = is_prime(candidate);
-
-      } else {
-        goto while_break;
-      }
       candidate += 2UL;
     }
   while_break:;
     return (candidate);
   }
 }
-static size_t raw_hasher(void const *data, size_t n) {
-  size_t val;
-  size_t tmp;
 
-  {
-    tmp = rotr_sz((size_t)data, 3);
-    val = tmp;
-    return (val % n);
-  }
-}
-static _Bool raw_comparator(void const *a, void const *b) {
-
-  { return ((_Bool)((unsigned long)a == (unsigned long)b)); }
-}
 static _Bool check_tuning(Hash_table *table___0) {
   Hash_tuning const *tuning;
   float epsilon;
@@ -1628,10 +1349,7 @@ static _Bool check_tuning(Hash_table *table___0) {
     tuning = table___0->tuning;
 
     epsilon = 0.1f;
-    if (epsilon < (float)tuning->growth_threshold) {
-      if (tuning->growth_threshold < (float const)((float)1 - epsilon)) {
-      }
-    }
+
     table___0->tuning = &default_tuning;
     return ((_Bool)0);
   }
@@ -1641,11 +1359,13 @@ static size_t compute_bucket_size(size_t candidate, Hash_tuning const *tuning) {
   int tmp;
 
   {
-    if (!tuning->is_n_buckets) {
 
-      candidate = (size_t)new_candidate;
-    }
     candidate = next_prime(candidate);
+    if (sizeof(ptrdiff_t) <= sizeof(size_t)) {
+      tmp = -1;
+    } else {
+      tmp = -2;
+    }
 
     return (candidate);
   }
@@ -1659,32 +1379,19 @@ Hash_table *(__attribute__((__warn_unused_result__)) hash_initialize)(
   _Bool tmp;
 
   {
-    if ((unsigned long)hasher == (unsigned long)((void *)0)) {
-      hasher = &raw_hasher;
-    }
-    if ((unsigned long)comparator == (unsigned long)((void *)0)) {
-      comparator = &raw_comparator;
-    }
+
     table___0 = (Hash_table *)malloc(sizeof(*table___0));
-    if ((unsigned long)table___0 == (unsigned long)((void *)0)) {
-      return ((Hash_table *)((void *)0));
-    }
-    if (!tuning) {
-      tuning = &default_tuning;
-    }
+
     table___0->tuning = tuning;
     tmp = check_tuning(table___0);
     if (!tmp) {
       goto fail;
     }
     table___0->n_buckets = compute_bucket_size(candidate, tuning);
-    if (!table___0->n_buckets) {
-      goto fail;
-    }
 
-    if ((unsigned long)table___0->bucket == (unsigned long)((void *)0)) {
-      goto fail;
-    }
+    table___0->bucket = (struct hash_entry *)calloc(
+        table___0->n_buckets, sizeof(*(table___0->bucket)));
+
     table___0->bucket_limit =
         (struct hash_entry const *)(table___0->bucket + table___0->n_buckets);
     table___0->n_buckets_used = (size_t)0;
@@ -1700,28 +1407,6 @@ Hash_table *(__attribute__((__warn_unused_result__)) hash_initialize)(
   }
 }
 
-static struct hash_entry *allocate_entry(Hash_table *table___0) {
-  struct hash_entry *new;
-
-  {
-    if (table___0->free_entry_list) {
-      new = table___0->free_entry_list;
-      table___0->free_entry_list = new->next;
-    } else {
-      new = (struct hash_entry *)malloc(sizeof(*new));
-    }
-    return (new);
-  }
-}
-static void free_entry(Hash_table *table___0, struct hash_entry *entry) {
-
-  {
-    entry->data = (void *)0;
-    entry->next = table___0->free_entry_list;
-    table___0->free_entry_list = entry;
-    return;
-  }
-}
 static void *hash_find_entry(Hash_table *table___0, void const *entry,
                              struct hash_entry **bucket_head, _Bool delete) {
   struct hash_entry *bucket;
@@ -1737,24 +1422,12 @@ static void *hash_find_entry(Hash_table *table___0, void const *entry,
   {
     tmp = (*(table___0->hasher))(entry, table___0->n_buckets);
     bucket = table___0->bucket + tmp;
-    if (!((unsigned long)bucket < (unsigned long)table___0->bucket_limit)) {
-      abort();
-    }
+
     *bucket_head = bucket;
     if ((unsigned long)bucket->data == (unsigned long)((void *)0)) {
       return ((void *)0);
     }
-    if ((unsigned long)entry == (unsigned long)bucket->data) {
-      goto _L;
-    } else {
-      tmp___0 = (*(table___0->comparator))(entry, (void const *)bucket->data);
-      if (tmp___0) {
-      _L:
-        data = bucket->data;
 
-        return (data);
-      }
-    }
     cursor = bucket;
     while (1) {
 
@@ -1764,7 +1437,8 @@ static void *hash_find_entry(Hash_table *table___0, void const *entry,
       if ((unsigned long)entry == (unsigned long)(cursor->next)->data) {
         goto _L___0;
       } else {
-
+        tmp___1 = (*(table___0->comparator))(
+            entry, (void const *)(cursor->next)->data);
         if (tmp___1) {
         _L___0:
           data___0 = (cursor->next)->data;
@@ -1778,79 +1452,7 @@ static void *hash_find_entry(Hash_table *table___0, void const *entry,
     return ((void *)0);
   }
 }
-static _Bool transfer_entries(Hash_table *dst, Hash_table *src, _Bool safe) {
-  struct hash_entry *bucket;
-  struct hash_entry *cursor;
-  struct hash_entry *next;
-  void *data;
-  struct hash_entry *new_bucket;
-  size_t tmp;
-  size_t tmp___0;
-  struct hash_entry *new_entry;
-  struct hash_entry *tmp___1;
 
-  {
-    bucket = src->bucket;
-
-  while_break:;
-    return ((_Bool)1);
-  }
-}
-_Bool(__attribute__((__warn_unused_result__)) hash_rehash)(
-    Hash_table *table___0, size_t candidate) {
-  Hash_table storage;
-  Hash_table *new_table;
-  size_t new_size;
-  size_t tmp;
-  _Bool tmp___0;
-  _Bool tmp___1;
-  _Bool tmp___2;
-
-  {
-    tmp = compute_bucket_size(candidate, table___0->tuning);
-    new_size = tmp;
-    if (!new_size) {
-      return ((_Bool)0);
-    }
-
-    new_table = &storage;
-
-    if ((unsigned long)new_table->bucket == (unsigned long)((void *)0)) {
-      return ((_Bool)0);
-    }
-    new_table->n_buckets = new_size;
-
-    new_table->n_buckets_used = (size_t)0;
-    new_table->n_entries = (size_t)0;
-    new_table->tuning = table___0->tuning;
-    new_table->hasher = table___0->hasher;
-    new_table->comparator = table___0->comparator;
-    new_table->data_freer = table___0->data_freer;
-    new_table->free_entry_list = table___0->free_entry_list;
-    tmp___0 = transfer_entries(new_table, table___0, (_Bool)0);
-    if (tmp___0) {
-      free((void *)table___0->bucket);
-      table___0->bucket = new_table->bucket;
-      table___0->bucket_limit = new_table->bucket_limit;
-      table___0->n_buckets = new_table->n_buckets;
-      table___0->n_buckets_used = new_table->n_buckets_used;
-      table___0->free_entry_list = new_table->free_entry_list;
-      return ((_Bool)1);
-    }
-    table___0->free_entry_list = new_table->free_entry_list;
-    tmp___1 = transfer_entries(table___0, new_table, (_Bool)1);
-    if (tmp___1) {
-      tmp___2 = transfer_entries(table___0, new_table, (_Bool)0);
-      if (!tmp___2) {
-        abort();
-      }
-    } else {
-      abort();
-    }
-    free((void *)new_table->bucket);
-    return ((_Bool)0);
-  }
-}
 void *(__attribute__((__warn_unused_result__)) hash_insert)(
     Hash_table *table___0, void const *entry) {
   void *data;
@@ -1864,23 +1466,9 @@ void *(__attribute__((__warn_unused_result__)) hash_insert)(
   struct hash_entry *tmp___2;
 
   {
-    if (!entry) {
-      abort();
-    }
+
     data = hash_find_entry(table___0, entry, &bucket, (_Bool)0);
 
-    if (bucket->data) {
-      tmp___2 = allocate_entry(table___0);
-      new_entry = tmp___2;
-      if ((unsigned long)new_entry == (unsigned long)((void *)0)) {
-        return ((void *)0);
-      }
-      new_entry->data = (void *)entry;
-      new_entry->next = bucket->next;
-      bucket->next = new_entry;
-      (table___0->n_entries)++;
-      return ((void *)entry);
-    }
     bucket->data = (void *)entry;
     (table___0->n_entries)++;
     (table___0->n_buckets_used)++;
@@ -1907,46 +1495,6 @@ void *hash_delete(Hash_table *table___0, void const *entry) {
 }
 size_t hash_pjw(void const *x, size_t tablesize);
 
-_Bool triple_compare_ino_str(void const *x, void const *y) {
-  struct F_triple const *a;
-  struct F_triple const *b;
-  int tmp___0;
-  int tmp___1;
-
-  {
-    a = (struct F_triple const *)x;
-    b = (struct F_triple const *)y;
-    if (a->st_ino == b->st_ino) {
-
-    } else {
-      tmp___0 = 0;
-    }
-    return ((_Bool)tmp___0);
-  }
-}
-void triple_free(void *x) {
-  struct F_triple *a;
-
-  {
-    a = (struct F_triple *)x;
-    free((void *)a->name);
-    free((void *)a);
-    return;
-  }
-}
-size_t hash_pjw(void const *x, size_t tablesize) {
-  char const *s;
-  size_t h;
-
-  {
-    h = (size_t)0;
-    s = (char const *)x;
-
-  while_break:;
-    return (h % tablesize);
-  }
-}
-
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(2, 3),
                                                        __leaf__)) fstatat)(
     int __fd, char const *__restrict __file, struct stat *__restrict __buf,
@@ -1955,7 +1503,8 @@ __attribute__((__nothrow__)) int(__attribute__((__warn_unused_result__,
                                                 __leaf__)) fts_close)(FTS *sp);
 __attribute__((__nothrow__))
 FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp);
-
+__attribute__((__nothrow__)) int(__attribute__((__leaf__)) fts_set)(
+    FTS *sp __attribute__((__unused__)), FTSENT *p, int instr);
 extern void(__attribute__((__nonnull__(1, 4))) qsort)(
     void *__base, size_t __nmemb, size_t __size,
     int (*__compar)(void const *, void const *));
@@ -1977,7 +1526,11 @@ static _Bool AD_compare(void const *x, void const *y) {
   {
     ax = (struct Active_dir const *)x;
     ay = (struct Active_dir const *)y;
+    if (ax->ino == ay->ino) {
 
+    } else {
+      tmp = 0;
+    }
     return ((_Bool)tmp);
   }
 }
@@ -2000,9 +1553,7 @@ static _Bool setup_dir(FTS *fts) {
     } else {
       fts->fts_cycle.state =
           (struct cycle_check_state *)malloc(sizeof(*(fts->fts_cycle.state)));
-      if (!fts->fts_cycle.state) {
-        return ((_Bool)0);
-      }
+
       cycle_check_init(fts->fts_cycle.state);
     }
     return ((_Bool)1);
@@ -2015,7 +1566,37 @@ static _Bool enter_dir(FTS *fts, FTSENT *ent) {
   struct Active_dir *ad_from_table;
   _Bool tmp___0;
 
-  { return ((_Bool)1); }
+  {
+    if (fts->fts_options & 258) {
+      st = (struct stat const *)(ent->fts_statp);
+      tmp = (struct Active_dir *)malloc(sizeof(*ad));
+      ad = tmp;
+      if (!ad) {
+        return ((_Bool)0);
+      }
+      ad->dev = (dev_t)st->st_dev;
+      ad->ino = (ino_t)st->st_ino;
+      ad->fts_ent = ent;
+      ad_from_table =
+          (struct Active_dir *)hash_insert(fts->fts_cycle.ht, (void const *)ad);
+      if ((unsigned long)ad_from_table != (unsigned long)ad) {
+        free((void *)ad);
+        if (!ad_from_table) {
+          return ((_Bool)0);
+        }
+        ent->fts_cycle = ad_from_table->fts_ent;
+        ent->fts_info = (unsigned short)2;
+      }
+    } else {
+      tmp___0 = cycle_check(fts->fts_cycle.state,
+                            (struct stat const *)(ent->fts_statp));
+      if (tmp___0) {
+        ent->fts_cycle = ent;
+        ent->fts_info = (unsigned short)2;
+      }
+    }
+    return ((_Bool)1);
+  }
 }
 static void leave_dir(FTS *fts, FTSENT *ent) {
   struct stat const *st;
@@ -2029,9 +1610,7 @@ static void leave_dir(FTS *fts, FTSENT *ent) {
       obj.dev = (dev_t)st->st_dev;
       obj.ino = (ino_t)st->st_ino;
       found = hash_delete(fts->fts_cycle.ht, (void const *)(&obj));
-      if (!found) {
-        abort();
-      }
+
       free(found);
     } else {
       parent = ent->fts_parent;
@@ -2039,6 +1618,17 @@ static void leave_dir(FTS *fts, FTSENT *ent) {
         if (0L <= parent->fts_level) {
           while (1) {
 
+            if ((fts->fts_cycle.state)->chdir_counter == 0UL) {
+              abort();
+            }
+            if ((fts->fts_cycle.state)->dev_ino.st_ino == (ino_t)st->st_ino) {
+              if ((fts->fts_cycle.state)->dev_ino.st_dev == (dev_t)st->st_dev) {
+                (fts->fts_cycle.state)->dev_ino.st_dev =
+                    parent->fts_statp[0].st_dev;
+                (fts->fts_cycle.state)->dev_ino.st_ino =
+                    parent->fts_statp[0].st_ino;
+              }
+            }
             goto while_break;
           }
         while_break:;
@@ -2065,9 +1655,6 @@ static void fd_ring_clear(I_ring *fd_ring) {
       }
       tmp = i_ring_pop(fd_ring);
       fd = tmp;
-      if (0 <= fd) {
-        close(fd);
-      }
     }
   while_break:;
     return;
@@ -2078,6 +1665,9 @@ static void fts_set_stat_required(FTSENT *p, _Bool required) {
   {
     while (1) {
 
+      if (!((int)p->fts_info == 11)) {
+        abort();
+      }
       goto while_break;
     }
   while_break:;
@@ -2100,18 +1690,10 @@ __inline static DIR *opendirat(int fd, char const *dir) {
   {
     tmp = openat_safer(fd, dir, 67840);
     new_fd = tmp;
-    if (new_fd < 0) {
-      return ((DIR *)((void *)0));
-    }
+
     set_cloexec_flag(new_fd, (_Bool)1);
     dirp = rpl_fdopendir(new_fd);
-    if ((unsigned long)dirp == (unsigned long)((void *)0)) {
-      tmp___0 = __errno_location();
-      saved_errno = *tmp___0;
-      close(new_fd);
-      tmp___1 = __errno_location();
-      *tmp___1 = saved_errno;
-    }
+
     return (dirp);
   }
 }
@@ -2122,7 +1704,10 @@ static void cwd_advance_fd(FTS *sp, int fd, _Bool chdir_down_one) {
 
   {
     old = sp->fts_cwd_fd;
+    while (1) {
 
+      goto while_break;
+    }
   while_break:;
     if (chdir_down_one) {
       tmp = i_ring_push(&sp->fts_fd_ring, old);
@@ -2159,13 +1744,14 @@ __inline static int diropen(FTS const *sp, char const *dir) {
       tmp___2 = tmp___1;
     }
     fd = tmp___2;
-    if (0 <= fd) {
-      set_cloexec_flag(fd, (_Bool)1);
-    }
+
     return (fd);
   }
 }
-
+__attribute__((__nothrow__))
+FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
+    char *const *argv, int options,
+    int (*compar)(FTSENT const **, FTSENT const **));
 FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
     char *const *argv, int options,
     int (*compar)(FTSENT const **, FTSENT const **)) {
@@ -2195,9 +1781,7 @@ FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
     tmp = (FTSENT *)((void *)0);
 
     sp = (FTS *)malloc(sizeof(FTS));
-    if ((unsigned long)sp == (unsigned long)((void *)0)) {
-      return ((FTS *)((void *)0));
-    }
+
     memset((void *)sp, 0, sizeof(FTS));
     sp->fts_compar = compar;
     sp->fts_options = options;
@@ -2221,7 +1805,15 @@ FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
       }
       parent->fts_level = (ptrdiff_t)-1;
     }
-
+    if ((unsigned long)compar == (unsigned long)((void *)0)) {
+      tmp___7 = 1;
+    } else {
+      if (sp->fts_options & 1024) {
+        tmp___7 = 1;
+      } else {
+        tmp___7 = 0;
+      }
+    }
     defer_stat = (_Bool)tmp___7;
     root = (FTSENT *)((void *)0);
     nitems = (size_t)0;
@@ -2279,6 +1871,13 @@ FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
       goto mem3;
     }
     if (!(sp->fts_options & 4)) {
+      if (!(sp->fts_options & 512)) {
+        tmp___11 = diropen((FTS const *)sp, ".");
+        sp->fts_rfd = tmp___11;
+        if (tmp___11 < 0) {
+          sp->fts_options |= 4;
+        }
+      }
     }
     i_ring_init(&sp->fts_fd_ring, -1);
     return (sp);
@@ -2292,77 +1891,30 @@ FTS *(__attribute__((__warn_unused_result__, __leaf__)) fts_open)(
     return ((FTS *)((void *)0));
   }
 }
+static void fts_load(FTS *sp, FTSENT *p) {
+  size_t len;
+  char *cp;
+  size_t tmp;
+  char *tmp___0;
 
+  {
+    tmp = p->fts_namelen;
+    p->fts_pathlen = tmp;
+    len = tmp;
+    memmove((void *)sp->fts_path, (void const *)(p->fts_name), len + 1UL);
+    cp = strrchr((char const *)(p->fts_name), '/');
+
+    tmp___0 = sp->fts_path;
+    p->fts_path = tmp___0;
+    p->fts_accpath = tmp___0;
+    return;
+  }
+}
 __attribute__((__nothrow__)) int(__attribute__((__warn_unused_result__,
                                                 __leaf__)) fts_close)(FTS *sp);
-int(__attribute__((__warn_unused_result__, __leaf__)) fts_close)(FTS *sp) {
-  FTSENT *freep;
-  FTSENT *p;
-  int saved_errno;
-  int *tmp;
-  int tmp___0;
-  int *tmp___1;
-  int tmp___2;
-  int *tmp___3;
-  int tmp___4;
-  int *tmp___5;
 
-  {
-    saved_errno = 0;
-    if (sp->fts_cur) {
-      p = sp->fts_cur;
-
-    while_break:
-      free((void *)p);
-    }
-
-    free((void *)sp->fts_array);
-    free((void *)sp->fts_path);
-    if (sp->fts_options & 512) {
-
-    } else {
-    }
-    fd_ring_clear(&sp->fts_fd_ring);
-
-    free_dir(sp);
-    free((void *)sp);
-    if (saved_errno) {
-      tmp___5 = __errno_location();
-      *tmp___5 = saved_errno;
-      return (-1);
-    }
-    return (0);
-  }
-}
 extern __attribute__((__nothrow__)) int(__attribute__((
     __nonnull__(2), __leaf__)) fstatfs)(int __fildes, struct statfs *__buf);
-static _Bool dirent_inode_sort_may_be_useful(int dir_fd) {
-  struct statfs fs_buf;
-  int tmp;
-
-  {
-    tmp = fstatfs(dir_fd, &fs_buf);
-
-    goto switch_default;
-  case_16914836:
-    return ((_Bool)0);
-  switch_default:
-    return ((_Bool)1);
-
-    return ((_Bool)0);
-  }
-}
-
-static _Bool LCO_compare(void const *x, void const *y) {
-  struct LCO_ent const *ax;
-  struct LCO_ent const *ay;
-
-  {
-    ax = (struct LCO_ent const *)x;
-    ay = (struct LCO_ent const *)y;
-    return ((_Bool)(ax->st_dev == ay->st_dev));
-  }
-}
 
 __attribute__((__nothrow__))
 FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp);
@@ -2408,11 +1960,20 @@ FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp) {
   FTSENT *tmp___32;
 
   {
-
+    if ((unsigned long)sp->fts_cur == (unsigned long)((void *)0)) {
+      return ((FTSENT *)((void *)0));
+    } else {
+      if (sp->fts_options & 8192) {
+        return ((FTSENT *)((void *)0));
+      }
+    }
     p = sp->fts_cur;
     instr = p->fts_instr;
     p->fts_instr = (unsigned short)3;
-
+    if ((int)instr == 1) {
+      p->fts_info = fts_stat(sp, p, (_Bool)0);
+      return (p);
+    }
     if ((int)instr == 2) {
       if ((int)p->fts_info == 12) {
         goto _L;
@@ -2421,6 +1982,10 @@ FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp) {
         _L:
           p->fts_info = fts_stat(sp, p, (_Bool)1);
           if ((int)p->fts_info == 1) {
+            if (!(sp->fts_options & 4)) {
+              tmp___1 = diropen((FTS const *)sp, ".");
+              p->fts_symfd = tmp___1;
+            }
           }
           goto check_for_dir;
         }
@@ -2445,13 +2010,37 @@ FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp) {
           }
         }
       }
-
+      if ((unsigned long)sp->fts_child != (unsigned long)((void *)0)) {
+      }
       if ((unsigned long)sp->fts_child != (unsigned long)((void *)0)) {
         tmp___3 = fts_safe_changedir(sp, p, -1, (char const *)p->fts_accpath);
+        if (tmp___3) {
+          tmp___2 = __errno_location();
+          p->fts_errno = *tmp___2;
+          p->fts_flags = (unsigned short)((int)p->fts_flags | 1);
+          p = sp->fts_child;
+          while (1) {
 
+            if (!((unsigned long)p != (unsigned long)((void *)0))) {
+              goto while_break___0;
+            }
+            p->fts_accpath = (p->fts_parent)->fts_accpath;
+            p = p->fts_link;
+          }
+        while_break___0:;
+        }
       } else {
         tmp___4 = fts_build(sp, 3);
         sp->fts_child = tmp___4;
+        if ((unsigned long)tmp___4 == (unsigned long)((void *)0)) {
+
+          while (1) {
+            leave_dir(sp, p);
+            goto while_break___1;
+          }
+        while_break___1:;
+          return (p);
+        }
       }
       p = sp->fts_child;
       sp->fts_child = (struct _ftsent *)((void *)0);
@@ -2463,13 +2052,60 @@ FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp) {
     if ((unsigned long)p != (unsigned long)((void *)0)) {
       sp->fts_cur = p;
       free((void *)tmp);
-
+      if (p->fts_level == 0L) {
+        fd_ring_clear(&sp->fts_fd_ring);
+        if (!(sp->fts_options & 4)) {
+          if (sp->fts_options & 512) {
+            if (sp->fts_options & 512) {
+              tmp___5 = -100;
+            } else {
+              tmp___5 = sp->fts_rfd;
+            }
+            cwd_advance_fd(sp, tmp___5, (_Bool)1);
+            tmp___8 = 0;
+          } else {
+            if (sp->fts_options & 512) {
+              tmp___6 = -100;
+            } else {
+              tmp___6 = sp->fts_rfd;
+            }
+            tmp___7 = fchdir(tmp___6);
+            tmp___8 = tmp___7;
+          }
+          if (tmp___8) {
+            tmp___9 = 1;
+          } else {
+            tmp___9 = 0;
+          }
+        } else {
+          tmp___9 = 0;
+        }
+        if (tmp___9) {
+          sp->fts_options |= 8192;
+          return ((FTSENT *)((void *)0));
+        }
+        free_dir(sp);
+        fts_load(sp, p);
+        setup_dir(sp);
+        goto check_for_dir;
+      }
       if ((int)p->fts_instr == 4) {
         goto next;
       }
       if ((int)p->fts_instr == 2) {
         p->fts_info = fts_stat(sp, p, (_Bool)1);
         if ((int)p->fts_info == 1) {
+          if (!(sp->fts_options & 4)) {
+            tmp___11 = diropen((FTS const *)sp, ".");
+            p->fts_symfd = tmp___11;
+            if (tmp___11 < 0) {
+              tmp___10 = __errno_location();
+              p->fts_errno = *tmp___10;
+              p->fts_info = (unsigned short)7;
+            } else {
+              p->fts_flags = (unsigned short)((int)p->fts_flags | 2);
+            }
+          }
         }
         p->fts_instr = (unsigned short)3;
       }
@@ -2491,21 +2127,45 @@ FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp) {
         if (p->fts_statp[0].st_size == 2L) {
           parent = p->fts_parent;
           if (0L < p->fts_level) {
+            if (parent->fts_n_dirs_remaining == 0UL) {
+              if (sp->fts_options & 8) {
 
+              } else {
+                goto _L___4;
+              }
+            } else {
+              goto _L___4;
+            }
           } else {
           _L___4:
             p->fts_info = fts_stat(sp, p, (_Bool)0);
+            if ((p->fts_statp[0].st_mode & 61440U) == 16384U) {
+              if (p->fts_level != 0L) {
+                if (parent->fts_n_dirs_remaining) {
+                  (parent->fts_n_dirs_remaining)--;
+                }
+              }
+            }
           }
         } else {
+          while (1) {
 
+            if (!(p->fts_statp[0].st_size == 1L)) {
+              abort();
+            }
+            goto while_break___2;
+          }
         while_break___2:;
         }
       }
       if ((int)p->fts_info == 1) {
-        if (p->fts_level == 0L) {
-          sp->fts_dev = p->fts_statp[0].st_dev;
-        }
+
         tmp___16 = enter_dir(sp, p);
+        if (!tmp___16) {
+          tmp___15 = __errno_location();
+          *tmp___15 = 12;
+          return ((FTSENT *)((void *)0));
+        }
       }
       return (p);
     }
@@ -2520,18 +2180,32 @@ FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp) {
       sp->fts_cur = tmp___18;
       return (tmp___18);
     }
+    while (1) {
 
+      if (!((int)p->fts_info != 11)) {
+        abort();
+      }
+      goto while_break___3;
+    }
   while_break___3:
     *(sp->fts_path + p->fts_pathlen) = (char)'\000';
     if (p->fts_level == 0L) {
       fd_ring_clear(&sp->fts_fd_ring);
       if (!(sp->fts_options & 4)) {
-
-        if (tmp___23) {
-          tmp___24 = 1;
+        if (sp->fts_options & 512) {
+          if (sp->fts_options & 512) {
+            tmp___20 = -100;
+          } else {
+            tmp___20 = sp->fts_rfd;
+          }
+          cwd_advance_fd(sp, tmp___20, (_Bool)1);
+          tmp___23 = 0;
         } else {
-          tmp___24 = 0;
+
+          tmp___22 = fchdir(tmp___21);
+          tmp___23 = tmp___22;
         }
+
       } else {
         tmp___24 = 0;
       }
@@ -2541,6 +2215,26 @@ FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp) {
         sp->fts_options |= 8192;
       }
     } else {
+      if ((int)p->fts_flags & 2) {
+        if (!(sp->fts_options & 4)) {
+
+          if (tmp___29) {
+            tmp___25 = __errno_location();
+            saved_errno = *tmp___25;
+            close(p->fts_symfd);
+            tmp___26 = __errno_location();
+            *tmp___26 = saved_errno;
+            tmp___27 = __errno_location();
+            p->fts_errno = *tmp___27;
+            sp->fts_options |= 8192;
+          }
+        }
+        close(p->fts_symfd);
+      } else {
+        if (!((int)p->fts_flags & 1)) {
+          tmp___31 = fts_safe_changedir(sp, p->fts_parent, -1, "..");
+        }
+      }
     }
     if (p->fts_errno) {
       p->fts_info = (unsigned short)7;
@@ -2548,41 +2242,31 @@ FTSENT *(__attribute__((__warn_unused_result__, __leaf__)) fts_read)(FTS *sp) {
       p->fts_info = (unsigned short)6;
     }
     if (p->fts_errno == 0) {
-
+      while (1) {
+        leave_dir(sp, p);
+        goto while_break___4;
+      }
     while_break___4:;
     }
-
+    if (sp->fts_options & 8192) {
+      tmp___32 = (FTSENT *)((void *)0);
+    } else {
+      tmp___32 = p;
+    }
     return (tmp___32);
   }
 }
 __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fts_set)(
     FTS *sp __attribute__((__unused__)), FTSENT *p, int instr);
-int(__attribute__((__leaf__)) fts_set)(FTS *sp __attribute__((__unused__)),
-                                       FTSENT *p, int instr) {
-  int *tmp;
-
-  {
-
-    p->fts_instr = (unsigned short)instr;
-    return (0);
-  }
-}
 
 static void set_stat_type(struct stat *st, unsigned int dtype) {
   mode_t type;
 
   {
 
-    if (dtype == 1U) {
-      goto case_1;
+    if (dtype == 12U) {
+      goto case_12;
     }
-    if (dtype == 10U) {
-      goto case_10;
-    }
-    if (dtype == 8U) {
-      goto case_8;
-    }
-
     goto switch_default;
   case_6:
     type = (mode_t)24576;
@@ -2666,20 +2350,55 @@ static FTSENT *fts_build(FTS *sp, int type) {
 
   {
     cur = sp->fts_cur;
-
-    if ((unsigned long)dirp == (unsigned long)((void *)0)) {
-      if (type == 3) {
-        cur->fts_info = (unsigned short)4;
-        tmp = __errno_location();
-        cur->fts_errno = *tmp;
+    if (!(sp->fts_options & 4)) {
+      if (sp->fts_options & 512) {
+        tmp___0 = opendirat(sp->fts_cwd_fd, (char const *)cur->fts_accpath);
+        dirp = tmp___0;
+      } else {
+        tmp___1 = opendir_safer((char const *)cur->fts_accpath);
+        dirp = tmp___1;
       }
-      return ((FTSENT *)((void *)0));
+    } else {
+      tmp___1 = opendir_safer((char const *)cur->fts_accpath);
+      dirp = tmp___1;
     }
 
+    if ((int)cur->fts_info == 11) {
+      cur->fts_info = fts_stat(sp, cur, (_Bool)0);
+    } else {
+      if (sp->fts_options & 256) {
+
+      while_break:
+        fts_stat(sp, cur, (_Bool)0);
+        tmp___3 = enter_dir(sp, cur);
+        if (!tmp___3) {
+          tmp___2 = __errno_location();
+          *tmp___2 = 12;
+          return ((FTSENT *)((void *)0));
+        }
+      }
+    }
     if (type == 2) {
       nlinks = (nlink_t)0;
       nostat = (_Bool)0;
     } else {
+      if (sp->fts_options & 8) {
+        if (sp->fts_options & 16) {
+          if (sp->fts_options & 32) {
+            tmp___4 = 0;
+          } else {
+            tmp___4 = 2;
+          }
+          nlinks = cur->fts_statp[0].st_nlink - (__nlink_t)tmp___4;
+          nostat = (_Bool)1;
+        } else {
+          nlinks = (nlink_t)-1;
+          nostat = (_Bool)0;
+        }
+      } else {
+        nlinks = (nlink_t)-1;
+        nostat = (_Bool)0;
+      }
     }
     if (nlinks) {
       goto _L___0;
@@ -2701,7 +2420,11 @@ static FTSENT *fts_build(FTS *sp, int type) {
             cur->fts_flags = (unsigned short)((int)cur->fts_flags | 1);
             descend = (_Bool)0;
             closedir(dirp);
-
+            if (sp->fts_options & 512) {
+              if (0 <= dir_fd) {
+                close(dir_fd);
+              }
+            }
             dirp = (DIR *)((void *)0);
           } else {
             descend = (_Bool)1;
@@ -2734,12 +2457,17 @@ static FTSENT *fts_build(FTS *sp, int type) {
       } else {
         goto while_break___0;
       }
-
+      if (!(sp->fts_options & 32)) {
+        if ((int)dp->d_name[0] == 46) {
+          if (!dp->d_name[1]) {
+            goto __Cont;
+          } else {
+          }
+        }
+      }
       tmp___9 = strlen((char const *)(dp->d_name));
       p = fts_alloc(sp, (char const *)(dp->d_name), tmp___9);
-      if ((unsigned long)p == (unsigned long)((void *)0)) {
-        goto mem1;
-      }
+
       tmp___14 = strlen((char const *)(dp->d_name));
       if (tmp___14 >= maxlen) {
         oldaddr = (void *)sp->fts_path;
@@ -2758,44 +2486,72 @@ static FTSENT *fts_build(FTS *sp, int type) {
           *tmp___11 = saved_errno;
           return ((FTSENT *)((void *)0));
         }
-
+        if ((unsigned long)oldaddr != (unsigned long)sp->fts_path) {
+          doadjust = (_Bool)1;
+          if (sp->fts_options & 4) {
+            cp = sp->fts_path + len;
+          }
+        }
         maxlen = sp->fts_pathlen - len;
       }
       tmp___15 = strlen((char const *)(dp->d_name));
       new_len = len + tmp___15;
-
+      if (new_len < len) {
+        free((void *)p);
+        fts_lfree(head);
+        closedir(dirp);
+        cur->fts_info = (unsigned short)7;
+        sp->fts_options |= 8192;
+        tmp___16 = __errno_location();
+        *tmp___16 = 36;
+        return ((FTSENT *)((void *)0));
+      }
       p->fts_level = level;
       p->fts_parent = sp->fts_cur;
       p->fts_pathlen = new_len;
       p->fts_statp[0].st_ino = dp->d_ino;
-
+      if (sp->fts_options & 4) {
+        p->fts_accpath = p->fts_path;
+        memmove((void *)cp, (void const *)(p->fts_name), p->fts_namelen + 1UL);
+      } else {
+        p->fts_accpath = p->fts_name;
+      }
       if ((unsigned long)sp->fts_compar == (unsigned long)((void *)0) ||
           sp->fts_options & 1024) {
-
+        if (sp->fts_options & 16) {
+          if (sp->fts_options & 8) {
+            if ((int)dp->d_type != 0) {
+              if (!((int)dp->d_type == 4)) {
+                tmp___17 = 1;
+              } else {
+                tmp___17 = 0;
+              }
+            } else {
+              tmp___17 = 0;
+            }
+          } else {
+            tmp___17 = 0;
+          }
+        } else {
+          tmp___17 = 0;
+        }
         skip_stat = (_Bool)tmp___17;
         p->fts_info = (unsigned short)11;
         set_stat_type(p->fts_statp, (unsigned int)dp->d_type);
         fts_set_stat_required(p, (_Bool)(!skip_stat));
+        if (sp->fts_options & 16) {
 
+        } else {
+          tmp___18 = 0;
+        }
         is_dir = (_Bool)tmp___18;
       } else {
         p->fts_info = fts_stat(sp, p, (_Bool)0);
-        if ((int)p->fts_info == 1) {
-          tmp___19 = 1;
-        } else {
-          if ((int)p->fts_info == 2) {
-            tmp___19 = 1;
-          } else {
-            if ((int)p->fts_info == 5) {
-              tmp___19 = 1;
-            } else {
-              tmp___19 = 0;
-            }
-          }
-        }
+
         is_dir = (_Bool)tmp___19;
       }
-
+      if (nlinks > 0UL) {
+      }
       p->fts_link = (struct _ftsent *)((void *)0);
       if ((unsigned long)head == (unsigned long)((void *)0)) {
         tail = p;
@@ -2808,16 +2564,32 @@ static FTSENT *fts_build(FTS *sp, int type) {
     __Cont:;
     }
   while_break___0:;
-    if (dirp) {
-      closedir(dirp);
-    }
 
+    if (sp->fts_options & 4) {
+      if (len == sp->fts_pathlen) {
+        cp--;
+      } else {
+      }
+      *cp = (char)'\000';
+    }
     if (descend) {
       if (type == 1 || !nitems) {
         if (cur->fts_level == 0L) {
           fd_ring_clear(&sp->fts_fd_ring);
           if (!(sp->fts_options & 4)) {
+            if (sp->fts_options & 512) {
+              if (sp->fts_options & 512) {
+                tmp___20 = -100;
+              } else {
+                tmp___20 = sp->fts_rfd;
+              }
+              cwd_advance_fd(sp, tmp___20, (_Bool)1);
+              tmp___23 = 0;
+            } else {
 
+              tmp___22 = fchdir(tmp___21);
+              tmp___23 = tmp___22;
+            }
             if (tmp___23) {
               tmp___24 = 1;
             } else {
@@ -2831,14 +2603,16 @@ static FTSENT *fts_build(FTS *sp, int type) {
           tmp___25 = fts_safe_changedir(sp, cur->fts_parent, -1, "..");
           tmp___26 = tmp___25;
         }
+        if (tmp___26) {
+          cur->fts_info = (unsigned short)7;
+          sp->fts_options |= 8192;
+          fts_lfree(head);
+          return ((FTSENT *)((void *)0));
+        }
       }
     }
-    if (!nitems) {
-      if (type == 3) {
-        cur->fts_info = (unsigned short)6;
-      }
-      fts_lfree(head);
-      return ((FTSENT *)((void *)0));
+
+    if (nitems > 10000UL) {
     }
 
     return (head);
@@ -2859,7 +2633,8 @@ static unsigned short fts_stat(FTS *sp, FTSENT *p, _Bool follow) {
 
   {
     sbp = p->fts_statp;
-
+    if (p->fts_level == 0L) {
+    }
     if (sp->fts_options & 2) {
       goto _L;
     } else {
@@ -2870,7 +2645,9 @@ static unsigned short fts_stat(FTS *sp, FTSENT *p, _Bool follow) {
           tmp = __errno_location();
           saved_errno = *tmp;
           tmp___1 = __errno_location();
-
+          if (*tmp___1 == 2) {
+            tmp___2 = lstat((char const *)p->fts_accpath, sbp);
+          }
           p->fts_errno = saved_errno;
           goto err;
         }
@@ -2887,10 +2664,33 @@ static unsigned short fts_stat(FTS *sp, FTSENT *p, _Bool follow) {
       }
     }
     if ((sbp->st_mode & 61440U) == 16384U) {
-
+      if (sp->fts_options & 32) {
+        tmp___6 = 0;
+      } else {
+        tmp___6 = 2;
+      }
       p->fts_n_dirs_remaining = sbp->st_nlink - (__nlink_t)tmp___6;
-
+      if ((int)p->fts_name[0] == 46) {
+        if (!p->fts_name[1]) {
+          goto _L___0;
+        } else {
+          if ((int)p->fts_name[1] == 46) {
+            if (!p->fts_name[2]) {
+            _L___0:
+              if (p->fts_level == 0L) {
+                tmp___7 = 1;
+              } else {
+                tmp___7 = 5;
+              }
+              return ((unsigned short)tmp___7);
+            }
+          }
+        }
+      }
       return ((unsigned short)1);
+    }
+    if ((sbp->st_mode & 61440U) == 40960U) {
+      return ((unsigned short)12);
     }
 
     return ((unsigned short)3);
@@ -2919,39 +2719,36 @@ static FTSENT *fts_sort(FTS *sp, FTSENT *head, size_t nitems) {
 
   {
     if (sizeof(&dummy) == sizeof(void *)) {
-      if ((long)(&dummy) == (long)((void *)(&dummy))) {
-        tmp = (int (*)(void const *, void const *))sp->fts_compar;
-      } else {
-        tmp = &fts_compar;
-      }
+
     } else {
       tmp = &fts_compar;
     }
     compare = tmp;
     if (nitems > sp->fts_nitems) {
       sp->fts_nitems = nitems + 40UL;
-
+      if (0xffffffffffffffffUL / sizeof(*a) < sp->fts_nitems) {
+        free((void *)sp->fts_array);
+        sp->fts_array = (struct _ftsent **)((void *)0);
+        sp->fts_nitems = (size_t)0;
+        return (head);
+      } else {
+        a = (FTSENT **)realloc((void *)sp->fts_array,
+                               sp->fts_nitems * sizeof(*a));
+      }
       sp->fts_array = a;
     }
     ap = sp->fts_array;
     p = head;
-    while (1) {
 
-      if (!p) {
-        goto while_break;
-      }
-      tmp___0 = ap;
-      ap++;
-      *tmp___0 = p;
-      p = p->fts_link;
-    }
   while_break:
     qsort((void *)sp->fts_array, nitems, sizeof(FTSENT *), compare);
     ap = sp->fts_array;
     head = *ap;
     while (1) {
       nitems--;
-
+      if (!nitems) {
+        goto while_break___0;
+      }
       (*(ap + 0))->fts_link = *(ap + 1);
       ap++;
     }
@@ -3006,7 +2803,13 @@ static _Bool fts_palloc(FTS *sp, size_t more) {
 
   {
     new_len = (sp->fts_pathlen + more) + 256UL;
-
+    if (new_len < sp->fts_pathlen) {
+      free((void *)sp->fts_path);
+      sp->fts_path = (char *)((void *)0);
+      tmp = __errno_location();
+      *tmp = 36;
+      return ((_Bool)0);
+    }
     sp->fts_pathlen = new_len;
     p = (char *)realloc((void *)sp->fts_path, sp->fts_pathlen);
 
@@ -3014,42 +2817,22 @@ static _Bool fts_palloc(FTS *sp, size_t more) {
     return ((_Bool)1);
   }
 }
-static void fts_padjust(FTS *sp, FTSENT *head) {
-  FTSENT *p;
-  char *addr;
 
-  {
-    addr = sp->fts_path;
-    p = sp->fts_child;
-
-  while_break:
-    p = head;
-    while (1) {
-
-      if (!(p->fts_level >= 0L)) {
-        goto while_break___1;
-      }
-      while (1) {
-
-        if ((unsigned long)p->fts_accpath != (unsigned long)(p->fts_name)) {
-          p->fts_accpath = addr + (p->fts_accpath - p->fts_path);
-        }
-        p->fts_path = addr;
-        goto while_break___2;
-      }
-    while_break___2:;
-    }
-  while_break___1:;
-    return;
-  }
-}
 static size_t fts_maxarglen(char *const *argv) {
   size_t len;
   size_t max;
 
   {
     max = (size_t)0;
+    while (1) {
 
+      if (!*argv) {
+        goto while_break;
+      }
+      len = strlen((char const *)*argv);
+
+      argv++;
+    }
   while_break:;
     return (max + 1UL);
   }
@@ -3073,18 +2856,21 @@ static int fts_safe_changedir(FTS *sp, FTSENT *p, int fd, char const *dir) {
   {
     if (dir) {
       tmp = strcmp(dir, "..");
-      if (tmp == 0) {
-        tmp___0 = 1;
-      } else {
-        tmp___0 = 0;
-      }
+
     } else {
       tmp___0 = 0;
     }
     is_dotdot = (_Bool)tmp___0;
-
+    if (sp->fts_options & 4) {
+      if (sp->fts_options & 512) {
+      }
+      return (0);
+    }
     if (fd < 0) {
       if (is_dotdot) {
+        if (sp->fts_options & 512) {
+          tmp___1 = i_ring_empty((I_ring const *)(&sp->fts_fd_ring));
+        }
       }
     }
     newfd = fd;
@@ -3122,7 +2908,10 @@ static int fts_safe_changedir(FTS *sp, FTSENT *p, int fd, char const *dir) {
         }
       }
     }
-
+    if (sp->fts_options & 512) {
+      cwd_advance_fd(sp, newfd, (_Bool)(!is_dotdot));
+      return (0);
+    }
     ret = fchdir(newfd);
   bail:
 
@@ -3217,12 +3006,7 @@ extern char *gid_to_name(gid_t gid) {
   {
     tmp = getgrgid(gid);
     grp = tmp;
-    if (grp) {
-      tmp___2 = grp->gr_name;
-    } else {
-      tmp___1 = umaxtostr((uintmax_t)gid, buf___1);
-      tmp___2 = tmp___1;
-    }
+
     tmp___3 = xstrdup((char const *)tmp___2);
     return (tmp___3);
   }
@@ -3240,12 +3024,7 @@ extern char *uid_to_name(uid_t uid) {
   {
     tmp = getpwuid(uid);
     pwd = tmp;
-    if (pwd) {
-      tmp___2 = pwd->pw_name;
-    } else {
-      tmp___1 = umaxtostr((uintmax_t)uid, buf___1);
-      tmp___2 = tmp___1;
-    }
+
     tmp___3 = xstrdup((char const *)tmp___2);
     return (tmp___3);
   }
@@ -3293,34 +3072,17 @@ static void describe_change(char const *file, enum Change_status changed,
     } else {
       spec = group;
     }
-    if ((unsigned int)changed == 2U) {
-      goto case_2;
+
+    if ((unsigned int)changed == 3U) {
+      goto case_3;
     }
 
     goto switch_default;
   case_2:
-    if (user) {
-      tmp___5 = gettext("changed ownership of %s to %s\n");
-      fmt = (char const *)tmp___5;
-    } else {
 
-      fmt = (char const *)tmp___8;
-    }
     goto switch_break;
   case_3:
-    if (user) {
-      tmp___9 = gettext("failed to change ownership of %s to %s\n");
-      fmt = (char const *)tmp___9;
-    } else {
-      if (group) {
-        tmp___10 = gettext("failed to change group of %s to %s\n");
-        tmp___12 = tmp___10;
-      } else {
-        tmp___11 = gettext("failed to change ownership of %s\n");
-        tmp___12 = tmp___11;
-      }
-      fmt = (char const *)tmp___12;
-    }
+
     goto switch_break;
   case_4:
     if (user) {
@@ -3365,7 +3127,26 @@ static enum RCH_status restricted_chown(int cwd_fd, char const *file,
     if (!((orig_st->st_mode & 61440U) == 32768U)) {
     }
     fd = openat(cwd_fd, file, open_flags);
+    if (!(0 <= fd)) {
+      tmp___2 = __errno_location();
+      if (*tmp___2 == 13) {
+        if ((orig_st->st_mode & 61440U) == 32768U) {
+          fd = openat(cwd_fd, file, 1 | open_flags);
 
+        } else {
+          goto _L___0;
+        }
+      } else {
+      _L___0:
+        tmp___1 = __errno_location();
+        if (*tmp___1 == 13) {
+          tmp___0 = 5;
+        } else {
+          tmp___0 = 6;
+        }
+        return ((enum RCH_status)tmp___0);
+      }
+    }
     tmp___6 = fstat(fd, &st);
     if (tmp___6 != 0) {
       status = (enum RCH_status)6;
@@ -3385,7 +3166,11 @@ static enum RCH_status restricted_chown(int cwd_fd, char const *file,
                   tmp___5 = fchown(fd, uid, gid);
                   if (tmp___5 == 0) {
                     tmp___4 = close(fd);
-
+                    if (tmp___4 == 0) {
+                      status = (enum RCH_status)2;
+                    } else {
+                      status = (enum RCH_status)6;
+                    }
                     return (status);
                   } else {
                     status = (enum RCH_status)6;
@@ -3470,9 +3255,6 @@ static _Bool change_file_owner(FTS *fts, FTSENT *ent, uid_t uid, gid_t gid,
     file = (char const *)ent->fts_accpath;
     ok = (_Bool)1;
     symlink_changed = (_Bool)1;
-    if ((int)ent->fts_info == 1) {
-      goto case_1;
-    }
 
     if ((int)ent->fts_info == 10) {
       goto case_10;
@@ -3486,10 +3268,43 @@ static _Bool change_file_owner(FTS *fts, FTSENT *ent, uid_t uid, gid_t gid,
     }
     goto switch_default;
   case_1:
+    if (chopt->recurse) {
+      if (chopt->root_dev_ino) {
+        if (ent->fts_statp[0].st_ino == (chopt->root_dev_ino)->st_ino) {
+          if (ent->fts_statp[0].st_dev == (chopt->root_dev_ino)->st_dev) {
+            while (1) {
+              tmp___4 = strcmp(file_full_name, "/");
+              if (tmp___4 == 0) {
+                tmp = quote(file_full_name);
+                tmp___0 =
+                    gettext("it is dangerous to operate recursively on %s");
+                error(0, 0, (char const *)tmp___0, tmp);
+              } else {
+                tmp___1 = quote_n(1, "/");
+                tmp___2 = quote_n(0, file_full_name);
 
+                error(0, 0, (char const *)tmp___3, tmp___2, tmp___1);
+              }
+              tmp___5 =
+                  gettext("use --no-preserve-root to override this failsafe");
+              error(0, 0, (char const *)tmp___5);
+              goto while_break;
+            }
+          while_break:
+            fts_set(fts, ent, 4);
+            tmp___6 = fts_read(fts);
+            ignore_ptr((void *)tmp___6);
+            return ((_Bool)0);
+          }
+        }
+      }
+      return ((_Bool)1);
+    }
     goto switch_break;
   case_6:
-
+    if (!chopt->recurse) {
+      return ((_Bool)1);
+    }
     goto switch_break;
   case_10:
     if (ent->fts_level == 0L) {
@@ -3507,16 +3322,7 @@ static _Bool change_file_owner(FTS *fts, FTSENT *ent, uid_t uid, gid_t gid,
     goto switch_break;
   case_2:
     tmp___15 = cycle_warning_required((FTS const *)fts, (FTSENT const *)ent);
-    if (tmp___15) {
-      while (1) {
-        tmp___13 = quote(file_full_name);
 
-        error(0, 0, (char const *)tmp___14, tmp___13);
-        goto while_break___0;
-      }
-    while_break___0:;
-      return ((_Bool)0);
-    }
     goto switch_break;
   switch_default:
     goto switch_break;
@@ -3548,6 +3354,11 @@ static _Bool change_file_owner(FTS *fts, FTSENT *ent, uid_t uid, gid_t gid,
       _L___3:
         file_stats = (struct stat const *)(ent->fts_statp);
         if (chopt->affect_symlink_referent) {
+          if ((file_stats->st_mode & 61440U) == 40960U) {
+            tmp___19 = fstatat(fts->fts_cwd_fd, file, &stat_buf, 0);
+
+            file_stats = (struct stat const *)(&stat_buf);
+          }
         }
         if (ok) {
           if (required_uid == 4294967295U) {
@@ -3575,6 +3386,23 @@ static _Bool change_file_owner(FTS *fts, FTSENT *ent, uid_t uid, gid_t gid,
       }
     }
     if (ok) {
+      if ((int)ent->fts_info == 1) {
+        goto _L___4;
+      } else {
+        if ((int)ent->fts_info == 2) {
+          goto _L___4;
+        } else {
+          if ((int)ent->fts_info == 6) {
+            goto _L___4;
+          } else {
+            if ((int)ent->fts_info == 4) {
+            _L___4:
+              if (chopt->root_dev_ino) {
+              }
+            }
+          }
+        }
+      }
     }
     if (do_chown) {
       if (!chopt->affect_symlink_referent) {
@@ -3587,6 +3415,12 @@ static _Bool change_file_owner(FTS *fts, FTSENT *ent, uid_t uid, gid_t gid,
         err = tmp___30;
         if ((unsigned int)err == 2U) {
           goto case_2___0;
+        }
+        if ((unsigned int)err == 5U) {
+          goto case_5;
+        }
+        if ((unsigned int)err == 6U) {
+          goto case_6___0;
         }
 
         if ((unsigned int)err == 3U) {
@@ -3611,7 +3445,44 @@ static _Bool change_file_owner(FTS *fts, FTSENT *ent, uid_t uid, gid_t gid,
       switch_break___0:;
       }
     }
+    if ((unsigned int const)chopt->verbosity != 2U) {
+      if (do_chown) {
+        if (ok) {
+          if (symlink_changed) {
 
+          } else {
+            tmp___37 = 0;
+          }
+        } else {
+          tmp___37 = 0;
+        }
+      } else {
+        tmp___37 = 0;
+      }
+      changed = (_Bool)tmp___37;
+      if (changed) {
+        goto _L___6;
+      } else {
+        if ((unsigned int const)chopt->verbosity == 0U) {
+        _L___6:
+          if (!ok) {
+            tmp___40 = 3;
+          } else {
+            if (!symlink_changed) {
+              tmp___39 = 1;
+            } else {
+
+              tmp___39 = tmp___38;
+            }
+            tmp___40 = tmp___39;
+          }
+          ch_status = (enum Change_status)tmp___40;
+          describe_change(file_full_name, ch_status,
+                          (char const *)chopt->user_name,
+                          (char const *)chopt->group_name);
+        }
+      }
+    }
     if (!chopt->recurse) {
       fts_set(fts, ent, 4);
     }
@@ -3657,10 +3528,7 @@ extern _Bool chown_files(char **files, int bit_flags, uid_t uid, gid_t gid,
       ent = fts_read(fts);
       if ((unsigned long)ent == (unsigned long)((void *)0)) {
         tmp___3 = __errno_location();
-        if (*tmp___3 != 0) {
 
-          ok = (_Bool)0;
-        }
         goto while_break;
       }
       tmp___4 = change_file_owner(fts, ent, uid, gid, required_uid,
@@ -3674,43 +3542,13 @@ extern _Bool chown_files(char **files, int bit_flags, uid_t uid, gid_t gid,
   }
 }
 extern char *optarg;
+extern __attribute__((__nothrow__)) int(
+    __attribute__((__nonnull__(1), __leaf__)) atexit)(void (*__func)(void));
+extern __attribute__((__nothrow__)) char *(
+    __attribute__((__leaf__)) textdomain)(char const *__domainname);
+extern __attribute__((__nothrow__)) char *(__attribute__((
+    __leaf__)) bindtextdomain)(char const *__domainname, char const *__dirname);
 
-__inline static void emit_ancillary_info(void) {
-  char *tmp;
-  char *tmp___0;
-  char *tmp___1;
-  char *tmp___2;
-  char const *lc_messages;
-  char const *tmp___3;
-  char *tmp___4;
-  char *tmp___5;
-  int tmp___6;
-  char *tmp___7;
-  char *tmp___8;
-
-  {
-    tmp = last_component(program_name);
-    tmp___0 = gettext("\nReport %s bugs to %s\n");
-    printf((char const *)tmp___0, tmp, "bug-coreutils@gnu.org");
-    tmp___1 = gettext("%s home page: <http://www.gnu.org/software/%s/>\n");
-    printf((char const *)tmp___1, "GNU coreutils", "coreutils");
-
-    fputs_unlocked((char const *)tmp___2, stdout);
-    tmp___3 = (char const *)setlocale(5, (char const *)((void *)0));
-    lc_messages = tmp___3;
-    if (lc_messages) {
-      tmp___6 = strncmp(lc_messages, "en_", (size_t)3);
-    }
-    tmp___7 = last_component(program_name);
-
-    printf((char const *)tmp___8, tmp___7);
-    return;
-  }
-}
-__inline static char *bad_cast(char const *s) {
-
-  { return ((char *)s); }
-}
 static char *reference_file;
 static struct option const long_options___1[14] = {
     {"recursive", 0, (int *)((void *)0), 'R'},
@@ -3742,37 +3580,7 @@ void usage(int status) {
   char *tmp___9;
   char *tmp___10;
 
-  {
-    if (status != 0) {
-      tmp = gettext("Try `%s --help\' for more information.\n");
-      fprintf(stderr, (char const *)tmp, program_name);
-    } else {
-
-      printf((char const *)tmp___0, program_name, program_name);
-
-      fputs_unlocked((char const *)tmp___1, stdout);
-
-      fputs_unlocked((char const *)tmp___2, stdout);
-
-      fputs_unlocked((char const *)tmp___3, stdout);
-
-      fputs_unlocked((char const *)tmp___4, stdout);
-
-      fputs_unlocked((char const *)tmp___5, stdout);
-
-      fputs_unlocked((char const *)tmp___6, stdout);
-      tmp___7 = gettext("      --help     display this help and exit\n");
-      fputs_unlocked((char const *)tmp___7, stdout);
-
-      fputs_unlocked((char const *)tmp___8, stdout);
-
-      fputs_unlocked((char const *)tmp___9, stdout);
-
-      printf((char const *)tmp___10, program_name, program_name, program_name);
-      emit_ancillary_info();
-    }
-    exit(status);
-  }
+  { exit(status); }
 }
 static struct dev_ino dev_ino_buf;
 int main(int argc, char **argv) {
@@ -3830,8 +3638,15 @@ int main(int argc, char **argv) {
         goto while_break;
       }
 
+      if (optc == 130) {
+        goto case_130;
+      }
+
       if (optc == 129) {
         goto case_129;
+      }
+      if (optc == 82) {
+        goto case_82;
       }
 
       goto switch_default;
@@ -3863,10 +3678,7 @@ int main(int argc, char **argv) {
       tmp = parse_user_spec((char const *)optarg, &required_uid, &required_gid,
                             &u_dummy, &g_dummy);
       e = tmp;
-      if (e) {
-        tmp___0 = quote((char const *)optarg);
-        error(1, 0, "%s: %s", e, tmp___0);
-      }
+
       goto switch_break;
     case_82:
       chopt.recurse = (_Bool)1;
@@ -3884,7 +3696,8 @@ int main(int argc, char **argv) {
       usage(0);
       goto switch_break;
     case_neg_131:
-
+      version_etc(stdout, "chown", "GNU coreutils", Version, "David MacKenzie",
+                  "Jim Meyering", (char *)((void *)0));
       exit(0);
       goto switch_break;
     switch_default:
@@ -3892,17 +3705,13 @@ int main(int argc, char **argv) {
     switch_break:;
     }
   while_break:;
+    if (chopt.recurse) {
 
-    chopt.affect_symlink_referent = (_Bool)(dereference != 0);
-    if (reference_file) {
-      tmp___5 = 1;
     } else {
-      tmp___5 = 2;
+      bit_flags = 16;
     }
-    if (argc - optind < tmp___5) {
+    chopt.affect_symlink_referent = (_Bool)(dereference != 0);
 
-      usage(1);
-    }
     if (reference_file) {
       tmp___9 = stat((char const *)reference_file, &ref_stats);
 
@@ -3914,12 +3723,7 @@ int main(int argc, char **argv) {
       tmp___10 = parse_user_spec((char const *)*(argv + optind), &uid, &gid,
                                  &chopt.user_name, &chopt.group_name);
       e___0 = tmp___10;
-      if (e___0) {
-        tmp___11 = quote((char const *)*(argv + optind));
-        error(1, 0, "%s: %s", e___0, tmp___11);
-      }
-      if (!chopt.user_name) {
-      }
+
       optind++;
     }
 

@@ -12,47 +12,23 @@ Custom chown error:
 Directory listing after custom chown:
 testdir_simple:      
 total 8     
-drwxr-xr-x 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file1
+-rw-r--r-- 1 user1 group1 0 6 file2
+-rw-r--r-- 1 user1 group1 0 6 file3.txt
+-rw-r--r-- 1 user1 group1 0 6 file4.tmp
 System chown output:
 System chown error:
 Directory listing after system chown:
 testdir_simple:      
 total 8     
-drwxr-xr-x 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
-Testing command: chown user1:group1 "testdir_with spaces"
-Structure type: simple
-Custom chown output:
-Custom chown error:
-Directory listing after custom chown:
-testdir_with spaces:     
-total 8     
-drwxr-xr-x 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
-System chown output:
-System chown error:
-Directory listing after system chown:
-testdir_with spaces:     
-total 8     
-drwxr-xr-x 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file1
+-rw-r--r-- 1 user1 group1 0 6 file2
+-rw-r--r-- 1 user1 group1 0 6 file3.txt
+-rw-r--r-- 1 user1 group1 0 6 file4.tmp
 Testing command: chown user1:group1 "testdir_nested"
 Structure type: nested
 Custom chown output:
@@ -60,95 +36,59 @@ Custom chown error:
 Directory listing after custom chown:
 testdir_nested:      
 total 16     
-drwxr-xr-x 4 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
-drwxr-xr-x 3 root root 4096 20 subdir1
-drwxr-xr-x 2 root root 4096 20 subdir2
+drwxr-xr-x 4 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file1
+drwxr-xr-x 3 user1 group1 4096 6 subdir1
+drwxr-xr-x 2 user1 group1 4096 6 subdir2
       
 testdir_nested/subdir1:      
 total 12     
-drwxr-xr-x 3 root root 4096 20 .
-drwxr-xr-x 4 user1 group1 4096 20 ..
--rw-r--r-- 1 root root 0 20 file2
-drwxr-xr-x 2 root root 4096 20 subsubdir
+drwxr-xr-x 3 user1 group1 4096 6 .
+drwxr-xr-x 4 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file2
+drwxr-xr-x 2 user1 group1 4096 6 subsubdir
       
 testdir_nested/subdir1/subsubdir:      
 total 8     
-drwxr-xr-x 2 root root 4096 20 .
-drwxr-xr-x 3 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file3
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 3 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file3
       
 testdir_nested/subdir2:      
 total 8     
-drwxr-xr-x 2 root root 4096 20 .
-drwxr-xr-x 4 user1 group1 4096 20 ..
--rw-r--r-- 1 root root 0 20 file4
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 4 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file4
 System chown output:
 System chown error:
 Directory listing after system chown:
 testdir_nested:      
 total 16     
-drwxr-xr-x 4 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
-drwxr-xr-x 3 root root 4096 20 subdir1
-drwxr-xr-x 2 root root 4096 20 subdir2
+drwxr-xr-x 4 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file1
+drwxr-xr-x 3 user1 group1 4096 6 subdir1
+drwxr-xr-x 2 user1 group1 4096 6 subdir2
       
 testdir_nested/subdir1:      
 total 12     
-drwxr-xr-x 3 root root 4096 20 .
-drwxr-xr-x 4 user1 group1 4096 20 ..
--rw-r--r-- 1 root root 0 20 file2
-drwxr-xr-x 2 root root 4096 20 subsubdir
+drwxr-xr-x 3 user1 group1 4096 6 .
+drwxr-xr-x 4 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file2
+drwxr-xr-x 2 user1 group1 4096 6 subsubdir
       
 testdir_nested/subdir1/subsubdir:      
 total 8     
-drwxr-xr-x 2 root root 4096 20 .
-drwxr-xr-x 3 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file3
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 3 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file3
       
 testdir_nested/subdir2:      
 total 8     
-drwxr-xr-x 2 root root 4096 20 .
-drwxr-xr-x 4 user1 group1 4096 20 ..
--rw-r--r-- 1 root root 0 20 file4
-Testing command: chown user1:group1 "testdir_symlinks"
-Structure type: symlinks
-Custom chown output:
-Custom chown error:
-Directory listing after custom chown:
-testdir_symlinks:      
-total 12     
-drwxr-xr-x 3 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
-lrwxrwxrwx 1 root root 27 20 symlink_dir
-lrwxrwxrwx 1 root root 28 20 symlink_file
-drwxr-xr-x 2 root root 4096 20 target_dir
--rw-r--r-- 1 root root 0 20 target_file
-      
-testdir_symlinks/target_dir:      
-total 8     
-drwxr-xr-x 2 root root 4096 20 .
-drwxr-xr-x 3 user1 group1 4096 20 ..
--rw-r--r-- 1 root root 0 20 nested_file
-System chown output:
-System chown error:
-Directory listing after system chown:
-testdir_symlinks:      
-total 12     
-drwxr-xr-x 3 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
-lrwxrwxrwx 1 root root 27 20 symlink_dir
-lrwxrwxrwx 1 root root 28 20 symlink_file
-drwxr-xr-x 2 root root 4096 20 target_dir
--rw-r--r-- 1 root root 0 20 target_file
-      
-testdir_symlinks/target_dir:      
-total 8     
-drwxr-xr-x 2 root root 4096 20 .
-drwxr-xr-x 3 user1 group1 4096 20 ..
--rw-r--r-- 1 root root 0 20 nested_file
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 4 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file4
 Testing command: chown user1:group1 "testdir_special"
 Structure type: special
 Custom chown output:
@@ -156,23 +96,23 @@ Custom chown error:
 Directory listing after custom chown:
 testdir_special:      
 total 8     
-drwxr-xr-x 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
-brw-r--r-- 1 root root 7, Sep 14:25
-crw-r--r-- 1 root root 1, Sep 14:25
-prw-r--r-- 1 root root 0 20 named_pipe
--rw-r--r-- 1 root root 0 20 regular_file
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+brw-r--r-- 1 user1 group1 7, Oct 20:22
+crw-r--r-- 1 user1 group1 1, Oct 20:22
+prw-r--r-- 1 user1 group1 0 6 named_pipe
+-rw-r--r-- 1 user1 group1 0 6 regular_file
 System chown output:
 System chown error:
 Directory listing after system chown:
 testdir_special:      
 total 8     
-drwxr-xr-x 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
-brw-r--r-- 1 root root 7, Sep 14:25
-crw-r--r-- 1 root root 1, Sep 14:25
-prw-r--r-- 1 root root 0 20 named_pipe
--rw-r--r-- 1 root root 0 20 regular_file
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+brw-r--r-- 1 user1 group1 7, Oct 20:22
+crw-r--r-- 1 user1 group1 1, Oct 20:22
+prw-r--r-- 1 user1 group1 0 6 named_pipe
+-rw-r--r-- 1 user1 group1 0 6 regular_file
 Testing command: chown user1:group1 "testdir_permissions"
 Structure type: permissions
 Custom chown output:
@@ -180,81 +120,310 @@ Custom chown error:
 Directory listing after custom chown:
 testdir_permissions:      
 total 12     
-drwxr-xr-x 3 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
-drwxr-xr-x 2 root root 4096 20 dir_755
--r-------- 1 root root 0 20 file_400
--rw-r--r-- 1 root root 0 20 file_644
--rwxr-xr-x 1 root root 0 20 file_755
+drwxr-xr-x 3 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+drwxr-xr-x 2 user1 group1 4096 6 dir_755
+-r-------- 1 user1 group1 0 6 file_400
+-rw-r--r-- 1 user1 group1 0 6 file_644
+-rwxr-xr-x 1 user1 group1 0 6 file_755
       
 testdir_permissions/dir_755:      
 total 8     
-drwxr-xr-x 2 root root 4096 20 .
-drwxr-xr-x 3 user1 group1 4096 20 ..
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 3 user1 group1 4096 6 ..
 System chown output:
 System chown error:
 Directory listing after system chown:
 testdir_permissions:      
 total 12     
-drwxr-xr-x 3 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
-drwxr-xr-x 2 root root 4096 20 dir_755
--r-------- 1 root root 0 20 file_400
--rw-r--r-- 1 root root 0 20 file_644
--rwxr-xr-x 1 root root 0 20 file_755
+drwxr-xr-x 3 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+drwxr-xr-x 2 user1 group1 4096 6 dir_755
+-r-------- 1 user1 group1 0 6 file_400
+-rw-r--r-- 1 user1 group1 0 6 file_644
+-rwxr-xr-x 1 user1 group1 0 6 file_755
       
 testdir_permissions/dir_755:      
 total 8     
-drwxr-xr-x 2 root root 4096 20 .
-drwxr-xr-x 3 user1 group1 4096 20 ..
-Testing command: chown user1:group1 "testdir_special_chars!@#$%^&*()"
-Structure type: simple
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 3 user1 group1 4096 6 ..
+Testing command: chown user1:group1 "testdir_special _chars!@#$%^&*()"
+Structure type: nested
 Custom chown output:
 Custom chown error:
 Directory listing after custom chown:
-testdir_special_chars!@#$%^&*():      
+testdir_special _chars!@#$%^&*():     
+total 16     
+drwxr-xr-x 4 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file1
+drwxr-xr-x 3 user1 group1 4096 6 subdir1
+drwxr-xr-x 2 user1 group1 4096 6 subdir2
+      
+testdir_special _chars!@#$%^&*()/subdir1:     
+total 12     
+drwxr-xr-x 3 user1 group1 4096 6 .
+drwxr-xr-x 4 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file2
+drwxr-xr-x 2 user1 group1 4096 6 subsubdir
+      
+testdir_special _chars!@#$%^&*()/subdir1/subsubdir:     
 total 8     
-drwxr-xr-x 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 3 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file3
+      
+testdir_special _chars!@#$%^&*()/subdir2:     
+total 8     
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 4 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file4
 System chown output:
 System chown error:
 Directory listing after system chown:
-testdir_special_chars!@#$%^&*():      
+testdir_special _chars!@#$%^&*():     
+total 16     
+drwxr-xr-x 4 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file1
+drwxr-xr-x 3 user1 group1 4096 6 subdir1
+drwxr-xr-x 2 user1 group1 4096 6 subdir2
+      
+testdir_special _chars!@#$%^&*()/subdir1:     
+total 12     
+drwxr-xr-x 3 user1 group1 4096 6 .
+drwxr-xr-x 4 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file2
+drwxr-xr-x 2 user1 group1 4096 6 subsubdir
+      
+testdir_special _chars!@#$%^&*()/subdir1/subsubdir:     
 total 8     
-drwxr-xr-x 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 3 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file3
+      
+testdir_special _chars!@#$%^&*()/subdir2:     
+total 8     
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 4 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file4
 Testing command: chown user1: "testdir_simple"
 Structure type: simple
 Custom chown output:
 Custom chown error:
+timeout: the monitored command dumped core
+./chown_gen.sh: line 91: 1728150 Segmentation fault      timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test -R $args "$test_dir"
 Directory listing after custom chown:
 testdir_simple:      
 total 8     
-drwxr-xr-x 2 user1 user1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file1
+-rw-r--r-- 1 root root 0 6 file2
+-rw-r--r-- 1 root root 0 6 file3.txt
+-rw-r--r-- 1 root root 0 6 file4.tmp
 System chown output:
 System chown error:
 Directory listing after system chown:
 testdir_simple:      
 total 8     
-drwxr-xr-x 2 user1 user1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
+drwxr-xr-x 2 user1 user1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 user1 0 6 file1
+-rw-r--r-- 1 user1 user1 0 6 file2
+-rw-r--r-- 1 user1 user1 0 6 file3.txt
+-rw-r--r-- 1 user1 user1 0 6 file4.tmp
+Directory listings do not match
+Testing command: chown user1: "testdir_nested"
+Structure type: nested
+Custom chown output:
+Custom chown error:
+timeout: the monitored command dumped core
+./chown_gen.sh: line 91: 1728187 Segmentation fault      timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test -R $args "$test_dir"
+Directory listing after custom chown:
+testdir_nested:      
+total 16     
+drwxr-xr-x 4 root root 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file1
+drwxr-xr-x 3 root root 4096 6 subdir1
+drwxr-xr-x 2 root root 4096 6 subdir2
+      
+testdir_nested/subdir1:      
+total 12     
+drwxr-xr-x 3 root root 4096 6 .
+drwxr-xr-x 4 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file2
+drwxr-xr-x 2 root root 4096 6 subsubdir
+      
+testdir_nested/subdir1/subsubdir:      
+total 8     
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 3 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file3
+      
+testdir_nested/subdir2:      
+total 8     
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 4 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file4
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_nested:      
+total 16     
+drwxr-xr-x 4 user1 user1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 user1 0 6 file1
+drwxr-xr-x 3 user1 user1 4096 6 subdir1
+drwxr-xr-x 2 user1 user1 4096 6 subdir2
+      
+testdir_nested/subdir1:      
+total 12     
+drwxr-xr-x 3 user1 user1 4096 6 .
+drwxr-xr-x 4 user1 user1 4096 6 ..
+-rw-r--r-- 1 user1 user1 0 6 file2
+drwxr-xr-x 2 user1 user1 4096 6 subsubdir
+      
+testdir_nested/subdir1/subsubdir:      
+total 8     
+drwxr-xr-x 2 user1 user1 4096 6 .
+drwxr-xr-x 3 user1 user1 4096 6 ..
+-rw-r--r-- 1 user1 user1 0 6 file3
+      
+testdir_nested/subdir2:      
+total 8     
+drwxr-xr-x 2 user1 user1 4096 6 .
+drwxr-xr-x 4 user1 user1 4096 6 ..
+-rw-r--r-- 1 user1 user1 0 6 file4
+Directory listings do not match
+Testing command: chown user1: "testdir_special"
+Structure type: special
+Custom chown output:
+Custom chown error:
+timeout: the monitored command dumped core
+./chown_gen.sh: line 91: 1728224 Segmentation fault      timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test -R $args "$test_dir"
+Directory listing after custom chown:
+testdir_special:      
+total 8     
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+brw-r--r-- 1 root root 7, Oct 20:22
+crw-r--r-- 1 root root 1, Oct 20:22
+prw-r--r-- 1 root root 0 6 named_pipe
+-rw-r--r-- 1 root root 0 6 regular_file
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_special:      
+total 8     
+drwxr-xr-x 2 user1 user1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+brw-r--r-- 1 user1 user1 7, Oct 20:23
+crw-r--r-- 1 user1 user1 1, Oct 20:23
+prw-r--r-- 1 user1 user1 0 6 named_pipe
+-rw-r--r-- 1 user1 user1 0 6 regular_file
+Directory listings do not match
+Testing command: chown user1: "testdir_permissions"
+Structure type: permissions
+Custom chown output:
+Custom chown error:
+timeout: the monitored command dumped core
+./chown_gen.sh: line 91: 1728264 Segmentation fault      timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test -R $args "$test_dir"
+Directory listing after custom chown:
+testdir_permissions:      
+total 12     
+drwxr-xr-x 3 root root 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+drwxr-xr-x 2 root root 4096 6 dir_755
+-r-------- 1 root root 0 6 file_400
+-rw-r--r-- 1 root root 0 6 file_644
+-rwxr-xr-x 1 root root 0 6 file_755
+      
+testdir_permissions/dir_755:      
+total 8     
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 3 root root 4096 6 ..
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_permissions:      
+total 12     
+drwxr-xr-x 3 user1 user1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+drwxr-xr-x 2 user1 user1 4096 6 dir_755
+-r-------- 1 user1 user1 0 6 file_400
+-rw-r--r-- 1 user1 user1 0 6 file_644
+-rwxr-xr-x 1 user1 user1 0 6 file_755
+      
+testdir_permissions/dir_755:      
+total 8     
+drwxr-xr-x 2 user1 user1 4096 6 .
+drwxr-xr-x 3 user1 user1 4096 6 ..
+Directory listings do not match
+Testing command: chown user1: "testdir_special _chars!@#$%^&*()"
+Structure type: nested
+Custom chown output:
+Custom chown error:
+timeout: the monitored command dumped core
+./chown_gen.sh: line 91: 1728305 Segmentation fault      timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test -R $args "$test_dir"
+Directory listing after custom chown:
+testdir_special _chars!@#$%^&*():     
+total 16     
+drwxr-xr-x 4 root root 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file1
+drwxr-xr-x 3 root root 4096 6 subdir1
+drwxr-xr-x 2 root root 4096 6 subdir2
+      
+testdir_special _chars!@#$%^&*()/subdir1:     
+total 12     
+drwxr-xr-x 3 root root 4096 6 .
+drwxr-xr-x 4 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file2
+drwxr-xr-x 2 root root 4096 6 subsubdir
+      
+testdir_special _chars!@#$%^&*()/subdir1/subsubdir:     
+total 8     
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 3 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file3
+      
+testdir_special _chars!@#$%^&*()/subdir2:     
+total 8     
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 4 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file4
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_special _chars!@#$%^&*():     
+total 16     
+drwxr-xr-x 4 user1 user1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 user1 0 6 file1
+drwxr-xr-x 3 user1 user1 4096 6 subdir1
+drwxr-xr-x 2 user1 user1 4096 6 subdir2
+      
+testdir_special _chars!@#$%^&*()/subdir1:     
+total 12     
+drwxr-xr-x 3 user1 user1 4096 6 .
+drwxr-xr-x 4 user1 user1 4096 6 ..
+-rw-r--r-- 1 user1 user1 0 6 file2
+drwxr-xr-x 2 user1 user1 4096 6 subsubdir
+      
+testdir_special _chars!@#$%^&*()/subdir1/subsubdir:     
+total 8     
+drwxr-xr-x 2 user1 user1 4096 6 .
+drwxr-xr-x 3 user1 user1 4096 6 ..
+-rw-r--r-- 1 user1 user1 0 6 file3
+      
+testdir_special _chars!@#$%^&*()/subdir2:     
+total 8     
+drwxr-xr-x 2 user1 user1 4096 6 .
+drwxr-xr-x 4 user1 user1 4096 6 ..
+-rw-r--r-- 1 user1 user1 0 6 file4
+Directory listings do not match
 Testing command: chown :group1 "testdir_simple"
 Structure type: simple
 Custom chown output:
@@ -262,23 +431,201 @@ Custom chown error:
 Directory listing after custom chown:
 testdir_simple:      
 total 8     
-drwxr-xr-x 2 root group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file1
+-rw-r--r-- 1 root group1 0 6 file2
+-rw-r--r-- 1 root group1 0 6 file3.txt
+-rw-r--r-- 1 root group1 0 6 file4.tmp
 System chown output:
 System chown error:
 Directory listing after system chown:
 testdir_simple:      
 total 8     
-drwxr-xr-x 2 root group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file1
+-rw-r--r-- 1 root group1 0 6 file2
+-rw-r--r-- 1 root group1 0 6 file3.txt
+-rw-r--r-- 1 root group1 0 6 file4.tmp
+Testing command: chown :group1 "testdir_nested"
+Structure type: nested
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_nested:      
+total 16     
+drwxr-xr-x 4 root group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file1
+drwxr-xr-x 3 root group1 4096 6 subdir1
+drwxr-xr-x 2 root group1 4096 6 subdir2
+      
+testdir_nested/subdir1:      
+total 12     
+drwxr-xr-x 3 root group1 4096 6 .
+drwxr-xr-x 4 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file2
+drwxr-xr-x 2 root group1 4096 6 subsubdir
+      
+testdir_nested/subdir1/subsubdir:      
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 3 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file3
+      
+testdir_nested/subdir2:      
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 4 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file4
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_nested:      
+total 16     
+drwxr-xr-x 4 root group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file1
+drwxr-xr-x 3 root group1 4096 6 subdir1
+drwxr-xr-x 2 root group1 4096 6 subdir2
+      
+testdir_nested/subdir1:      
+total 12     
+drwxr-xr-x 3 root group1 4096 6 .
+drwxr-xr-x 4 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file2
+drwxr-xr-x 2 root group1 4096 6 subsubdir
+      
+testdir_nested/subdir1/subsubdir:      
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 3 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file3
+      
+testdir_nested/subdir2:      
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 4 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file4
+Testing command: chown :group1 "testdir_special"
+Structure type: special
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_special:      
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+brw-r--r-- 1 root group1 7, Oct 20:23
+crw-r--r-- 1 root group1 1, Oct 20:23
+prw-r--r-- 1 root group1 0 6 named_pipe
+-rw-r--r-- 1 root group1 0 6 regular_file
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_special:      
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+brw-r--r-- 1 root group1 7, Oct 20:23
+crw-r--r-- 1 root group1 1, Oct 20:23
+prw-r--r-- 1 root group1 0 6 named_pipe
+-rw-r--r-- 1 root group1 0 6 regular_file
+Testing command: chown :group1 "testdir_permissions"
+Structure type: permissions
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_permissions:      
+total 12     
+drwxr-xr-x 3 root group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+drwxr-xr-x 2 root group1 4096 6 dir_755
+-r-------- 1 root group1 0 6 file_400
+-rw-r--r-- 1 root group1 0 6 file_644
+-rwxr-xr-x 1 root group1 0 6 file_755
+      
+testdir_permissions/dir_755:      
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 3 root group1 4096 6 ..
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_permissions:      
+total 12     
+drwxr-xr-x 3 root group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+drwxr-xr-x 2 root group1 4096 6 dir_755
+-r-------- 1 root group1 0 6 file_400
+-rw-r--r-- 1 root group1 0 6 file_644
+-rwxr-xr-x 1 root group1 0 6 file_755
+      
+testdir_permissions/dir_755:      
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 3 root group1 4096 6 ..
+Testing command: chown :group1 "testdir_special _chars!@#$%^&*()"
+Structure type: nested
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_special _chars!@#$%^&*():     
+total 16     
+drwxr-xr-x 4 root group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file1
+drwxr-xr-x 3 root group1 4096 6 subdir1
+drwxr-xr-x 2 root group1 4096 6 subdir2
+      
+testdir_special _chars!@#$%^&*()/subdir1:     
+total 12     
+drwxr-xr-x 3 root group1 4096 6 .
+drwxr-xr-x 4 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file2
+drwxr-xr-x 2 root group1 4096 6 subsubdir
+      
+testdir_special _chars!@#$%^&*()/subdir1/subsubdir:     
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 3 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file3
+      
+testdir_special _chars!@#$%^&*()/subdir2:     
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 4 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file4
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_special _chars!@#$%^&*():     
+total 16     
+drwxr-xr-x 4 root group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file1
+drwxr-xr-x 3 root group1 4096 6 subdir1
+drwxr-xr-x 2 root group1 4096 6 subdir2
+      
+testdir_special _chars!@#$%^&*()/subdir1:     
+total 12     
+drwxr-xr-x 3 root group1 4096 6 .
+drwxr-xr-x 4 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file2
+drwxr-xr-x 2 root group1 4096 6 subsubdir
+      
+testdir_special _chars!@#$%^&*()/subdir1/subsubdir:     
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 3 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file3
+      
+testdir_special _chars!@#$%^&*()/subdir2:     
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 4 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file4
 Testing command: chown user1:group1 "testdir_read_only"
 Structure type: read-only
 Custom chown output:
@@ -286,65 +633,225 @@ Custom chown error:
 Directory listing after custom chown:
 testdir_read_only:      
 total 8     
-d--------- 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--r--r--r-- 1 root root 0 20 file1
--r--r--r-- 1 root root 0 20 file2
--r--r--r-- 1 root root 0 20 file3.txt
+d--------- 2 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-r--r--r-- 1 user1 group1 0 6 file1
+-r--r--r-- 1 user1 group1 0 6 file2
+-r--r--r-- 1 user1 group1 0 6 file3.txt
 System chown output:
 System chown error:
 Directory listing after system chown:
 testdir_read_only:      
 total 8     
-d--------- 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--r--r--r-- 1 root root 0 20 file1
--r--r--r-- 1 root root 0 20 file2
--r--r--r-- 1 root root 0 20 file3.txt
-Testing command: chown 1000:1000 "testdir_simple"
-Structure type: simple
+d--------- 2 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-r--r--r-- 1 user1 group1 0 6 file1
+-r--r--r-- 1 user1 group1 0 6 file2
+-r--r--r-- 1 user1 group1 0 6 file3.txt
+Testing command: chown 1000:1000 "testdir_nested"
+Structure type: nested
 Custom chown output:
 Custom chown error:
-bins/chown-test: timeout: the monitored command dumped core
-./chown_gen.sh: line 90: 133579 Segmentation fault      timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test $args "$test_dir"
+timeout: the monitored command dumped core
+./chown_gen.sh: line 91: 1728609 Segmentation fault      timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test -R $args "$test_dir"
 Directory listing after custom chown:
-testdir_simple:      
+testdir_nested:      
+total 16     
+drwxr-xr-x 4 root root 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file1
+drwxr-xr-x 3 root root 4096 6 subdir1
+drwxr-xr-x 2 root root 4096 6 subdir2
+      
+testdir_nested/subdir1:      
+total 12     
+drwxr-xr-x 3 root root 4096 6 .
+drwxr-xr-x 4 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file2
+drwxr-xr-x 2 root root 4096 6 subsubdir
+      
+testdir_nested/subdir1/subsubdir:      
 total 8     
-drwxr-xr-x 2 root root 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 3 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file3
+      
+testdir_nested/subdir2:      
+total 8     
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 4 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file4
 System chown output:
 System chown error:
 Directory listing after system chown:
-testdir_simple:      
+testdir_nested:      
+total 16     
+drwxr-xr-x 4 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file1
+drwxr-xr-x 3 user1 group1 4096 6 subdir1
+drwxr-xr-x 2 user1 group1 4096 6 subdir2
+      
+testdir_nested/subdir1:      
+total 12     
+drwxr-xr-x 3 user1 group1 4096 6 .
+drwxr-xr-x 4 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file2
+drwxr-xr-x 2 user1 group1 4096 6 subsubdir
+      
+testdir_nested/subdir1/subsubdir:      
 total 8     
-drwxr-xr-x 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 3 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file3
+      
+testdir_nested/subdir2:      
+total 8     
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 4 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file4
 Directory listings do not match
+Testing command: chown :1000 "testdir_nested"
+Structure type: nested
+Custom chown output:
+Custom chown error:
+timeout: the monitored command dumped core
+./chown_gen.sh: line 91: 1728647 Segmentation fault      timeout ${TIMEOUT_LIMIT} $BINARY_DIR/chown-test -R $args "$test_dir"
+Directory listing after custom chown:
+testdir_nested:      
+total 16     
+drwxr-xr-x 4 root root 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file1
+drwxr-xr-x 3 root root 4096 6 subdir1
+drwxr-xr-x 2 root root 4096 6 subdir2
+      
+testdir_nested/subdir1:      
+total 12     
+drwxr-xr-x 3 root root 4096 6 .
+drwxr-xr-x 4 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file2
+drwxr-xr-x 2 root root 4096 6 subsubdir
+      
+testdir_nested/subdir1/subsubdir:      
+total 8     
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 3 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file3
+      
+testdir_nested/subdir2:      
+total 8     
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 4 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file4
+System chown output:
+System chown error:
+Directory listing after system chown:
+testdir_nested:      
+total 16     
+drwxr-xr-x 4 root group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file1
+drwxr-xr-x 3 root group1 4096 6 subdir1
+drwxr-xr-x 2 root group1 4096 6 subdir2
+      
+testdir_nested/subdir1:      
+total 12     
+drwxr-xr-x 3 root group1 4096 6 .
+drwxr-xr-x 4 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file2
+drwxr-xr-x 2 root group1 4096 6 subsubdir
+      
+testdir_nested/subdir1/subsubdir:      
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 3 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file3
+      
+testdir_nested/subdir2:      
+total 8     
+drwxr-xr-x 2 root group1 4096 6 .
+drwxr-xr-x 4 root group1 4096 6 ..
+-rw-r--r-- 1 root group1 0 6 file4
+Directory listings do not match
+Testing command: chown 1000: "testdir_nested"
+Structure type: nested
+Custom chown output:
+Custom chown error:
+Directory listing after custom chown:
+testdir_nested:      
+total 16     
+drwxr-xr-x 4 root root 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file1
+drwxr-xr-x 3 root root 4096 6 subdir1
+drwxr-xr-x 2 root root 4096 6 subdir2
+      
+testdir_nested/subdir1:      
+total 12     
+drwxr-xr-x 3 root root 4096 6 .
+drwxr-xr-x 4 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file2
+drwxr-xr-x 2 root root 4096 6 subsubdir
+      
+testdir_nested/subdir1/subsubdir:      
+total 8     
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 3 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file3
+      
+testdir_nested/subdir2:      
+total 8     
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 4 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file4
+System chown output:
+System chown error:
+chown: invalid spec: ‘1000:’
+Directory listing after system chown:
+testdir_nested:      
+total 16     
+drwxr-xr-x 4 root root 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file1
+drwxr-xr-x 3 root root 4096 6 subdir1
+drwxr-xr-x 2 root root 4096 6 subdir2
+      
+testdir_nested/subdir1:      
+total 12     
+drwxr-xr-x 3 root root 4096 6 .
+drwxr-xr-x 4 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file2
+drwxr-xr-x 2 root root 4096 6 subsubdir
+      
+testdir_nested/subdir1/subsubdir:      
+total 8     
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 3 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file3
+      
+testdir_nested/subdir2:      
+total 8     
+drwxr-xr-x 2 root root 4096 6 .
+drwxr-xr-x 4 root root 4096 6 ..
+-rw-r--r-- 1 root root 0 6 file4
 Testing command: chown user1:group1 file1 file2 file3
 Custom chown output:
 Custom chown error:
 Directory listing after custom chown:
 total 12   
-drwxr-xr-x 3 root root .
-drwxr-xr-x 4 root root ..
+drwxr-xr-x 3 user1 group1 .
+drwxr-xr-x 5 user1 group1 ..
 -rw-r--r-- 1 user1 group1 file1
--rw-r--r-- 1 root root file2
--rw-r--r-- 1 root root file3
-drwxr-xr-x 2 root root subdir
+-rw-r--r-- 1 user1 group1 file2
+-rw-r--r-- 1 user1 group1 file3
+drwxr-xr-x 2 user1 group1 subdir
 System chown output:
 System chown error:
 Directory listing after system chown:
 total 12   
 drwxr-xr-x 3 root root .
-drwxr-xr-x 4 root root ..
+drwxr-xr-x 5 user1 group1 ..
 -rw-r--r-- 1 user1 group1 file1
 -rw-r--r-- 1 user1 group1 file2
 -rw-r--r-- 1 user1 group1 file3
@@ -357,21 +864,21 @@ Custom chown error:
 Directory listing after custom chown:
 testdir_read_only:      
 total 8     
-d--------- 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--r--r--r-- 1 root root 0 20 file1
--r--r--r-- 1 root root 0 20 file2
--r--r--r-- 1 root root 0 20 file3.txt
+d--------- 2 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-r--r--r-- 1 user1 group1 0 6 file1
+-r--r--r-- 1 user1 group1 0 6 file2
+-r--r--r-- 1 user1 group1 0 6 file3.txt
 System chown output:
 System chown error:
 Directory listing after system chown:
 testdir_read_only:      
 total 8     
-d--------- 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--r--r--r-- 1 root root 0 20 file1
--r--r--r-- 1 root root 0 20 file2
--r--r--r-- 1 root root 0 20 file3.txt
+d--------- 2 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-r--r--r-- 1 user1 group1 0 6 file1
+-r--r--r-- 1 user1 group1 0 6 file2
+-r--r--r-- 1 user1 group1 0 6 file3.txt
 Testing command: chown user1:group1 "non-existent"
 Structure type: simple
 Custom chown output:
@@ -379,22 +886,22 @@ Custom chown error:
 Directory listing after custom chown:
 non-existent:      
 total 8     
-drwxr-xr-x 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file1
+-rw-r--r-- 1 user1 group1 0 6 file2
+-rw-r--r-- 1 user1 group1 0 6 file3.txt
+-rw-r--r-- 1 user1 group1 0 6 file4.tmp
 System chown output:
 System chown error:
 Directory listing after system chown:
 non-existent:      
 total 8     
-drwxr-xr-x 2 user1 group1 4096 20 .
-drwxr-xr-x 4 root root 4096 20 ..
--rw-r--r-- 1 root root 0 20 file1
--rw-r--r-- 1 root root 0 20 file2
--rw-r--r-- 1 root root 0 20 file3.txt
--rw-r--r-- 1 root root 0 20 file4.tmp
+drwxr-xr-x 2 user1 group1 4096 6 .
+drwxr-xr-x 5 user1 group1 4096 6 ..
+-rw-r--r-- 1 user1 group1 0 6 file1
+-rw-r--r-- 1 user1 group1 0 6 file2
+-rw-r--r-- 1 user1 group1 0 6 file3.txt
+-rw-r--r-- 1 user1 group1 0 6 file4.tmp
 
 test run completed!

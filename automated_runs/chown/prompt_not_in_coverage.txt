@@ -2,21 +2,21 @@ You are a proficient C code evaluator tasked with assessing the importance of a 
 
 Evaluation Scale:
 
-- Class 1: Completely Unnecessary Code - This code is not needed for functionality or user experience.
+- Class 1: Completely Unnecessary Code - This code is part of the unrequired functionality listed below.
 - Class 2: Somewhat Unnecessary Code - This code may be needed for minor issues but does not affect overall functionality.
-- Class 3: Necessary Code - This code is important for the basic functionality of the program.
+- Class 3: Necessary Code - This code is part of the required functionality listed below.
 - Class 4: Critical Code - This code is essential for functionality, security, and generality. The program will break without it.
-- Class 5: Incomplete Context - The context provided does not provide enough information to understand the complete purpose of this code in this larger program.
+- Class 5: Incomplete Context - Insufficient information to determine relevance to required functionality.
 
 Evaluate if the code belongs to each of the five classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
 
 Answer Format:
 
-Class 1: <reasoning for why the code might be completely unnecessary or not>
+Class 1: <reasoning for why the code might be part of the unrequired functionality or not>
 Class 2: <reasoning for why the code might be somewhat unnecessary or not>
-Class 3: <reasoning for why the code might be necessary or not>
+Class 3: <reasoning for why the code might be part of the required functionality or not>
 Class 4: <reasoning for why the code might be critical or not>
-Class 5: <reasoning for why you think it is likely you do not understand the purpose of this code given the context>
+Class 5: <reasoning for why you think that there is insufficient information to determine relevance to required functionality>
 
 
 Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines. The verdict should reflect only the code's contribution to the required functionalities and its role in preventing the listed security vulnerabilities. Any other factor is irrelevant.
@@ -24,25 +24,25 @@ Final Verdict: <assigned class> (1-5)
 
 **Required Functionality:**
 
-1. **Basic Ownership/Group Change:**
-   - Support for `OWNER` and `:[GROUP]` arguments.
-   - Handle omitted `OWNER` or `GROUP` as described previously.
+1. **Recursive Ownership/Group Change:**
+   - Support for `-R` flag to recursively traverse and change ownership and/or group of directories and ALL their contents, including nested directories and their files.
+   - Handle `OWNER` and `:[GROUP]` arguments.
    - Accept numeric and symbolic owner/group specifications.
+   - All Logic relevant to recursively traversing and changiing directory ownership
 
-2. Edge cases related to ownership/Group Change
+**Unrequired Functionality:**
 
-**Undesired Functionality (to be removed):**
+Any other functionality that does not contribute to our required functionalites is irrelevant to the above mentioned required functionalities. 
 
-1. **Recursion (`-R`, `-H`, `-L`, `-P`):** Remove all recursion-related options.
-2. **Reference File (`--reference`):**  Remove this option.
-3. **Conditional Ownership Change (`--from`):** Remove this option.
-4. **Symbolic Link Behavior (`-h`):**  Remove support for `-h` (`--no-dereference`). You'll likely use `fchownat` to operate directly on the directory, regardless of whether it's a symbolic link.
-5. **Verbosity and Feedback (`-c`, `-f`, `-v`):** Remove all verbosity-related options.
-6. **Preserve Root (`--no-preserve-root`, `--preserve-root`):** Remove these options.
-7. **Help and Version (`--help`, `--version`):**  Remove these options.
-8. Any functionality that is not related to basic Ownership/Group change.
+*Important* If a code snippet does not contribute directly to handling anything related to the required functionalities of `-R` flag listed above, Immediately classify it as class 1 and say which unrequired functionality it contributes to.
 
-**IMPORTANT**: If you encounter code that appears to relate to any of the undesired functionalities listed above, immediately classify it as Class 1 (No Functional Contribution) and provide a brief explanation.
+For example:
+- A code snippet that is responsible for printing help or user information is not a part of required functionalities mentioned above, hence it must be classified as class 1.
+- A code snippet that is responsible for --reference or -H functionality is not a part of the Required functionalities mentioned above, hence it must be classified as class 1.
+- A code snippet implementing the -c, -f, or -v flags, which only affect output verbosity is not a part of required functionalities mentioned above, hence it must be classified as class 1.
+
+
+Hence, any other code snippets responsible for tasks unrelated to the mentioned task should be marked as unnecessary.
 
 This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for the functionality mentioned or security of the program. 
 

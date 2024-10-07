@@ -44,6 +44,11 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
     os.makedirs("../LLM_Util/cands/fifty_text", exist_ok=True)
     os.makedirs("../LLM_Util/cands/llm_response", exist_ok=True)
     
+    # multiagent folders
+    os.makedirs("../LLM_Util/cands/multiagent", exist_ok=True)
+    os.makedirs("../LLM_Util/cands/multiagent/relevance", exist_ok=True)
+    os.makedirs("../LLM_Util/cands/multiagent/functionality", exist_ok=True)
+    os.makedirs("../LLM_Util/cands/multiagent/security", exist_ok=True)
 
     now = datetime.now()
     formatted_time = now.strftime("%H-%M-%S-%f")[:-3]
@@ -95,9 +100,9 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
         # query llm only if cache is empty
         if llm_cache == None:
             if (exist_in_coverage):
-                llm_response = qa.invoke(query, 'security', context_clean, fifty_clean)
+                llm_response = qa.invoke(query, 'security', context_clean, fifty_clean, str(formatted_time))
             else:
-                llm_response = qa.invoke(query, 'generality', context_clean, fifty_clean)
+                llm_response = qa.invoke(query, 'generality', context_clean, fifty_clean, str(formatted_time))
         else:
             print("Using Cached LLM Response")
             llm_response = llm_cache
@@ -112,6 +117,7 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
                 file.write("LLM failed to generate response")
 
         score = extract_imp_score_new_prompt(llm_response)
+
         if score == None:
             return 9
         return score

@@ -1,0 +1,20 @@
+**Required Functionality:**
+
+Recursive Ownership/Group Change:
+
+   Support for -R flag to recursively traverse and change ownership and/or group of directories and ALL their contents, including nested directories and their files.
+   Handle OWNER and :[GROUP] arguments, including numeric and symbolic owner/group specifications.
+   Correctly resolve and apply symbolic or numeric user and group names, including retrieving user/group names from user IDs (UID) and group IDs (GID), or converting numeric identifiers back into human-readable names.
+   Logic for correctly parsing arguments related to the -R flag and user and group arguments.
+   All logic relevant to recursively traversing and changing directory ownership and group.
+
+**Unrequired Functionality:**
+
+Any other functionality that does not contribute to the above-mentioned core features is irrelevant. Examples include code responsible for help messages, verbosity (-v, -f, etc.), or other unrelated flags.
+
+For example:
+- A code snippet that is responsible for printing help or user information is not a part of required functionalities mentioned above, hence it must be classified as class 1.
+- A code snippet that is responsible for --reference or -H functionality is not a part of the Required functionalities mentioned above, hence it must be classified as class 1.
+- A code snippet implementing the -c, -f, or -v flags, which only affect output verbosity is not a part of required functionalities mentioned above, hence it must be classified as class 1.
+
+Hence, any other code snippets responsible for tasks unrelated to the mentioned task should be marked as unnecessary.

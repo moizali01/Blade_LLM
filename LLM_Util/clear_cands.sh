@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# rm -rf sec_list.txt 
+rm -rf sec_list.txt 
 cd cands
 rm -rf *.c 
 cd pretext_code
@@ -16,3 +16,5 @@ rm -rf *.c
 cd ..
 cd fifty_text
 rm -rf *.c
+cd ..
+rm -r multiagent/*

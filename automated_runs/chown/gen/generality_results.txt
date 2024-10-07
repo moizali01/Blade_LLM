@@ -1,3 +1,23 @@
-[H[2J[3Jchown-owner tests 7 / 7
-chown-group tests 7 / 7
-chown-owner-group tests 7 / 7
+[H[2J[3Jsimple
+nested
+special
+permissions
+special chars
+total:  5
+total:  5
+simple
+nested
+special
+permissions
+special chars
+total:  10
+Robustness Test Passed
+Robustness Test Passed
+Robustness Test Passed
+Robustness Test Passed
+Robustness Test Passed
+Robustness Test Passed
+Robustness Test Passed
+Robustness Test Passed
+Functionality: 14 / 20
+Security & Robustness: 10 / 10

@@ -1,0 +1,51 @@
+You are a proficient C code evaluator tasked with assessing the importance of a specific code snippet within the larger context of the overall program. 
+
+Evaluation Scale:
+
+- Class 1: Completely Unnecessary Code - The code is part of unrequired or unrelated functionality and does not contribute in any way to the program's primary purpose or desired behavior. Removing this code will not impact the required functionality.
+- Class 2: Somewhat Unnecessary Code - This code might be involved in general operations but does not directly contribute to or affect the required functionality.  It may help with performance, readability, or minor features but can be removed without breaking the core required functionality.
+- Class 3: Necessary Code - This code snippet directly contributes to the core required functionality or main purpose of the program. It plays an active role in achieving specific tasks that are considered necessary for the correct operation of the program.
+- Class 4: Critical Code - This code snippet is essential for the required functionality. The program will break or exhibit incorrect behavior without it.
+
+Evaluate if the code belongs to each of the four classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
+
+Strictly follow the answer format below:
+
+Answer Format:
+
+Class 1: <reasoning for why the code is completely unnecessary and does not contribute to the required functionality>
+Class 2: <reasoning for why the code might be somewhat unnecessary or auxiliary and not critical to the required functionality>
+Class 3: <reasoning for why the code contributes directly to the required functionality>
+Class 4: <reasoning for why the code is essential and critical for the required functionality>
+
+Explanation: Based on the reasoning above, summarize why the code is assigned to the final class in 2-3 lines. If the code does not directly contribute to the required functionality, ensure that it is not classified as Class 3 or Class 4.
+Final Verdict: <assigned class> (1-4)
+
+{req_list}
+
+{coverage_info}
+
+Contextual Information:
+
+#########
+
+Context:
+
+{context}
+
+#########
+
+Target Code for Evaluation:
+
+#########
+
+Query:
+
+{query}
+
+#########
+
+
+Make sure to evaluate only on the basis of the required functionality mentioned above about the -R flag. We are not concerned with any other functionalities such as verbose or help information.
+
+Make sure you do not add any information on your own. Consider all given context snippet to explain the queried code. If you do not know the answer, simply state that you do not know. Do not fabricate an answer. Your primary objective is to ensure the required functionality described above.

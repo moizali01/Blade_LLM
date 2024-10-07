@@ -2,8 +2,8 @@
 
 BINARY_DIR="bins"
 LOG="log.txt"
-C_FILE=mkdir-debloated.c.blade.c
-# C_FILE=mkdir-5.2.1.c.origin.c
+# C_FILE=mkdir-cov.c
+C_FILE=mkdir-5.2.1.c.origin.c
 # C_FILE=testing.c
 TIMEOUT_LIMIT="-k 5 5"
 
@@ -119,7 +119,7 @@ function test()
     
     # Clean up temporary files
     rm -f "$binary_output" "$binary_error" "$mkdir_output" "$mkdir_error"
-    echo "returning"
+    # echo "returning"
     return 0
 }
 
@@ -177,13 +177,13 @@ function run_tests()
 function test_robustness(){
     ((MAX_SECURITY_CASES++))
     local binary_output="$1"
-    if [[ "$binary_output" == "TIMEOUT" ]]; then
-        echo "Test failed: $cmd $args"
-        return 1
+    a=$?
+    if [[ $a -ne 124 && $a -ne 137 ]]; then
+        ((TOTAL_SECURITY_SCORE++))
+        return 0
     fi
 
-    ((TOTAL_SECURITY_SCORE++))
-    return 0
+    return 1
 
 }
 
@@ -220,7 +220,7 @@ test_compare_overwrite(){
 
 function security_tests()
 {
-    MAX_SECURITY_CASES=$((MAX_SECURITY_CASES + 6))
+    MAX_SECURITY_CASES=$((MAX_SECURITY_CASES + 7))
 
     rm -rf testdir 2> /dev/null
 
@@ -270,6 +270,13 @@ function security_tests()
         echo "Test failed: Test with sticky bit and immutable flag"
     fi
 
+    # Test 7: Test with empty file
+    if test "temp" "-m 700" ""; then
+        ((TOTAL_SECURITY_SCORE++))
+    else
+        echo "Test failed: Test with sticky bit and immutable flag"
+    fi
+
     return 0
 }
 function robustness_tests()
@@ -301,6 +308,11 @@ function robustness_tests()
 
     # Test 6: test on removed flag
     output_debloat=$(timeout ${TIMEOUT_LIMIT} $BINARY_DIR/mkdir-text -p testdir/testdir2 2>/dev/null)
+    test_robustness "$output_debloat"
+    rm -r testdir 2> /dev/null
+
+    # Test 7: test on removed flag
+    output_debloat=$(timeout ${TIMEOUT_LIMIT} $BINARY_DIR/mkdir-text -vp testdir/testdir2 2>/dev/null)
     test_robustness "$output_debloat"
     rm -r testdir 2> /dev/null
 

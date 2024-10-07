@@ -1,0 +1,29 @@
+Given the provided context and user query below, determine if the context is sufficient to understand the role or purpose of the queried code within the larger program.
+
+Contextual Information:
+
+#########
+
+Context:
+
+{context}
+
+#########
+
+Target Code for Evaluation:
+
+#########
+
+Query:
+
+{query}
+
+#########
+
+Instructions:
+
+- Answer "Yes" if the context includes relevant information that can reasonably explain the role or functionality of the queried code in the program, even if some minor details are missing or inferred.
+- Answer "No" if the context is clearly missing crucial information needed to identify the role of the queried code
+- Answer "I don't know" only if the context and query are both so unclear or ambiguous that no reasonable inference can be made.
+
+If you cannot decide based on the context, respond with "I don't know."
