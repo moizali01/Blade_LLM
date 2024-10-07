@@ -3,7 +3,7 @@
 PROGRAM_NAME=gzip-8.16
 DIR=$(pwd)
 ORIGINAL_FILE=$DIR/gzip-org.c
-REDUCED_FILE=$DIR/gzip-cov.c
+REDUCED_FILE=$DIR/gzip-util.c.blade.c
 ORIGINAL_BINARY=$DIR/original_binary
 REDUCED_BINARY=$DIR/reduced_binary
 CC=clang

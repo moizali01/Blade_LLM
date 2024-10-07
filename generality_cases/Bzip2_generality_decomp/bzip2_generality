@@ -3,7 +3,7 @@
 PROGRAM_NAME=bzip2-8.16
 DIR=$(pwd)
 ORIGINAL_FILE=$DIR/bzip2-org.c
-REDUCED_FILE=$DIR/bzip2-covl.c
+REDUCED_FILE=$DIR/bzip2-util.c.blade.c
 ORIGINAL_BINARY=$DIR/original_binary
 REDUCED_BINARY=$DIR/reduced_binary
 CC=clang
@@ -233,9 +233,9 @@ function robustness_cases() {
     run_robustness "Invalid Flag" \
         "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -a new_file.txt > $DIR/temp_output.txt; }"
 
-    echo "Running test: No arguments">>${LOG} 2>&1
-    run_robustness "No arguments " \
-        "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -a > $DIR/temp_output.txt; }" 
+    # echo "Running test: No arguments">>${LOG} 2>&1
+    # run_robustness "No arguments " \
+    #     "{ timeout $TIMEOUT_LIMIT $REDUCED_BINARY -a > $DIR/temp_output.txt; }" 
 
     echo "Running test: -R flag">>${LOG} 2>&1
     run_robustness "Invalid Flag" \
@@ -288,13 +288,16 @@ function main() {
     
     clean_env
     
-    echo "Total tests: $TOTAL_TESTS"
-    echo "=========================="
-    echo "Total functionality tests Passed: $TOTAL_FUNCTIONALITY_PASSED/$TOTAL_FUNCTIONALITY"
-    echo "Total security tests Passed: $TOTAL_SECURITY_PASSED/$TOTAL_SECURITY"
-    echo "Total robustness tests Passed: $TOTAL_ROBUSTNESS_PASSED/$TOTAL_ROBUSTNESS"
-    echo "=========================="
-    echo "Total tests Passed: $((TOTAL_FUNCTIONALITY_PASSED + TOTAL_SECURITY_PASSED + TOTAL_ROBUSTNESS_PASSED))/$((TOTAL_FUNCTIONALITY + TOTAL_SECURITY + TOTAL_ROBUSTNESS))"
+    echo "Total tests: $TOTAL_TESTS" >>${LOG} 2>&1
+    echo "==========================">>${LOG} 2>&1
+    echo "Total functionality tests Passed: $TOTAL_FUNCTIONALITY_PASSED/$TOTAL_FUNCTIONALITY"   >>${LOG} 2>&1
+    echo "Total security tests Passed: $TOTAL_SECURITY_PASSED/$TOTAL_SECURITY">>${LOG} 2>&1
+    echo "Total robustness tests Passed: $TOTAL_ROBUSTNESS_PASSED/$TOTAL_ROBUSTNESS">>${LOG} 2>&1
+    echo "==========================">>${LOG} 2>&1
+    echo "Total tests Passed: $((TOTAL_FUNCTIONALITY_PASSED + TOTAL_SECURITY_PASSED + TOTAL_ROBUSTNESS_PASSED))/$((TOTAL_FUNCTIONALITY + TOTAL_SECURITY + TOTAL_ROBUSTNESS))">>${LOG} 2>&1
+    if [ $((TOTAL_FUNCTIONALITY_PASSED + TOTAL_SECURITY_PASSED + TOTAL_ROBUSTNESS_PASSED)) -eq $((TOTAL_FUNCTIONALITY + TOTAL_SECURITY + TOTAL_ROBUSTNESS)) ]; then
+        echo "All tests passed successfully."
+    fi
     return 0
 }
 

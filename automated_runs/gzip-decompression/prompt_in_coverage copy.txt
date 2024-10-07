@@ -23,13 +23,13 @@ Class 5: <whether the purpose of this code is unclear without further context or
 Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
 Final Verdict: <assigned class> (1-5)
 
-The code belongs to tthe bzip2 core utility. bzip2 decompression functionality uses sorting to reconstruct data for decompression.
+The code belongs to tthe Gzip core utility. Gzip decompression functionality uses Deflate algorithm for decompression.
 Required Functionality:
-1. bzip2 is used only with the -d flag to decompress all kind of files.
+1. Gzip is used only with the -d flag to compress all kind of files with varying extensions.
 2. Retain the data integrity after decompression and make sure the decompression occurs successfully. 
-3. For decompression combination of run-length encoding (RLE) and Huffman coding is used.
+3. For decompression LZ77 and Huffman coding is used to build Huffman trees and then uses these trees are used to decode literal bytes and distance-length pairs for reconstructing the original data after decompression.
 
-We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. 
+We must cater to all edge cases related to decompression of files. We are NOT interested in any other functionality. 
 
 Any other functionality that does not contribute to our required functionalites is irrelevant to our use case. Here are some of the unrequired functionalities:
 
@@ -41,6 +41,7 @@ Any other functionality that does not contribute to our required functionalites 
 6. **-t, --test**:  Tests compressed file integrity, which is not needed as we want to ensure successful decompression.
 7. **-k, --keep**:  Keeps input files, which is not needed as we are not concerned with deleting input files.
 8. **-f, --force**:  Overwrites existing output files, which is not needed as we are not concerned with overwriting existing files.  
+9. Everything other than decompression.
 
 **IMPORTANT**: If you encounter code that appears to relate to any of the undesired functionalities listed above, immediately classify it as Class 1 (No Functional Contribution) and provide a brief explanation.
 
@@ -82,6 +83,6 @@ Make sure to evaluate on the basis of the following:
 
 Make sure to cater to ALL edge cases for the functionalites mentioned. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
-We are not concerned with any other functionalities so make sure to evaluate the candidate set on the basis of the unrequired functionalites mentioned above as well and mark the candidate sets that meet the unrequired functionality criteria as unnecessary. 
+We are not concerned with any other functionalities so make sure to evaluate the candidate set on the basis of the unrequired functionalites mentioned above as well and mark the candidate sets that meet the unrequired functionality criteria as *unnecessary* and give them the appropriate classes. 
 
 Make sure you do not add any information on your own. Consider all four snippets in the provided context to explain the queried code. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.

@@ -27,9 +27,9 @@ The code belongs to tthe Gzip core utility. Gzip decompression functionality use
 Required Functionality:
 1. Gzip is used only with the -d flag to compress all kind of files with varying extensions.
 2. Retain the data integrity after decompression and make sure the decompression occurs successfully. 
-3. For decompression LZ77 and Huffman coding is used to build Huffman trees and then uses these trees are used to decode literal bytes and distance-length pairs for reconstructing the original data.
+3. For decompression LZ77 and Huffman coding is used to build Huffman trees and then uses these trees are used to decode literal bytes and distance-length pairs for reconstructing the original data after decompression.
 
-We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements, goto statements and loop or variable initialization which are important for keeping the workflow structure.   
+We must cater to all edge cases related to decompression of files. We are NOT interested in any other functionality.
 
 Any other functionality that does not contribute to our required functionalites is irrelevant to our use case. Here are some of the unrequired functionalities:
 
@@ -41,7 +41,6 @@ Any other functionality that does not contribute to our required functionalites 
 6. **-t, --test**:  Tests compressed file integrity, which is not needed as we want to ensure successful decompression.
 7. **-k, --keep**:  Keeps input files, which is not needed as we are not concerned with deleting input files.
 8. **-f, --force**:  Overwrites existing output files, which is not needed as we are not concerned with overwriting existing files.  
-9. Everything other than decompression.
 
 **IMPORTANT**: If you encounter code that appears to relate to any of the undesired functionalities listed above, immediately classify it as Class 1 (No Functional Contribution) and provide a brief explanation.
 
@@ -77,11 +76,11 @@ Target Code:
 
 Make sure to evaluate on the basis of the following:
 1. Prevention against the security vulnerabilities mentioned in the security list.
-2. Retaining the data integrity of the decompressed file.
-3. Prevent the program workflow from being disrupted by being careful of jump/goto statements.
+2. Keeping required functionalites intact.
+3. Removing all the unrequired functionalites.
 
 Make sure to cater to ALL edge cases for the functionalites mentioned. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
-We are not concerned with any other functionalities so make sure to evaluate the candidate set on the basis of the unrequired functionalites mentioned above as well and mark the candidate sets that meet the unrequired functionality criteria as unnecessary. 
+We are not concerned with any other functionalities so make sure to evaluate the candidate set on the basis of the unrequired functionalites mentioned above as well and mark the candidate sets that meet the unrequired functionality criteria as *unnecessary* and give them the appropriate classes. 
 
 Make sure you do not add any information on your own. Consider all four snippets in the provided context to explain the queried code. Do not fabricate an answer. Your primary objective is to ensure the functionality described above and to evaluate security of the overall program.

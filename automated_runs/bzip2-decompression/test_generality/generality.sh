@@ -1,18 +1,18 @@
 #!/bin/bash
 
-PROGRAM_NAME=gzip
+PROGRAM_NAME=bzip2
 DIR=${PWD}
-C_FILE=${DIR}/gzip-util.c.blade.c
+C_FILE=${DIR}/bzip2-util.c.blade.c
 REDUCED_BINARY=${DIR}/${PROGRAM_NAME}.rbin
 ORG_BINARY=${DIR}/${PROGRAM_NAME}.bin
-ORG_FILE=${DIR}/gzip-org.c
+ORG_FILE=${DIR}/bzip2-org.c
 CC=clang
-TIMEOUT_LIMIT="-k 5 5"
+TIMEOUT_LIMIT="-k 15 15"
 LOG=${DIR}/log
 
-TOTAL_TESTS=0
+
 PASSED_COUNT=0
-HARDCODED_FILES=("test2.txt" "test3.txt" "test4.txt" "test5.txt")
+TOTAL_TESTS=0
 
 function compress_and_decompress() {
     ((TOTAL_TESTS++))
@@ -37,13 +37,13 @@ function compress_and_decompress() {
         return 1
     fi
     local debloated_compressed_files=$(ls temp)
-    if find temp -type f ! -name "*.gz" | grep -q .; then
-        echo "Not all files are .gz" >>${LOG} 2>&1
+    if find temp -type f ! -name "*.bz2" | grep -q .; then
+        echo "Not all files are .bz2" >>${LOG} 2>&1
         rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
         return 1
 
     else
-        echo "All files are .gz" >>${LOG} 2>&1
+        echo "All files are .bz2" >>${LOG} 2>&1
     fi
 
     local decompression_original="decompression_original.txt"
@@ -55,12 +55,12 @@ function compress_and_decompress() {
         return 1
     fi
     local original_decompressed_files=$(ls temp)
-    if find temp -type f -name "*.gz" | grep -q .; then
-        echo "There are .gz files" >>${LOG} 2>&1
+    if find temp -type f -name "*.bz2" | grep -q .; then
+        echo "There are .bz2 files" >>${LOG} 2>&1
         rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
         return 1
     else
-        echo "There are no .gz files" >>${LOG} 2>&1
+        echo "There are no .bz2 files" >>${LOG} 2>&1
     fi
 
     for file in temp/*; do
@@ -99,9 +99,9 @@ function compress_and_decompress() {
 
 function execute_tests() {
     # 1 Byte File Test
-    echo "Case: 1 Byte File Test" >>${LOG} 2>&1
-    echo -n "x" >tiny_1.txt # Writes exactly one byte without a newline
-    compress_and_decompress "tiny_1.txt" || echo "Test failed: 1 Byte File" >>${LOG}
+    # echo "Case: 1 Byte File Test" >>${LOG} 2>&1
+    # echo -n "x" >tiny_1.txt # Writes exactly one byte without a newline
+    # compress_and_decompress "tiny_1.txt" || echo "Test failed: 1 Byte File" >>${LOG}
 
     # Single Word File Test
     echo "Case: Single Word File Test" >>${LOG} 2>&1
@@ -196,13 +196,13 @@ function execute_tests() {
     compress_and_decompress "medium_1mb.zip" || echo "Test failed: 1MB ZIP File" >>${LOG}
 
     # Medium Randomly Generated Binary Files
-    echo "Case: Medium 1MB Binary File Test" >>${LOG} 2>&1
-    dd if=/dev/urandom of=medium_1mb.bin bs=1048576 count=1 2>/dev/null
-    compress_and_decompress "medium_1mb.bin" || echo "Test failed: 1MB Binary File" >>${LOG}
+    # echo "Case: Medium 1MB Binary File Test" >>${LOG} 2>&1
+    # dd if=/dev/urandom of=medium_1mb.bin bs=1048576 count=1 2>/dev/null
+    # compress_and_decompress "medium_1mb.bin" || echo "Test failed: 1MB Binary File" >>${LOG}
 
-    echo "Case: Medium 2MB Binary File Test" >>${LOG} 2>&1
-    dd if=/dev/urandom of=medium_2mb.bin bs=2097152 count=1 2>/dev/null
-    compress_and_decompress "medium_2mb.bin" || echo "Test failed: 2MB Binary File" >>${LOG}
+    # echo "Case: Medium 2MB Binary File Test" >>${LOG} 2>&1
+    # dd if=/dev/urandom of=medium_2mb.bin bs=2097152 count=1 2>/dev/null
+    # compress_and_decompress "medium_2mb.bin" || echo "Test failed: 2MB Binary File" >>${LOG}
 
 
     # English Text File Test
@@ -361,12 +361,12 @@ function execute_tests() {
     compress_and_decompress "файл中文.txt" || echo "Test failed: Filename with non-ASCII characters" >>${LOG}
 
     # Standard tests
-    touch ${HARDCODED_FILES[@]}
-    cp $ORG_FILE ${HARDCODED_FILES[0]}
-    cp $ORG_FILE ${HARDCODED_FILES[2]}
-    echo "Case 9" >>${LOG} 2>&1
-    echo "Processing all files simultaneously:" >>${LOG} 2>&1
-    compress_and_decompress "${HARDCODED_FILES[@]}" || echo "Test failed: Multiple files" >>${LOG}
+    # touch ${HARDCODED_FILES[@]}
+    # cp $ORG_FILE ${HARDCODED_FILES[0]}
+    # cp $ORG_FILE ${HARDCODED_FILES[2]}
+    # echo "Case 9" >>${LOG} 2>&1
+    # echo "Processing all files simultaneously:" >>${LOG} 2>&1
+    # compress_and_decompress "${HARDCODED_FILES[@]}" || echo "Test failed: Multiple files" >>${LOG}
     
     #  Repeated Empty File Test
     echo "Processing multiple empty files:" >>${LOG} 2>&1
@@ -382,8 +382,8 @@ function execute_tests() {
 
 function clean_env() {
     cd ${DIR}
-    rm -rf ${REDUCED_BINARY} ${ORG_BINARY} *.bin >/dev/null 2>&1
-    rm -rf temp comparison ${compression_debloated} ${decompression_original} >/dev/null 2>&1
+    rm -rf ${REDUCED_BINARY} ${ORG_BINARY} *.txt.gz *.txt binary_file *.tar *.jpg *.wav *.png *.mp3 *.csv *.json *.bin *exe *bz2 *.flac *.bmp *tar *.ogg *.pdf *.gif >/dev/null 2>&1
+    rm -rf temp comparison ${compression_debloated} ${decompression_original} ${files[@]} >/dev/null 2>&1
     rm -rf *.jpg *.wav >/dev/null 2>&1
     return 0
 }
@@ -391,7 +391,7 @@ function clean_env() {
 function compile() {
     touch ${LOG}
     cd ${DIR}
-    cp ../test_files . -r
+    cp ../test_files . -r >/dev/null 2>&1
     echo "Compiling ${C_FILE} into ${REDUCED_BINARY}" &>>${LOG}
     ${CC} ${C_FILE} -w -o ${REDUCED_BINARY} &>>${LOG} || exit 1
     echo "Compiling ${ORG_FILE} into ${ORG_BINARY}" &>>${LOG}

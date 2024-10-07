@@ -29,7 +29,7 @@ Required Functionality:
 2. Retain the data integrity after decompression and make sure the decompression occurs successfully. 
 3. For decompression combination of run-length encoding (RLE) and Huffman coding is used.
 
-We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements, goto statements and loop or variable initialization which are important for keeping the workflow structure.  
+We must cater to all edge cases related to compressin of files. We are NOT interested in any other functionality.
 
 Any other functionality that does not contribute to our required functionalites is irrelevant to our use case. Here are some of the unrequired functionalities:
 
@@ -78,7 +78,7 @@ Make sure to evaluate on the basis of the following:
 1. Prevention against the security vulnerabilities mentioned in the security list.
 2. Decompress files with the -d files.
 3. Retaining the data integrity of the decompressed file.
-4. Prevent the program workflow from being disrupted by taking care of goto statements.
+4. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements, goto statements and loop or variable initialization which are important for keeping the workflow structure.  
 
 Make sure to cater to ALL edge cases for the functionalites mentioned. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
