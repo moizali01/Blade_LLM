@@ -15,91 +15,51 @@ Test passed: Calculate tomorrow's date
 Test passed: Calculate next Monday's date
 Test passed: Calculate last Friday's date
 Test passed: Calculate 5 days from 2024-01-01
-1c1
-< 2024-02-28
----
-> 2024-02-29
-Test failed: Leap year: Calculate 1 day after Feb 28, 2024
-1c1
-< 2023-02-28
----
-> 2023-03-01
-Test failed: Non-leap year: Calculate 1 day after Feb 28, 2023
+Test passed: Leap year: Calculate 1 day after Feb 28, 2024
+Test passed: Non-leap year: Calculate 1 day after Feb 28, 2023
 Test passed: End-of-month transition: Jan 31 to Feb
-1c1
-< 2024-04-30
----
-> 2024-05-01
-Test failed: End-of-month transition: Apr 30 to May 1
-1c1
-< 2023-12-31
----
-> 2024-01-01
-Test failed: New Year's Eve to New Year's Day
-1c1
-< 2124
----
-> 1924
-Test failed: Calculate the year 100 years ago
+Test passed: End-of-month transition: Apr 30 to May 1
+Test passed: New Year's Eve to New Year's Day
+Test passed: Calculate the year 100 years ago
 Test passed: Add 10 days to 2024-01-01
 Test passed: Subtract 2 weeks from 2024-01-01
 Test passed: Add 1 year to 2024-01-01
 Test passed: Compound calculation: Add 1 month and subtract 3 days
-1c1
-< 2024-08-31
----
-> 2024-08-30
-Test failed: Negative offset: Calculate the previous day
+Test passed: Negative offset: Calculate the previous day
 Test passed: Negative offset: Calculate the previous month
 
 Running generality tests...
 Test passed: Combination of date calculation and formatting
-1c1
-< Tuesday, 31 December 2024
----
-> Wednesday, 01 January 2025
-Test failed: Calculate New Year's Day with full date formatting
+Test passed: Calculate New Year's Day with full date formatting
 
 Running edge case tests...
 Test passed: Verify leap year 2000
-1c1
-< 2100-02-28
----
-> 2100-03-01
-Test failed: Verify non-leap year 2100
+Test passed: Verify non-leap year 2100
 Test passed: Verify leap year 2400
 Test passed: Month rollover in a 31-day month
 Test passed: Month rollback from 31 to 28
 Test passed: Far future date
 Test passed: Earliest representable date
-Test passed: Unix epoch for 0000-01-01
+1c1
+< 2024-10-01
+---
+> 0000-01-01
+Test failed: Unix epoch for 0000-01-01
 
 Running extended generality tests...
-Test passed: Unix timestamp input
 1c1
-< 2023-01-15 14:30:00
+< 2024-10-01 00:00:00
 ---
-> 2023-09-15 14:30:00
-Test failed: Human-readable date input
-1c1
-< 1725121296.21
----
-> 1725121236.20
-Test failed: Unix timestamp with microseconds
-1c1
-< 2024-10-19
----
-> 2024-12-19
-Test failed: Complex relative date calculation
+> 2021-09-10 00:42:47
+Test failed: Unix timestamp input
+Test passed: Human-readable date input
+Test passed: Unix timestamp with microseconds
+Test passed: Complex relative date calculation
 Test passed: Long-term past date calculation
-1c1
-< 2024-01-01
----
-> 2023-12-31
-Test failed: Multiple date operations
+Test passed: Multiple date operations
 Test passed: Relative and fixed date combination
 Test passed: Compare two dates
 
 Total tests run: 42
-Total tests passed: 30
+Total tests passed: 40
 Some tests failed.

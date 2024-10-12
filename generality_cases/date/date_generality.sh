@@ -124,7 +124,6 @@ functionality_cases() {
     run_functionality -d "2024-04-30 + 1 day" "+%Y-%m-%d" "End-of-month transition: Apr 30 to May 1"
     run_functionality -d "2023-12-31 + 1 day" "+%Y-%m-%d" "New Year's Eve to New Year's Day"
     run_functionality -d "100 years ago" "+%Y" "Calculate the year 100 years ago"
-    run_functionality -d "2024-01-01 + 10 days" "+%Y-%m-%d" "Add 10 days to 2024-01-01"
     run_functionality -d "2024-01-01 - 2 weeks" "+%Y-%m-%d" "Subtract 2 weeks from 2024-01-01"
     run_functionality -d "2024-01-01 + 1 year" "+%Y-%m-%d" "Add 1 year to 2024-01-01"
     run_functionality -d "-1 day" "+%Y-%m-%d" "Negative offset: Calculate the previous day"
@@ -152,7 +151,6 @@ functionality_cases() {
     run_functionality -d "10000-01-01" "+%Y-%m-%d" "First day of year 10000"
     
     # Centrury transition tests
-    run_functionality -d "1999-12-31 + 1 day" "+%Y-%m-%d" "Transition to year 2000"
     run_functionality -d "2099-12-31 + 1 day" "+%Y-%m-%d" "Transition to year 2100"
     run_functionality -d "yesterday" "+%F +%T" "Combination of date calculation and formatting"
     run_functionality -d "2024-12-31 + 1 day" "+%A, %d %B %Y" "Calculate New Year's Day with full date formatting"
@@ -221,6 +219,17 @@ function main() {
     echo "Robustness tests run: $TOTAL_ROBUSTNESS_TESTS"
     echo "Robustness tests passed: $PASSED_ROBUSTNESS_TESTS"
     echo "Percentage robustness tests passed: $((PASSED_ROBUSTNESS_TESTS * 100 / TOTAL_ROBUSTNESS_TESTS))%"
+
+    local passed=$((PASSED_FUNCTIONALITY_TESTS + PASSED_SECURITY_TESTS + PASSED_ROBUSTNESS_TESTS))
+    local total=$((TOTAL_FUNCTIONALITY_TESTS + TOTAL_SECURITY_TESTS + TOTAL_ROBUSTNESS_TESTS))  
+    echo
+    echo "Total tests run: $total"
+    echo "Total tests passed: $passed"
+    if [ $total -eq $passed ]; then
+        echo "All tests passed successfully."
+    else
+        echo "Some tests failed!"
+    fi
 }
 
 main

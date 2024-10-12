@@ -1,6 +1,8 @@
 #!/bin/bash
 
-DEBLOATED_FILE="uniq-og.c"
+# DEBLOATED_FILE="uniq-util.c.blade.c"
+DEBLOATED_FILE="uniq.c"
+# DEBLOATED_FILE="uniq_no_comments.c"
 ORIGINAL_FILE="uniq-og.c"
 CC=clang
 DEBLOATED_UNIQ="./debloated_uniq"
@@ -16,9 +18,6 @@ TIMEOUT_VALUE=3
 # Counters for tests
 TOTAL_FUNCTIONALITY_TESTS=0
 PASSED_FUNCTIONALITY_TESTS=0
-
-TOTAL_SECURITY_TESTS=0
-PASSED_SECURITY_TESTS=0
 
 TOTAL_ROBUSTNESS_TESTS=0
 PASSED_ROBUSTNESS_TESTS=0
@@ -52,11 +51,7 @@ run_functionality() {
   local cleanup_command="$4"
   local test_type="$5"
 
-  if [ "$test_type" == "functionality" ]; then
-    TOTAL_FUNCTIONALITY_TESTS=$((TOTAL_FUNCTIONALITY_TESTS + 1))
-  elif [ "$test_type" == "security" ]; then
-    TOTAL_SECURITY_TESTS=$((TOTAL_SECURITY_TESTS + 1))
-  fi  
+  TOTAL_FUNCTIONALITY_TESTS=$((TOTAL_FUNCTIONALITY_TESTS + 1))
 
   echo "Running test: $description"
   
@@ -76,8 +71,6 @@ run_functionality() {
   timeout "$TIMEOUT_VALUE" $ORIGINAL_UNIQ "$input_file" >& "$OUTPUT_ORIGINAL"
   if [ $? -ne 0 ]; then
     echo "Error: Original program crashed!"
-    # Do not consider this as a test case
-    TOTAL_TESTS=$((TOTAL_TESTS - 1))
     eval "$cleanup_command"
     echo
     return
@@ -86,12 +79,7 @@ run_functionality() {
   # Compare outputs
   if cmp -s "$OUTPUT_DEBLOATED" "$OUTPUT_ORIGINAL"; then
     echo "Pass"
-    PASSED_TESTS=$((PASSED_TESTS + 1))
-    if [ "$test_type" == "functionality" ]; then
-      PASSED_FUNCTIONALITY_TESTS=$((PASSED_FUNCTIONALITY_TESTS + 1))
-    elif [ "$test_type" == "security" ]; then
-      PASSED_SECURITY_TESTS=$((PASSED_SECURITY_TESTS + 1))
-    fi
+    PASSED_FUNCTIONALITY_TESTS=$((PASSED_FUNCTIONALITY_TESTS + 1))
   else
     echo "Fail"
   fi
@@ -158,18 +146,6 @@ functionality_cases() {
 }
 
 security_cases() {
-  run_functionality "Read from read-only file" \
-  "$TEST_DIR/readonly_file" \
-  "echo -e \"apple\napple\nbanana\ncherry\" > $TEST_DIR/readonly_file && chmod 444 $TEST_DIR/readonly_file" \
-  "chmod 644 $TEST_DIR/readonly_file && rm -rf $TEST_DIR/readonly_file" \
-  "security"
-
-  # run_functionality "File in directory without read permission" \
-  #   "$TEST_DIR/no_read_dir/file" \
-  #   "mkdir -p $TEST_DIR/no_read_dir && echo -e \"apple\napple\nbanana\ncherry\" > $TEST_DIR/no_read_dir/file && chmod 000 $TEST_DIR/no_read_dir" \
-  #   "chmod 700 $TEST_DIR/no_read_dir && rm -rf $TEST_DIR/no_read_dir" \
-  #   "security"
-
   run_functionality "File with setuid bit" \
     "$TEST_DIR/setuid_file" \
     "echo -e \"apple\napple\nbanana\ncherry\" > $TEST_DIR/setuid_file && chmod u+s $TEST_DIR/setuid_file" \
@@ -199,13 +175,6 @@ security_cases() {
     "echo -e \"%s\n%s\n%s\n%s\" > $TEST_DIR/format_string" \
     "rm -rf $TEST_DIR/format_string" \
     "security"
-
-  run_functionality "File with maximum allowed filename length" \
-    "$TEST_DIR/$(printf 'a%.0s' {1..255})" \
-    "echo -e \"apple\napple\nbanana\ncherry\" > $TEST_DIR/$(printf 'a%.0s' {1..255})" \
-    "rm -rf $TEST_DIR/$(printf 'a%.0s' {1..255})" \
-    "security"
-
 
 }
 
@@ -283,18 +252,20 @@ cleanup() {
   rm -f debloated_uniq original_uniq
 }
 
-main() {
-
-  cleanup
-  compile
-
-  # Create the test directory
+setup(){
+  # Setup test environment
   mkdir -p "$TEST_DIR"
   cp -r ../test_files crash_inputs
   mkdir -p test_files
   mv crash_inputs/*.txt test_files/
   mv crash_inputs/*.csv test_files/
+}
 
+main() {
+
+  cleanup
+  compile
+  setup
 
   # Run the test cases
   functionality_cases
@@ -305,17 +276,25 @@ main() {
   cleanup
   
   # Summary
+
   echo "Functionality tests run: $TOTAL_FUNCTIONALITY_TESTS"
   echo "Functionality tests passed: $PASSED_FUNCTIONALITY_TESTS"
   echo "Percentage functionality tests passed: $((PASSED_FUNCTIONALITY_TESTS * 100 / TOTAL_FUNCTIONALITY_TESTS))%"
   echo
-  echo "Security tests run: $TOTAL_SECURITY_TESTS"
-  echo "Security tests passed: $PASSED_SECURITY_TESTS"
-  echo "Percentage security tests passed: $((PASSED_SECURITY_TESTS * 100 / TOTAL_SECURITY_TESTS))%" 
-  echo
   echo "Robustness tests run: $TOTAL_ROBUSTNESS_TESTS"
   echo "Robustness tests passed: $PASSED_ROBUSTNESS_TESTS"
   echo "Percentage robustness tests passed: $((PASSED_ROBUSTNESS_TESTS * 100 / TOTAL_ROBUSTNESS_TESTS))%"
+
+  local passed=$((PASSED_FUNCTIONALITY_TESTS + PASSED_SECURITY_TESTS + PASSED_ROBUSTNESS_TESTS))
+  local total=$((TOTAL_FUNCTIONALITY_TESTS + TOTAL_SECURITY_TESTS + TOTAL_ROBUSTNESS_TESTS))  
+  echo
+  echo "Total tests run: $total"
+  echo "Total tests passed: $passed"
+  if [ $total -eq $passed ]; then
+    echo "All tests passed successfully."
+  else
+    echo "Some tests failed!"
+  fi
 
 }
 

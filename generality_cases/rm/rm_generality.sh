@@ -273,6 +273,11 @@ robustness_cases() {
   "touch $TEST_DIR/test_file_1.txt" \
   "rm -f $TEST_DIR/test_file_1.txt"
 
+  run_robustness "Invalid flag -i" \
+  "-i $TEST_DIR/test_file_1.txt" \
+  "touch $TEST_DIR/test_file_1.txt" \
+  "rm -f $TEST_DIR/test_file_1.txt"
+
   run_robustness "Invalid flag help" \
   "--help $TEST_DIR/test_file_1.txt" \
   "touch $TEST_DIR/test_file_1.txt" \
@@ -287,7 +292,6 @@ robustness_cases() {
   "-z $TEST_DIR/test_file_1.txt" \
   "touch $TEST_DIR/test_file_1.txt" \
   "rm -f $TEST_DIR/test_file_1.txt"
-
 
 }
 

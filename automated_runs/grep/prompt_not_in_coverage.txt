@@ -32,38 +32,25 @@ The given code belongs to the grep core utility. The desired functionality of th
 * **File Tree Traversal:** Safe recursive traversal across all scenarios.
 * **Output Handling:** Careful handling of output, including proper formatting and prevention of security vulnerabilities.
 * **Prevention of security vulnerabilities:** Prevention against the security vulnerabilities mentioned in the security list.
+**Important** If a code snippet contributes to handling the required functionalities of input format parsing, output date formatting, and date calculation, Immediately classify it as class 3 and say which required functionality it contributes to.
+For example:
+- A code snippet that is responsible for regular expression matching in a file is a part of the above mentioned required functionalities, hence it must be classified as class 3.
+- A code snippet that is responsible for traversing directories is considered as file tree traversal. This is a part of the above mentioned required functionalities. Hence it must be classified as class 3.
+- A code snippet that is responsible for prevention of the security vulnerabilities is considered important, hence it must be classified as class 3.
+- Any code snippet that is responsible for the above mentioned required functionalites must be classified as class 3.
 
-When evaluating conditional blocks, make sure to evaluate all outcomes of the conditional statements. Since we can not change the structure of code, evaluate the importance of the target code given its context.
+We are NOT interested in any other functionality. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements, goto statements and loop or variable initialization which are important for keeping the workflow structure.  
+
+Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL kinds of directory traversal, regular expression matching or input file formats. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
 Undesired Functionality:
-The following functionalities given below are unnecessary:
 
-* `-E, --extended-regexp` - extended regular expressions
-* `-F, --fixed-strings` - fixed strings
-* `-G, --basic-regexp` - basic regular expressions
-* `-P, --perl-regexp` - Perl regular expressions
-* `-e, --regexp=PATTERNS` - use PATTERNS for matching
-* `-f, --file=FILE` - take PATTERNS from FILE
-* `-w, --word-regexp` - match only whole words
-* `-x, --line-regexp` - match only whole lines
-* `-z, --null-data` - a data line ends in 0 byte, not newline
-* `-i, --ignore-case` - ignores case distinctions (if not required)
-* `-v, --invert-match` - selects non-matching lines
-* `-q, --quiet, --silent` - suppresses all normal output
-* `-L, --files-without-match` - prints names of files with no matches
-* `-l, --files-with-matches` - prints names of files with matches
-* `-T, --initial-tab` - makes tabs line up
-* `-Z, --null` - prints 0 byte after filename
-* `-s, --no-messages` - suppresses error messages
-* `-V, --version` - displays version information and exits
-* `--help` - displays this help text and exits
-Anything else that is not directly or indirectly related to the required functionalities
-
-
-**IMPORTANT**: If you encounter code that appears to relate to any of the undesired functionalities listed above and do NOT relate to any of the required functionalities, immediately classify it as Class 1 (No Functional Contribution) and provide a brief explanation.
-
-
-User friendliness is an **undesired** functionality. So consider removal for help statements, usage information or any error feedback to the user.
+Any other functionality that does not contribute to our required functionalites is irrelevant to the above mentioned required functionalities. 
+**Important** If a code snippet does not contribute to handling the required functionalities of input format parsing, output date formatting, and date calculation, Immediately classify it as class 1 and say which unrequired functionality it contributes to.
+For example:
+- A code snippet that is responsible for printing help or user information is not a part of required functionalities mentioned above, hence it must be classified as class 1.
+- A code snippet that is responsible for setting the color of the output is not a part of the required functionalities mentioned above, hence it must be classified as class 1.
+Hence, any other code snippets responsible for tasks unrelated to the mentioned task should be marked as unnecessary.
 
 This code snippet is not a part of the code execution path for the required functionality.
 
@@ -106,10 +93,10 @@ The given code belongs to the grep core utility. The desired functionality of th
 * **File Tree Traversal:** Safe recursive traversal across all scenarios.
 * **Output Handling:** Careful handling of output, including proper formatting and prevention of security vulnerabilities.
 * **Prevention of security vulnerabilities:** Prevention against the security vulnerabilities mentioned in the security list.
+* **Prevention the program workflow from being disrupted.**
 
-Make sure to cater to ALL edge cases for the functionalites mentioned. For example, cater to all kinds of regular expressions, and cater to all kinds of input data (it could be standard text or any other kind of input files). If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
-When evaluating conditional blocks, make sure to evaluate all outcomes of the conditional statements. Since we can not change the structure of code, evaluate the importance of the target code given its context.
+Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations.
 
 If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 

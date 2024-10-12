@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEBLOATED_FILE="grep-org.c"
+DEBLOATED_FILE="grep.c"
 ORIGINAL_FILE="grep-org.c"
 CC=clang
 
@@ -60,23 +60,33 @@ run_functionality() {
   eval "$setup_command"
 
   timeout "$TIMEOUT_VALUE" $DEBLOATED_GREP $flag "$pattern" $input_file >& "$OUTPUT_DEBLOATED" 
-  if [ $? -ne 0 ]; then
-    eval "$cleanup_command"
-    echo Fail: $description
-    # cat "$OUTPUT_DEBLOATED"
-    # echo "Error: Debloated program crashed!"
-    # echo
-    return
-  fi
+  local a=$?
+  # if [ $? -ne 0 ]; then
+  #   eval "$cleanup_command"
+  #   echo Fail: $description
+  #   # cat "$OUTPUT_DEBLOATED"
+  #   # echo "Error: Debloated program crashed!"
+  #   # echo
+  #   return
+  # fi
 
   # Run the original program and suppress stderr
   timeout "$TIMEOUT_VALUE" $ORIGINAL_GREP $flag "$pattern" $input_file >& "$OUTPUT_ORIGINAL"
-  if [ $? -ne 0 ]; then
-    echo "Error: Original program crashed!"
-    # Do not consider this as a test case
-    TOTAL_TESTS=$((TOTAL_TESTS - 1))
+  local b=$?
+  # if [ $? -ne 0 ]; then
+  #   echo "Error: Original program crashed!"
+  #   # Do not consider this as a test case
+  #   TOTAL_TESTS=$((TOTAL_TESTS - 1))
+  #   eval "$cleanup_command"
+  #   echo
+  #   return
+  # fi
+  if [ $a -ne $b ]; then
+    echo "Fail: $description"
+    # cat "$OUTPUT_DEBLOATED"
+    # echo ...
+    # cat "$OUTPUT_ORIGINAL"
     eval "$cleanup_command"
-    echo
     return
   fi
 

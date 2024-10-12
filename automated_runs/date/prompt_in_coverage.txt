@@ -14,10 +14,10 @@ Strictly follow the answer format below:
 
 Answer Format:
 
-Class 1: <reasoning for why the code might be completely unnecessary or not>
-Class 2: <reasoning for why the code might be somewhat unnecessary or not>
-Class 3: <reasoning for why the code might be necessary or not>
-Class 4: <reasoning for why the code might be critical or not>
+Class 1: <reasoning for which unrequired functionality the target code contributes to>
+Class 2: <reasoning for why the target code does not contribute to any of the required functionalities>
+Class 3: <reasoning for which functionality the target code contributes to>
+Class 4: <reasoning for which functionality or security the code snippet contributes to>
 Class 5: <reasoning for why you think it is likely you do not understand the purpose of this code given the context>
 
 Explanation: Based on the reasoning above, explain why the code is assigned to the final class in 2-3 lines.
@@ -29,20 +29,29 @@ The given code belongs to the date core utility. The desired functionality of th
 1. Proper input preprocessing. The preprocessing and parsing logic is often complex and critical for the program to function properly.
 2. Proper input parsing. The parsing of the input is necessary as it can contain specific formats of time and command line arguments for calculations.
 3. Date formatting. Date formatting allows you to convert the current date and time into specific formats (e.g, +"%Y-%m-%d %H:%M:%S", +"%Y-%m-%d %I:%M:%S %p", and more). It is necessary for us to be able to convert any format of date into another format.
+    - The formats can be any kind of formats for the input. For example 12 hour to 24 hour format, and monday vs mon are different formats as well.
 4. Output display formatting. Every minor formatting is necessary.
 5. Date calculation lets you compute past or future dates (e.g., "yesterday," "next Monday", "2024-08-27 +5 days", and more). 
 6. Prevention against the security vulnerabilities mentioned in the security list.
+**Important** If a code snippet contributes to handling the required functionalities of input format parsing, output date formatting, and date calculation, Immediately classify it as class 3 and say which required functionality it contributes to.
+For example:
+- A code snippet that is responsible for parsing of any specific input format is a part of the above mentioned required functionalities, hence it must be classified as class 3.
+- A code snippet that is responsible for padding the output or handling the width is considered as output display formatting. This is a part of the above mentioned required functionalities. Hence it must be classified as class 3.
+- A code snippet that is responsible for prevention of the security vulnerabilities is considered important, hence it must be classified as class 3.
+- Any code snippet that is responsible for the above mentioned required functionalites must be classified as class 3.
+
+We are NOT interested in any other functionality. Make sure that the program workflow is disrupted minimally, so be careful with judging statements such as jump statements, goto statements and loop or variable initialization which are important for keeping the workflow structure.  
 
 Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 
 Undesired Functionality:
 
-Any other functionality that does not contribute to our required functionalites is irrelevant to our use case. Here are some of the unrequired functionalities:
-1. **--debug**:                    Annotate and warn about parsed date usage to stderr.
-2. **-f, --file=DATEFILE**:        Apply --date once for each line in DATEFILE.
-3. **-r, --reference=FILE**:       Show last modification time of FILE.
-4. **--help**:                    Display help information and exit.
-5. **--version**:                 Output version information and exit.
+Any other functionality that does not contribute to our required functionalites is irrelevant to the above mentioned required functionalities. 
+**Important** If a code snippet does not contribute to handling the required functionalities of input format parsing, output date formatting, and date calculation, Immediately classify it as class 1 and say which unrequired functionality it contributes to.
+For example:
+- A code snippet that is responsible for printing help or user information is not a part of required functionalities mentioned above, hence it must be classified as class 1.
+- A code snippet that is responsible for setting the date of the system is not a part of the Required functionalities mentioned above, hence it must be classified as class 1.
+Hence, any other code snippets responsible for tasks unrelated to the mentioned task should be marked as unnecessary.
 
 This code snippet is a part of the code execution path for the required functionality.
 
@@ -85,8 +94,9 @@ Make sure to evaluate on the basis of:
 4. Output display formatting. Every minor formatting is necessary.
 5. Date calculation lets you compute past or future dates (e.g., "yesterday," "next Monday", "2024-08-27 +5 days", and more). 
 6. Prevention against the security vulnerabilities mentioned in the security list.
+7. Prevent the program workflow from being disrupted.
 
-Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations. If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
+Make sure to cater to ALL edge cases for the functionalites mentioned, such as catering to ALL formats (standard or non-standard formats), and catering to all kinds of date computations.
 
 If our target code contributes to our required functionalities directly or indirectly, it is necessary for us.
 

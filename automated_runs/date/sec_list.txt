@@ -2,3 +2,4 @@
 - **Sanitization of user input:**  Verify that the program properly sanitizes user input to prevent malicious code injection.
 - **Resource exhaustion:**  Test the program's behavior when encountering resource limitations, such as memory exhaustion or open file limits.
 - **Buffer overflows:**  Test for potential buffer overflows in the program's input handling and string manipulation functions.
+- **Error Handling:** Ensure the program handles all error conditions gracefully to handle robustness.
