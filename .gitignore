@@ -57,5 +57,6 @@ generality_cases/sort/test_files/
 functionality_files/
 security_cases/
 robustness_cases/
+test_files/
 
 compression_tests/
