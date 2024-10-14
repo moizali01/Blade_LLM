@@ -127,7 +127,7 @@ class QAClass:
         "response_mime_type": "text/plain",
         }
         model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
+        model_name="gemini-1.5-pro",
         generation_config=generation_config,
         safety_settings = safe
         # See https://ai.google.dev/gemini-api/docs/safety-settings
@@ -353,7 +353,8 @@ class QAClass:
             req_list = file.read()
 
         # cov_info = in_cov_statement if coverage else not_cov_statement
-        code_with_cov = update_code_with_coverage(self.timestamp)
+        # code_with_cov = update_code_with_coverage(self.timestamp)
+        
 
         prompt = prompt_template.format(context=formatted_context, query=query, summary=summary, req_list=req_list)
 
