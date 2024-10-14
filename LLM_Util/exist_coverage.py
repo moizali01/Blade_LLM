@@ -48,9 +48,9 @@ def exist(file_path):
     
 import re
 
-def update_code_with_coverage(formatted_time):
+def update_code_with_coverage(code_path):
     # Construct the file path using the provided timestamp
-    code_path = "../LLM_Util/cands/context/context" + "_time_" + str(formatted_time) + ".blade.c"
+    # code_path = "../LLM_Util/cands/context/context" + "_time_" + str(formatted_time) + ".blade.c"
     coverage_path = '../LLM_Util/coverage.txt'
     
     # code_path = "cands/context/" + self.timestamp[:-12]
@@ -72,12 +72,39 @@ def update_code_with_coverage(formatted_time):
             # Replace the line in code with the line from coverage (matching the index)
             code_lines[i] = coverage_lines[i]
     
-    # Step 4: Remove just the line numbers at the start and empty lines
+    # # Step 4: Remove just the line numbers at the start and empty lines
     updated_code = ''.join(code_lines)
-    # Remove only the line number and the following pipe (|) character
+    # # Remove only the line number and the following pipe (|) character
     cleaned_code = "\n".join([re.sub(r'^\d+\|', '', line) for line in updated_code.splitlines() if line.strip() != ""])
-    
+    cleaned_code = "The code is given in the following format:\nLine Number| Execution Count (no number indicates non executable lines)| Code line\n" + cleaned_code
     return cleaned_code
 
+def get_immediate_context(code_path, pretext, posttext):
+    start, end = analyze_code(code_path)
+    return coverage_for_lines(start - pretext, end + posttext)
+        
 
+def coverage_for_lines(first_line, last_line):
+    coverage_path = '../LLM_Util/coverage.txt'
+    
+    coverage_lines = ""
+    code_lines = ""
+    with open(coverage_path, 'r') as coverage_file:
+        coverage_lines = coverage_file.readlines()
+    if first_line < 0:
+        first_line = 0
+    if last_line > len(coverage_lines):
+        last_line = len(coverage_lines)
+        
+    for i in range(first_line - 1, last_line):
+        code_lines = code_lines + coverage_lines[i]
+
+     # # Step 4: Remove just the line numbers at the start and empty lines
+    updated_code = ''.join(code_lines)
+    # # Remove only the line number and the following pipe (|) character
+    cleaned_code = "\n".join([re.sub(r'^\d+\|', '', line) for line in updated_code.splitlines() if line.strip() != ""])
+    cleaned_code = "The code is given in the following format:\nLine Number| Execution Count (no number indicates non executable lines)| Code line\n" + cleaned_code
+    return cleaned_code
+        
+    
 # print(update_code_with_coverage("18-49-59-982"))

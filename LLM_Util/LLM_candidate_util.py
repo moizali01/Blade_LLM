@@ -2,11 +2,12 @@ from datetime import datetime
 from LLM_Util.LLm_class import QAClass
 from writer import write
 import os
-from LLM_Util.exist_coverage import exist
+from LLM_Util.exist_coverage import exist, get_immediate_context
 import glob
 import time
 import subprocess
 import re
+from LLM_Util.function_ctx import get_function_list, get_function_context
 
 THRESHOLD = 7
 
@@ -56,13 +57,15 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
 
     now = datetime.now()
     formatted_time = now.strftime("%H-%M-%S-%f")[:-3]
+    cand_linenum = "../LLM_Util/cands/context/context" + "_time_"+  str(formatted_time)+ ".blade.c"
+    write(candidate_set_with_line_number, cand_linenum)
     outfile = "../LLM_Util/cands/removed_code/removed_code" + "_time_"+  str(formatted_time)+ ".blade.c"
-    write(candidate, outfile)
+    candidate = get_immediate_context(cand_linenum, 0, 0)
+    with open (outfile, 'w') as file:
+        file.write(candidate)
     clang_format_command = f"clang-format -i {outfile}"
     os.system(clang_format_command)
 
-    cand_linenum = "../LLM_Util/cands/context/context" + "_time_"+  str(formatted_time)+ ".blade.c"
-    write(candidate_set_with_line_number, cand_linenum)
 
     # clean empty lines in context for query to DB
     first_non_empty_index = next((i for i, x in enumerate(context) if x), len(context))
@@ -75,20 +78,25 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
 
 
     # write fifty context to file 
-    fifty_clean = [c for c in fifty_context if c != ""]
+    # fifty_clean = [c for c in fifty_context if c != ""]
+    fifty_clean = get_immediate_context(cand_linenum, 70, 70).split("\n")
     fifty_file = "../LLM_Util/cands/fifty_text/fifty_context" + "_time_"+ str(formatted_time)+ ".blade.c"
     write(fifty_clean, fifty_file)
 
     # write llm response to file 
     llm_file = "../LLM_Util/cands/llm_response/llm" + "_time_"+ str(formatted_time)+ ".blade.c.txt"
+    
+    function_list = get_function_list("../LLM_Util/original.c")
+    function_context = get_function_context(cand_linenum, '../LLM_Util/coverage.txt', function_list)
 
     qa = QAClass() 
     try:
         # time.sleep(10)
-        query=""
+        query=candidate
         llm_response=""
-        with open(outfile, 'r') as file:
-            query = file.read()
+        # with open(outfile, 'r') as file:
+        #     query = file.read()
+        # print("Query:\n", query)
         
         with open(context_file, 'r') as file:
             context_clean = file.read()
@@ -104,9 +112,9 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
         # query llm only if cache is empty
         if llm_cache == None:
             if (exist_in_coverage):
-                llm_response = qa.invoke(query, 'security', context_clean, fifty_clean, str(formatted_time))
+                llm_response = qa.invoke(query, 'security', context_clean, fifty_clean, str(formatted_time), function_context)
             else:
-                llm_response = qa.invoke(query, 'generality', context_clean, fifty_clean, str(formatted_time))
+                llm_response = qa.invoke(query, 'generality', context_clean, fifty_clean, str(formatted_time), function_context)
         else:
             print("Using Cached LLM Response")
             llm_response = llm_cache

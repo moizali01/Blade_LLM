@@ -213,7 +213,7 @@ class QAClass:
             def __init__(self, outer_instance):
                 self.outer_instance = outer_instance
 
-            def run(self, query, context_query, coverage, fifty_clean):
+            def run(self, query, context_query, coverage, fifty_clean, function_context):
 
                 # define retriever
                 retriever = self.outer_instance._db.as_retriever(search_type="similarity", search_kwargs={"k": 4})
@@ -231,10 +231,19 @@ class QAClass:
                 # Unzip the sorted pairs
                 retrieved_docs, similarity_scores = zip(*sorted_pairs)
 
-                if len(query.splitlines()) > 10:
-                    formatted_context_2 = self.outer_instance.combine_docs(retrieved_docs)
-                else:
-                    formatted_context_2 = "Snippet.0: \n\n" + fifty_clean + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
+                formatted_context_2 = "Function in which the code snippet was called:\n\n" + function_context + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
+                function_lines = function_context
+                function_lines = function_lines.splitlines()
+                if len(function_lines) < 10:
+                    formatted_context_2 = "Function in which the code snippet was called:\n\n" + function_context + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
+                elif len(function_lines) > 1000:
+                    first_100_lines = "\n".join(fifty_clean.splitlines()[:100])
+                    last_100_lines = "\n".join(fifty_clean.splitlines()[-100:])
+                    formatted_context_2 = "Snippet.0: \n\n" + first_100_lines + "\n\n" "Snippet.1: \n\n" + last_100_lines + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
+                # if len(query.splitlines()) > 10:
+                #     formatted_context_2 = self.outer_instance.combine_docs(retrieved_docs)
+                # else:
+                #     formatted_context_2 = "Snippet.0: \n\n" + fifty_clean + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
                 
                 return self.outer_instance.call_llm(query, formatted_context_2, coverage, llm)
 
@@ -253,7 +262,6 @@ class QAClass:
 
         # prompt = prompt_template.format(sec_list=sec_list, formatted_context=formatted_context, query=query)
         # prompt_to_send = prompt
-
         # Classify the context as relevant or not. If not, retain
         print("Checking Relevance")
         relevance, summary = self.check_relevance(query, formatted_context, llm)
@@ -287,6 +295,9 @@ class QAClass:
             prompt_template = file.read()
 
         prompt = prompt_template.format(context=formatted_context, query=query)
+        os.makedirs("../LLM_Util/cands/prompt", exist_ok=True)
+        with open("../LLM_Util/cands/prompt/prompt" + "_time_"+ str(self.timestamp) + ".blade.c.txt", 'w') as file:
+            file.write(prompt)
 
         response = llm(prompt)
 
@@ -403,7 +414,7 @@ class QAClass:
         # retain if there is any issue in extracting importance score
         return "yes"
 
-    def invoke(self, query, prompt_type, context_query, fifty_clean, passed_time):
+    def invoke(self, query, prompt_type, context_query, fifty_clean, passed_time, function_context):
         # Retrieve documents based on context query
         print("Querying: ", query)
         # print("Context Retrived from DB: ", formatted_context)
@@ -411,9 +422,9 @@ class QAClass:
         self.timestamp = passed_time
 
         if prompt_type == 'generality':
-            return self.llm_chain.run(query, context_query, False, fifty_clean)
+            return self.llm_chain.run(query, context_query, False, fifty_clean, function_context)
         elif prompt_type == 'security':
-            return self.llm_chain.run(query, context_query, True, fifty_clean)
+            return self.llm_chain.run(query, context_query, True, fifty_clean, function_context)
         
 
     def get_security_checks(self):
