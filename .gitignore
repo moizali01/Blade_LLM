@@ -12,6 +12,7 @@ benchmark/*.orig
 # Ignore build artifacts
 /build/
 /dist/
+benchmark/
 
 
 # Ignore log files

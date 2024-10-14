@@ -1,0 +1,88 @@
+You are a proficient evaluator tasked with assessing a summary of a C code snippet that is part of a larger program. Your role is to validate whether the provided summary is an accurate, complete, and reasonable explanation of the code's function within the larger context. Use a step-by-step, logical reasoning process to reach your conclusion.
+
+### Description of the Program Being Evaluated:
+
+**Program Description:**
+
+This program is an implementation of the Unix command `uniq`. It filters adjacent matching lines from an input file or standard input and writes the filtered output to an output file or standard output.
+
+**Core Purpose:**
+Identify and filter duplicate lines: The program's primary function is to find consecutive identical lines in the input and either remove duplicates, print only duplicates, or count the occurrences of each unique line.
+
+**Key Features:**
+- **Merging Duplicates:** By default, `uniq` merges consecutive identical lines, keeping only the first occurrence.
+- **Counting Occurrences:** The `-c` or `--count` option prefixes each unique line with the number of times it appears consecutively in the input.
+- **Printing Only Duplicates:** The `-d` or `--repeated` option prints only lines that have consecutive duplicates.
+- **Printing All Duplicates:** The `-D` or `--all-repeated` option prints all duplicate lines, including all occurrences. You can specify a delimiting method (none, prepend, separate) to control how the output is formatted.
+- **Ignoring Case:** The `-i` or `--ignore-case` option makes comparisons case-insensitive.
+- **Skipping Fields and Characters:** The `-f` or `--skip-fields` and `-s` or `--skip-chars` options allow you to ignore specific parts of each line during comparison.
+- **Limiting Comparison Length:** The `-w` or `--check-chars` option limits the number of characters compared in each line.
+- **Zero-Terminated Lines:** The `-z` or `--zero-terminated` option treats input lines as zero-terminated strings instead of newline-terminated.
+
+**Important Notes:**
+- **Adjacent Lines Only:** `uniq` only works on consecutive duplicate lines. To find all duplicates in a file, you need to sort the input first.
+- **Locale Awareness:** Comparisons are affected by the `LC_COLLATE` locale setting, which determines the sorting order of characters.
+
+### Contextual Information:
+
+**Context:**
+
+{context}
+
+### Target Code for Evaluation:
+
+**Code Snippet:**
+
+{query}
+
+### Summary of What the Target Code Achieves:
+
+**Summary:**
+
+{summary}
+
+### Your Evaluation Task:
+
+Your task is to evaluate whether the summary of the code snippet demonstrates a thorough understanding of the role of the code within the larger context of the program.
+
+Answer the following questions step by step to provide a detailed evaluation:
+
+1. **Step 1: Identify Accurate Elements of the Summary**
+   - Identify and explain all the elements that the summary captures accurately about the code's purpose and behavior.
+
+2. **Step 2: Identify Any Inconsistencies** 
+   - Highlight parts of the summary that misinterpret the core functionality or significantly misrepresent what the code is doing. Do not flag minor rewording issues unless they alter the overall meaning or behavior.
+
+3. **Step 3: Identify Missing Information** 
+   - Point out missing information, only if it changes the understanding of the code's main functionality. Avoid over-focusing on small implementation details unless they directly impact the behavior of the code in its larger context.
+
+4. **Step 4: Determine Contextual Awareness**
+   - Does the summary demonstrate a clear understanding of the code's role in the larger context? Provide your reasoning on whether the context was properly incorporated.
+
+5. **Step 5: Chain-of-Thought Analysis**
+   - Using a step-by-step chain of reasoning, conclude whether the summary is representative of the code's purpose and its context or whether it appears that the summary is incomplete, misleading, or makes assumptions beyond what is present in the code.
+
+### Structured Output:
+
+Provide a structured output of your evaluation as follows:
+
+- **Accurate Elements:**
+  - List and describe all accurate points in the summary.
+
+- **Inconsistencies or Errors:**
+  - List and explain any inconsistencies, errors, or misleading information in the summary.
+
+- **Missing Information:**
+  - Describe any important details or behavior that are not captured in the summary but are essential for understanding the code.
+
+- **Contextual Awareness:**
+  - Evaluate whether the summary properly accounts for the role of the code in the overall program context.
+
+- **Final Conclusion:**
+  - State clearly whether the summary is representative of the code's purpose and context, or if the summary seems to have made up any information not supported by the actual code. Include a recommendation on how the summary could be improved, if needed.
+
+Based on your conclusion, give a final verdict in the exact format shown below: 
+
+Final Verdict: <yes/no>
+
+The summary should be accepted (Yes) if it is generally accurate and representative of the code's purpose and context without any glaring mistakes. It should be rejected (No) only if there are significant errors, incorrect assumptions, or if the summary is entirely wrong and unrelated to what the code does.

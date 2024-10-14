@@ -1,20 +1,24 @@
 **Required Functionality:**
 
-Recursive Ownership/Group Change:
+Removal of duplicate lines from a file:
 
-   Support for -R flag to recursively traverse and change ownership and/or group of directories and ALL their contents, including nested directories and their files.
-   Handle OWNER and :[GROUP] arguments, including numeric and symbolic owner/group specifications.
-   Correctly resolve and apply symbolic or numeric user and group names, including retrieving user/group names from user IDs (UID) and group IDs (GID), or converting numeric identifiers back into human-readable names.
-   Logic for correctly parsing arguments related to the -R flag and user and group arguments.
-   All logic relevant to recursively traversing and changing directory ownership and group.
+1. Use of this core-utility without any flags to remove duplicate lines from sorted files. 
+2. Proper input processing from a file. We will take input by reading lines from a file which is a necessary feature.
+3. Proper output processing. We will output the results to standard out. 
 
 **Unrequired Functionality:**
 
-Any other functionality that does not contribute to the above-mentioned core features is irrelevant. Examples include code responsible for help messages, verbosity (-v, -f, etc.), or other unrelated flags.
+Any other functionality that does not contribute to the above-mentioned core features is irrelevant. Choosing different options to choose criteria for filtering unique lines, or to display any other information other than the basic main filtering capabilities of the uniq core utility is unrequired.
+If you encounter a code snippet make sure to think about whether it is a part of the required or unrequired functionality by thinking like the following examples:
 
-For example:
 - A code snippet that is responsible for printing help or user information is not a part of required functionalities mentioned above, hence it must be classified as class 1.
-- A code snippet that is responsible for --reference or -H functionality is not a part of the Required functionalities mentioned above, hence it must be classified as class 1.
-- A code snippet implementing the -c, -f, or -v flags, which only affect output verbosity is not a part of required functionalities mentioned above, hence it must be classified as class 1.
+- A code snippet that is responsible for -c, --count (prefix lines by the number of occurrences functionality) is not a part of the Required functionalities mentioned above, hence it must be classified as class 1.
+- A code snippet that is responsible for filtering uniq lines based on a particular delimiter is considered unnecessary
 
 Hence, any other code snippets responsible for tasks unrelated to the mentioned task should be marked as unnecessary.
+
+Please use the following examples to help you streamline the thought process.
+Class 1: A piece of code that is directly a part of any unrequired functionalities such as displaying version information or counting unique occurances is completely unnecessary.
+Class 2: A piece of code that is comparing lines may or may not be required. If the code snippet is used with extra constaints such as ignore case or skip characters, the code snippet would not directly be a part of our required functionality
+Class 3: A piece of code that is setting environment variables, handling or ensuring the control flow of the program is disrupted minimally in the context of the larger required functionality of removing duplicate lines.
+Class 4: A piece of code that employs the core logic of the required functionality within directly within the appropriate context as well.

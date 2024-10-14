@@ -1,4 +1,36 @@
-Given the provided context and user query below, determine if the context is sufficient to understand the role or purpose of the queried code within the larger program.
+You are a proficient C code evaluator tasked with assessing the importance of a specific code snippet within the larger context of the overall program. 
+
+Description of the program being evaluated:
+#########
+
+Program Description:
+
+This program is an implementation of the Unix command uniq. It filters adjacent matching lines from an input file or standard input and writes the filtered output to an output file or standard output.
+
+Here's a breakdown of its functionality:
+
+Core Purpose:
+Identify and filter duplicate lines: The program's primary function is to find consecutive identical lines in the input and either remove duplicates, print only duplicates, or count the occurrences of each unique line.
+
+Key Features:
+Merging duplicates: By default, uniq merges consecutive identical lines, keeping only the first occurrence.
+Counting occurrences: The -c or --count option prefixes each unique line with the number of times it appears consecutively in the input.
+Printing only duplicates: The -d or --repeated option prints only lines that have consecutive duplicates.
+Printing all duplicates: The -D or --all-repeated option prints all duplicate lines, including all occurrences. You can specify a delimiting method (none, prepend, separate) to control how the output is formatted.
+Ignoring case: The -i or --ignore-case option makes comparisons case-insensitive.
+Skipping fields and characters: The -f or --skip-fields and -s or --skip-chars options allow you to ignore specific parts of each line during comparison.
+Limiting comparison length: The -w or --check-chars option limits the number of characters compared in each line.
+Zero-terminated lines: The -z or --zero-terminated option treats input lines as zero-terminated strings instead of newline-terminated.
+
+Important Notes:
+Adjacent lines only: uniq only works on consecutive duplicate lines. To find all duplicates in a file, you need to sort the input first.
+Locale awareness: Comparisons are affected by the LC_COLLATE locale setting, which determines the sorting order of characters.
+
+General Summary:
+The uniq program is a useful tool for processing text files and removing or identifying duplicate lines. It offers various options to customize its behavior and output format, making it versatile for different use cases. 
+
+
+#########
 
 Contextual Information:
 
@@ -20,10 +52,10 @@ Query:
 
 #########
 
-Instructions:
 
-- Answer "Yes" if the context includes relevant information that can reasonably explain the role or functionality of the queried code in the program, even if some minor details are missing or inferred.
-- Answer "No" if the context is clearly missing crucial information needed to identify the role of the queried code
-- Answer "I don't know" only if the context and query are both so unclear or ambiguous that no reasonable inference can be made.
+Break your response into two larger sections:
+Section 1: A thorough explanation of what this code snippet achieves. In your explanations for Section 1 make sure to refer to the lines of the code that achieve a general purpose.
+Section 2: What is the larger functionality of which this code snippet is a part of? for example, a code snippet may be calculating unique lines just to count the number of unique lines, or a code snippet may be filtering out unique lines but specifically skipping characters or ignoring case. 
+In your explanations for Section 2 make sure to refer to the context snippet that helps you deducee the larger functionality of the target code in the program.
 
-If you cannot decide based on the context, respond with "I don't know."
+You can make educated guesses for the details of the implementation such as the kind of data structures used or the impleementations of the functions involved. We are interested in an overview of what the code snippet can achieve assuming the unknown dependancies can be treated as a blackbox. Answer corresponding to any possibilities the code could potentially be about.

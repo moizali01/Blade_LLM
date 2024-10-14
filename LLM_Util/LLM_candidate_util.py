@@ -34,6 +34,9 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
     if is_complete_c_function(process.stdout):
         return 1
     
+    if check_struct_definition(process.stdout):
+        return 1
+
     if check_while_break(process.stdout):
         return 10
 
@@ -49,6 +52,7 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
     os.makedirs("../LLM_Util/cands/multiagent/relevance", exist_ok=True)
     os.makedirs("../LLM_Util/cands/multiagent/functionality", exist_ok=True)
     os.makedirs("../LLM_Util/cands/multiagent/security", exist_ok=True)
+    os.makedirs("../LLM_Util/cands/multiagent/new_relevance", exist_ok=True)
 
     now = datetime.now()
     formatted_time = now.strftime("%H-%M-%S-%f")[:-3]
@@ -91,9 +95,9 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
 
         with open(fifty_file, 'r') as file:
             fifty_clean = file.read()
-
-        exist_in_coverage = exist(outfile)
-
+        # print("before coverage check")
+        exist_in_coverage = exist(cand_linenum)
+        # print("after coverage check")
         # get llm response from cache if cand set is repeating
         llm_cache = check_previous_responses(cand_linenum)
 
@@ -263,3 +267,13 @@ def check_while_break(candidate_set):
     
     # Use re.search to check if the pattern exists in the candidate_set
     return bool(re.match(pattern, candidate_set, re.DOTALL))
+
+def check_struct_definition(text):
+    """
+    Check if the given text contains a C/C++ struct or enum definition.
+
+    :param text: The text to search within.
+    :return: True if a struct or enum definition is found, False otherwise.
+    """
+    pattern = r'\b(?:struct|enum)\s+\w*\s*\{[^}]*\};?|(?:static|extern)?\s*\w+\s+(?:\*|const\s*\*|const\s*\*\s*const\s*)?\w*\[\d*\]\s*=\s*\{[^}]*\};?'
+    return bool(re.search(pattern, text))

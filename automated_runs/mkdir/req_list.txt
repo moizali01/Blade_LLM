@@ -1,0 +1,9 @@
+**Required Functionality**:
+
+    - The given code belongs to the mkdir core utility and is used only with the -m flag to create a directory with specific permissions. 
+    - For this task we only want to create directories using the -m flag with specific permissions in any format.
+
+**Unrequired Functionality**:
+
+Any other functionality such as verbose or parent directories creation is not considered relevant. 
+

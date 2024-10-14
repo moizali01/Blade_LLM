@@ -21,6 +21,7 @@ cp mkdir-5.2.1.c.origin.c ../../src/target-program/mkdir-5.2.1.c.origin.c
 cp mkdir.sh ../../src/target-program/mkdir.sh
 cp original.txt ../../src/original.txt
 cp coverage.txt ../../LLM_Util/coverage.txt
+cp req_list.txt ../../LLM_Util/req_list.txt
 clear
 
 # copy prompts to LLM_UTIL

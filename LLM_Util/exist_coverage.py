@@ -46,4 +46,38 @@ def exist(file_path):
     coverage, _ = check_coverage('../LLM_Util/coverage.txt', first_line, last_line)
     return coverage
     
+import re
 
+def update_code_with_coverage(formatted_time):
+    # Construct the file path using the provided timestamp
+    code_path = "../LLM_Util/cands/context/context" + "_time_" + str(formatted_time) + ".blade.c"
+    coverage_path = '../LLM_Util/coverage.txt'
+    
+    # code_path = "cands/context/" + self.timestamp[:-12]
+    # coverage_path = "coverage.txt"
+
+    # Step 1: Get the first and last non-empty line numbers in the code file
+    first_line, last_line = analyze_code(code_path)
+    
+    # Step 2: Read both code file and coverage file contents
+    with open(code_path, 'r') as code_file:
+        code_lines = code_file.readlines()
+        
+    with open(coverage_path, 'r') as coverage_file:
+        coverage_lines = coverage_file.readlines()
+
+    # Step 3: Replace lines in the code file with the coverage lines
+    for i in range(first_line - 1, last_line):
+        if i < len(coverage_lines):
+            # Replace the line in code with the line from coverage (matching the index)
+            code_lines[i] = coverage_lines[i]
+    
+    # Step 4: Remove just the line numbers at the start and empty lines
+    updated_code = ''.join(code_lines)
+    # Remove only the line number and the following pipe (|) character
+    cleaned_code = "\n".join([re.sub(r'^\d+\|', '', line) for line in updated_code.splitlines() if line.strip() != ""])
+    
+    return cleaned_code
+
+
+# print(update_code_with_coverage("18-49-59-982"))

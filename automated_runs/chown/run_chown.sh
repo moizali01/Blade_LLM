@@ -21,12 +21,13 @@ cp chown-8.2.c.origin.c ../../src/target-program/chown-8.2.c.origin.c
 cp chown_train.sh ../../src/target-program/chown_train.sh
 cp original.txt ../../src/original.txt
 cp coverage.txt ../../LLM_Util/coverage.txt
+cp req_list.txt ../../LLM_Util/req_list.txt
 # clear
 
 # copy prompts to LLM_UTIL
 cd $DIR
-cp prompt_in_coverage.txt ../../LLM_Util/prompt_in_coverage.txt
-cp prompt_not_in_coverage.txt ../../LLM_Util/prompt_not_in_coverage.txt
+# cp prompt_in_coverage.txt ../../LLM_Util/prompt_in_coverage.txt
+# cp prompt_not_in_coverage.txt ../../LLM_Util/prompt_not_in_coverage.txt
 # clear
 
 # clear cands

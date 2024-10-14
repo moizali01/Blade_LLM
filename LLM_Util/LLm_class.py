@@ -28,6 +28,7 @@ from tree_sitter_languages import get_language, get_parser
 from llama_index.core.text_splitter import CodeSplitter
 from dotenv import load_dotenv
 from LLM_Util.chunker import get_code_chunks
+from LLM_Util.exist_coverage import update_code_with_coverage
 import subprocess
 
 
@@ -255,14 +256,14 @@ class QAClass:
 
         # Classify the context as relevant or not. If not, retain
         print("Checking Relevance")
-        relevance = self.check_relevance(query, formatted_context, llm)
+        relevance, summary = self.check_relevance(query, formatted_context, llm)
         print(relevance)
         if relevance == "no":
             return "final verdict: class 4"
         else:
             # query functionality
             print("Checking Functionality")
-            functionality = self.check_functionality(query, formatted_context, llm, coverage)
+            functionality = self.check_functionality(query, formatted_context, llm, coverage, summary)
             print(functionality)
             # retain since it is needed for required functionality
             if functionality == "yes":
@@ -289,32 +290,61 @@ class QAClass:
 
         response = llm(prompt)
 
-        # save response to cands/multiagent/security
-        file_name = "../LLM_Util/cands/multiagent/relevance/relevance" + "_time_"+ str(self.timestamp) + ".blade.c.txt"
-        with open(file_name, 'w') as file:
-            file.write(response)
+        if response == None:  
+            return "no", "No response from LLM"
 
+        # call agent 2 here
+        with open("../LLM_Util/confirm_relevance_prompt.txt", 'r') as file:
+            confirm_relevance_prompt = file.read()
+
+        prompt = confirm_relevance_prompt.format(context=formatted_context, query=query, summary=response)
+        response2 = llm(prompt)
+
+        if response2 == None:
+            return "no", response
+
+        merged_response = response + "\n\n" + response2
+        file_name = "../LLM_Util/cands/multiagent/new_relevance/relevance" + "_time_"+ str(self.timestamp) + ".blade.c.txt"
+        with open (file_name, 'w') as file:
+            file.write(merged_response)
+
+        # # save response to cands/multiagent/security
+        # file_name = "../LLM_Util/cands/multiagent/relevance/relevance" + "_time_"+ str(self.timestamp) + ".blade.c.txt"
+        # with open(file_name, 'w') as file:
+        #     file.write(response)
+
+
+        # # parse response to get "yes" or "no"
+        # match = re.search(r'\b(yes|no)\b', response.lower().strip())
+        # if match is not None:
+        #     return match.group(1).lower()
+        # else:
+        #     return "no"
 
         # parse response to get "yes" or "no"
-        match = re.search(r'\b(yes|no)\b', response.lower().strip())
+        match = re.search(r'Final Verdict\s*:\s*(yes|no)', response2.strip(), re.IGNORECASE)
+        print(match)
         if match is not None:
-            return match.group(1).lower()
+            return match.group(1).lower(), response
         else:
-            return "no"
+            return "no", response
+        
+        return "no", response
 
-    def check_functionality(self, query, formatted_context, llm, coverage):
+    def check_functionality(self, query, formatted_context, llm, coverage, summary):
         with open("../LLM_Util/functionality_prompt.txt", 'r') as file:
             prompt_template = file.read()
 
-        in_cov_statement = "This code snippet included in the code execution path for the required functionality, therefore verify if the given code snippet is important for required functionality of the program."
-        not_cov_statement = "This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for the required functionality of the program."
+        # in_cov_statement = "This code snippet included in the code execution path for the required functionality, therefore verify if the given code snippet is important for required functionality of the program."
+        # not_cov_statement = "This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for the required functionality of the program."
 
         with open("../LLM_Util/req_list.txt", 'r') as file:
             req_list = file.read()
 
-        cov_info = in_cov_statement if coverage else not_cov_statement
+        # cov_info = in_cov_statement if coverage else not_cov_statement
+        code_with_cov = update_code_with_coverage(self.timestamp)
 
-        prompt = prompt_template.format(context=formatted_context, query=query, coverage_info=cov_info, req_list=req_list)
+        prompt = prompt_template.format(context=formatted_context, query=code_with_cov, summary=summary, req_list=req_list)
 
         response = llm(prompt)
 
@@ -322,7 +352,6 @@ class QAClass:
         file_name = "../LLM_Util/cands/multiagent/functionality/functionality" + "_time_"+ str(self.timestamp) + ".blade.c.txt"
         with open(file_name, 'w') as file:
             file.write(response)
-
 
         # parse response to get "yes" or "no"
         match = self.extract_imp_score_new_prompt(response)

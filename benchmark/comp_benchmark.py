@@ -77,15 +77,38 @@ def check_if_commented_out(file_path, start_line, end_line):
     return False
 
 
+def get_benchmark_length(file_path):
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    return len(lines)
+
 def compare_benchmark(debloated_file, benchmark_file):
-    os.system(f"astyle -j -A4 {debloated_file}")
-    os.system(f"astyle -j -A4 {benchmark_file}")
+    # os.system(f"astyle -j -A4 {debloated_file}")
+    # os.system(f"astyle -j -A4 {benchmark_file}")
     
     # debloated
     merged_files = []
     
     false_retention = 0
     false_removal = 0
+
+    false_retention_files = []
+    false_removal_files = []
+
+    # get array of length of number of lines in benchmark
+    lines_queried_from_original = [False for i in range(0, get_benchmark_length(benchmark_file))]
+
+    lines_removed_by_llm = [False for i in range(0, get_benchmark_length(benchmark_file))]
+
+    lines_removed_by_benchmark = [False for i in range(0, get_benchmark_length(benchmark_file))]
+
+    # load benchmark, mark removed lines as True
+    with open(benchmark_file, 'r') as file:
+        benchmark_lines = file.readlines()
+    for i,each in enumerate(benchmark_lines):
+        if "//" in each:
+            lines_removed_by_benchmark[i] = True 
 
     # read all file names from cands/removed_code
     for root, dirs, files in os.walk("cands/context"):
@@ -106,30 +129,53 @@ def compare_benchmark(debloated_file, benchmark_file):
         #     context = f.readlines() 
         start_code, end_code = analyze_code(f"cands/context/context_time_{timestamp}.blade.c")
 
+
+        # mark Lines queried as cand sets
+        for i in range(start_code, end_code):
+                lines_queried_from_original[i] = True
+
+
+        # mark removed lines by LLM
+        for i in range(start_code, end_code):
+            if llm_class == 1:
+                lines_removed_by_llm[i] = True
+
         # check if the code is commented out in the benchmark file
         not_in_benchmark = check_if_commented_out(benchmark_file, start_code, end_code)
 
         # code is not in benchmark but in debloated (Bloat)
         if not_in_benchmark and llm_class == 9:
             false_retention += 1
-
+            false_retention_files.append(f"cands/merged_responses/merged_time_{timestamp}.blade.c.txt")
         # llm removed but present in benchmark  (Extra removal)
         elif not not_in_benchmark and llm_class == 1:
             false_removal += 1
+            false_removal_files.append(f"cands/merged_responses/merged_time_{timestamp}.blade.c.txt")
 
-
-        # check if any line number from start_code to end_code is commented out in the benchmark file
-
-        # find line number of first non empty line
-        # first_non_empty_index = next((i for i, x in enumerate(context) if x), len(context))
-        # find line number of last non empty line
-        # last_non_empty_index = next((i for i, x in enumerate(reversed(context)) if x), len(context))
-
-        # print(f"Range:{first_non_empty_index}, {last_non_empty_index}")
-        # print(f"Range:{first_non_empty_index} - {last_non_empty_index}")
 
         # print(len(context))
     print(f"Total Cands: {len(merged_files)}")
+
+    # make new results folder and save the false retention and false removal files
+    os.makedirs("results", exist_ok=True)
+    os.makedirs("results/false_retention", exist_ok=True)
+    os.makedirs("results/false_removal", exist_ok=True)
+
+
+
+    for each in false_retention_files:
+        os.system(f"cp {each} results/false_retention")
+
+    for each in false_removal_files:
+        os.system(f"cp {each} results/false_removal")
+
+
+    print("Lines Queried as Cand.Sets: ", sum(lines_queried_from_original))
+    print("Lines Removed by LLM: ", sum(lines_removed_by_llm))
+    print("Lines Removed by Benchmark: ", sum(lines_removed_by_benchmark))
+
+    print("Lines Removed By Benchmark and LLM: ", sum([a and b for a, b in zip(lines_removed_by_benchmark, lines_removed_by_llm)]))
+
     return false_retention, false_removal
 # compare_benchmark("debloated.c", "benchmark.c")
 
@@ -139,6 +185,6 @@ bloat_causer, func_losser = compare_benchmark("mkdir-multiagent.c", "benchmark.c
 
 print(f"False Retention: {bloat_causer}")
 print(f"False Removal: {func_losser}")
-
+os.system("rm -rf *.orig")
 
 

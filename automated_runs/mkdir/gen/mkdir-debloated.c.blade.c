@@ -48,31 +48,10 @@ struct stat {
   struct timespec st_ctim;
   __syscall_slong_t __glibc_reserved[3];
 };
-struct dev_ino {
-  ino_t st_ino;
-  dev_t st_dev;
-};
-struct cycle_check_state {
-  struct dev_ino dev_ino;
-  size_t chdir_counter;
-  unsigned long magic;
-};
+
 struct _ftsent;
 struct _ftsent;
-struct __anonstruct_FTS_26 {
-  struct _ftsent *fts_cur;
-  struct _ftsent *fts_child;
-  struct _ftsent **fts_array;
-  dev_t fts_dev;
-  char *fts_path;
-  int fts_rfd;
-  size_t fts_pathlen;
-  int fts_nitems;
-  int (*fts_compar)(void const *, void const *);
-  int fts_options;
-  Hash_table *active_dir_ht;
-  struct cycle_check_state *cycle_state;
-};
+
 typedef struct __anonstruct_FTS_26 FTS;
 struct _ftsent {
   struct _ftsent *fts_cycle;
@@ -104,42 +83,7 @@ struct _IO_FILE;
 struct _IO_FILE;
 typedef struct _IO_FILE FILE;
 typedef void _IO_lock_t;
-struct _IO_marker {
-  struct _IO_marker *_next;
-  struct _IO_FILE *_sbuf;
-  int _pos;
-};
-struct _IO_FILE {
-  int _flags;
-  char *_IO_read_ptr;
-  char *_IO_read_end;
-  char *_IO_read_base;
-  char *_IO_write_base;
-  char *_IO_write_ptr;
-  char *_IO_write_end;
-  char *_IO_buf_base;
-  char *_IO_buf_end;
-  char *_IO_save_base;
-  char *_IO_backup_base;
-  char *_IO_save_end;
-  struct _IO_marker *_markers;
-  struct _IO_FILE *_chain;
-  int _fileno;
-  int _flags2;
-  __off_t _old_offset;
-  unsigned short _cur_column;
-  signed char _vtable_offset;
-  char _shortbuf[1];
-  _IO_lock_t *_lock;
-  __off64_t _offset;
-  void *__pad1;
-  void *__pad2;
-  void *__pad3;
-  void *__pad4;
-  size_t __pad5;
-  int _mode;
-  char _unused2[(15UL * sizeof(int) - 4UL * sizeof(void *)) - sizeof(size_t)];
-};
+
 typedef int wchar_t;
 typedef unsigned int wint_t;
 enum __anonenum_arg_type_26 {
@@ -203,63 +147,17 @@ struct __anonstruct_arguments_29 {
   argument *arg;
 };
 typedef struct __anonstruct_arguments_29 arguments;
-struct __anonstruct_char_directive_30 {
-  char const *dir_start;
-  char const *dir_end;
-  int flags;
-  char const *width_start;
-  char const *width_end;
-  int width_arg_index;
-  char const *precision_start;
-  char const *precision_end;
-  int precision_arg_index;
-  char conversion;
-  int arg_index;
-};
+
 typedef struct __anonstruct_char_directive_30 char_directive;
-struct __anonstruct_char_directives_31 {
-  unsigned int count;
-  char_directive *dir;
-  unsigned int max_width_length;
-  unsigned int max_precision_length;
-};
+
 typedef struct __anonstruct_char_directives_31 char_directives;
 typedef long __suseconds_t;
-struct timeval {
-  __time_t tv_sec;
-  __suseconds_t tv_usec;
-};
+
 typedef __gid_t gid_t;
 typedef __uid_t uid_t;
-struct passwd {
-  char *pw_name;
-  char *pw_passwd;
-  __uid_t pw_uid;
-  __gid_t pw_gid;
-  char *pw_gecos;
-  char *pw_dir;
-  char *pw_shell;
-};
-struct group {
-  char *gr_name;
-  char *gr_passwd;
-  __gid_t gr_gid;
-  char **gr_mem;
-};
+
 typedef void *iconv_t;
-struct tm {
-  int tm_sec;
-  int tm_min;
-  int tm_hour;
-  int tm_mday;
-  int tm_mon;
-  int tm_year;
-  int tm_wday;
-  int tm_yday;
-  int tm_isdst;
-  long tm_gmtoff;
-  char const *tm_zone;
-};
+
 union __anonunion___value_16 {
   unsigned int __wch;
   char __wchb[4];
@@ -270,10 +168,7 @@ struct __anonstruct___mbstate_t_15 {
 };
 typedef struct __anonstruct___mbstate_t_15 __mbstate_t;
 typedef __mbstate_t mbstate_t;
-struct numname {
-  int num;
-  char const name[8];
-};
+
 typedef unsigned int md5_uint32;
 typedef unsigned long md5_uintptr;
 struct sha_ctx {
@@ -288,10 +183,7 @@ struct sha_ctx {
 };
 typedef int __clockid_t;
 typedef __clockid_t clockid_t;
-struct timezone {
-  int tz_minuteswest;
-  int tz_dsttime;
-};
+
 struct dirent {
   __ino_t d_ino;
   __off_t d_off;
@@ -316,24 +208,9 @@ struct __anonstruct_ut_tv_27 {
   __int32_t tv_sec;
   __int32_t tv_usec;
 };
-struct utmpx {
-  short ut_type;
-  __pid_t ut_pid;
-  char ut_line[32];
-  char ut_id[4];
-  char ut_user[32];
-  char ut_host[256];
-  struct __exit_status ut_exit;
-  __int32_t ut_session;
-  struct __anonstruct_ut_tv_27 ut_tv;
-  __int32_t ut_addr_v6[4];
-  char __glibc_reserved[20];
-};
+
 typedef struct utmpx STRUCT_UTMP;
-struct tokenbuffer {
-  long size;
-  char *buffer;
-};
+
 typedef struct tokenbuffer token_buffer;
 struct quoting_options;
 struct quoting_options;
@@ -354,16 +231,7 @@ struct mntent {
   int mnt_freq;
   int mnt_passno;
 };
-struct mount_entry {
-  char *me_devname;
-  char *me_mountdir;
-  char *me_type;
-  dev_t me_dev;
-  unsigned int me_dummy : 1;
-  unsigned int me_remote : 1;
-  unsigned int me_type_malloced : 1;
-  struct mount_entry *me_next;
-};
+
 typedef __mode_t mode_t;
 struct mode_change {
   char op;
@@ -392,50 +260,7 @@ struct option {
   int val;
 };
 typedef int nl_item;
-struct linebuffer {
-  size_t size;
-  size_t length;
-  char *buffer;
-};
-union __anonunion_id_22 {
-  uid_t u;
-  gid_t g;
-};
-struct userid {
-  union __anonunion_id_22 id;
-  char *name;
-  struct userid *next;
-};
-struct lconv {
-  char *decimal_point;
-  char *thousands_sep;
-  char *grouping;
-  char *int_curr_symbol;
-  char *currency_symbol;
-  char *mon_decimal_point;
-  char *mon_thousands_sep;
-  char *mon_grouping;
-  char *positive_sign;
-  char *negative_sign;
-  char int_frac_digits;
-  char frac_digits;
-  char p_cs_precedes;
-  char p_sep_by_space;
-  char n_cs_precedes;
-  char n_sep_by_space;
-  char p_sign_posn;
-  char n_sign_posn;
-  char int_p_cs_precedes;
-  char int_p_sep_by_space;
-  char int_n_cs_precedes;
-  char int_n_sep_by_space;
-  char int_p_sign_posn;
-  char int_n_sign_posn;
-};
-struct hash_entry {
-  void *data;
-  struct hash_entry *next;
-};
+
 struct hash_tuning {
   float shrink_threshold;
   float shrink_factor;
@@ -444,18 +269,7 @@ struct hash_tuning {
   _Bool is_n_buckets;
 };
 typedef struct hash_tuning Hash_tuning;
-struct hash_table {
-  struct hash_entry *bucket;
-  struct hash_entry const *bucket_limit;
-  size_t n_buckets;
-  size_t n_buckets_used;
-  size_t n_entries;
-  Hash_tuning const *tuning;
-  size_t (*hasher)(void const *, size_t);
-  _Bool (*comparator)(void const *, void const *);
-  void (*data_freer)(void *);
-  struct hash_entry *free_entry_list;
-};
+
 typedef struct timezone *__restrict __timezone_ptr_t;
 struct __anonstruct_textint_22 {
   int value;
@@ -468,43 +282,14 @@ struct __anonstruct_table_23 {
   int value;
 };
 typedef struct __anonstruct_table_23 table;
-struct __anonstruct_parser_control_25 {
-  char const *input;
-  int day_ordinal;
-  int day_number;
-  int local_isdst;
-  int time_zone;
-  int meridian;
-  textint year;
-  int month;
-  int day;
-  int hour;
-  int minutes;
-  int seconds;
-  int rel_year;
-  int rel_month;
-  int rel_day;
-  int rel_hour;
-  int rel_minutes;
-  int rel_seconds;
-  int dates_seen;
-  int days_seen;
-  int local_zones_seen;
-  int rels_seen;
-  int times_seen;
-  int zones_seen;
-  table local_time_zone_table[3];
-};
+
 typedef struct __anonstruct_parser_control_25 parser_control;
 union YYSTYPE {
   int intval;
   textint textintval;
 };
 typedef union YYSTYPE YYSTYPE;
-union yyalloc {
-  short yyss;
-  YYSTYPE yyvs;
-};
+
 typedef signed char yysigned_char;
 typedef unsigned int __u_int;
 typedef __u_int u_int;
@@ -520,53 +305,14 @@ typedef struct __anonstruct___fsid_t_2 __fsid_t;
 typedef unsigned long __fsblkcnt_t;
 typedef unsigned long __fsfilcnt_t;
 typedef long __fsword_t;
-struct fs_usage {
-  int fsu_blocksize;
-  uintmax_t fsu_blocks;
-  uintmax_t fsu_bfree;
-  uintmax_t fsu_bavail;
-  int fsu_bavail_top_bit_set;
-  uintmax_t fsu_files;
-  uintmax_t fsu_ffree;
-};
-struct statfs {
-  __fsword_t f_type;
-  __fsword_t f_bsize;
-  __fsblkcnt_t f_blocks;
-  __fsblkcnt_t f_bfree;
-  __fsblkcnt_t f_bavail;
-  __fsfilcnt_t f_files;
-  __fsfilcnt_t f_ffree;
-  __fsid_t f_fsid;
-  __fsword_t f_namelen;
-  __fsword_t f_frsize;
-  __fsword_t f_flags;
-  __fsword_t f_spare[4];
-};
+
 struct exclude;
 struct exclude;
-struct patopts {
-  char const *pattern;
-  int options;
-};
-struct exclude {
-  struct patopts *exclude;
-  size_t exclude_alloc;
-  size_t exclude_count;
-};
+
 typedef unsigned int __socklen_t;
 typedef unsigned int uint32_t;
 typedef uint32_t in_addr_t;
-struct in_addr {
-  in_addr_t s_addr;
-};
-struct hostent {
-  char *h_name;
-  char **h_aliases;
-  int h_addrtype;
-  int h_length;
-  char **h_addr_list;
-};
+
 enum backup_type { none = 0, simple = 1, numbered_existing = 2, numbered = 3 };
 extern __attribute__((__nothrow__)) unsigned short const **(__attribute__((__leaf__)) __ctype_b_loc)(void)__attribute__((__const__));
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) rpmatch)(char const *response);
@@ -621,9 +367,6 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
   char const *q;
   unsigned short const **tmp___0;
   int *tmp___1;
-  char *tmp___2;
-  int *tmp___3;
-  int *tmp___4;
   int base;
   int suffixes;
   strtol_error overflow;
@@ -647,17 +390,6 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
       p = &t_ptr;
     }
     q = s;
-    {
-      while (1) {
-        ;
-        { tmp___0 = __ctype_b_loc(); }
-        if (!((int const) * (*tmp___0 + (int)((unsigned char)*q)) & 8192)) {
-          goto while_break;
-        }
-        q++;
-      };
-    }
-  while_break:;
     if ((int const) * q == 45) {
       return ((strtol_error)4);
     }
@@ -666,35 +398,7 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
       *tmp___1 = 0;
       tmp = strtoul((char const * /* __restrict  */)s, (char ** /* __restrict  */)p, strtol_base);
     }
-    if ((unsigned long)*p == (unsigned long)s) {
-      if (valid_suffixes) {
-        if (*(*p)) {
-          {
-            tmp___2 = strchr(valid_suffixes, (int)*(*p));
-          }
-          if (tmp___2) {
-            tmp = 1UL;
-          } else {
-            return ((strtol_error)4);
-          }
-        } else {
-          return ((strtol_error)4);
-        }
-      } else {
-        return ((strtol_error)4);
-      }
-    } else {
-      { tmp___4 = __errno_location(); }
-      if (*tmp___4 != 0) {
-        {
-          tmp___3 = __errno_location();
-        }
-        if (*tmp___3 != 34) {
-          return ((strtol_error)4);
-        }
-        err = (strtol_error)1;
-      }
-    }
+
     if (!valid_suffixes) {
       *val = tmp;
       return (err);
@@ -710,28 +414,7 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
         return ((strtol_error)((unsigned int)err | 2U));
       }
       { tmp___6 = strchr(valid_suffixes, '0'); }
-      if (tmp___6) {
-        if ((int)*(*(p + 0) + 1) == 105) {
-          goto case_105;
-        }
-        if ((int)*(*(p + 0) + 1) == 68) {
-          goto case_68;
-        }
-        if ((int)*(*(p + 0) + 1) == 66) {
-          goto case_68;
-        }
-        goto switch_break;
-      case_105:
-        if ((int)*(*(p + 0) + 2) == 66) {
-          suffixes += 2;
-        }
-        goto switch_break;
-      case_68:
-        base = 1000;
-        suffixes++;
-        goto switch_break;
-      switch_break:;
-      }
+
       if ((int)*(*p) == 98) {
         goto case_98;
       }
@@ -741,9 +424,7 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
       if ((int)*(*p) == 99) {
         goto case_99;
       }
-      if ((int)*(*p) == 69) {
-        goto case_69;
-      }
+
       if ((int)*(*p) == 103) {
         goto case_103;
       }
@@ -849,11 +530,7 @@ void xalloc_die(void) {
   char *tmp;
 
   {
-    if (xalloc_fail_func) {
-      {
-        (*xalloc_fail_func)();
-      }
-    }
+
     {
       tmp = gettext(xalloc_msg_memory_exhausted);
       error((int)exit_failure, 0, "%s", tmp);
@@ -866,11 +543,7 @@ __inline static void *xnmalloc_inline(size_t n, size_t s) {
   int tmp;
 
   {
-    if (sizeof(ptrdiff_t) <= sizeof(size_t)) {
-      tmp = -1;
-    } else {
-      tmp = -2;
-    }
+
     if ((size_t)tmp / s < n) {
       {
         xalloc_die();
@@ -929,29 +602,7 @@ void *xrealloc(void *p, size_t n) {
 extern int gethostname();
 __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) rpl_getcwd)(char *buf, size_t size);
 char *xgetcwd(void);
-char *xgetcwd(void) {
-  char *cwd;
-  char *tmp;
-  int *tmp___0;
 
-  {
-    {
-      tmp = rpl_getcwd((char *)((void *)0), (size_t)0);
-      cwd = tmp;
-    }
-    if (!cwd) {
-      {
-        tmp___0 = __errno_location();
-      }
-      if (*tmp___0 == 12) {
-        {
-          xalloc_die();
-        }
-      }
-    }
-    return (cwd);
-  }
-}
 char const *quote(char const *name);
 extern int fprintf(FILE *__restrict __stream, char const *__restrict __format, ...);
 extern int vfprintf(FILE *__restrict __s, char const *__restrict __format, __gnuc_va_list __arg);
@@ -961,151 +612,7 @@ char const *version_etc_copyright;
 void version_etc_va(FILE *stream, char const *command_name, char const *package, char const *version, va_list authors);
 void version_etc(FILE *stream, char const *command_name, char const *package, char const *version, ...);
 char const *version_etc_copyright = "Copyright (C) 2004 Free Software Foundation, Inc.";
-void version_etc_va(FILE *stream, char const *command_name, char const *package, char const *version, va_list authors) {
-  unsigned int n_authors;
-  va_list tmp_authors;
-  char const *tmp___0;
-  char *tmp___1;
-  char *tmp___2;
-  char *tmp___3;
-  char *tmp___4;
-  char *tmp___5;
-  char *tmp___6;
-  char *tmp___7;
-  char *tmp___8;
-  char *tmp___9;
-  char *tmp___10;
-  char *tmp___11;
 
-  {
-    {
-      __builtin_va_copy(tmp_authors, authors);
-      n_authors = 0U;
-    }
-    {
-      while (1) {
-        ;
-        { tmp___0 = __builtin_va_arg(tmp_authors, char const *); }
-        if (!((unsigned long)tmp___0 != (unsigned long)((void *)0))) {
-          goto while_break;
-        }
-        n_authors++;
-      };
-    }
-  while_break:;
-    if (command_name) {
-      {
-        fprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */) "%s (%s) %s\n", command_name, package, version);
-      }
-    } else {
-      { fprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */) "%s %s\n", package, version); }
-    }
-    if (n_authors == 0U) {
-      goto case_0;
-    }
-    if (n_authors == 1U) {
-      goto case_1;
-    }
-    if (n_authors == 2U) {
-      goto case_2;
-    }
-    if (n_authors == 3U) {
-      goto case_3;
-    }
-    if (n_authors == 4U) {
-      goto case_4;
-    }
-    if (n_authors == 5U) {
-      goto case_5;
-    }
-    if (n_authors == 6U) {
-      goto case_6;
-    }
-    if (n_authors == 7U) {
-      goto case_7;
-    }
-    if (n_authors == 8U) {
-      goto case_8;
-    }
-    if (n_authors == 9U) {
-      goto case_9;
-    }
-    goto switch_default;
-  case_0: { abort(); }
-  case_1: {
-    tmp___1 = gettext("Written by %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___1), authors);
-  }
-    goto switch_break;
-  case_2: {
-    tmp___2 = gettext("Written by %s and %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___2), authors);
-  }
-    goto switch_break;
-  case_3: {
-    tmp___3 = gettext("Written by %s, %s, and %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___3), authors);
-  }
-    goto switch_break;
-  case_4: {
-    tmp___4 = gettext("Written by %s, %s, %s,\nand %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___4), authors);
-  }
-    goto switch_break;
-  case_5: {
-    tmp___5 = gettext("Written by %s, %s, %s,\n%s, and %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___5), authors);
-  }
-    goto switch_break;
-  case_6: {
-    tmp___6 = gettext("Written by %s, %s, %s,\n%s, %s, and %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___6), authors);
-  }
-    goto switch_break;
-  case_7: {
-    tmp___7 = gettext("Written by %s, %s, %s,\n%s, %s, %s, and %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___7), authors);
-  }
-    goto switch_break;
-  case_8: {
-    tmp___8 = gettext("Written by %s, %s, %s,\n%s, %s, %s, %s,\nand %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___8), authors);
-  }
-    goto switch_break;
-  case_9: {
-    tmp___9 = gettext("Written by %s, %s, %s,\n%s, %s, %s, %s,\n%s, and %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___9), authors);
-  }
-    goto switch_break;
-  switch_default: {
-    tmp___10 = gettext("Written by %s, %s, %s,\n%s, %s, %s, %s,\n%s, %s, and others.\n");
-    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___10), authors);
-  }
-    goto switch_break;
-  switch_break: {
-    __builtin_va_end(authors);
-    putc_unlocked('\n', stream);
-    fputs_unlocked((char const * /* __restrict  */)version_etc_copyright, (FILE * /* __restrict  */)stream);
-    putc_unlocked('\n', stream);
-    tmp___11 = gettext("This is free software; see the source for copying conditions. "
-                       " There is NO\nwarranty; not even for MERCHANTABILITY or "
-                       "FITNESS FOR A PARTICULAR PURPOSE.\n");
-    fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___11), (FILE * /* __restrict  */)stream);
-  }
-    return;
-  }
-}
-void version_etc(FILE *stream, char const *command_name, char const *package, char const *version, ...) {
-  va_list authors;
-
-  {
-    {
-      __builtin_va_start(authors, version);
-      version_etc_va(stream, command_name, package, version, authors);
-    }
-    return;
-  }
-}
 extern __attribute__((__nothrow__)) int snprintf(char *__restrict __s, size_t __maxlen, char const *__restrict __format, ...);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) utimes)(char const *__file, struct timeval const *__tvp);
 extern __attribute__((__nothrow__)) int sprintf(char *__restrict __s, char const *__restrict __format, ...);
@@ -1162,41 +669,7 @@ static mbstate_t const mbstate_zero;
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) __libc_current_sigrtmin)(void);
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) __libc_current_sigrtmax)(void);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) strncmp)(char const *__s1, char const *__s2, size_t __n) __attribute__((__pure__));
-static struct numname numname_table[35] = {{1, {(char const)'H', (char const)'U', (char const)'P', (char const)'\000'}},
-                                           {2, {(char const)'I', (char const)'N', (char const)'T', (char const)'\000'}},
-                                           {3, {(char const)'Q', (char const)'U', (char const)'I', (char const)'T', (char const)'\000'}},
-                                           {4, {(char const)'I', (char const)'L', (char const)'L', (char const)'\000'}},
-                                           {5, {(char const)'T', (char const)'R', (char const)'A', (char const)'P', (char const)'\000'}},
-                                           {6, {(char const)'A', (char const)'B', (char const)'R', (char const)'T', (char const)'\000'}},
-                                           {8, {(char const)'F', (char const)'P', (char const)'E', (char const)'\000'}},
-                                           {9, {(char const)'K', (char const)'I', (char const)'L', (char const)'L', (char const)'\000'}},
-                                           {7, {(char const)'B', (char const)'U', (char const)'S', (char const)'\000'}},
-                                           {11, {(char const)'S', (char const)'E', (char const)'G', (char const)'V', (char const)'\000'}},
-                                           {13, {(char const)'P', (char const)'I', (char const)'P', (char const)'E', (char const)'\000'}},
-                                           {14, {(char const)'A', (char const)'L', (char const)'R', (char const)'M', (char const)'\000'}},
-                                           {15, {(char const)'T', (char const)'E', (char const)'R', (char const)'M', (char const)'\000'}},
-                                           {10, {(char const)'U', (char const)'S', (char const)'R', (char const)'1', (char const)'\000'}},
-                                           {12, {(char const)'U', (char const)'S', (char const)'R', (char const)'2', (char const)'\000'}},
-                                           {17, {(char const)'C', (char const)'H', (char const)'L', (char const)'D', (char const)'\000'}},
-                                           {23, {(char const)'U', (char const)'R', (char const)'G', (char const)'\000'}},
-                                           {19, {(char const)'S', (char const)'T', (char const)'O', (char const)'P', (char const)'\000'}},
-                                           {20, {(char const)'T', (char const)'S', (char const)'T', (char const)'P', (char const)'\000'}},
-                                           {18, {(char const)'C', (char const)'O', (char const)'N', (char const)'T', (char const)'\000'}},
-                                           {21, {(char const)'T', (char const)'T', (char const)'I', (char const)'N', (char const)'\000'}},
-                                           {22, {(char const)'T', (char const)'T', (char const)'O', (char const)'U', (char const)'\000'}},
-                                           {31, {(char const)'S', (char const)'Y', (char const)'S', (char const)'\000'}},
-                                           {29, {(char const)'P', (char const)'O', (char const)'L', (char const)'L', (char const)'\000'}},
-                                           {26, {(char const)'V', (char const)'T', (char const)'A', (char const)'L', (char const)'R', (char const)'M', (char const)'\000'}},
-                                           {27, {(char const)'P', (char const)'R', (char const)'O', (char const)'F', (char const)'\000'}},
-                                           {24, {(char const)'X', (char const)'C', (char const)'P', (char const)'U', (char const)'\000'}},
-                                           {25, {(char const)'X', (char const)'F', (char const)'S', (char const)'Z', (char const)'\000'}},
-                                           {6, {(char const)'I', (char const)'O', (char const)'T', (char const)'\000'}},
-                                           {17, {(char const)'C', (char const)'L', (char const)'D', (char const)'\000'}},
-                                           {30, {(char const)'P', (char const)'W', (char const)'R', (char const)'\000'}},
-                                           {28, {(char const)'W', (char const)'I', (char const)'N', (char const)'C', (char const)'H', (char const)'\000'}},
-                                           {29, {(char const)'I', (char const)'O', (char const)'\000'}},
-                                           {16, {(char const)'S', (char const)'T', (char const)'K', (char const)'F', (char const)'L', (char const)'T', (char const)'\000'}},
-                                           {0, {(char const)'E', (char const)'X', (char const)'I', (char const)'T', (char const)'\000'}}};
+
 extern size_t fread_unlocked(void *__restrict __ptr, size_t __size, size_t __n, FILE *__restrict __stream);
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) feof_unlocked)(FILE *__stream);
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) ferror_unlocked)(FILE *__stream);
@@ -1227,140 +700,16 @@ int save_cwd(struct saved_cwd *cwd) {
         return (1);
       }
     }
-    if (!have_working_fchdir) {
-      {
-        cwd->name = xgetcwd();
-      }
-      if ((unsigned long)cwd->name == (unsigned long)((void *)0)) {
-        return (1);
-      }
-    }
+
     return (0);
   }
 }
-int restore_cwd(struct saved_cwd const *cwd) {
-  int tmp;
-  int tmp___0;
 
-  {
-    if (0 <= (int)cwd->desc) {
-      {
-        tmp = fchdir((int)cwd->desc);
-      }
-      return (tmp < 0);
-    } else {
-      { tmp___0 = chdir((char const *)cwd->name); }
-      return (tmp___0 < 0);
-    }
-  }
-}
-void free_cwd(struct saved_cwd *cwd) {
-
-  {
-    if (cwd->desc >= 0) {
-      {
-        close(cwd->desc);
-      }
-    }
-    if (cwd->name) {
-      {
-        rpl_free((void *)cwd->name);
-      }
-    }
-    return;
-  }
-}
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) stat)(char const *__restrict __file, struct stat *__restrict __buf);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) memcmp)(void const *__s1, void const *__s2, size_t __n) __attribute__((__pure__));
 int same_name(char const *source, char const *dest);
 char *dir_name(char const *path);
-int same_name(char const *source, char const *dest) {
-  char const *source_basename;
-  char *tmp;
-  char const *dest_basename;
-  char *tmp___0;
-  size_t source_baselen;
-  size_t tmp___1;
-  size_t dest_baselen;
-  size_t tmp___2;
-  _Bool identical_basenames;
-  int tmp___3;
-  int tmp___4;
-  _Bool compare_dirs;
-  _Bool same;
-  struct stat source_dir_stats;
-  struct stat dest_dir_stats;
-  char *source_dirname;
-  char *dest_dirname;
-  int *tmp___5;
-  int tmp___6;
-  int *tmp___7;
-  int tmp___8;
-  int tmp___9;
 
-  {
-    {
-      tmp = base_name(source);
-      source_basename = (char const *)tmp;
-      tmp___0 = base_name(dest);
-      dest_basename = (char const *)tmp___0;
-      tmp___1 = base_len(source_basename);
-      source_baselen = tmp___1;
-      tmp___2 = base_len(dest_basename);
-      dest_baselen = tmp___2;
-    }
-    if (source_baselen == dest_baselen) {
-      {
-        tmp___3 = memcmp((void const *)source_basename, (void const *)dest_basename, dest_baselen);
-      }
-      if (tmp___3 == 0) {
-        tmp___4 = 1;
-      } else {
-        tmp___4 = 0;
-      }
-    } else {
-      tmp___4 = 0;
-    }
-    identical_basenames = (_Bool)tmp___4;
-    compare_dirs = identical_basenames;
-    same = (_Bool)0;
-    if (compare_dirs) {
-      {
-        source_dirname = dir_name(source);
-        dest_dirname = dir_name(dest);
-        tmp___6 = stat((char const * /* __restrict  */)((char const *)source_dirname), (struct stat * /* __restrict  */)(&source_dir_stats));
-      }
-      if (tmp___6) {
-        {
-          tmp___5 = __errno_location();
-          error(1, *tmp___5, "%s", source_dirname);
-        }
-      }
-      { tmp___8 = stat((char const * /* __restrict  */)((char const *)dest_dirname), (struct stat * /* __restrict  */)(&dest_dir_stats)); }
-      if (tmp___8) {
-        {
-          tmp___7 = __errno_location();
-          error(1, *tmp___7, "%s", dest_dirname);
-        }
-      }
-      if (source_dir_stats.st_ino == dest_dir_stats.st_ino) {
-        if (source_dir_stats.st_dev == dest_dir_stats.st_dev) {
-          tmp___9 = 1;
-        } else {
-          tmp___9 = 0;
-        }
-      } else {
-        tmp___9 = 0;
-      }
-      {
-        same = (_Bool)tmp___9;
-        rpl_free((void *)source_dirname);
-        rpl_free((void *)dest_dirname);
-      }
-    }
-    return ((int)same);
-  }
-}
 extern ssize_t write(int __fd, void const *__buf, size_t __n);
 extern ssize_t read(int __fd, void *__buf, size_t __nbytes);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) lstat)(char const *__restrict __file, struct stat *__restrict __buf);
@@ -1382,48 +731,10 @@ char *quotearg_colon(char const *arg);
 extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) __ctype_get_mb_cur_max)(void);
 extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) mbrtowc)(wchar_t *__restrict __pwc, char const *__restrict __s, size_t __n, mbstate_t *__restrict __p);
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) iswprint)(wint_t __wc);
-char const *const quoting_style_args[8] = {(char const * /* const  */) "literal", (char const * /* const  */) "shell",  (char const * /* const  */) "shell-always", (char const * /* const  */) "c",
-                                           (char const * /* const  */) "escape",  (char const * /* const  */) "locale", (char const * /* const  */) "clocale",      (char const * /* const  */)((char const *)0)};
+
 enum quoting_style const quoting_style_vals[7] = {(enum quoting_style const)0, (enum quoting_style const)1, (enum quoting_style const)2, (enum quoting_style const)3, (enum quoting_style const)4, (enum quoting_style const)5, (enum quoting_style const)6};
 static struct quoting_options default_quoting_options;
-int set_char_quoting(struct quoting_options *o, char c, int i) {
-  unsigned char uc;
-  int *p;
-  struct quoting_options *tmp;
-  int shift;
-  int r;
 
-  {
-    uc = (unsigned char)c;
-    if (o) {
-      tmp = o;
-    } else {
-      tmp = &default_quoting_options;
-    }
-    p = tmp->quote_these_too + (unsigned long)uc / (sizeof(int) * 8UL);
-    shift = (int)((unsigned long)uc % (sizeof(int) * 8UL));
-    r = (*p >> shift) & 1;
-    *p ^= ((i & 1) ^ r) << shift;
-    return (r);
-  }
-}
-static char const *gettext_quote(char const *msgid, enum quoting_style s) {
-  char const *translation;
-  char *tmp;
-
-  {
-    {
-      tmp = gettext(msgid);
-      translation = (char const *)tmp;
-    }
-    if ((unsigned long)translation == (unsigned long)msgid) {
-      if ((unsigned int)s == 6U) {
-        translation = "\"";
-      }
-    }
-    return (translation);
-  }
-}
 static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char const *arg, size_t argsize, enum quoting_style quoting_style, struct quoting_options const *o) {
   size_t i;
   size_t len;
@@ -1438,16 +749,9 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
   char const *tmp___1;
   unsigned char c;
   unsigned char esc;
-  int tmp___2;
   size_t m;
   int printable;
   unsigned short const **tmp___3;
-  mbstate_t mbstate;
-  wchar_t w;
-  size_t bytes;
-  size_t tmp___4;
-  int tmp___5;
-  int tmp___6;
   size_t ilim;
   int tmp___7;
   size_t tmp___8;
@@ -1461,34 +765,16 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       tmp = __ctype_get_mb_cur_max();
       unibyte_locale = tmp == 1UL;
     }
-    if ((unsigned int)quoting_style == 3U) {
-      goto case_3;
-    }
+
     if ((unsigned int)quoting_style == 4U) {
       goto case_4;
     }
-    if ((unsigned int)quoting_style == 6U) {
-      goto case_6;
-    }
-    if ((unsigned int)quoting_style == 5U) {
-      goto case_6;
-    }
+
     if ((unsigned int)quoting_style == 2U) {
       goto case_2;
     }
     goto switch_default;
-  case_3: {
-    while (1) {
-      ;
-
-      if (len < buffersize) {
-        *(buffer + len) = (char)'\"';
-      }
-      len++;
-      goto while_break;
-    };
-  }
-  while_break:
+  case_3: {}
     backslash_escapes = 1;
     quote_string = "\"";
     quote_string_len = (size_t)1;
@@ -1503,28 +789,6 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
     right = tmp___1;
     quote_string = left;
   }
-    {
-      while (1) {
-        ;
-
-        if (!*quote_string) {
-          goto while_break___0;
-        }
-        {
-          while (1) {
-            ;
-
-            if (len < buffersize) {
-              *(buffer + len) = (char)*quote_string;
-            }
-            len++;
-            goto while_break___1;
-          };
-        }
-      while_break___1:
-        quote_string++;
-      };
-    }
   while_break___0: {
     backslash_escapes = 1;
     quote_string = right;
@@ -1535,9 +799,6 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
     while (1) {
       ;
 
-      if (len < buffersize) {
-        *(buffer + len) = (char)'\'';
-      }
       len++;
       goto while_break___2;
     };
@@ -1554,37 +815,10 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       while (1) {
         ;
 
-        if (argsize == 0xffffffffffffffffUL) {
-          tmp___7 = (int const) * (arg + i) == 0;
-        } else {
-          tmp___7 = i == argsize;
-        }
         if (tmp___7) {
           goto while_break___3;
         }
-        if (backslash_escapes) {
-          if (quote_string_len) {
-            if (i + quote_string_len <= argsize) {
-              {
-                tmp___2 = memcmp((void const *)(arg + i), (void const *)quote_string, quote_string_len);
-              }
-              if (tmp___2 == 0) {
-                {
-                  while (1) {
-                    ;
 
-                    if (len < buffersize) {
-                      *(buffer + len) = (char)'\\';
-                    }
-                    len++;
-                    goto while_break___4;
-                  };
-                }
-              while_break___4:;
-              }
-            }
-          }
-        }
         c = (unsigned char)*(arg + i);
         if ((int)c == 0) {
           goto case_0;
@@ -1604,9 +838,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 10) {
           goto case_10;
         }
-        if ((int)c == 13) {
-          goto case_13;
-        }
+
         if ((int)c == 9) {
           goto case_9;
         }
@@ -1616,24 +848,18 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 92) {
           goto case_92;
         }
-        if ((int)c == 126) {
-          goto case_126;
-        }
+
         if ((int)c == 35) {
           goto case_126;
         }
-        if ((int)c == 124) {
-          goto case_124;
-        }
+
         if ((int)c == 96) {
           goto case_124;
         }
         if ((int)c == 94) {
           goto case_124;
         }
-        if ((int)c == 91) {
-          goto case_124;
-        }
+
         if ((int)c == 62) {
           goto case_124;
         }
@@ -1661,18 +887,14 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 34) {
           goto case_124;
         }
-        if ((int)c == 33) {
-          goto case_124;
-        }
+
         if ((int)c == 32) {
           goto case_124;
         }
         if ((int)c == 39) {
           goto case_39___0;
         }
-        if ((int)c == 125) {
-          goto case_125;
-        }
+
         if ((int)c == 123) {
           goto case_125;
         }
@@ -1712,69 +934,39 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 111) {
           goto case_125;
         }
-        if ((int)c == 110) {
-          goto case_125;
-        }
+
         if ((int)c == 109) {
           goto case_125;
         }
         if ((int)c == 108) {
           goto case_125;
         }
-        if ((int)c == 107) {
-          goto case_125;
-        }
-        if ((int)c == 106) {
-          goto case_125;
-        }
+
         if ((int)c == 105) {
           goto case_125;
         }
         if ((int)c == 104) {
           goto case_125;
         }
-        if ((int)c == 103) {
-          goto case_125;
-        }
+
         if ((int)c == 102) {
           goto case_125;
         }
-        if ((int)c == 101) {
-          goto case_125;
-        }
-        if ((int)c == 100) {
-          goto case_125;
-        }
+
         if ((int)c == 99) {
           goto case_125;
         }
         if ((int)c == 98) {
           goto case_125;
         }
-        if ((int)c == 97) {
-          goto case_125;
-        }
-        if ((int)c == 95) {
-          goto case_125;
-        }
-        if ((int)c == 93) {
-          goto case_125;
-        }
-        if ((int)c == 90) {
-          goto case_125;
-        }
-        if ((int)c == 89) {
-          goto case_125;
-        }
+
         if ((int)c == 88) {
           goto case_125;
         }
         if ((int)c == 87) {
           goto case_125;
         }
-        if ((int)c == 86) {
-          goto case_125;
-        }
+
         if ((int)c == 85) {
           goto case_125;
         }
@@ -1784,27 +976,18 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 83) {
           goto case_125;
         }
-        if ((int)c == 82) {
-          goto case_125;
-        }
+
         if ((int)c == 81) {
           goto case_125;
         }
-        if ((int)c == 80) {
-          goto case_125;
-        }
-        if ((int)c == 79) {
-          goto case_125;
-        }
+
         if ((int)c == 78) {
           goto case_125;
         }
         if ((int)c == 77) {
           goto case_125;
         }
-        if ((int)c == 76) {
-          goto case_125;
-        }
+
         if ((int)c == 75) {
           goto case_125;
         }
@@ -1820,9 +1003,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 71) {
           goto case_125;
         }
-        if ((int)c == 70) {
-          goto case_125;
-        }
+
         if ((int)c == 69) {
           goto case_125;
         }
@@ -1838,9 +1019,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 65) {
           goto case_125;
         }
-        if ((int)c == 61) {
-          goto case_125;
-        }
+
         if ((int)c == 58) {
           goto case_125;
         }
@@ -1883,9 +1062,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 45) {
           goto case_125;
         }
-        if ((int)c == 44) {
-          goto case_125;
-        }
+
         if ((int)c == 43) {
           goto case_125;
         }
@@ -1894,130 +1071,11 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         }
         goto switch_default___2;
       case_0:
-        if (backslash_escapes) {
-          {
-            while (1) {
-              ;
-
-              if (len < buffersize) {
-                *(buffer + len) = (char)'\\';
-              }
-              len++;
-              goto while_break___5;
-            };
-          }
-        while_break___5:;
-          {
-            while (1) {
-              ;
-
-              if (len < buffersize) {
-                *(buffer + len) = (char)'0';
-              }
-              len++;
-              goto while_break___6;
-            };
-          }
-        while_break___6:;
-          {
-            while (1) {
-              ;
-
-              if (len < buffersize) {
-                *(buffer + len) = (char)'0';
-              }
-              len++;
-              goto while_break___7;
-            };
-          }
-        while_break___7:
-          c = (unsigned char)'0';
-        }
         goto switch_break___0;
       case_63:
-        if ((unsigned int)quoting_style == 1U) {
-          goto case_1;
-        }
-        if ((unsigned int)quoting_style == 3U) {
-          goto case_3___0;
-        }
         goto switch_default___0;
-      case_1:
         goto use_shell_always_quoting_style;
-      case_3___0:
-        if (i + 2UL < argsize) {
-          if ((int const) * (arg + (i + 1UL)) == 63) {
-            if ((int const) * (arg + (i + 2UL)) == 62) {
-              goto case_62;
-            }
-            if ((int const) * (arg + (i + 2UL)) == 61) {
-              goto case_62;
-            }
-            if ((int const) * (arg + (i + 2UL)) == 60) {
-              goto case_62;
-            }
-            if ((int const) * (arg + (i + 2UL)) == 47) {
-              goto case_62;
-            }
-            if ((int const) * (arg + (i + 2UL)) == 45) {
-              goto case_62;
-            }
-            if ((int const) * (arg + (i + 2UL)) == 41) {
-              goto case_62;
-            }
-            if ((int const) * (arg + (i + 2UL)) == 40) {
-              goto case_62;
-            }
-            if ((int const) * (arg + (i + 2UL)) == 39) {
-              goto case_62;
-            }
-            if ((int const) * (arg + (i + 2UL)) == 33) {
-              goto case_62;
-            }
-            goto switch_break___2;
-          case_62:
-            c = (unsigned char)*(arg + (i + 2UL));
-            i += 2UL;
-            {
-              while (1) {
-                ;
 
-                if (len < buffersize) {
-                  *(buffer + len) = (char)'?';
-                }
-                len++;
-                goto while_break___8;
-              };
-            }
-          while_break___8:;
-            {
-              while (1) {
-                ;
-
-                if (len < buffersize) {
-                  *(buffer + len) = (char)'\\';
-                }
-                len++;
-                goto while_break___9;
-              };
-            }
-          while_break___9:;
-            {
-              while (1) {
-                ;
-
-                if (len < buffersize) {
-                  *(buffer + len) = (char)'?';
-                }
-                len++;
-                goto while_break___10;
-              };
-            }
-          while_break___10:;
-            goto switch_break___2;
-          switch_break___2:;
-          }
-        }
         goto switch_break___1;
       switch_default___0:
         goto switch_break___1;
@@ -2035,7 +1093,6 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       case_10:
         esc = (unsigned char)'n';
         goto c_and_shell_escape;
-      case_13:
         esc = (unsigned char)'r';
         goto c_and_shell_escape;
       case_9:
@@ -2067,51 +1124,21 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         }
         goto switch_break___0;
       case_39___0:
-        if ((unsigned int)quoting_style == 1U) {
-          goto case_1___0;
-        }
         if ((unsigned int)quoting_style == 2U) {
           goto case_2___0;
         }
         goto switch_default___1;
-      case_1___0:
         goto use_shell_always_quoting_style;
-      case_2___0: {
-        while (1) {
-          ;
-
-          if (len < buffersize) {
-            *(buffer + len) = (char)'\'';
-          }
-          len++;
-          goto while_break___11;
-        };
-      }
-      while_break___11:;
+      case_2___0: {}
         {
           while (1) {
             ;
 
-            if (len < buffersize) {
-              *(buffer + len) = (char)'\\';
-            }
             len++;
             goto while_break___12;
           };
         }
       while_break___12:;
-        {
-          while (1) {
-            ;
-
-            if (len < buffersize) {
-              *(buffer + len) = (char)'\'';
-            }
-            len++;
-            goto while_break___13;
-          };
-        }
-      while_break___13:;
         goto switch_break___3;
       switch_default___1:
         goto switch_break___3;
@@ -2120,72 +1147,6 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       case_125:
         goto switch_break___0;
       switch_default___2:
-        if (unibyte_locale) {
-          {
-            m = (size_t)1;
-            tmp___3 = __ctype_b_loc();
-            printable = (int)((int const) * (*tmp___3 + (int)c) & 16384);
-          }
-        } else {
-          {
-            memset((void *)(&mbstate), 0, sizeof(mbstate));
-            m = (size_t)0;
-            printable = 1;
-          }
-          if (argsize == 0xffffffffffffffffUL) {
-            {
-              argsize = strlen(arg);
-            }
-          }
-          {
-            while (1) {
-              ;
-              {
-                tmp___4 = mbrtowc((wchar_t * /* __restrict  */)(&w), (char const * /* __restrict  */)(arg + (i + m)), argsize - (i + m), (mbstate_t * /* __restrict  */)(&mbstate));
-                bytes = tmp___4;
-              }
-              if (bytes == 0UL) {
-                goto while_break___14;
-              } else {
-                if (bytes == 0xffffffffffffffffUL) {
-                  printable = 0;
-                  goto while_break___14;
-                } else {
-                  if (bytes == 0xfffffffffffffffeUL) {
-                    printable = 0;
-                    {
-                      while (1) {
-                        ;
-
-                        if (i + m < argsize) {
-                          if (!*(arg + (i + m))) {
-                            goto while_break___15;
-                          }
-                        } else {
-                          goto while_break___15;
-                        }
-                        m++;
-                      };
-                    }
-                  while_break___15:;
-                    goto while_break___14;
-                  } else {
-                    { tmp___5 = iswprint((wint_t)w); }
-                    if (!tmp___5) {
-                      printable = 0;
-                    }
-                    m += bytes;
-                  }
-                }
-              }
-              { tmp___6 = mbsinit((mbstate_t const *)(&mbstate)); }
-              if (tmp___6) {
-                goto while_break___14;
-              }
-            };
-          }
-        while_break___14:;
-        }
         if (1UL < m) {
           goto _L;
         } else {
@@ -2193,102 +1154,16 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
             if (!printable) {
             _L:
               ilim = i + m;
-              {
-                while (1) {
-                  ;
-
-                  if (backslash_escapes) {
-                    if (!printable) {
-                      {
-                        while (1) {
-                          ;
-
-                          if (len < buffersize) {
-                            *(buffer + len) = (char)'\\';
-                          }
-                          len++;
-                          goto while_break___17;
-                        };
-                      }
-                    while_break___17:;
-                      {
-                        while (1) {
-                          ;
-
-                          if (len < buffersize) {
-                            *(buffer + len) = (char)(48 + ((int)c >> 6));
-                          }
-                          len++;
-                          goto while_break___18;
-                        };
-                      }
-                    while_break___18:;
-                      {
-                        while (1) {
-                          ;
-
-                          if (len < buffersize) {
-                            *(buffer + len) = (char)(48 + (((int)c >> 3) & 7));
-                          }
-                          len++;
-                          goto while_break___19;
-                        };
-                      }
-                    while_break___19:
-                      c = (unsigned char)(48 + ((int)c & 7));
-                    }
-                  }
-                  if (ilim <= i + 1UL) {
-                    goto while_break___16;
-                  }
-                  {
-                    while (1) {
-                      ;
-
-                      if (len < buffersize) {
-                        *(buffer + len) = (char)c;
-                      }
-                      len++;
-                      goto while_break___20;
-                    };
-                  }
-                while_break___20:
-                  i++;
-                  c = (unsigned char)*(arg + i);
-                };
-              }
-            while_break___16:;
               goto store_c;
             }
           }
         }
       switch_break___0:;
-        if (backslash_escapes) {
-          if (!(o->quote_these_too[(unsigned long)c / (sizeof(int) * 8UL)] & (1 << (unsigned long)c % (sizeof(int) * 8UL)))) {
-            goto store_c;
-          }
-        } else {
-          goto store_c;
-        }
-      store_escape: {
-        while (1) {
-          ;
-
-          if (len < buffersize) {
-            *(buffer + len) = (char)'\\';
-          }
-          len++;
-          goto while_break___21;
-        };
-      }
-      while_break___21:;
+      store_escape: {}
       store_c: {
         while (1) {
           ;
 
-          if (len < buffersize) {
-            *(buffer + len) = (char)c;
-          }
           len++;
           goto while_break___22;
         };
@@ -2322,9 +1197,6 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         };
       }
     while_break___23:;
-    }
-    if (len < buffersize) {
-      *(buffer + len) = (char)'\000';
     }
     return (len);
   use_shell_always_quoting_style: { tmp___8 = quotearg_buffer_restyled(buffer, buffersize, arg, argsize, (enum quoting_style)2, o); }
@@ -2468,27 +1340,7 @@ char *quotearg_n_style(int n, enum quoting_style s, char const *arg) {
     return (tmp___0);
   }
 }
-char *quotearg_char(char const *arg, char ch) {
-  struct quoting_options options;
-  char *tmp;
 
-  {
-    {
-      options = default_quoting_options;
-      set_char_quoting(&options, ch, 1);
-      tmp = quotearg_n_options(0, arg, (size_t)-1, (struct quoting_options const *)(&options));
-    }
-    return (tmp);
-  }
-}
-char *quotearg_colon(char const *arg) {
-  char *tmp;
-
-  {
-    { tmp = quotearg_char(arg, (char)':'); }
-    return (tmp);
-  }
-}
 char const *quote_n(int n, char const *name);
 char const *quote_n(int n, char const *name) {
   char *tmp;
@@ -2759,12 +1611,7 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
               tmp___12 = malloc(sizeof(struct mode_change));
               change = (struct mode_change *)tmp___12;
             }
-            if ((unsigned long)change == (unsigned long)((void *)0)) {
-              {
-                mode_free(head);
-              }
-              return ((struct mode_change *)1);
-            }
+
             change->next = (struct mode_change *)((void *)0);
             change->op = (char)*mode_string___0;
             affected_masked = affected_bits;
@@ -2862,9 +1709,6 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
                 change->flags = (char)((int)change->flags | 2);
                 goto switch_break___0;
               case_103___0:
-                if (change->value) {
-                  goto invalid;
-                }
                 change->value = (mode_t)(448 >> 3);
                 change->flags = (char)((int)change->flags | 2);
                 goto switch_break___0;
@@ -2980,13 +1824,6 @@ mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
           value &= (unsigned int)changes->affected;
         } else {
           value = (mode_t)changes->value;
-          if ((int const)changes->flags & 1) {
-            if (!((oldmode & 61440U) == 16384U)) {
-              if ((newmode & (unsigned int)((64 | (64 >> 3)) | ((64 >> 3) >> 3))) == 0U) {
-                value &= (unsigned int)(~((64 | (64 >> 3)) | ((64 >> 3) >> 3)));
-              }
-            }
-          }
         }
         if ((int const)changes->op == 61) {
           goto case_61;
@@ -3094,9 +1931,7 @@ int make_dir(char const *dir, char const *dirpath, mode_t mode, int *created_dir
         }
       }
     }
-    if (created_dir_p) {
-      *created_dir_p = created_dir;
-    }
+
     return (fail);
   }
 }
@@ -3118,47 +1953,16 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
   void *tmp___1;
   int tmp___2;
   int tmp___3;
-  int tmp___4;
   int newly_created_dir;
   int fail;
-  int _saved_errno;
-  int *tmp___5;
-  char *tmp___6;
-  int *tmp___7;
-  int *tmp___8;
-  int tmp___9;
-  char const *tmp___10;
   char const *tmp___11;
   char *tmp___12;
   int *tmp___13;
-  int _saved_errno___0;
-  int *tmp___14;
-  char *tmp___15;
-  int *tmp___16;
-  int *tmp___17;
-  int tmp___18;
   int tmp___19;
   struct ptr_list *new;
   void *tmp___20;
-  char const *tmp___21;
-  char *tmp___22;
-  int *tmp___23;
-  int _saved_errno___1;
-  int *tmp___24;
-  char *tmp___25;
-  int *tmp___26;
-  int *tmp___27;
-  int tmp___28;
-  int tmp___29;
   char *tmp___30;
-  int _saved_errno___2;
-  int *tmp___31;
-  char *tmp___32;
-  int *tmp___33;
-  int *tmp___34;
-  int tmp___35;
   int tmp___36;
-  char const *tmp___37;
   char const *tmp___38;
   char *tmp___39;
   int *tmp___40;
@@ -3167,12 +1971,6 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
   char *tmp___43;
   int *tmp___44;
   int tmp___45;
-  int _saved_errno___3;
-  int *tmp___46;
-  char *tmp___47;
-  int *tmp___48;
-  int *tmp___49;
-  int tmp___50;
   char const *tmp___51;
   char *tmp___52;
   int *tmp___53;
@@ -3229,22 +2027,9 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
         }
       }
       { tmp___2 = save_cwd(&cwd); }
-      if (tmp___2) {
-        tmp___3 = 0;
-      } else {
-        tmp___3 = 1;
-      }
+
       do_chdir = tmp___3;
-      if (do_chdir) {
-        if ((int)*dirpath == 47) {
-          {
-            tmp___4 = chdir("/");
-          }
-          if (tmp___4 < 0) {
-            do_chdir = 0;
-          }
-        }
-      }
+
       slash = dirpath;
       {
         while (1) {
@@ -3267,58 +2052,14 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
           if ((unsigned long)slash == (unsigned long)((void *)0)) {
             goto while_break___0;
           }
-          if (!do_chdir) {
-            basename_dir = dirpath;
-          }
+
           {
             *slash = (char)'\000';
             fail = make_dir((char const *)basename_dir, (char const *)dirpath, (mode_t)tmp_mode, &newly_created_dir);
           }
-          if (fail) {
-            {
-              while (1) {
-                ;
-                { umask(oldmask); }
-                {
-                  while (1) {
-                    ;
 
-                    if (do_chdir) {
-                      {
-                        tmp___9 = restore_cwd((struct saved_cwd const *)(&cwd));
-                      }
-                      if (tmp___9 != 0) {
-                        {
-                          tmp___5 = __errno_location();
-                          _saved_errno = *tmp___5;
-                          tmp___6 = gettext("failed to return to initial working directory");
-                          tmp___7 = __errno_location();
-                          error(0, *tmp___7, (char const *)tmp___6);
-                          free_cwd(&cwd);
-                          tmp___8 = __errno_location();
-                          *tmp___8 = _saved_errno;
-                        }
-                        return (1);
-                      }
-                      { free_cwd(&cwd); }
-                    }
-                    goto while_break___2;
-                  };
-                }
-              while_break___2:;
-                goto while_break___1;
-              };
-            }
-          while_break___1:;
-            return (1);
-          }
           if (newly_created_dir) {
-            if (verbose_fmt_string) {
-              {
-                tmp___10 = quote((char const *)dirpath);
-                error(0, 0, verbose_fmt_string, tmp___10);
-              }
-            }
+
             if (owner != 4294967295U) {
               goto _L___0;
             } else {
@@ -3331,42 +2072,6 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
                     tmp___13 = __errno_location();
                     error(0, *tmp___13, (char const *)tmp___12, tmp___11);
                   }
-                  {
-                    while (1) {
-                      ;
-                      { umask(oldmask); }
-                      {
-                        while (1) {
-                          ;
-
-                          if (do_chdir) {
-                            {
-                              tmp___18 = restore_cwd((struct saved_cwd const *)(&cwd));
-                            }
-                            if (tmp___18 != 0) {
-                              {
-                                tmp___14 = __errno_location();
-                                _saved_errno___0 = *tmp___14;
-                                tmp___15 = gettext("failed to return to "
-                                                   "initial working directory");
-                                tmp___16 = __errno_location();
-                                error(0, *tmp___16, (char const *)tmp___15);
-                                free_cwd(&cwd);
-                                tmp___17 = __errno_location();
-                                *tmp___17 = _saved_errno___0;
-                              }
-                              return (1);
-                            }
-                            { free_cwd(&cwd); }
-                          }
-                          goto while_break___4;
-                        };
-                      }
-                    while_break___4:;
-                      goto while_break___3;
-                    };
-                  }
-                while_break___3:;
                   return (1);
                 }
               }
@@ -3381,56 +2086,7 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
               }
             }
           }
-          if (do_chdir) {
-            {
-              tmp___29 = chdir((char const *)basename_dir);
-            }
-            if (tmp___29 < 0) {
-              {
-                tmp___21 = quote((char const *)dirpath);
-                tmp___22 = gettext("cannot chdir to directory %s");
-                tmp___23 = __errno_location();
-                error(0, *tmp___23, (char const *)tmp___22, tmp___21);
-              }
-              {
-                while (1) {
-                  ;
-                  { umask(oldmask); }
-                  {
-                    while (1) {
-                      ;
 
-                      if (do_chdir) {
-                        {
-                          tmp___28 = restore_cwd((struct saved_cwd const *)(&cwd));
-                        }
-                        if (tmp___28 != 0) {
-                          {
-                            tmp___24 = __errno_location();
-                            _saved_errno___1 = *tmp___24;
-                            tmp___25 = gettext("failed to return to initial "
-                                               "working directory");
-                            tmp___26 = __errno_location();
-                            error(0, *tmp___26, (char const *)tmp___25);
-                            free_cwd(&cwd);
-                            tmp___27 = __errno_location();
-                            *tmp___27 = _saved_errno___1;
-                          }
-                          return (1);
-                        }
-                        { free_cwd(&cwd); }
-                      }
-                      goto while_break___6;
-                    };
-                  }
-                while_break___6:;
-                  goto while_break___5;
-                };
-              }
-            while_break___5:;
-              return (1);
-            }
-          }
           tmp___30 = slash;
           slash++;
           *tmp___30 = (char)'/';
@@ -3455,50 +2111,7 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
         umask(oldmask);
         tmp___36 = make_dir((char const *)basename_dir, (char const *)dirpath, (mode_t)mode, (int *)((void *)0));
       }
-      if (tmp___36) {
-        {
-          while (1) {
-            ;
-            { umask(oldmask); }
-            {
-              while (1) {
-                ;
 
-                if (do_chdir) {
-                  {
-                    tmp___35 = restore_cwd((struct saved_cwd const *)(&cwd));
-                  }
-                  if (tmp___35 != 0) {
-                    {
-                      tmp___31 = __errno_location();
-                      _saved_errno___2 = *tmp___31;
-                      tmp___32 = gettext("failed to return to initial working directory");
-                      tmp___33 = __errno_location();
-                      error(0, *tmp___33, (char const *)tmp___32);
-                      free_cwd(&cwd);
-                      tmp___34 = __errno_location();
-                      *tmp___34 = _saved_errno___2;
-                    }
-                    return (1);
-                  }
-                  { free_cwd(&cwd); }
-                }
-                goto while_break___9;
-              };
-            }
-          while_break___9:;
-            goto while_break___8;
-          };
-        }
-      while_break___8:;
-        return (1);
-      }
-      if ((unsigned long)verbose_fmt_string != (unsigned long)((void *)0)) {
-        {
-          tmp___37 = quote((char const *)dirpath);
-          error(0, 0, verbose_fmt_string, tmp___37);
-        }
-      }
       if (owner != 4294967295U) {
         goto _L___1;
       } else {
@@ -3533,25 +2146,6 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
         while (1) {
           ;
 
-          if (do_chdir) {
-            {
-              tmp___50 = restore_cwd((struct saved_cwd const *)(&cwd));
-            }
-            if (tmp___50 != 0) {
-              {
-                tmp___46 = __errno_location();
-                _saved_errno___3 = *tmp___46;
-                tmp___47 = gettext("failed to return to initial working directory");
-                tmp___48 = __errno_location();
-                error(0, *tmp___48, (char const *)tmp___47);
-                free_cwd(&cwd);
-                tmp___49 = __errno_location();
-                *tmp___49 = _saved_errno___3;
-              }
-              return (1);
-            }
-            { free_cwd(&cwd); }
-          }
           goto while_break___10;
         };
       }
@@ -3728,53 +2322,13 @@ static unsigned char const yystos[66] = {(unsigned char const)0,  (unsigned char
                                          (unsigned char const)33, (unsigned char const)21, (unsigned char const)18, (unsigned char const)18, (unsigned char const)17, (unsigned char const)33};
 static table const meridian_table[5] = {{"AM", 265, 0}, {"A.M.", 265, 0}, {"PM", 265, 1}, {"P.M.", 265, 1}, {(char const *)0, 0, 0}};
 static table const dst_table[1] = {{"DST", 259, 0}};
-static table const month_and_day_table[25] = {{"JANUARY", 267, 1}, {"FEBRUARY", 267, 2}, {"MARCH", 267, 3},     {"APRIL", 267, 4},     {"MAY", 267, 5},    {"JUNE", 267, 6},     {"JULY", 267, 7},       {"AUGUST", 267, 8}, {"SEPTEMBER", 267, 9},
-                                              {"SEPT", 267, 9},    {"OCTOBER", 267, 10}, {"NOVEMBER", 267, 11}, {"DECEMBER", 267, 12}, {"SUNDAY", 260, 0}, {"MONDAY", 260, 1},   {"TUESDAY", 260, 2},    {"TUES", 260, 2},   {"WEDNESDAY", 260, 3},
-                                              {"WEDNES", 260, 3},  {"THURSDAY", 260, 4}, {"THUR", 260, 4},      {"THURS", 260, 4},     {"FRIDAY", 260, 5}, {"SATURDAY", 260, 6}, {(char const *)0, 0, 0}};
+
 static table const time_units_table[11] = {{"YEAR", 270, 1}, {"MONTH", 268, 1}, {"FORTNIGHT", 261, 14}, {"WEEK", 261, 7}, {"DAY", 261, 1}, {"HOUR", 263, 1}, {"MINUTE", 266, 1}, {"MIN", 266, 1}, {"SECOND", 269, 1}, {"SEC", 269, 1}, {(char const *)0, 0, 0}};
-static table const relative_time_table[20] = {{"TOMORROW", 261, 1}, {"YESTERDAY", 261, -1}, {"TODAY", 261, 0},   {"NOW", 261, 0},    {"LAST", 273, -1}, {"THIS", 273, 0},   {"NEXT", 273, 1},      {"FIRST", 273, 1},    {"THIRD", 273, 3}, {"FOURTH", 273, 4},
-                                              {"FIFTH", 273, 5},    {"SIXTH", 273, 6},      {"SEVENTH", 273, 7}, {"EIGHTH", 273, 8}, {"NINTH", 273, 9}, {"TENTH", 273, 10}, {"ELEVENTH", 273, 11}, {"TWELFTH", 273, 12}, {"AGO", 258, 1},   {(char const *)0, 0, 0}};
-static table const time_zone_table[51] = {{"GMT", 271, 0},    {"UT", 271, 0},      {"UTC", 271, 0},     {"WET", 271, 0},     {"WEST", 262, 0},    {"BST", 262, 0},     {"ART", 271, -180},     {"BRT", 271, -180}, {"BRST", 262, -180}, {"NST", 271, -210}, {"NDT", 262, -210},
-                                          {"AST", 271, -240}, {"ADT", 262, -240},  {"CLT", 271, -240},  {"CLST", 262, -240}, {"EST", 271, -300},  {"EDT", 262, -300},  {"CST", 271, -360},     {"CDT", 262, -360}, {"MST", 271, -420},  {"MDT", 262, -420}, {"PST", 271, -480},
-                                          {"PDT", 262, -480}, {"AKST", 271, -540}, {"AKDT", 262, -540}, {"HST", 271, -600},  {"HAST", 271, -600}, {"HADT", 262, -600}, {"SST", 271, -720},     {"WAT", 271, 60},   {"CET", 271, 60},    {"CEST", 262, 60},  {"MET", 271, 60},
-                                          {"MEZ", 271, 60},   {"MEST", 262, 60},   {"MESZ", 262, 60},   {"EET", 271, 120},   {"EEST", 262, 120},  {"CAT", 271, 120},   {"SAST", 271, 120},     {"EAT", 271, 180},  {"MSK", 271, 180},   {"MSD", 262, 180},  {"IST", 271, 330},
-                                          {"SGT", 271, 480},  {"KST", 271, 540},   {"JST", 271, 540},   {"GST", 271, 600},   {"NZST", 271, 720},  {"NZDT", 262, 720},  {(char const *)0, 0, 0}};
+
 static table const military_table[26] = {{"A", 271, -60}, {"B", 271, -120}, {"C", 271, -180}, {"D", 271, -240}, {"E", 271, -300}, {"F", 271, -360}, {"G", 271, -420}, {"H", 271, -480}, {"I", 271, -540}, {"K", 271, -600}, {"L", 271, -660}, {"M", 271, -720}, {"N", 271, 60},
                                          {"O", 271, 120}, {"P", 271, 180},  {"Q", 271, 240},  {"R", 271, 300},  {"S", 271, 360},  {"T", 271, 420},  {"U", 271, 480},  {"V", 271, 540},  {"W", 271, 600},  {"X", 271, 660},  {"Y", 271, 720},  {"Z", 271, 0},    {(char const *)0, 0, 0}};
 extern char *getcwd(char *buf, size_t size);
 __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) rpl_getcwd)(char *buf, size_t size);
-char *(__attribute__((__leaf__)) rpl_getcwd)(char *buf, size_t size) {
-  char *cwd;
-  char *tmp;
-  size_t tmp___0;
-  int tmp___1;
-  int *tmp___2;
-
-  {
-    {
-      tmp = getcwd(buf, size);
-      cwd = tmp;
-    }
-    if ((unsigned long)cwd == (unsigned long)((void *)0)) {
-      return ((char *)((void *)0));
-    }
-    { tmp___0 = strlen((char const *)cwd); }
-    if (tmp___0 <= 3839UL) {
-      return (cwd);
-    } else {
-      { tmp___1 = same_name((char const *)cwd, "."); }
-      if (tmp___1) {
-        return (cwd);
-      }
-    }
-    {
-      rpl_free((void *)cwd);
-      tmp___2 = __errno_location();
-      *tmp___2 = 36;
-    }
-    return ((char *)((void *)0));
-  }
-}
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(2), __leaf__)) fstat)(int __fd, struct stat *__buf);
 extern void(__attribute__((__nonnull__(1, 4))) qsort)(void *__base, size_t __nmemb, size_t __size, int (*__compar)(void const *, void const *));
 extern char *(__attribute__((__nonnull__(1))) strrchr)(char const *__s, int __c) __attribute__((__pure__));
@@ -3784,14 +2338,7 @@ extern __attribute__((__nothrow__)) void(__attribute__((__leaf__)) free)(void *_
 __attribute__((__nothrow__)) void(__attribute__((__leaf__)) rpl_free)(void *p);
 void(__attribute__((__leaf__)) rpl_free)(void *p) {
 
-  {
-    if (p) {
-      {
-        free(p);
-      }
-    }
-    return;
-  }
+  { return; }
 }
 extern __attribute__((__nothrow__)) FILE *(__attribute__((__leaf__)) fdopen)(int __fd, char const *__modes);
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fileno)(FILE *__stream);
@@ -3802,94 +2349,9 @@ extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf
 extern int fnmatch(char const *__pattern, char const *__name, int __flags);
 extern int fcntl(int __fd, int __cmd, ...);
 size_t dir_len(char const *path);
-size_t dir_len(char const *path) {
-  size_t prefix_length;
-  size_t length;
-  char *tmp;
-
-  {
-    {
-      prefix_length = (size_t)0;
-      tmp = base_name(path);
-      length = (size_t)(tmp - (char *)path);
-    }
-    {
-      while (1) {
-        ;
-
-        if (!(prefix_length < length)) {
-          goto while_break;
-        }
-        if (!((int const) * (path + (length - 1UL)) == 47)) {
-          return (length);
-        }
-        length--;
-      };
-    }
-  while_break:;
-    return (prefix_length + (size_t)((int const) * (path + prefix_length) == 47));
-  }
-}
-char *dir_name(char const *path) {
-  size_t length;
-  size_t tmp;
-  int append_dot;
-  char *newpath;
-  void *tmp___0;
-  size_t tmp___1;
-
-  {
-    {
-      tmp = dir_len(path);
-      length = tmp;
-      append_dot = length == 0UL;
-      tmp___0 = xmalloc((length + (size_t)append_dot) + 1UL);
-      newpath = (char *)tmp___0;
-      memcpy((void * /* __restrict  */)((void *)newpath), (void const * /* __restrict  */)((void const *)path), length);
-    }
-    if (append_dot) {
-      tmp___1 = length;
-      length++;
-      *(newpath + tmp___1) = (char)'.';
-    }
-    *(newpath + length) = (char)0;
-    return (newpath);
-  }
-}
 char const diacrit_base[256];
 char const diacrit_diac[256];
-char const diacrit_base[256] = {
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)'A', (char const)'B', (char const)'C', (char const)'D', (char const)'E', (char const)'F', (char const)'G', (char const)'H', (char const)'I', (char const)'J', (char const)'K', (char const)'L', (char const)'M', (char const)'N', (char const)'O',
-    (char const)'P', (char const)'Q', (char const)'R', (char const)'S', (char const)'T', (char const)'U', (char const)'V', (char const)'W', (char const)'X', (char const)'Y', (char const)'Z', (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)'a', (char const)'b', (char const)'c', (char const)'d', (char const)'e', (char const)'f', (char const)'g', (char const)'h', (char const)'i', (char const)'j', (char const)'k', (char const)'l', (char const)'m', (char const)'n', (char const)'o',
-    (char const)'p', (char const)'q', (char const)'r', (char const)'s', (char const)'t', (char const)'u', (char const)'v', (char const)'w', (char const)'x', (char const)'y', (char const)'z', (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)'A', (char const)'A', (char const)'A', (char const)'A', (char const)'A', (char const)'A', (char const)'A', (char const)'C', (char const)'E', (char const)'E', (char const)'E', (char const)'E', (char const)'I', (char const)'I', (char const)'I', (char const)'I',
-    (char const)0,   (char const)'N', (char const)'O', (char const)'O', (char const)'O', (char const)'O', (char const)'O', (char const)0,   (char const)'O', (char const)'U', (char const)'U', (char const)'U', (char const)'U', (char const)'Y', (char const)0,   (char const)0,
-    (char const)'a', (char const)'a', (char const)'a', (char const)'a', (char const)'a', (char const)'a', (char const)'a', (char const)'c', (char const)'e', (char const)'e', (char const)'e', (char const)'e', (char const)'i', (char const)'i', (char const)'i', (char const)'i',
-    (char const)0,   (char const)'n', (char const)'o', (char const)'o', (char const)'o', (char const)'o', (char const)'o', (char const)0,   (char const)'o', (char const)'u', (char const)'u', (char const)'u', (char const)'u', (char const)'y', (char const)0,   (char const)'y'};
-char const diacrit_diac[256] = {
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)4,
-    (char const)0, (char const)3, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)6, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)3, (char const)2, (char const)4, (char const)6, (char const)5, (char const)8, (char const)1, (char const)7, (char const)3, (char const)2, (char const)4, (char const)5, (char const)3, (char const)2, (char const)4, (char const)5, (char const)0,
-    (char const)6, (char const)3, (char const)2, (char const)4, (char const)6, (char const)5, (char const)0, (char const)9, (char const)3, (char const)2, (char const)4, (char const)5, (char const)2, (char const)0, (char const)0, (char const)3, (char const)2, (char const)4, (char const)6,
-    (char const)5, (char const)8, (char const)1, (char const)7, (char const)3, (char const)2, (char const)4, (char const)5, (char const)3, (char const)2, (char const)4, (char const)5, (char const)0, (char const)6, (char const)3, (char const)2, (char const)4, (char const)6, (char const)5,
-    (char const)0, (char const)9, (char const)3, (char const)2, (char const)4, (char const)5, (char const)2, (char const)0, (char const)0};
+
 void close_stdout(void);
 extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) __fpending)(FILE *__fp);
 static char const *file_name;
@@ -3897,50 +2359,15 @@ void close_stdout(void) {
   int e;
   int tmp___0;
   int tmp___1;
-  size_t tmp___2;
-  int *tmp___3;
   int tmp___4;
-  char const *write_error;
-  char *tmp___5;
-  char *tmp___6;
 
   {
     { tmp___1 = ferror_unlocked(stdout); }
-    if (tmp___1) {
-      tmp___0 = 0;
-    } else {
-      tmp___0 = -1;
-    }
+
     e = tmp___0;
-    if (e) {
-      {
-        tmp___2 = __fpending(stdout);
-      }
-      if (tmp___2 == 0UL) {
-        return;
-      }
-    }
+
     { tmp___4 = fclose(stdout); }
-    if (tmp___4 != 0) {
-      {
-        tmp___3 = __errno_location();
-        e = *tmp___3;
-      }
-    }
-    if (0 <= e) {
-      {
-        tmp___5 = gettext("write error");
-        write_error = (char const *)tmp___5;
-      }
-      if (file_name) {
-        {
-          tmp___6 = quotearg_colon(file_name);
-          error((int)exit_failure, e, "%s: %s", tmp___6, write_error);
-        }
-      } else {
-        { error((int)exit_failure, e, "%s", write_error); }
-      }
-    }
+
     return;
   }
 }
@@ -3955,36 +2382,6 @@ char *base_name(char const *name) {
   {
     base = name + 0;
     p = base;
-    {
-      while (1) {
-        ;
-
-        if (!*p) {
-          goto while_break;
-        }
-        if ((int const) * p == 47) {
-          {
-            while (1) {
-              ;
-              p++;
-              if (!((int const) * p == 47)) {
-                goto while_break___0;
-              }
-            };
-          }
-        while_break___0:;
-          if (!*p) {
-            if ((int const) * base == 47) {
-              base = p - 1;
-            }
-            goto while_break;
-          }
-          base = p;
-        }
-        p++;
-      };
-    }
-  while_break:;
     return ((char *)base);
   }
 }
@@ -4031,43 +2428,9 @@ char *program_name;
 static int create_parents;
 static struct option const longopts[6] = {{"mode", 1, (int *)((void *)0), 'm'}, {"parents", 0, (int *)((void *)0), 'p'}, {"verbose", 0, (int *)((void *)0), 'v'}, {"help", 0, (int *)0, -130}, {"version", 0, (int *)0, -131}, {(char const *)((void *)0), 0, (int *)((void *)0), 0}};
 void usage(int status) {
-  char *tmp;
-  char *tmp___0;
-  char *tmp___1;
-  char *tmp___2;
-  char *tmp___3;
-  char *tmp___4;
-  char *tmp___5;
-  char *tmp___6;
 
   {
-    if (status != 0) {
-      {
-        tmp = gettext("Try `%s --help\' for more information.\n");
-        fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */)((char const *)tmp), program_name);
-      }
-    } else {
-      {
-        tmp___0 = gettext("Usage: %s [OPTION] DIRECTORY...\n");
-        printf((char const * /* __restrict  */)((char const *)tmp___0), program_name);
-        tmp___1 = gettext("Create the DIRECTORY(ies), if they do not already exist.\n\n");
-        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___1), (FILE * /* __restrict  */)stdout);
-        tmp___2 = gettext("Mandatory arguments to long options are mandatory "
-                          "for short options too.\n");
-        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___2), (FILE * /* __restrict  */)stdout);
-        tmp___3 = gettext("  -m, --mode=MODE   set permission mode (as in chmod), not "
-                          "rwxrwxrwx - umask\n  -p, --parents     no error if existing, make "
-                          "parent directories as needed\n  -v, --verbose     print a message "
-                          "for each created directory\n");
-        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___3), (FILE * /* __restrict  */)stdout);
-        tmp___4 = gettext("      --help     display this help and exit\n");
-        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___4), (FILE * /* __restrict  */)stdout);
-        tmp___5 = gettext("      --version  output version information and exit\n");
-        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___5), (FILE * /* __restrict  */)stdout);
-        tmp___6 = gettext("\nReport bugs to <%s>.\n");
-        printf((char const * /* __restrict  */)((char const *)tmp___6), "bug-coreutils@gnu.org");
-      }
-    }
+
     { exit(status); }
   }
 }
@@ -4079,7 +2442,6 @@ int main(int argc, char **argv) {
   int errors;
   int optc;
   char *tmp;
-  char *tmp___0;
   mode_t umask_value;
   __mode_t tmp___1;
   struct mode_change *change;
@@ -4091,9 +2453,6 @@ int main(int argc, char **argv) {
   char *dir;
   char const *dir___0;
   int dir_created;
-  char const *tmp___6;
-  char *tmp___7;
-  char const *tmp___8;
   char const *tmp___9;
   char *tmp___10;
   int *tmp___11;
@@ -4120,25 +2479,14 @@ int main(int argc, char **argv) {
         if (optc == 0) {
           goto case_0;
         }
-        if (optc == 112) {
-          goto case_112;
-        }
+
         if (optc == 109) {
           goto case_109;
         }
-        if (optc == 118) {
-          goto case_118;
-        }
-        if (optc == -130) {
-          goto case_neg_130;
-        }
-        if (optc == -131) {
-          goto case_neg_131;
-        }
+
         goto switch_default;
       case_0:
         goto switch_break;
-      case_112:
         create_parents = 1;
         goto switch_break;
       case_109:
@@ -4161,13 +2509,6 @@ int main(int argc, char **argv) {
       };
     }
   while_break:;
-    if (optind == argc) {
-      {
-        tmp___0 = gettext("too few arguments");
-        error(0, 0, (char const *)tmp___0);
-        usage(1);
-      }
-    }
     {
       newmode = (mode_t)((448 | (448 >> 3)) | ((448 >> 3) >> 3));
       tmp___1 = umask((__mode_t)0);
@@ -4215,28 +2556,7 @@ int main(int argc, char **argv) {
             dir___0 = (char const *)*(argv + optind);
             fail = make_dir(dir___0, dir___0, newmode, &dir_created);
           }
-          if (!fail) {
-            if (!create_parents) {
-              if (!dir_created) {
-                {
-                  tmp___6 = quote(dir___0);
-                  tmp___7 = gettext("cannot create directory %s");
-                  error(0, 17, (char const *)tmp___7, tmp___6);
-                  fail = 1;
-                }
-              } else {
-                goto _L;
-              }
-            } else {
-            _L:
-              if (verbose_fmt_string) {
-                {
-                  tmp___8 = quote(dir___0);
-                  error(0, 0, verbose_fmt_string, tmp___8);
-                }
-              }
-            }
-          }
+
           if (fail == 0) {
             if (specified_mode) {
               if (dir_created) {

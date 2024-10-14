@@ -380,3 +380,163 @@ returning
 Total Score: 49 / 49
 Total Security Score: 12 / 12
 test run completed!
+[H[2J[3J#######################################################
+############### AUTOMATED TESTING #####################
+############## mkdir-8.2 testing ######################
+#######################################################
+
+starting...
+
+returning
+returning
+returning
+returning
+returning
+-m 444 tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m 755 tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m 000 tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m 600 tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m 700 tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m 711 tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m 750 tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m 770 tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m 775 tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m 777 tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m 644 tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m 655 tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m u=r,g=r,o=r tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m u=rwx,g=rx,o=rx tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m u=,g=,o= tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m u=rw,g=,o= tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m u=rwx,g=,o= tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m u=rwx,g=x,o=x tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m u=rwx,g=rx,o= tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m u=rwx,g=rwx,o= tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m u=rwx,g=rwx,o=rx tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m u=rwx,g=rwx,o=rwx tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m u=rw,g=r,o=r tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+-m u=rw,g=rx,o=rx tests       2 / 2
+returning
+returning
+returning
+returning
+returning
+returning
+Total Score: 49 / 49
+Total Security Score: 12 / 12
+test run completed!
