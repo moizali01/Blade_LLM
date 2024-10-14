@@ -87,7 +87,7 @@ def LLM_candidate(candidate, candidate_set_with_line_number, context, fifty_cont
         with open(fifty_file, 'r') as file:
             fifty_clean = file.read()
 
-        exist_in_coverage = exist(outfile)
+        exist_in_coverage = exist(cand_linenum)
 
         # get llm response from cache if cand set is repeating
         llm_cache = check_previous_responses(cand_linenum)

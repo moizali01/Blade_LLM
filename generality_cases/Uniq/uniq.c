@@ -138,31 +138,31 @@ typedef enum canonicalize_mode_t canonicalize_mode_t;
 typedef unsigned int __socklen_t;
 typedef __socklen_t socklen_t;
 typedef unsigned short sa_family_t;
-struct sockaddr {
-    sa_family_t sa_family;
-    char sa_data[14];
-};
-struct addrinfo {
-    int ai_flags;
-    int ai_family;
-    int ai_socktype;
-    int ai_protocol;
-    socklen_t ai_addrlen;
-    struct sockaddr *ai_addr;
-    char *ai_canonname;
-    struct addrinfo *ai_next;
-};
+// struct sockaddr {
+//     sa_family_t sa_family;
+//     char sa_data[14];
+// };
+// struct addrinfo {
+//     int ai_flags;
+//     int ai_family;
+//     int ai_socktype;
+//     int ai_protocol;
+//     socklen_t ai_addrlen;
+//     struct sockaddr *ai_addr;
+//     char *ai_canonname;
+//     struct addrinfo *ai_next;
+// };
 struct __locale_data;
 struct __locale_data;
-struct __locale_struct {
-    struct __locale_data *__locales[13];
-    unsigned short const *__ctype_b;
-    int const *__ctype_tolower;
-    int const *__ctype_toupper;
-    char const *__names[13];
-};
-typedef struct __locale_struct *__locale_t;
-typedef __locale_t locale_t;
+// struct __locale_struct {
+//     struct __locale_data *__locales[13];
+//     unsigned short const *__ctype_b;
+//     int const *__ctype_tolower;
+//     int const *__ctype_toupper;
+//     char const *__names[13];
+// };
+// typedef struct __locale_struct *__locale_t;
+// typedef __locale_t locale_t;
 // struct base64_decode_context {
 //     unsigned int i;
 //     char buf[4];
@@ -514,14 +514,14 @@ struct __anonstruct_posix_spawnattr_t_50 {
 typedef struct __anonstruct_posix_spawnattr_t_50 posix_spawnattr_t;
 struct __spawn_action;
 struct __spawn_action;
-struct __anonstruct_posix_spawn_file_actions_t_51 {
-    int __allocated;
-    int __used;
-    struct __spawn_action *__actions;
-    int __pad[16];
-};
-typedef struct __anonstruct_posix_spawn_file_actions_t_51
-    posix_spawn_file_actions_t;
+// struct __anonstruct_posix_spawn_file_actions_t_51 {
+//     int __allocated;
+//     int __used;
+//     struct __spawn_action *__actions;
+//     int __pad[16];
+// };
+// typedef struct __anonstruct_posix_spawn_file_actions_t_51
+//     posix_spawn_file_actions_t;
 struct numname {
     int num;
     char const name[8];
@@ -540,22 +540,22 @@ struct sha256_ctx {
     size_t buflen;
     uint32_t buffer[32];
 };
-struct sha1_ctx {
-    uint32_t A;
-    uint32_t B;
-    uint32_t C;
-    uint32_t D;
-    uint32_t E;
-    uint32_t total[2];
-    uint32_t buflen;
-    uint32_t buffer[32];
-};
+// struct sha1_ctx {
+//     uint32_t A;
+//     uint32_t B;
+//     uint32_t C;
+//     uint32_t D;
+//     uint32_t E;
+//     uint32_t total[2];
+//     uint32_t buflen;
+//     uint32_t buffer[32];
+// };
 typedef int __clockid_t;
 typedef __clockid_t clockid_t;
-struct timezone {
-    int tz_minuteswest;
-    int tz_dsttime;
-};
+// struct timezone {
+//     int tz_minuteswest;
+//     int tz_dsttime;
+// };
 enum __anonenum_state_14 {
     INITIAL_STATE = 0,
     FD_STATE = 1,
@@ -573,18 +573,18 @@ struct savewd {
     enum __anonenum_state_14 state;
     union __anonunion_val_15 val;
 };
-union __anonunion_52___0 {
-    int __in;
-    int __i;
-};
-union __anonunion_53___0 {
-    int __in;
-    int __i;
-};
-union __anonunion_54___0 {
-    int __in;
-    int __i;
-};
+// union __anonunion_52___0 {
+//     int __in;
+//     int __i;
+// };
+// union __anonunion_53___0 {
+//     int __in;
+//     int __i;
+// };
+// union __anonunion_54___0 {
+//     int __in;
+//     int __i;
+// };
 typedef int __int32_t;
 struct __exit_status {
     short e_termination;
@@ -594,20 +594,20 @@ struct __anonstruct_ut_tv_15 {
     __int32_t tv_sec;
     __int32_t tv_usec;
 };
-struct utmpx {
-    short ut_type;
-    __pid_t ut_pid;
-    char ut_line[32];
-    char ut_id[4];
-    char ut_user[32];
-    char ut_host[256];
-    struct __exit_status ut_exit;
-    __int32_t ut_session;
-    struct __anonstruct_ut_tv_15 ut_tv;
-    __int32_t ut_addr_v6[4];
-    char __glibc_reserved[20];
-};
-typedef struct utmpx STRUCT_UTMP;
+// struct utmpx {
+//     short ut_type;
+//     __pid_t ut_pid;
+//     char ut_line[32];
+//     char ut_id[4];
+//     char ut_user[32];
+//     char ut_host[256];
+//     struct __exit_status ut_exit;
+//     __int32_t ut_session;
+//     struct __anonstruct_ut_tv_15 ut_tv;
+//     __int32_t ut_addr_v6[4];
+//     char __glibc_reserved[20];
+// };
+// typedef struct utmpx STRUCT_UTMP;
 struct obstack;
 struct obstack;
 struct _obstack_chunk {
@@ -634,24 +634,24 @@ struct obstack {
     unsigned int maybe_empty_object : 1;
     unsigned int alloc_failed : 1;
 };
-struct Tokens {
-    size_t n_tok;
-    char **tok;
-    size_t *tok_len;
-    struct obstack o_data;
-    struct obstack o_tok;
-    struct obstack o_tok_len;
-};
+// struct Tokens {
+//     size_t n_tok;
+//     char **tok;
+//     size_t *tok_len;
+//     struct obstack o_data;
+//     struct obstack o_tok;
+//     struct obstack o_tok_len;
+// };
 struct tokenbuffer {
     size_t size;
     char *buffer;
 };
 typedef struct tokenbuffer token_buffer;
 typedef size_t word;
-struct randread_source;
-struct randread_source;
+// struct randread_source;
+// struct randread_source;
 typedef unsigned long uint_least64_t;
-typedef struct timezone *__restrict __timezone_ptr_t;
+// typedef struct timezone *__restrict __timezone_ptr_t;
 typedef uint_least64_t isaac_word;
 struct isaac_state {
     isaac_word m[1 << 8];
@@ -668,16 +668,16 @@ struct isaac {
     struct isaac_state state;
     union __anonunion_data_31 data;
 };
-union __anonunion_buf_30 {
-    char c[2UL * ((unsigned long)(1 << 8) * sizeof(isaac_word))];
-    struct isaac isaac;
-};
-struct randread_source {
-    FILE *source;
-    void (*handler)(void const *);
-    void const *handler_arg;
-    union __anonunion_buf_30 buf;
-};
+// union __anonunion_buf_30 {
+//     char c[2UL * ((unsigned long)(1 << 8) * sizeof(isaac_word))];
+//     struct isaac isaac;
+// };
+// struct randread_source {
+//     FILE *source;
+//     void (*handler)(void const *);
+//     void const *handler_arg;
+//     union __anonunion_buf_30 buf;
+// };
 struct sparse_ent_ {
     size_t index;
     size_t val;
@@ -1446,30 +1446,30 @@ void *xrealloc(void *p, size_t n) __attribute__((__alloc_size__(2)));
 extern __attribute__((__nothrow__)) char *(
     __attribute__((__nonnull__(1), __leaf__)) strdup)(char const *__s)
 __attribute__((__malloc__));
-extern int getaddrinfo(char const *__restrict __name,
-                       char const *__restrict __service,
-                       struct addrinfo const *__restrict __req,
-                       struct addrinfo **__restrict __pai);
-extern __attribute__((__nothrow__)) void(
-    __attribute__((__leaf__)) freeaddrinfo)(struct addrinfo *__ai);
-extern __attribute__((__nothrow__)) char const *(
-    __attribute__((__leaf__)) gai_strerror)(int __ecode);
-static int last_cherror;
-static struct addrinfo hints;
-extern __attribute__((__nothrow__))
-__locale_t(__attribute__((__leaf__)) newlocale)(int __category_mask,
-        char const *__locale,
-        __locale_t __base);
-extern __attribute__((__nothrow__)) long double(__attribute__((
-            __nonnull__(1, 3), __leaf__)) strtold_l)(char const *__restrict __nptr,
-                    char **__restrict __endptr,
-                    __locale_t __loc);
-static locale_t volatile c_locale_cache;
-extern __attribute__((__nothrow__)) double(__attribute__((
-            __nonnull__(1, 3), __leaf__)) strtod_l)(char const *__restrict __nptr,
-                    char **__restrict __endptr,
-                    __locale_t __loc);
-static locale_t volatile c_locale_cache___0;
+// extern int getaddrinfo(char const *__restrict __name,
+//                        char const *__restrict __service,
+//                        struct addrinfo const *__restrict __req,
+//                        struct addrinfo **__restrict __pai);
+// extern __attribute__((__nothrow__)) void(
+//     __attribute__((__leaf__)) freeaddrinfo)(struct addrinfo *__ai);
+// extern __attribute__((__nothrow__)) char const *(
+//     __attribute__((__leaf__)) gai_strerror)(int __ecode);
+// static int last_cherror;
+// static struct addrinfo hints;
+// extern __attribute__((__nothrow__))
+// __locale_t(__attribute__((__leaf__)) newlocale)(int __category_mask,
+//         char const *__locale,
+//         __locale_t __base);
+// extern __attribute__((__nothrow__)) long double(__attribute__((
+//             __nonnull__(1, 3), __leaf__)) strtold_l)(char const *__restrict __nptr,
+//                     char **__restrict __endptr,
+//                     __locale_t __loc);
+// static locale_t volatile c_locale_cache;
+// extern __attribute__((__nothrow__)) double(__attribute__((
+//             __nonnull__(1, 3), __leaf__)) strtod_l)(char const *__restrict __nptr,
+//                     char **__restrict __endptr,
+//                     __locale_t __loc);
+// static locale_t volatile c_locale_cache___0;
 int c_tolower(int c) __attribute__((__const__));
 int c_strcasecmp(char const *s1, char const *s2) __attribute__((__pure__));
 int c_strcasecmp(char const *s1, char const *s2) __attribute__((__pure__));
@@ -2309,9 +2309,9 @@ switch_break___0: /* CIL Label */
         return (err);
     }
 }
-extern __attribute__((__nothrow__)) long(__attribute__((
-            __nonnull__(1), __leaf__)) strtol)(char const *__restrict __nptr,
-                    char **__restrict __endptr, int __base);
+// extern __attribute__((__nothrow__)) long(__attribute__((
+//             __nonnull__(1), __leaf__)) strtol)(char const *__restrict __nptr,
+//                     char **__restrict __endptr, int __base);
 // extern __attribute__((__nothrow__))
 // intmax_t(__attribute__((__leaf__)) strtoimax)(char const *__restrict __nptr,
 //         char **__restrict __endptr,
@@ -5922,52 +5922,52 @@ void set_program_name(char const *argv0)
 //     (wchar_t const)'L', (wchar_t const)'L', (wchar_t const)')',
 //     (wchar_t const)0
 // };
-int posix2_version(void);
-int posix2_version(void)
-{
-    long v;
-    char const *s;
-    char const *tmp;
-    char *e;
-    long i;
-    long tmp___0;
-    long tmp___1;
-    long tmp___2;
-    char *__cil_tmp10;
+// int posix2_version(void);
+// int posix2_version(void)
+// {
+//     long v;
+//     char const *s;
+//     char const *tmp;
+//     char *e;
+//     long i;
+//     long tmp___0;
+//     long tmp___1;
+//     long tmp___2;
+//     char *__cil_tmp10;
 
-    {
-        {
-            v = 200809L;
-            tmp = (char const *)getenv("_POSIX2_VERSION");
-            s = tmp;
-        }
-        if (s) {
-            if (*s) {
-                {
-                    tmp___0 = strtol((char const * /* __restrict  */)s,
-                                     (char ** /* __restrict  */)(&e), 10);
-                    i = tmp___0;
-                }
-                if (!*e) {
-                    v = i;
-                }
-            }
-        }
-        if (v < (-0x7FFFFFFF - 1)) {
-            tmp___2 = (-0x7FFFFFFF - 1);
-        }
-        else {
-            if (v < 2147483647L) {
-                tmp___1 = v;
-            }
-            else {
-                tmp___1 = 2147483647L;
-            }
-            tmp___2 = tmp___1;
-        }
-        return ((int)tmp___2);
-    }
-}
+//     {
+//         {
+//             v = 200809L;
+//             tmp = (char const *)getenv("_POSIX2_VERSION");
+//             s = tmp;
+//         }
+//         if (s) {
+//             if (*s) {
+//                 {
+//                     tmp___0 = strtol((char const * /* __restrict  */)s,
+//                                      (char ** /* __restrict  */)(&e), 10);
+//                     i = tmp___0;
+//                 }
+//                 if (!*e) {
+//                     v = i;
+//                 }
+//             }
+//         }
+//         if (v < (-0x7FFFFFFF - 1)) {
+//             tmp___2 = (-0x7FFFFFFF - 1);
+//         }
+//         else {
+//             if (v < 2147483647L) {
+//                 tmp___1 = v;
+//             }
+//             else {
+//                 tmp___1 = 2147483647L;
+//             }
+//             tmp___2 = tmp___1;
+//         }
+//         return ((int)tmp___2);
+//     }
+// }
 // extern __attribute__((__nothrow__))
 // time_t(__attribute__((__leaf__)) time)(time_t *__timer);
 // extern __attribute__((__nothrow__)) struct tm *(
@@ -7989,12 +7989,12 @@ static _Bool different(char *old, char *new, size_t oldlen, size_t newlen)
     int tmp___3;
 
     {
-        if (check_chars < oldlen) {
-            oldlen = check_chars;
-        }
-        if (check_chars < newlen) {
-            newlen = check_chars;
-        }
+        // if (check_chars < oldlen) {
+        //     oldlen = check_chars;
+        // }
+        // if (check_chars < newlen) {
+        //     newlen = check_chars;
+        // }
         if (ignore_case) {
             // if (oldlen != newlen) {
             //     tmp___0 = 1;
@@ -8475,36 +8475,36 @@ _L___2:
                                 if (optc == 1) {
                                     goto case_1;
                                 }
-                                if (optc == 48) {
-                                    goto case_48;
-                                }
-                                if (optc == 49) {
-                                    goto case_48;
-                                }
-                                if (optc == 50) {
-                                    goto case_48;
-                                }
-                                if (optc == 51) {
-                                    goto case_48;
-                                }
-                                if (optc == 52) {
-                                    goto case_48;
-                                }
-                                if (optc == 53) {
-                                    goto case_48;
-                                }
-                                if (optc == 54) {
-                                    goto case_48;
-                                }
-                                if (optc == 55) {
-                                    goto case_48;
-                                }
-                                if (optc == 56) {
-                                    goto case_48;
-                                }
-                                if (optc == 57) {
-                                    goto case_48;
-                                }
+                                // if (optc == 48) {
+                                //     goto case_48;
+                                // }
+                                // if (optc == 49) {
+                                //     goto case_48;
+                                // }
+                                // if (optc == 50) {
+                                //     goto case_48;
+                                // }
+                                // if (optc == 51) {
+                                //     goto case_48;
+                                // }
+                                // if (optc == 52) {
+                                //     goto case_48;
+                                // }
+                                // if (optc == 53) {
+                                //     goto case_48;
+                                // }
+                                // if (optc == 54) {
+                                //     goto case_48;
+                                // }
+                                // if (optc == 55) {
+                                //     goto case_48;
+                                // }
+                                // if (optc == 56) {
+                                //     goto case_48;
+                                // }
+                                // if (optc == 57) {
+                                //     goto case_48;
+                                // }
                                 // if (optc == 99) {
                                 //     goto case_99;
                                 // }
@@ -8541,29 +8541,29 @@ _L___2:
                                 // goto switch_default;
 case_1: /* CIL Label */
                                 if ((int)*(optarg + 0) == 43) {
-                                    {
-                                        tmp___7 = posix2_version();
-                                    }
-                                    if (tmp___7 < 200112) {
-                                        {
-                                            tmp___8 = xstrtoul((char const *)optarg,
-                                                               (char **)((void *)0), 10, &size, "");
-                                        }
-                                        if ((unsigned int)tmp___8 == 0U) {
-                                            if (size <= 0xffffffffffffffffUL) {
-                                                skip_chars = size;
-                                            }
-                                            else {
-                                                goto _L___1;
-                                            }
-                                        }
-                                        else {
-                                            goto _L___1;
-                                        }
-                                    }
-                                    else {
-                                        goto _L___1;
-                                    }
+                                    // {
+                                    //     tmp___7 = posix2_version();
+                                    // }
+                                    // if (tmp___7 < 200112) {
+                                    //     {
+                                    //         tmp___8 = xstrtoul((char const *)optarg,
+                                    //                            (char **)((void *)0), 10, &size, "");
+                                    //     }
+                                    //     if ((unsigned int)tmp___8 == 0U) {
+                                    //         if (size <= 0xffffffffffffffffUL) {
+                                    //             skip_chars = size;
+                                    //         }
+                                    //         else {
+                                    //             goto _L___1;
+                                    //         }
+                                    //     }
+                                    //     else {
+                                    //         goto _L___1;
+                                    //     }
+                                    // }
+                                    // else {
+                                    //     goto _L___1;
+                                    // }
                                 }
                                 else {
 _L___1:
