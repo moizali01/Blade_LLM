@@ -48,9 +48,9 @@ def exist(file_path):
     
 import re
 
-def update_code_with_coverage(code_path):
+def update_code_with_coverage(formatted_time):
     # Construct the file path using the provided timestamp
-    # code_path = "../LLM_Util/cands/context/context" + "_time_" + str(formatted_time) + ".blade.c"
+    code_path = "../LLM_Util/cands/context/context" + "_time_" + str(formatted_time) + ".blade.c"
     coverage_path = '../LLM_Util/coverage.txt'
     
     # code_path = "cands/context/" + self.timestamp[:-12]

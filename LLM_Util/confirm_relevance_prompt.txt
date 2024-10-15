@@ -43,7 +43,7 @@ Identify and filter duplicate lines: The program's primary function is to find c
 
 ### Your Evaluation Task:
 
-Your task is to evaluate whether the summary of the code snippet demonstrates a thorough understanding of the role of the code within the larger context of the program.
+Your task is to evaluate whether the summary of the code snippet demonstrates an overall understanding of the role of the code within the larger context of the program.
 
 Answer the following questions step by step to provide a detailed evaluation:
 

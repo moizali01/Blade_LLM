@@ -28,8 +28,9 @@ from tree_sitter_languages import get_language, get_parser
 from llama_index.core.text_splitter import CodeSplitter
 from dotenv import load_dotenv
 from LLM_Util.chunker import get_code_chunks
-from LLM_Util.exist_coverage import update_code_with_coverage
+from LLM_Util.exist_coverage import update_code_with_coverage, coverage_for_lines
 import subprocess
+from LLM_Util.function_ctx import get_function_list, get_function_context
 
 
 dotenv_path = '../.env'
@@ -213,7 +214,7 @@ class QAClass:
             def __init__(self, outer_instance):
                 self.outer_instance = outer_instance
 
-            def run(self, query, context_query, coverage, fifty_clean, function_context):
+            def run(self, query, context_query, coverage, fifty_clean, cand_linenum):
 
                 # define retriever
                 retriever = self.outer_instance._db.as_retriever(search_type="similarity", search_kwargs={"k": 4})
@@ -230,28 +231,65 @@ class QAClass:
 
                 # Unzip the sorted pairs
                 retrieved_docs, similarity_scores = zip(*sorted_pairs)
-
-                formatted_context_2 = "Function in which the code snippet was called:\n\n" + function_context + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
-                function_lines = function_context
+                
+                cleaned_code = "The code is given in the following format:\nLine Number| Execution Count (no number indicates non executable lines)| Code line\n" 
+                function_list = get_function_list("../LLM_Util/original.c")
+                function_cov = get_function_context(cand_linenum, '../LLM_Util/coverage.txt', function_list)
+                function = get_function_context(cand_linenum, '../LLM_Util/original.c', function_list)
+                
+                function_lines = function_cov
                 function_lines = function_lines.splitlines()
+                formatted_context_2 = "Function in which the code snippet was called:\n\n" + function_cov + "\n\n" 
+                formatted_context_1 = function
                 if len(function_lines) < 10:
-                    formatted_context_2 = "Function in which the code snippet was called:\n\n" + function_context + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
+                    formatted_context_2 = "Function in which the code snippet was called:\n\n" + function_cov + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
+                    formatted_context_1 = function + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
                 elif len(function_lines) > 1000:
-                    first_100_lines = "\n".join(fifty_clean.splitlines()[:100])
-                    last_100_lines = "\n".join(fifty_clean.splitlines()[-100:])
-                    formatted_context_2 = "Snippet.0: \n\n" + first_100_lines + "\n\n" "Snippet.1: \n\n" + last_100_lines + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
+                    # go to cand linenum and get its line number 
+                    with open("cand_linenum", "r") as f:
+                        context_linenum = f.readlines()
+                    # then go to that line in coverage
+                    
+                    first_non_empty_index = next((i for i, x in enumerate(context) if x), len(context))
+                    last_non_empty_index = next((i for i, x in enumerate(reversed(context)) if x), len(context))
+                    
+                    start_line = min(0, first_non_empty_index - 300)
+                    end_index = max(len(context), last_non_empty_index + 300)
+                    
+                    # contains fifty text +- 300 lines from coverage.txt
+                    fifty_text_with_cov = coverage_for_lines(start_line, end_index)
+                    print(fifty_text_with_cov)
+                    
+                    
+                    # first_100_lines = "\n".join(fifty_clean.splitlines()[:300])
+                    # last_100_lines = "\n".join(fifty_clean.splitlines()[-300:])
+                    # formatted_context_2 = "Snippet.0: \n\n" + first_100_lines + "\n\n" "Snippet.1: \n\n" + last_100_lines + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
+                    
+                    # formatted_context_1 is function without any coverage info
+                    with open("../LLM_Util/original.c", "r") as f:
+                        formatted_context_1 = f.readlines()
+                        
+                    formatted_context_1 = formatted_context_1[start_line:end_index]
+                    formatted_context_1 = "\n".join(formatted_context_1) + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
+                                        
+                    formatted_context_2 = "Snippet.0: \n\n" + fifty_text_with_cov + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
+                    
+                    function_lines = function.splitlines()
+                    first_100_lines = "\n".join(function_lines[:300])
+                    last_100_lines = "\n".join(function_lines[-300:])
+                    
                 # if len(query.splitlines()) > 10:
                 #     formatted_context_2 = self.outer_instance.combine_docs(retrieved_docs)
                 # else:
                 #     formatted_context_2 = "Snippet.0: \n\n" + fifty_clean + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
                 
-                return self.outer_instance.call_llm(query, formatted_context_2, coverage, llm)
+                return self.outer_instance.call_llm(query, formatted_context_1, formatted_context_2, coverage, llm)
 
 
         return CustomQAChain(self)
     
     # need to make three calls to LLM, 1) relevance of context, 2) generality and 3) security
-    def call_llm(self, query, formatted_context, coverage, llm):
+    def call_llm(self, query, formated_context_without_cov, formatted_context, coverage, llm):
 
         # if coverage:
         #     with open('../LLM_Util/prompt_in_coverage.txt', 'r') as file:
@@ -264,7 +302,7 @@ class QAClass:
         # prompt_to_send = prompt
         # Classify the context as relevant or not. If not, retain
         print("Checking Relevance")
-        relevance, summary = self.check_relevance(query, formatted_context, llm)
+        relevance, summary = self.check_relevance(query, formated_context_without_cov, llm)
         print(relevance)
         if relevance == "no":
             return "final verdict: class 4"
@@ -296,7 +334,7 @@ class QAClass:
 
         prompt = prompt_template.format(context=formatted_context, query=query)
         os.makedirs("../LLM_Util/cands/prompt", exist_ok=True)
-        with open("../LLM_Util/cands/prompt/prompt" + "_time_"+ str(self.timestamp) + ".blade.c.txt", 'w') as file:
+        with open("../LLM_Util/cands/prompt/prompt_rel" + "_time_"+ str(self.timestamp) + ".blade.c.txt", 'w') as file:
             file.write(prompt)
 
         response = llm(prompt)
@@ -304,15 +342,16 @@ class QAClass:
         if response == None:  
             return "no", "No response from LLM"
 
-        # call agent 2 here
-        with open("../LLM_Util/confirm_relevance_prompt.txt", 'r') as file:
-            confirm_relevance_prompt = file.read()
+        response2 = ""
+        # # call agent 2 here
+        # with open("../LLM_Util/confirm_relevance_prompt.txt", 'r') as file:
+        #     confirm_relevance_prompt = file.read()
 
-        prompt = confirm_relevance_prompt.format(context=formatted_context, query=query, summary=response)
-        response2 = llm(prompt)
+        # prompt = confirm_relevance_prompt.format(context=formatted_context, query=query, summary=response)
+        # response2 = llm(prompt)
 
-        if response2 == None:
-            return "no", response
+        # if response2 == None:
+        #     return "no", response
 
         merged_response = response + "\n\n" + response2
         file_name = "../LLM_Util/cands/multiagent/new_relevance/relevance" + "_time_"+ str(self.timestamp) + ".blade.c.txt"
@@ -333,14 +372,16 @@ class QAClass:
         #     return "no"
 
         # parse response to get "yes" or "no"
-        match = re.search(r'Final Verdict\s*:\s*(yes|no)', response2.strip(), re.IGNORECASE)
-        print(match)
-        if match is not None:
-            return match.group(1).lower(), response
-        else:
-            return "no", response
+        # match = re.search(r'Final Verdict\s*:\s*(yes|no)', response2.strip(), re.IGNORECASE)
+        # print(match)
+        # if match is not None:
+        #     return match.group(1).lower(), response
+        # else:
+        #     return "no", response
         
-        return "no", response
+        # return "no", response
+
+        return "yes", response
 
     def check_functionality(self, query, formatted_context, llm, coverage, summary):
         with open("../LLM_Util/functionality_prompt.txt", 'r') as file:
@@ -353,11 +394,14 @@ class QAClass:
             req_list = file.read()
 
         # cov_info = in_cov_statement if coverage else not_cov_statement
-        # code_with_cov = update_code_with_coverage(self.timestamp)
+        code_with_cov = update_code_with_coverage(self.timestamp)
         
 
-        prompt = prompt_template.format(context=formatted_context, query=query, summary=summary, req_list=req_list)
-
+        prompt = prompt_template.format(context=formatted_context, query=code_with_cov, summary=summary, req_list=req_list)
+        
+        with open("../LLM_Util/cands/prompt/prompt_func" + "_time_"+ str(self.timestamp) + ".blade.c.txt", 'w') as file:
+            file.write(prompt)
+        
         response = llm(prompt)
 
         # save response to cands/multiagent/functionality
@@ -415,7 +459,7 @@ class QAClass:
         # retain if there is any issue in extracting importance score
         return "yes"
 
-    def invoke(self, query, prompt_type, context_query, fifty_clean, passed_time, function_context):
+    def invoke(self, query, prompt_type, context_query, fifty_clean, passed_time, cand_linenum):
         # Retrieve documents based on context query
         print("Querying: ", query)
         # print("Context Retrived from DB: ", formatted_context)
@@ -423,9 +467,9 @@ class QAClass:
         self.timestamp = passed_time
 
         if prompt_type == 'generality':
-            return self.llm_chain.run(query, context_query, False, fifty_clean, function_context)
+            return self.llm_chain.run(query, context_query, False, fifty_clean, cand_linenum)
         elif prompt_type == 'security':
-            return self.llm_chain.run(query, context_query, True, fifty_clean, function_context)
+            return self.llm_chain.run(query, context_query, True, fifty_clean, cand_linenum)
         
 
     def get_security_checks(self):
