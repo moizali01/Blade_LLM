@@ -265,15 +265,6 @@ class QAClass:
     # need to make three calls to LLM, 1) relevance of context, 2) generality and 3) security
     def call_llm(self, query, formated_context_without_cov, formatted_context, coverage, llm):
 
-        # if coverage:
-        #     with open('../LLM_Util/prompt_in_coverage.txt', 'r') as file:
-        #         prompt_template = file.read()
-        # else:
-        #     with open('../LLM_Util/prompt_not_in_coverage.txt', 'r') as file:
-        #         prompt_template = file.read()
-
-        # prompt = prompt_template.format(sec_list=sec_list, formatted_context=formatted_context, query=query)
-        # prompt_to_send = prompt
         # Classify the context as relevant or not. If not, retain
         print("Checking Relevance")
         relevance, summary = self.check_relevance(query, formated_context_without_cov, llm)
@@ -332,37 +323,11 @@ class QAClass:
         with open (file_name, 'w') as file:
             file.write(merged_response)
 
-        # # save response to cands/multiagent/security
-        # file_name = "../LLM_Util/cands/multiagent/relevance/relevance" + "_time_"+ str(self.timestamp) + ".blade.c.txt"
-        # with open(file_name, 'w') as file:
-        #     file.write(response)
-
-
-        # # parse response to get "yes" or "no"
-        # match = re.search(r'\b(yes|no)\b', response.lower().strip())
-        # if match is not None:
-        #     return match.group(1).lower()
-        # else:
-        #     return "no"
-
-        # parse response to get "yes" or "no"
-        # match = re.search(r'Final Verdict\s*:\s*(yes|no)', response2.strip(), re.IGNORECASE)
-        # print(match)
-        # if match is not None:
-        #     return match.group(1).lower(), response
-        # else:
-        #     return "no", response
-        
-        # return "no", response
-
         return "yes", response
 
     def check_functionality(self, query, formatted_context, llm, coverage, summary):
         with open("../LLM_Util/functionality_prompt.txt", 'r') as file:
             prompt_template = file.read()
-
-        # in_cov_statement = "This code snippet included in the code execution path for the required functionality, therefore verify if the given code snippet is important for required functionality of the program."
-        # not_cov_statement = "This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for the required functionality of the program."
 
         with open("../LLM_Util/req_list.txt", 'r') as file:
             req_list = file.read()
@@ -407,11 +372,6 @@ class QAClass:
 
         with open("../LLM_Util/security_prompt.txt", 'r') as file:
             prompt_template = file.read()
-
-        # in_cov_statement = "This code snippet included in the code execution path for the required functionality, therefore verify if the given code snippet is important for any of the listed potential security vulnerabilities in the program."
-        # not_cov_statement = "This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for any of the listed potential security vulnerabilities in the program."
-
-        # cov_info = in_cov_statement if coverage else not_cov_statement
 
         prompt = prompt_template.format(context=formatted_context, query=query, summary=summary, sec_list=sec_list)
 
