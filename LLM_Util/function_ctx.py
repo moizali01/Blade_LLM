@@ -70,7 +70,7 @@ def get_function_context(code_path, coverage_path, function_list):
         coverage_data = ''.join(coverage_lines[func_start - 1: func_end])
         cleaned_code = "\n".join([re.sub(r'^\d+\|', '', line) for line in coverage_data.splitlines() if line.strip() != ""])
         return cleaned_code
-    return None
+    return ""
 
 def get_function(code_path, function_list):
     first_line, last_line = analyze_code(code_path)

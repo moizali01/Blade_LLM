@@ -245,40 +245,13 @@ class QAClass:
                 if len(function_lines) < 10:
                     formatted_context_2 = "Function in which the code snippet was called:\n\n" + function_cov + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
                     formatted_context_1 = function + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
-                elif len(function_lines) > 1000:
-                    # go to cand linenum and get its line number 
-                    with open(cand_linenum, "r") as f:
-                        context_linenum = f.readlines()
-                    # then go to that line in coverage
-                    
-                    first_non_empty_index = next((i for i, x in enumerate(context_linenum) if x), len(context_linenum))
-                    last_non_empty_index = next((i for i, x in enumerate(reversed(context_linenum)) if x), len(context_linenum))
-                    
-                    start_line = min(0, first_non_empty_index - 300)
-                    end_index = max(len(context_linenum), last_non_empty_index + 300)
-                    
+                elif len(function_lines) > 1000:                   
                     # contains fifty text +- 300 lines from coverage.txt
-                    fifty_text_with_cov = coverage_for_lines(start_line, end_index)
-                    print(fifty_text_with_cov)
-                    
-                    
-                    # first_100_lines = "\n".join(fifty_clean.splitlines()[:300])
-                    # last_100_lines = "\n".join(fifty_clean.splitlines()[-300:])
-                    # formatted_context_2 = "Snippet.0: \n\n" + first_100_lines + "\n\n" "Snippet.1: \n\n" + last_100_lines + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
-                    
-                    # formatted_context_1 is function without any coverage info
-                    with open("../LLM_Util/original.c", "r") as f:
-                        formatted_context_1 = f.readlines()
-                        
-                    formatted_context_1 = formatted_context_1[start_line:end_index]
-                    formatted_context_1 = "\n".join(formatted_context_1) + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
-                                        
-                    formatted_context_2 = "Snippet.0: \n\n" + fifty_text_with_cov + "\n\n" + self.outer_instance.combine_docs(retrieved_docs[:2])
-                    
-                    function_lines = function.splitlines()
-                    first_100_lines = "\n".join(function_lines[:300])
-                    last_100_lines = "\n".join(function_lines[-300:])
-                    
+                    fifty_text_with_cov = get_immediate_context(cand_linenum, 300, 300)
+                    fifty_text_without_cov = get_immediate_context(cand_linenum, 300, 300, src_file)
+
+                    formatted_context_1 = "Snippet.0: \n\n" + fifty_text_without_cov + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
+                    formatted_context_2 = "Snippet.0: \n\n" + fifty_text_with_cov + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
                 # if len(query.splitlines()) > 10:
                 #     formatted_context_2 = self.outer_instance.combine_docs(retrieved_docs)
                 # else:

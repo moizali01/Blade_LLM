@@ -79,14 +79,14 @@ def update_code_with_coverage(formatted_time):
     cleaned_code = "The code is given in the following format:\nLine Number| Execution Count (no number indicates non executable lines)| Code line\n" + cleaned_code
     return cleaned_code
 
-def get_immediate_context(code_path, pretext, posttext):
+def get_immediate_context(code_path, pretext, posttext, coverage_path = '../LLM_Util/coverage.txt'):
     start, end = analyze_code(code_path)
-    return coverage_for_lines(start - pretext, end + posttext)
+    return coverage_for_lines(start - pretext, end + posttext, coverage_path)
         
 
-def coverage_for_lines(first_line, last_line):
-    coverage_path = '../LLM_Util/coverage.txt'
-    
+def coverage_for_lines(first_line, last_line, coverage_path = '../LLM_Util/coverage.txt'):
+    # coverage_path = '../LLM_Util/coverage.txt'
+    print(f"The coverage path is {coverage_path}")
     coverage_lines = ""
     code_lines = ""
     with open(coverage_path, 'r') as coverage_file:
@@ -101,9 +101,8 @@ def coverage_for_lines(first_line, last_line):
 
      # # Step 4: Remove just the line numbers at the start and empty lines
     updated_code = ''.join(code_lines)
-    # # Remove only the line number and the following pipe (|) character
+    # Remove only the line number and the following pipe (|) character
     cleaned_code = "\n".join([re.sub(r'^\d+\|', '', line) for line in updated_code.splitlines() if line.strip() != ""])
-    cleaned_code = "The code is given in the following format:\nLine Number| Execution Count (no number indicates non executable lines)| Code line\n" + cleaned_code
     return cleaned_code
         
     
