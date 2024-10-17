@@ -238,7 +238,8 @@ class QAClass:
                 function = get_function_context(cand_linenum, '../LLM_Util/original.c', function_list)
                 
                 function_lines = function_cov
-                function_lines = function_lines.splitlines()
+                if function_lines:
+                    function_lines = function_lines.splitlines()
                 formatted_context_2 = "Function in which the code snippet was called:\n\n" + function_cov + "\n\n" 
                 formatted_context_1 = function
                 if len(function_lines) < 10:
@@ -246,15 +247,15 @@ class QAClass:
                     formatted_context_1 = function + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
                 elif len(function_lines) > 1000:
                     # go to cand linenum and get its line number 
-                    with open("cand_linenum", "r") as f:
+                    with open(cand_linenum, "r") as f:
                         context_linenum = f.readlines()
                     # then go to that line in coverage
                     
-                    first_non_empty_index = next((i for i, x in enumerate(context) if x), len(context))
-                    last_non_empty_index = next((i for i, x in enumerate(reversed(context)) if x), len(context))
+                    first_non_empty_index = next((i for i, x in enumerate(context_linenum) if x), len(context_linenum))
+                    last_non_empty_index = next((i for i, x in enumerate(reversed(context_linenum)) if x), len(context_linenum))
                     
                     start_line = min(0, first_non_empty_index - 300)
-                    end_index = max(len(context), last_non_empty_index + 300)
+                    end_index = max(len(context_linenum), last_non_empty_index + 300)
                     
                     # contains fifty text +- 300 lines from coverage.txt
                     fifty_text_with_cov = coverage_for_lines(start_line, end_index)
@@ -317,7 +318,7 @@ class QAClass:
             else:
                 # query security
                 print("Checking Security")
-                security = self.check_security(query, formatted_context, llm, coverage)
+                security = self.check_security(query, formatted_context, llm, coverage, summary)
                 print(security)
                 # retain since it is needed for required security
                 if security == "yes":
@@ -420,7 +421,7 @@ class QAClass:
         # retain if there is any issue in extracting importance score
         return "yes"
 
-    def check_security(self, query, formatted_context, llm, coverage):
+    def check_security(self, query, formatted_context, llm, coverage, summary):
 
         if os.path.exists("../LLM_Util/sec_list.txt"):
             with open("../LLM_Util/sec_list.txt", 'r') as file:
@@ -434,12 +435,12 @@ class QAClass:
         with open("../LLM_Util/security_prompt.txt", 'r') as file:
             prompt_template = file.read()
 
-        in_cov_statement = "This code snippet included in the code execution path for the required functionality, therefore verify if the given code snippet is important for any of the listed potential security vulnerabilities in the program."
-        not_cov_statement = "This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for any of the listed potential security vulnerabilities in the program."
+        # in_cov_statement = "This code snippet included in the code execution path for the required functionality, therefore verify if the given code snippet is important for any of the listed potential security vulnerabilities in the program."
+        # not_cov_statement = "This code snippet is not included in the code execution path for the required functionality, therefore verify if the given code snippet is important for any of the listed potential security vulnerabilities in the program."
 
-        cov_info = in_cov_statement if coverage else not_cov_statement
+        # cov_info = in_cov_statement if coverage else not_cov_statement
 
-        prompt = prompt_template.format(context=formatted_context, query=query, coverage_info=cov_info, sec_list=sec_list)
+        prompt = prompt_template.format(context=formatted_context, query=query, summary=summary, sec_list=sec_list)
 
         response = llm(prompt)
 

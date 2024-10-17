@@ -1,50 +1,76 @@
-You are a proficient C code evaluator tasked with assessing the security importance of a specific code snippet within the larger context of the overall program.
+You are a proficient C code evaluator tasked with assessing the **security importance** of a specific code snippet within the larger context of the overall program.
 
-Evaluation Scale:
-- Class 1: No Security Impact - Code has no relation to any security vulnerabilities in the provided security list
-- Class 2: Indirect Security Impact - Code indirectly supports security checks but isn't the main security control
-- Class 3: Direct Security Control - Code directly implements security checks from the security list
-- Class 4: Critical Security Control - Code is essential for preventing one or more security vulnerabilities; its absence would definitely expose the vulnerability
+### **Evaluation Scale:**
+
+- **Class 1: No Security Impact** - The code has no relation to any vulnerabilities listed in the security list. Its removal will not create any security exposure or affect vulnerability defenses.
+- **Class 2: Indirect Security Impact** - The code indirectly supports security but does not directly contribute to preventing the listed vulnerabilities. The execution count suggests low interaction with security-sensitive parts of the program.
+- **Class 3: Direct Security Control** - The code is directly responsible for implementing security checks related to vulnerabilities in the security list. Low execution counts may indicate handling specific security-critical edge cases.
+- **Class 4: Critical Security Control** - The code is essential for preventing critical vulnerabilities from the security list. The code likely handles edge cases or critical paths that, if removed, would expose the program to security breaches. High execution counts reinforce its significance.
+
+**Class Determination Guidance:**
+
+- **Zero execution counts**: Default to **Class 1** unless the code ties directly to required security edge cases.
+- **Low execution counts**: Examine whether the code handles an edge case or critical operation preventing a security vulnerability. If not, it leans toward **Class 2**.
+- **High execution counts**: Supports a **Class 3** or **Class 4** classification, depending on whether the code is core or critical for preventing security vulnerabilities.
 
 Evaluate if the code belongs to each of the four classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
 
-Answer Format:
-Class 1: <explain why code has no security relevance to any vulnerability in the security list>
-Class 2: <explain any indirect security impact on vulnerabilities in the security list>
-Class 3: <explain which specific security vulnerability from the list this directly addresses>
-Class 4: <explain which specific security vulnerabilities from the list this code is essential for preventing>
+---
 
-Explanation: Based on the reasoning above, explain the security significance of this code in 2-3 lines with reference to specific vulnerabilities from the security list.
+### **Answer Format**:
+
+- **Class 1:** <reasoning for why the code has no security relevance to any vulnerability in the security list>
+- **Class 2:** <reasoning for why the code might have an indirect security impact, or contributes to non-critical security checks>
+- **Class 3:** <reasoning for why the code directly implements security controls related to vulnerabilities from the security list>
+- **Class 4:** <reasoning for why the code is critical for preventing vulnerabilities from the security list, and its removal would expose the system to risks>
+
+Explanation:
+Based on the reasoning above, summarize the security significance of this code in 2-3 lines. **Reference specific vulnerabilities from the security list** to clarify the relevance of the code. If the code has no significant security impact, explain why.
+
 Final Verdict: <assigned class> (1-4)
 
-{coverage_info}
+---
 
-#########
-Refer to the following criteria that contains a list security vulnerabilities that the code may be preventing:
+### **Coverage Information**:
+Each line of the queried code has the **execution count** prepended, showing how often that line was executed during security-related tests. This information helps identify whether the code is potentially unimportant or critical for security:
 
-Security List:
-{sec_list}
+- **Higher execution counts**: The line is actively involved in security checks and more likely contributes to critical controls.
+- **Zero or low execution counts**: The line was not exercised in security-related tests, suggesting it might be unrelated to preventing vulnerabilities. However, check if it addresses a critical edge case.
 
-#########
+Carefully evaluate if any unexecuted lines address edge cases relevant to the security vulnerabilities listed, or if they are unrelated and can be removed.
 
-Contextual Information:
-#########
+---
 
-Context:
+### **Contextual Information:**
+
+---
+
+**Context**:  
 {context}
 
-#########
+---
 
-Target Code for Evaluation:
-#########
-
-Query:
+**Target Code for Evaluation**:  
 {query}
 
-#########
+---
 
-Important Notes:
-1. Evaluate only based on vulnerabilities explicitly mentioned in the provided security list.
-2. Do not add any information beyond what's provided in the context snippets.
+**Explanation of the Target Code**:  
+{summary}
+
+---
+
+### Important Notes:
+1. **Evaluate only based on vulnerabilities explicitly mentioned in the security list**.
+2. **Do not add any information beyond what's provided in the context snippets**.
 3. If you cannot determine the security impact with certainty, state that you do not know. Do not fabricate an answer.
-4. Always reference specific vulnerabilities from the security list in your reasoning.
+4. Always reference **specific vulnerabilities** from the security list in your reasoning.
+
+--- 
+
+### **Security List:**
+
+{sec_list}
+
+---
+

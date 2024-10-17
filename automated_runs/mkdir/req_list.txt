@@ -5,5 +5,6 @@
 
 **Unrequired Functionality**:
 
-Any other functionality such as verbose or parent directories creation is not considered relevant. 
-
+1) Functionality such as verbose or help flag is not important
+2) parent directories creation is not considered relevant. 
+3) Combination of other unrequired flags with the -m Flag is also not needed.

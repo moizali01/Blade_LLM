@@ -53,28 +53,7 @@ struct _ftsent;
 struct _ftsent;
 
 typedef struct __anonstruct_FTS_26 FTS;
-struct _ftsent {
-  struct _ftsent *fts_cycle;
-  struct _ftsent *fts_parent;
-  struct _ftsent *fts_link;
-  long fts_number;
-  void *fts_pointer;
-  char *fts_accpath;
-  char *fts_path;
-  int fts_errno;
-  int fts_symfd;
-  size_t fts_pathlen;
-  ino_t fts_ino;
-  dev_t fts_dev;
-  nlink_t fts_nlink;
-  int fts_level;
-  u_short fts_namelen;
-  u_short fts_info;
-  u_short fts_flags;
-  u_short fts_instr;
-  struct stat *fts_statp;
-  char fts_name[1];
-};
+
 typedef struct _ftsent FTSENT;
 typedef __builtin_va_list __gnuc_va_list;
 typedef __gnuc_va_list va_list;
@@ -86,66 +65,11 @@ typedef void _IO_lock_t;
 
 typedef int wchar_t;
 typedef unsigned int wint_t;
-enum __anonenum_arg_type_26 {
-  TYPE_NONE = 0,
-  TYPE_SCHAR = 1,
-  TYPE_UCHAR = 2,
-  TYPE_SHORT = 3,
-  TYPE_USHORT = 4,
-  TYPE_INT = 5,
-  TYPE_UINT = 6,
-  TYPE_LONGINT = 7,
-  TYPE_ULONGINT = 8,
-  TYPE_LONGLONGINT = 9,
-  TYPE_ULONGLONGINT = 10,
-  TYPE_DOUBLE = 11,
-  TYPE_LONGDOUBLE = 12,
-  TYPE_CHAR = 13,
-  TYPE_WIDE_CHAR = 14,
-  TYPE_STRING = 15,
-  TYPE_WIDE_STRING = 16,
-  TYPE_POINTER = 17,
-  TYPE_COUNT_SCHAR_POINTER = 18,
-  TYPE_COUNT_SHORT_POINTER = 19,
-  TYPE_COUNT_INT_POINTER = 20,
-  TYPE_COUNT_LONGINT_POINTER = 21,
-  TYPE_COUNT_LONGLONGINT_POINTER = 22
-};
+
 typedef enum __anonenum_arg_type_26 arg_type;
-union __anonunion_a_28 {
-  signed char a_schar;
-  unsigned char a_uchar;
-  short a_short;
-  unsigned short a_ushort;
-  int a_int;
-  unsigned int a_uint;
-  long a_longint;
-  unsigned long a_ulongint;
-  long long a_longlongint;
-  unsigned long long a_ulonglongint;
-  float a_float;
-  double a_double;
-  long double a_longdouble;
-  int a_char;
-  wint_t a_wide_char;
-  char const *a_string;
-  wchar_t const *a_wide_string;
-  void *a_pointer;
-  signed char *a_count_schar_pointer;
-  short *a_count_short_pointer;
-  int *a_count_int_pointer;
-  long *a_count_longint_pointer;
-  long long *a_count_longlongint_pointer;
-};
-struct __anonstruct_argument_27 {
-  arg_type type;
-  union __anonunion_a_28 a;
-};
+
 typedef struct __anonstruct_argument_27 argument;
-struct __anonstruct_arguments_29 {
-  unsigned int count;
-  argument *arg;
-};
+
 typedef struct __anonstruct_arguments_29 arguments;
 
 typedef struct __anonstruct_char_directive_30 char_directive;
@@ -171,26 +95,10 @@ typedef __mbstate_t mbstate_t;
 
 typedef unsigned int md5_uint32;
 typedef unsigned long md5_uintptr;
-struct sha_ctx {
-  md5_uint32 A;
-  md5_uint32 B;
-  md5_uint32 C;
-  md5_uint32 D;
-  md5_uint32 E;
-  md5_uint32 total[2];
-  md5_uint32 buflen;
-  char buffer[128];
-};
+
 typedef int __clockid_t;
 typedef __clockid_t clockid_t;
 
-struct dirent {
-  __ino_t d_ino;
-  __off_t d_off;
-  unsigned short d_reclen;
-  unsigned char d_type;
-  char d_name[256];
-};
 struct __dirstream;
 struct __dirstream;
 typedef struct __dirstream DIR;
@@ -200,14 +108,6 @@ struct saved_cwd {
 };
 typedef int __int32_t;
 typedef int __pid_t;
-struct __exit_status {
-  short e_termination;
-  short e_exit;
-};
-struct __anonstruct_ut_tv_27 {
-  __int32_t tv_sec;
-  __int32_t tv_usec;
-};
 
 typedef struct utmpx STRUCT_UTMP;
 
@@ -223,14 +123,6 @@ struct slotvec {
   char *val;
 };
 typedef __off_t off_t;
-struct mntent {
-  char *mnt_fsname;
-  char *mnt_dir;
-  char *mnt_type;
-  char *mnt_opts;
-  int mnt_freq;
-  int mnt_passno;
-};
 
 typedef __mode_t mode_t;
 struct mode_change {
@@ -240,19 +132,7 @@ struct mode_change {
   mode_t value;
   struct mode_change *next;
 };
-struct md5_ctx {
-  md5_uint32 A;
-  md5_uint32 B;
-  md5_uint32 C;
-  md5_uint32 D;
-  md5_uint32 total[2];
-  md5_uint32 buflen;
-  char buffer[128];
-};
-struct ptr_list {
-  char *dirname_end;
-  struct ptr_list *next;
-};
+
 struct option {
   char const *name;
   int has_arg;
@@ -260,6 +140,11 @@ struct option {
   int val;
 };
 typedef int nl_item;
+
+union __anonunion_id_22 {
+  uid_t u;
+  gid_t g;
+};
 
 struct hash_tuning {
   float shrink_threshold;
@@ -289,18 +174,14 @@ union YYSTYPE {
   textint textintval;
 };
 typedef union YYSTYPE YYSTYPE;
-
+union yyalloc {
+  short yyss;
+  YYSTYPE yyvs;
+};
 typedef signed char yysigned_char;
 typedef unsigned int __u_int;
 typedef __u_int u_int;
-struct Active_dir {
-  dev_t dev;
-  ino_t ino;
-  FTSENT *fts_ent;
-};
-struct __anonstruct___fsid_t_2 {
-  int __val[2];
-};
+
 typedef struct __anonstruct___fsid_t_2 __fsid_t;
 typedef unsigned long __fsblkcnt_t;
 typedef unsigned long __fsfilcnt_t;
@@ -367,6 +248,9 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
   char const *q;
   unsigned short const **tmp___0;
   int *tmp___1;
+  char *tmp___2;
+  int *tmp___3;
+  int *tmp___4;
   int base;
   int suffixes;
   strtol_error overflow;
@@ -390,15 +274,51 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
       p = &t_ptr;
     }
     q = s;
-    if ((int const) * q == 45) {
-      return ((strtol_error)4);
+    {
+      while (1) {
+        ;
+        { tmp___0 = __ctype_b_loc(); }
+        if (!((int const) * (*tmp___0 + (int)((unsigned char)*q)) & 8192)) {
+          goto while_break;
+        }
+        q++;
+      };
     }
+  while_break:;
     {
       tmp___1 = __errno_location();
       *tmp___1 = 0;
       tmp = strtoul((char const * /* __restrict  */)s, (char ** /* __restrict  */)p, strtol_base);
     }
-
+    if ((unsigned long)*p == (unsigned long)s) {
+      if (valid_suffixes) {
+        if (*(*p)) {
+          {
+            tmp___2 = strchr(valid_suffixes, (int)*(*p));
+          }
+          if (tmp___2) {
+            tmp = 1UL;
+          } else {
+            return ((strtol_error)4);
+          }
+        } else {
+          return ((strtol_error)4);
+        }
+      } else {
+        return ((strtol_error)4);
+      }
+    } else {
+      { tmp___4 = __errno_location(); }
+      if (*tmp___4 != 0) {
+        {
+          tmp___3 = __errno_location();
+        }
+        if (*tmp___3 != 34) {
+          return ((strtol_error)4);
+        }
+        err = (strtol_error)1;
+      }
+    }
     if (!valid_suffixes) {
       *val = tmp;
       return (err);
@@ -418,34 +338,25 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long 
       if ((int)*(*p) == 98) {
         goto case_98;
       }
-      if ((int)*(*p) == 66) {
-        goto case_66___0;
-      }
+
       if ((int)*(*p) == 99) {
         goto case_99;
       }
 
-      if ((int)*(*p) == 103) {
-        goto case_103;
-      }
       if ((int)*(*p) == 71) {
         goto case_103;
       }
       if ((int)*(*p) == 75) {
         goto case_75;
       }
-      if ((int)*(*p) == 107) {
-        goto case_75;
-      }
+
       if ((int)*(*p) == 109) {
         goto case_109;
       }
       if ((int)*(*p) == 77) {
         goto case_109;
       }
-      if ((int)*(*p) == 80) {
-        goto case_80;
-      }
+
       if ((int)*(*p) == 116) {
         goto case_116;
       }
@@ -523,14 +434,17 @@ extern __attribute__((__nothrow__, __noreturn__)) void(__attribute__((__leaf__))
 extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1, 2), __leaf__)) memcpy)(void *__restrict __dest, void const *__restrict __src, size_t __n);
 extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1), __leaf__)) memset)(void *__s, int __c, size_t __n);
 void (*xalloc_fail_func)(void) = (void (*)(void))0;
-char const xalloc_msg_memory_exhausted[17] = {(char const)'m', (char const)'e', (char const)'m', (char const)'o', (char const)'r', (char const)'y', (char const)' ', (char const)'e',   (char const)'x',
-                                              (char const)'h', (char const)'a', (char const)'u', (char const)'s', (char const)'t', (char const)'e', (char const)'d', (char const)'\000'};
+
 __attribute__((__noreturn__)) void xalloc_die(void);
 void xalloc_die(void) {
   char *tmp;
 
   {
-
+    if (xalloc_fail_func) {
+      {
+        (*xalloc_fail_func)();
+      }
+    }
     {
       tmp = gettext(xalloc_msg_memory_exhausted);
       error((int)exit_failure, 0, "%s", tmp);
@@ -543,7 +457,11 @@ __inline static void *xnmalloc_inline(size_t n, size_t s) {
   int tmp;
 
   {
-
+    if (sizeof(ptrdiff_t) <= sizeof(size_t)) {
+      tmp = -1;
+    } else {
+      tmp = -2;
+    }
     if ((size_t)tmp / s < n) {
       {
         xalloc_die();
@@ -612,7 +530,113 @@ char const *version_etc_copyright;
 void version_etc_va(FILE *stream, char const *command_name, char const *package, char const *version, va_list authors);
 void version_etc(FILE *stream, char const *command_name, char const *package, char const *version, ...);
 char const *version_etc_copyright = "Copyright (C) 2004 Free Software Foundation, Inc.";
+void version_etc_va(FILE *stream, char const *command_name, char const *package, char const *version, va_list authors) {
+  unsigned int n_authors;
+  va_list tmp_authors;
+  char *tmp___1;
+  char *tmp___2;
+  char *tmp___3;
+  char *tmp___4;
+  char *tmp___5;
+  char *tmp___6;
+  char *tmp___7;
+  char *tmp___8;
+  char *tmp___9;
+  char *tmp___10;
+  char *tmp___11;
 
+  {
+    {
+      __builtin_va_copy(tmp_authors, authors);
+      n_authors = 0U;
+    }
+
+    if (n_authors == 1U) {
+      goto case_1;
+    }
+
+    if (n_authors == 4U) {
+      goto case_4;
+    }
+
+    if (n_authors == 7U) {
+      goto case_7;
+    }
+
+    goto switch_default;
+  case_0: { abort(); }
+  case_1: {
+    tmp___1 = gettext("Written by %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___1), authors);
+  }
+    goto switch_break;
+  case_2: {
+    tmp___2 = gettext("Written by %s and %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___2), authors);
+  }
+    goto switch_break;
+  case_3: {
+    tmp___3 = gettext("Written by %s, %s, and %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___3), authors);
+  }
+    goto switch_break;
+  case_4: {
+    tmp___4 = gettext("Written by %s, %s, %s,\nand %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___4), authors);
+  }
+    goto switch_break;
+  case_5: {
+    tmp___5 = gettext("Written by %s, %s, %s,\n%s, and %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___5), authors);
+  }
+    goto switch_break;
+  case_6: {
+    tmp___6 = gettext("Written by %s, %s, %s,\n%s, %s, and %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___6), authors);
+  }
+    goto switch_break;
+  case_7: {
+    tmp___7 = gettext("Written by %s, %s, %s,\n%s, %s, %s, and %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___7), authors);
+  }
+    goto switch_break;
+  case_8: {
+    tmp___8 = gettext("Written by %s, %s, %s,\n%s, %s, %s, %s,\nand %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___8), authors);
+  }
+    goto switch_break;
+  case_9: {
+    tmp___9 = gettext("Written by %s, %s, %s,\n%s, %s, %s, %s,\n%s, and %s.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___9), authors);
+  }
+    goto switch_break;
+  switch_default: {
+    tmp___10 = gettext("Written by %s, %s, %s,\n%s, %s, %s, %s,\n%s, %s, and others.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___10), authors);
+  }
+    goto switch_break;
+  switch_break: {
+    __builtin_va_end(authors);
+    putc_unlocked('\n', stream);
+    fputs_unlocked((char const * /* __restrict  */)version_etc_copyright, (FILE * /* __restrict  */)stream);
+    putc_unlocked('\n', stream);
+
+    fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___11), (FILE * /* __restrict  */)stream);
+  }
+    return;
+  }
+}
+void version_etc(FILE *stream, char const *command_name, char const *package, char const *version, ...) {
+  va_list authors;
+
+  {
+    {
+      __builtin_va_start(authors, version);
+      version_etc_va(stream, command_name, package, version, authors);
+    }
+    return;
+  }
+}
 extern __attribute__((__nothrow__)) int snprintf(char *__restrict __s, size_t __maxlen, char const *__restrict __format, ...);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) utimes)(char const *__file, struct timeval const *__tvp);
 extern __attribute__((__nothrow__)) int sprintf(char *__restrict __s, char const *__restrict __format, ...);
@@ -641,25 +665,7 @@ extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) ctime)(time
 char *base_name(char const *name);
 size_t base_len(char const *name);
 int strip_trailing_slashes(char *path);
-int strip_trailing_slashes(char *path) {
-  char *base;
-  char *tmp;
-  char *base_lim;
-  size_t tmp___0;
-  int had_slash;
 
-  {
-    {
-      tmp = base_name((char const *)path);
-      base = tmp;
-      tmp___0 = base_len((char const *)base);
-      base_lim = base + tmp___0;
-      had_slash = (int)*base_lim;
-      *base_lim = (char)'\000';
-    }
-    return (had_slash);
-  }
-}
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) tolower)(int __c);
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) toupper)(int __c);
 extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) strftime)(char *__restrict __s, size_t __maxsize, char const *__restrict __format, struct tm const *__restrict __tp);
@@ -687,29 +693,11 @@ int save_cwd(struct saved_cwd *cwd);
 int restore_cwd(struct saved_cwd const *cwd);
 void free_cwd(struct saved_cwd *cwd);
 static int have_working_fchdir = 1;
-int save_cwd(struct saved_cwd *cwd) {
-
-  {
-    cwd->desc = -1;
-    cwd->name = (char *)((void *)0);
-    if (have_working_fchdir) {
-      {
-        cwd->desc = open(".", 65536);
-      }
-      if (cwd->desc < 0) {
-        return (1);
-      }
-    }
-
-    return (0);
-  }
-}
 
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) stat)(char const *__restrict __file, struct stat *__restrict __buf);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) memcmp)(void const *__s1, void const *__s2, size_t __n) __attribute__((__pure__));
 int same_name(char const *source, char const *dest);
 char *dir_name(char const *path);
-
 extern ssize_t write(int __fd, void const *__buf, size_t __n);
 extern ssize_t read(int __fd, void *__buf, size_t __nbytes);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) lstat)(char const *__restrict __file, struct stat *__restrict __buf);
@@ -734,7 +722,39 @@ extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) iswprint)(wint
 
 enum quoting_style const quoting_style_vals[7] = {(enum quoting_style const)0, (enum quoting_style const)1, (enum quoting_style const)2, (enum quoting_style const)3, (enum quoting_style const)4, (enum quoting_style const)5, (enum quoting_style const)6};
 static struct quoting_options default_quoting_options;
+int set_char_quoting(struct quoting_options *o, char c, int i) {
+  unsigned char uc;
+  int *p;
+  struct quoting_options *tmp;
+  int shift;
+  int r;
 
+  {
+    uc = (unsigned char)c;
+    if (o) {
+      tmp = o;
+    } else {
+      tmp = &default_quoting_options;
+    }
+    p = tmp->quote_these_too + (unsigned long)uc / (sizeof(int) * 8UL);
+    shift = (int)((unsigned long)uc % (sizeof(int) * 8UL));
+    r = (*p >> shift) & 1;
+    *p ^= ((i & 1) ^ r) << shift;
+    return (r);
+  }
+}
+static char const *gettext_quote(char const *msgid, enum quoting_style s) {
+  char const *translation;
+  char *tmp;
+
+  {
+    {
+      tmp = gettext(msgid);
+      translation = (char const *)tmp;
+    }
+    return (translation);
+  }
+}
 static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char const *arg, size_t argsize, enum quoting_style quoting_style, struct quoting_options const *o) {
   size_t i;
   size_t len;
@@ -749,9 +769,16 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
   char const *tmp___1;
   unsigned char c;
   unsigned char esc;
+  int tmp___2;
   size_t m;
   int printable;
   unsigned short const **tmp___3;
+  mbstate_t mbstate;
+  wchar_t w;
+  size_t bytes;
+  size_t tmp___4;
+  int tmp___5;
+  int tmp___6;
   size_t ilim;
   int tmp___7;
   size_t tmp___8;
@@ -765,16 +792,34 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       tmp = __ctype_get_mb_cur_max();
       unibyte_locale = tmp == 1UL;
     }
-
+    if ((unsigned int)quoting_style == 3U) {
+      goto case_3;
+    }
     if ((unsigned int)quoting_style == 4U) {
       goto case_4;
     }
-
+    if ((unsigned int)quoting_style == 6U) {
+      goto case_6;
+    }
+    if ((unsigned int)quoting_style == 5U) {
+      goto case_6;
+    }
     if ((unsigned int)quoting_style == 2U) {
       goto case_2;
     }
     goto switch_default;
-  case_3: {}
+  case_3: {
+    while (1) {
+      ;
+
+      if (len < buffersize) {
+        *(buffer + len) = (char)'\"';
+      }
+      len++;
+      goto while_break;
+    };
+  }
+  while_break:
     backslash_escapes = 1;
     quote_string = "\"";
     quote_string_len = (size_t)1;
@@ -789,21 +834,35 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
     right = tmp___1;
     quote_string = left;
   }
+    {
+      while (1) {
+        ;
+
+        if (!*quote_string) {
+          goto while_break___0;
+        }
+        {
+          while (1) {
+            ;
+
+            if (len < buffersize) {
+              *(buffer + len) = (char)*quote_string;
+            }
+            len++;
+            goto while_break___1;
+          };
+        }
+      while_break___1:
+        quote_string++;
+      };
+    }
   while_break___0: {
     backslash_escapes = 1;
     quote_string = right;
     quote_string_len = strlen(quote_string);
   }
     goto switch_break;
-  case_2: {
-    while (1) {
-      ;
-
-      len++;
-      goto while_break___2;
-    };
-  }
-  while_break___2:
+  case_2: {}
     quote_string = "\'";
     quote_string_len = (size_t)1;
     goto switch_break;
@@ -818,7 +877,29 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if (tmp___7) {
           goto while_break___3;
         }
+        if (backslash_escapes) {
+          if (quote_string_len) {
+            if (i + quote_string_len <= argsize) {
+              {
+                tmp___2 = memcmp((void const *)(arg + i), (void const *)quote_string, quote_string_len);
+              }
+              if (tmp___2 == 0) {
+                {
+                  while (1) {
+                    ;
 
+                    if (len < buffersize) {
+                      *(buffer + len) = (char)'\\';
+                    }
+                    len++;
+                    goto while_break___4;
+                  };
+                }
+              while_break___4:;
+              }
+            }
+          }
+        }
         c = (unsigned char)*(arg + i);
         if ((int)c == 0) {
           goto case_0;
@@ -826,33 +907,21 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 63) {
           goto case_63;
         }
-        if ((int)c == 7) {
-          goto case_7;
-        }
-        if ((int)c == 8) {
-          goto case_8;
-        }
-        if ((int)c == 12) {
-          goto case_12;
-        }
+
         if ((int)c == 10) {
           goto case_10;
         }
+        if ((int)c == 13) {
+          goto case_13;
+        }
 
-        if ((int)c == 9) {
-          goto case_9;
-        }
-        if ((int)c == 11) {
-          goto case_11;
-        }
         if ((int)c == 92) {
           goto case_92;
         }
 
-        if ((int)c == 35) {
-          goto case_126;
+        if ((int)c == 124) {
+          goto case_124;
         }
-
         if ((int)c == 96) {
           goto case_124;
         }
@@ -863,9 +932,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 62) {
           goto case_124;
         }
-        if ((int)c == 60) {
-          goto case_124;
-        }
+
         if ((int)c == 59) {
           goto case_124;
         }
@@ -887,23 +954,25 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 34) {
           goto case_124;
         }
-
+        if ((int)c == 33) {
+          goto case_124;
+        }
         if ((int)c == 32) {
           goto case_124;
         }
         if ((int)c == 39) {
           goto case_39___0;
         }
-
+        if ((int)c == 125) {
+          goto case_125;
+        }
         if ((int)c == 123) {
           goto case_125;
         }
         if ((int)c == 122) {
           goto case_125;
         }
-        if ((int)c == 121) {
-          goto case_125;
-        }
+
         if ((int)c == 120) {
           goto case_125;
         }
@@ -916,9 +985,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 117) {
           goto case_125;
         }
-        if ((int)c == 116) {
-          goto case_125;
-        }
+
         if ((int)c == 115) {
           goto case_125;
         }
@@ -931,32 +998,46 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 112) {
           goto case_125;
         }
-        if ((int)c == 111) {
+
+        if ((int)c == 110) {
           goto case_125;
         }
-
         if ((int)c == 109) {
           goto case_125;
         }
         if ((int)c == 108) {
           goto case_125;
         }
-
+        if ((int)c == 107) {
+          goto case_125;
+        }
+        if ((int)c == 106) {
+          goto case_125;
+        }
         if ((int)c == 105) {
           goto case_125;
         }
-        if ((int)c == 104) {
+
+        if ((int)c == 101) {
           goto case_125;
         }
-
-        if ((int)c == 102) {
+        if ((int)c == 100) {
           goto case_125;
         }
-
         if ((int)c == 99) {
           goto case_125;
         }
         if ((int)c == 98) {
+          goto case_125;
+        }
+        if ((int)c == 97) {
+          goto case_125;
+        }
+
+        if ((int)c == 93) {
+          goto case_125;
+        }
+        if ((int)c == 90) {
           goto case_125;
         }
 
@@ -966,50 +1047,45 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 87) {
           goto case_125;
         }
-
-        if ((int)c == 85) {
+        if ((int)c == 86) {
           goto case_125;
         }
+
         if ((int)c == 84) {
           goto case_125;
         }
-        if ((int)c == 83) {
+
+        if ((int)c == 82) {
           goto case_125;
         }
-
         if ((int)c == 81) {
+          goto case_125;
+        }
+        if ((int)c == 80) {
           goto case_125;
         }
 
         if ((int)c == 78) {
           goto case_125;
         }
-        if ((int)c == 77) {
+
+        if ((int)c == 76) {
           goto case_125;
         }
-
         if ((int)c == 75) {
           goto case_125;
         }
-        if ((int)c == 74) {
-          goto case_125;
-        }
-        if ((int)c == 73) {
-          goto case_125;
-        }
-        if ((int)c == 72) {
-          goto case_125;
-        }
+
         if ((int)c == 71) {
           goto case_125;
         }
-
+        if ((int)c == 70) {
+          goto case_125;
+        }
         if ((int)c == 69) {
           goto case_125;
         }
-        if ((int)c == 68) {
-          goto case_125;
-        }
+
         if ((int)c == 67) {
           goto case_125;
         }
@@ -1019,10 +1095,10 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 65) {
           goto case_125;
         }
-
-        if ((int)c == 58) {
+        if ((int)c == 61) {
           goto case_125;
         }
+
         if ((int)c == 57) {
           goto case_125;
         }
@@ -1062,7 +1138,9 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         if ((int)c == 45) {
           goto case_125;
         }
-
+        if ((int)c == 44) {
+          goto case_125;
+        }
         if ((int)c == 43) {
           goto case_125;
         }
@@ -1071,50 +1149,133 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         }
         goto switch_default___2;
       case_0:
+        if (backslash_escapes) {
+          {
+            while (1) {
+              ;
+
+              if (len < buffersize) {
+                *(buffer + len) = (char)'\\';
+              }
+              len++;
+              goto while_break___5;
+            };
+          }
+        while_break___5:;
+          c = (unsigned char)'0';
+        }
         goto switch_break___0;
       case_63:
+        if ((unsigned int)quoting_style == 1U) {
+          goto case_1;
+        }
+        if ((unsigned int)quoting_style == 3U) {
+          goto case_3___0;
+        }
         goto switch_default___0;
+      case_1:
         goto use_shell_always_quoting_style;
+      case_3___0:
+        if (i + 2UL < argsize) {
+          if ((int const) * (arg + (i + 1UL)) == 63) {
+            if ((int const) * (arg + (i + 2UL)) == 62) {
+              goto case_62;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 61) {
+              goto case_62;
+            }
 
+            if ((int const) * (arg + (i + 2UL)) == 47) {
+              goto case_62;
+            }
+
+            if ((int const) * (arg + (i + 2UL)) == 41) {
+              goto case_62;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 40) {
+              goto case_62;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 39) {
+              goto case_62;
+            }
+            if ((int const) * (arg + (i + 2UL)) == 33) {
+              goto case_62;
+            }
+            goto switch_break___2;
+          case_62:
+            c = (unsigned char)*(arg + (i + 2UL));
+            i += 2UL;
+            {
+              while (1) {
+                ;
+
+                if (len < buffersize) {
+                  *(buffer + len) = (char)'?';
+                }
+                len++;
+                goto while_break___8;
+              };
+            }
+          while_break___8:;
+            {
+              while (1) {
+                ;
+
+                if (len < buffersize) {
+                  *(buffer + len) = (char)'\\';
+                }
+                len++;
+                goto while_break___9;
+              };
+            }
+          while_break___9:;
+            {
+              while (1) {
+                ;
+
+                if (len < buffersize) {
+                  *(buffer + len) = (char)'?';
+                }
+                len++;
+                goto while_break___10;
+              };
+            }
+          while_break___10:;
+            goto switch_break___2;
+          switch_break___2:;
+          }
+        }
         goto switch_break___1;
       switch_default___0:
         goto switch_break___1;
       switch_break___1:;
         goto switch_break___0;
-      case_7:
         esc = (unsigned char)'a';
         goto c_escape;
-      case_8:
         esc = (unsigned char)'b';
         goto c_escape;
-      case_12:
         esc = (unsigned char)'f';
         goto c_escape;
       case_10:
         esc = (unsigned char)'n';
         goto c_and_shell_escape;
+      case_13:
         esc = (unsigned char)'r';
         goto c_and_shell_escape;
-      case_9:
         esc = (unsigned char)'t';
         goto c_and_shell_escape;
-      case_11:
         esc = (unsigned char)'v';
         goto c_escape;
       case_92:
         esc = c;
         goto c_and_shell_escape;
       c_and_shell_escape:
-        if ((unsigned int)quoting_style == 1U) {
-          goto use_shell_always_quoting_style;
-        }
       c_escape:
         if (backslash_escapes) {
           c = esc;
           goto store_escape;
         }
         goto switch_break___0;
-      case_126:
         if (i != 0UL) {
           goto switch_break___0;
         }
@@ -1124,16 +1285,34 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         }
         goto switch_break___0;
       case_39___0:
+        if ((unsigned int)quoting_style == 1U) {
+          goto case_1___0;
+        }
         if ((unsigned int)quoting_style == 2U) {
           goto case_2___0;
         }
         goto switch_default___1;
+      case_1___0:
         goto use_shell_always_quoting_style;
-      case_2___0: {}
+      case_2___0: {
+        while (1) {
+          ;
+
+          if (len < buffersize) {
+            *(buffer + len) = (char)'\'';
+          }
+          len++;
+          goto while_break___11;
+        };
+      }
+      while_break___11:;
         {
           while (1) {
             ;
 
+            if (len < buffersize) {
+              *(buffer + len) = (char)'\\';
+            }
             len++;
             goto while_break___12;
           };
@@ -1147,6 +1326,72 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
       case_125:
         goto switch_break___0;
       switch_default___2:
+        if (unibyte_locale) {
+          {
+            m = (size_t)1;
+            tmp___3 = __ctype_b_loc();
+            printable = (int)((int const) * (*tmp___3 + (int)c) & 16384);
+          }
+        } else {
+          {
+            memset((void *)(&mbstate), 0, sizeof(mbstate));
+            m = (size_t)0;
+            printable = 1;
+          }
+          if (argsize == 0xffffffffffffffffUL) {
+            {
+              argsize = strlen(arg);
+            }
+          }
+          {
+            while (1) {
+              ;
+              {
+                tmp___4 = mbrtowc((wchar_t * /* __restrict  */)(&w), (char const * /* __restrict  */)(arg + (i + m)), argsize - (i + m), (mbstate_t * /* __restrict  */)(&mbstate));
+                bytes = tmp___4;
+              }
+              if (bytes == 0UL) {
+                goto while_break___14;
+              } else {
+                if (bytes == 0xffffffffffffffffUL) {
+                  printable = 0;
+                  goto while_break___14;
+                } else {
+                  if (bytes == 0xfffffffffffffffeUL) {
+                    printable = 0;
+                    {
+                      while (1) {
+                        ;
+
+                        if (i + m < argsize) {
+                          if (!*(arg + (i + m))) {
+                            goto while_break___15;
+                          }
+                        } else {
+                          goto while_break___15;
+                        }
+                        m++;
+                      };
+                    }
+                  while_break___15:;
+                    goto while_break___14;
+                  } else {
+                    { tmp___5 = iswprint((wint_t)w); }
+                    if (!tmp___5) {
+                      printable = 0;
+                    }
+                    m += bytes;
+                  }
+                }
+              }
+              { tmp___6 = mbsinit((mbstate_t const *)(&mbstate)); }
+              if (tmp___6) {
+                goto while_break___14;
+              }
+            };
+          }
+        while_break___14:;
+        }
         if (1UL < m) {
           goto _L;
         } else {
@@ -1154,16 +1399,46 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
             if (!printable) {
             _L:
               ilim = i + m;
+              {
+                while (1) {
+                  ;
+
+                  if (ilim <= i + 1UL) {
+                    goto while_break___16;
+                  }
+                  i++;
+                  c = (unsigned char)*(arg + i);
+                };
+              }
+            while_break___16:;
               goto store_c;
             }
           }
         }
       switch_break___0:;
-      store_escape: {}
+        if (backslash_escapes) {
+          if (!(o->quote_these_too[(unsigned long)c / (sizeof(int) * 8UL)] & (1 << (unsigned long)c % (sizeof(int) * 8UL)))) {
+            goto store_c;
+          }
+        } else {
+          goto store_c;
+        }
+      store_escape: {
+        while (1) {
+          ;
+
+          len++;
+          goto while_break___21;
+        };
+      }
+      while_break___21:;
       store_c: {
         while (1) {
           ;
 
+          if (len < buffersize) {
+            *(buffer + len) = (char)c;
+          }
           len++;
           goto while_break___22;
         };
@@ -1197,6 +1472,9 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char con
         };
       }
     while_break___23:;
+    }
+    if (len < buffersize) {
+      *(buffer + len) = (char)'\000';
     }
     return (len);
   use_shell_always_quoting_style: { tmp___8 = quotearg_buffer_restyled(buffer, buffersize, arg, argsize, (enum quoting_style)2, o); }
@@ -1340,7 +1618,27 @@ char *quotearg_n_style(int n, enum quoting_style s, char const *arg) {
     return (tmp___0);
   }
 }
+char *quotearg_char(char const *arg, char ch) {
+  struct quoting_options options;
+  char *tmp;
 
+  {
+    {
+      options = default_quoting_options;
+      set_char_quoting(&options, ch, 1);
+      tmp = quotearg_n_options(0, arg, (size_t)-1, (struct quoting_options const *)(&options));
+    }
+    return (tmp);
+  }
+}
+char *quotearg_colon(char const *arg) {
+  char *tmp;
+
+  {
+    { tmp = quotearg_char(arg, (char)':'); }
+    return (tmp);
+  }
+}
 char const *quote_n(int n, char const *name);
 char const *quote_n(int n, char const *name) {
   char *tmp;
@@ -1588,147 +1886,144 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
           };
         }
 
-      no_more_affected:
-        if (affected_bits) {
-          who_specified_p = 1;
-        } else {
-          who_specified_p = 0;
-          affected_bits = (mode_t)((4032 | (448 >> 3)) | ((448 >> 3) >> 3));
-          ops_to_mask = masked_ops;
-        }
-        {
-          while (1) {
-            ;
+      no_more_affected: {
+        while (1) {
+          ;
 
-            if (!((int const) * mode_string___0 == 61)) {
-              if (!((int const) * mode_string___0 == 43)) {
-                if (!((int const) * mode_string___0 == 45)) {
-                  goto while_break___1;
-                }
+          if (!((int const) * mode_string___0 == 61)) {
+            if (!((int const) * mode_string___0 == 43)) {
+              if (!((int const) * mode_string___0 == 45)) {
+                goto while_break___1;
               }
             }
+          }
+          {
+            tmp___12 = malloc(sizeof(struct mode_change));
+            change = (struct mode_change *)tmp___12;
+          }
+          if ((unsigned long)change == (unsigned long)((void *)0)) {
             {
-              tmp___12 = malloc(sizeof(struct mode_change));
-              change = (struct mode_change *)tmp___12;
+              mode_free(head);
             }
-
-            change->next = (struct mode_change *)((void *)0);
-            change->op = (char)*mode_string___0;
-            affected_masked = affected_bits;
-            if (!who_specified_p) {
-              if ((int const) * mode_string___0 == 61) {
-                tmp___14 = 1;
-              } else {
-                tmp___14 = 0;
-              }
-              if (ops_to_mask & (unsigned int)tmp___14) {
-                {
-                  tmp___13 = make_node_op_equals((mode_t)0);
-                  p___0 = tmp___13;
-                }
-                if ((unsigned long)p___0 == (unsigned long)((void *)0)) {
-                  return ((struct mode_change *)1);
-                }
-                { mode_append_entry(&head, &tail, p___0); }
-              }
-            }
+            return ((struct mode_change *)1);
+          }
+          change->next = (struct mode_change *)((void *)0);
+          change->op = (char)*mode_string___0;
+          affected_masked = affected_bits;
+          if (!who_specified_p) {
             if ((int const) * mode_string___0 == 61) {
-              tmp___16 = 1;
+              tmp___14 = 1;
             } else {
-              if ((int const) * mode_string___0 == 43) {
-                tmp___15 = 2;
-              } else {
-                tmp___15 = 4;
+              tmp___14 = 0;
+            }
+            if (ops_to_mask & (unsigned int)tmp___14) {
+              {
+                tmp___13 = make_node_op_equals((mode_t)0);
+                p___0 = tmp___13;
               }
-              tmp___16 = tmp___15;
+              if ((unsigned long)p___0 == (unsigned long)((void *)0)) {
+                return ((struct mode_change *)1);
+              }
+              { mode_append_entry(&head, &tail, p___0); }
             }
-            if (ops_to_mask & (unsigned int)tmp___16) {
-              affected_masked &= ~umask_value;
+          }
+          if ((int const) * mode_string___0 == 61) {
+            tmp___16 = 1;
+          } else {
+            if ((int const) * mode_string___0 == 43) {
+              tmp___15 = 2;
+            } else {
+              tmp___15 = 4;
             }
-            {
-              change->affected = affected_masked;
-              change->value = (mode_t)0;
-              change->flags = (char)0;
-              mode_append_entry(&head, &tail, change);
+            tmp___16 = tmp___15;
+          }
+          if (ops_to_mask & (unsigned int)tmp___16) {
+            affected_masked &= ~umask_value;
+          }
+          {
+            change->affected = affected_masked;
+            change->value = (mode_t)0;
+            change->flags = (char)0;
+            mode_append_entry(&head, &tail, change);
+            mode_string___0++;
+          }
+          {
+            while (1) {
+              ;
+
+              if ((int const) * mode_string___0 == 114) {
+                goto case_114;
+              }
+              if ((int const) * mode_string___0 == 119) {
+                goto case_119;
+              }
+              if ((int const) * mode_string___0 == 88) {
+                goto case_88;
+              }
+              if ((int const) * mode_string___0 == 120) {
+                goto case_120;
+              }
+              if ((int const) * mode_string___0 == 115) {
+                goto case_115;
+              }
+              if ((int const) * mode_string___0 == 116) {
+                goto case_116;
+              }
+              if ((int const) * mode_string___0 == 117) {
+                goto case_117___0;
+              }
+              if ((int const) * mode_string___0 == 103) {
+                goto case_103___0;
+              }
+              if ((int const) * mode_string___0 == 111) {
+                goto case_111___0;
+              }
+              goto switch_default___0;
+            case_114:
+              change->value |= (unsigned int)((256 | (256 >> 3)) | ((256 >> 3) >> 3)) & affected_masked;
+              goto switch_break___0;
+            case_119:
+              change->value |= (unsigned int)((128 | (128 >> 3)) | ((128 >> 3) >> 3)) & affected_masked;
+              goto switch_break___0;
+            case_88:
+              change->flags = (char)((int)change->flags | 1);
+            case_120:
+              change->value |= (unsigned int)((64 | (64 >> 3)) | ((64 >> 3) >> 3)) & affected_masked;
+              goto switch_break___0;
+            case_115:
+              change->value |= 3072U & affected_masked;
+              goto switch_break___0;
+            case_116:
+              change->value |= 512U & affected_masked;
+              goto switch_break___0;
+            case_117___0:
+              if (change->value) {
+                goto invalid;
+              }
+              change->value = (mode_t)448;
+              change->flags = (char)((int)change->flags | 2);
+              goto switch_break___0;
+            case_103___0:
+              if (change->value) {
+                goto invalid;
+              }
+              change->value = (mode_t)(448 >> 3);
+              change->flags = (char)((int)change->flags | 2);
+              goto switch_break___0;
+            case_111___0:
+              change->value = (mode_t)((448 >> 3) >> 3);
+              change->flags = (char)((int)change->flags | 2);
+              goto switch_break___0;
+            switch_default___0:
+              goto no_more_values;
+            switch_break___0:
               mode_string___0++;
-            }
-            {
-              while (1) {
-                ;
+            };
+          }
 
-                if ((int const) * mode_string___0 == 114) {
-                  goto case_114;
-                }
-                if ((int const) * mode_string___0 == 119) {
-                  goto case_119;
-                }
-                if ((int const) * mode_string___0 == 88) {
-                  goto case_88;
-                }
-                if ((int const) * mode_string___0 == 120) {
-                  goto case_120;
-                }
-                if ((int const) * mode_string___0 == 115) {
-                  goto case_115;
-                }
-                if ((int const) * mode_string___0 == 116) {
-                  goto case_116;
-                }
-                if ((int const) * mode_string___0 == 117) {
-                  goto case_117___0;
-                }
-                if ((int const) * mode_string___0 == 103) {
-                  goto case_103___0;
-                }
-                if ((int const) * mode_string___0 == 111) {
-                  goto case_111___0;
-                }
-                goto switch_default___0;
-              case_114:
-                change->value |= (unsigned int)((256 | (256 >> 3)) | ((256 >> 3) >> 3)) & affected_masked;
-                goto switch_break___0;
-              case_119:
-                change->value |= (unsigned int)((128 | (128 >> 3)) | ((128 >> 3) >> 3)) & affected_masked;
-                goto switch_break___0;
-              case_88:
-                change->flags = (char)((int)change->flags | 1);
-              case_120:
-                change->value |= (unsigned int)((64 | (64 >> 3)) | ((64 >> 3) >> 3)) & affected_masked;
-                goto switch_break___0;
-              case_115:
-                change->value |= 3072U & affected_masked;
-                goto switch_break___0;
-              case_116:
-                change->value |= 512U & affected_masked;
-                goto switch_break___0;
-              case_117___0:
-                if (change->value) {
-                  goto invalid;
-                }
-                change->value = (mode_t)448;
-                change->flags = (char)((int)change->flags | 2);
-                goto switch_break___0;
-              case_103___0:
-                change->value = (mode_t)(448 >> 3);
-                change->flags = (char)((int)change->flags | 2);
-                goto switch_break___0;
-              case_111___0:
-                if (change->value) {
-                  goto invalid;
-                }
-                change->value = (mode_t)((448 >> 3) >> 3);
-                change->flags = (char)((int)change->flags | 2);
-                goto switch_break___0;
-              switch_default___0:
-                goto no_more_values;
-              switch_break___0:
-                mode_string___0++;
-              };
-            }
-
-          no_more_values:;
-          };
-        }
+        no_more_values:;
+        };
+      }
       while_break___1:;
         if (!((int const) * mode_string___0 == 44)) {
           goto while_break;
@@ -1746,15 +2041,6 @@ struct mode_change *mode_compile(char const *mode_string___0, unsigned int maske
 mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
   mode_t newmode;
   mode_t value;
-  int tmp;
-  int tmp___0;
-  int tmp___1;
-  int tmp___2;
-  int tmp___3;
-  int tmp___4;
-  int tmp___5;
-  int tmp___6;
-  int tmp___7;
 
   {
     newmode = oldmode & (unsigned int)((4032 | (448 >> 3)) | ((448 >> 3) >> 3));
@@ -1767,63 +2053,17 @@ mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
         }
         if ((int const)changes->flags & 2) {
           value = newmode & (unsigned int)changes->value;
-          if (changes->value & 448U) {
-            if (value & 256U) {
-              tmp = (256 >> 3) | ((256 >> 3) >> 3);
-            } else {
-              tmp = 0;
-            }
-            if (value & 128U) {
-              tmp___0 = (128 >> 3) | ((128 >> 3) >> 3);
-            } else {
-              tmp___0 = 0;
-            }
-            if (value & 64U) {
-              tmp___1 = (64 >> 3) | ((64 >> 3) >> 3);
-            } else {
-              tmp___1 = 0;
-            }
-            value |= (unsigned int)((tmp | tmp___0) | tmp___1);
-          } else {
-            if (changes->value & (unsigned int const)(448 >> 3)) {
-              if (value & (unsigned int)(256 >> 3)) {
-                tmp___2 = 256 | ((256 >> 3) >> 3);
-              } else {
-                tmp___2 = 0;
-              }
-              if (value & (unsigned int)(128 >> 3)) {
-                tmp___3 = 128 | ((128 >> 3) >> 3);
-              } else {
-                tmp___3 = 0;
-              }
-              if (value & (unsigned int)(64 >> 3)) {
-                tmp___4 = 64 | ((64 >> 3) >> 3);
-              } else {
-                tmp___4 = 0;
-              }
-              value |= (unsigned int)((tmp___2 | tmp___3) | tmp___4);
-            } else {
-              if (value & (unsigned int)((256 >> 3) >> 3)) {
-                tmp___5 = 256 | (256 >> 3);
-              } else {
-                tmp___5 = 0;
-              }
-              if (value & (unsigned int)((128 >> 3) >> 3)) {
-                tmp___6 = 128 | (128 >> 3);
-              } else {
-                tmp___6 = 0;
-              }
-              if (value & (unsigned int)((64 >> 3) >> 3)) {
-                tmp___7 = 64 | (64 >> 3);
-              } else {
-                tmp___7 = 0;
-              }
-              value |= (unsigned int)((tmp___5 | tmp___6) | tmp___7);
-            }
-          }
+
           value &= (unsigned int)changes->affected;
         } else {
           value = (mode_t)changes->value;
+          if ((int const)changes->flags & 1) {
+            if (!((oldmode & 61440U) == 16384U)) {
+              if ((newmode & (unsigned int)((64 | (64 >> 3)) | ((64 >> 3) >> 3))) == 0U) {
+                value &= (unsigned int)(~((64 | (64 >> 3)) | ((64 >> 3) >> 3)));
+              }
+            }
+          }
         }
         if ((int const)changes->op == 61) {
           goto case_61;
@@ -1897,8 +2137,6 @@ int make_dir(char const *dir, char const *dirpath, mode_t mode, int *created_dir
   int *tmp___0;
   char const *tmp___1;
   char *tmp___2;
-  char const *tmp___3;
-  char *tmp___4;
   int tmp___5;
 
   {
@@ -1920,15 +2158,6 @@ int make_dir(char const *dir, char const *dirpath, mode_t mode, int *created_dir
           error(0, saved_errno, (char const *)tmp___2, tmp___1);
           fail = 1;
         }
-      } else {
-        if (!((stats.st_mode & 61440U) == 16384U)) {
-          {
-            tmp___3 = quote(dirpath);
-            tmp___4 = gettext("%s exists but is not a directory");
-            error(0, 0, (char const *)tmp___4, tmp___3);
-            fail = 1;
-          }
-        }
       }
     }
 
@@ -1938,54 +2167,6 @@ int make_dir(char const *dir, char const *dirpath, mode_t mode, int *created_dir
 int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t group, int preserve_existing, char const *verbose_fmt_string) {
   struct stat stats;
   int retval;
-  char *slash;
-  int tmp_mode;
-  int re_protect;
-  struct ptr_list *p;
-  struct ptr_list *leading_dirs;
-  int do_chdir;
-  struct saved_cwd cwd;
-  char *basename_dir;
-  char *dirpath;
-  mode_t oldmask;
-  __mode_t tmp;
-  size_t tmp___0;
-  void *tmp___1;
-  int tmp___2;
-  int tmp___3;
-  int newly_created_dir;
-  int fail;
-  char const *tmp___11;
-  char *tmp___12;
-  int *tmp___13;
-  int tmp___19;
-  struct ptr_list *new;
-  void *tmp___20;
-  char *tmp___30;
-  int tmp___36;
-  char const *tmp___38;
-  char *tmp___39;
-  int *tmp___40;
-  int tmp___41;
-  char const *tmp___42;
-  char *tmp___43;
-  int *tmp___44;
-  int tmp___45;
-  char const *tmp___51;
-  char *tmp___52;
-  int *tmp___53;
-  int tmp___54;
-  char const *dirpath___0;
-  char const *tmp___55;
-  char *tmp___56;
-  char const *tmp___57;
-  char *tmp___58;
-  int *tmp___59;
-  int tmp___60;
-  char const *tmp___61;
-  char *tmp___62;
-  int *tmp___63;
-  int tmp___64;
   int tmp___65;
 
   {
@@ -1993,227 +2174,7 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t
       retval = 0;
       tmp___65 = stat((char const * /* __restrict  */)argpath, (struct stat * /* __restrict  */)(&stats));
     }
-    if (tmp___65) {
-      {
-        leading_dirs = (struct ptr_list *)((void *)0);
-        tmp = umask((__mode_t)0);
-        oldmask = tmp;
-        tmp___0 = strlen(argpath);
-        tmp___1 = __builtin_alloca(tmp___0 + 1UL);
-        dirpath = (char *)tmp___1;
-        strcpy((char * /* __restrict  */)dirpath, (char const * /* __restrict  */)argpath);
-        strip_trailing_slashes(dirpath);
-      }
-      if ((parent_mode & 192) != 192) {
-        tmp_mode = 448;
-        re_protect = 1;
-      } else {
-        if (owner != 4294967295U) {
-          goto _L;
-        } else {
-          if (group != 4294967295U) {
-          _L:
-            if ((parent_mode & 3584) != 0) {
-              tmp_mode = 448;
-              re_protect = 1;
-            } else {
-              tmp_mode = parent_mode;
-              re_protect = 0;
-            }
-          } else {
-            tmp_mode = parent_mode;
-            re_protect = 0;
-          }
-        }
-      }
-      { tmp___2 = save_cwd(&cwd); }
 
-      do_chdir = tmp___3;
-
-      slash = dirpath;
-      {
-        while (1) {
-          ;
-
-          if (!((int)*slash == 47)) {
-            goto while_break;
-          }
-          slash++;
-        };
-      }
-    while_break:;
-      {
-        while (1) {
-          ;
-          {
-            basename_dir = slash;
-            slash = strchr((char const *)slash, '/');
-          }
-          if ((unsigned long)slash == (unsigned long)((void *)0)) {
-            goto while_break___0;
-          }
-
-          {
-            *slash = (char)'\000';
-            fail = make_dir((char const *)basename_dir, (char const *)dirpath, (mode_t)tmp_mode, &newly_created_dir);
-          }
-
-          if (newly_created_dir) {
-
-            if (owner != 4294967295U) {
-              goto _L___0;
-            } else {
-              if (group != 4294967295U) {
-              _L___0: { tmp___19 = chown((char const *)basename_dir, owner, group); }
-                if (tmp___19) {
-                  {
-                    tmp___11 = quote((char const *)dirpath);
-                    tmp___12 = gettext("cannot change owner and/or group of %s");
-                    tmp___13 = __errno_location();
-                    error(0, *tmp___13, (char const *)tmp___12, tmp___11);
-                  }
-                  return (1);
-                }
-              }
-            }
-            if (re_protect) {
-              {
-                tmp___20 = __builtin_alloca(sizeof(struct ptr_list));
-                new = (struct ptr_list *)tmp___20;
-                new->dirname_end = slash;
-                new->next = leading_dirs;
-                leading_dirs = new;
-              }
-            }
-          }
-
-          tmp___30 = slash;
-          slash++;
-          *tmp___30 = (char)'/';
-          {
-            while (1) {
-              ;
-
-              if (!((int)*slash == 47)) {
-                goto while_break___7;
-              }
-              slash++;
-            };
-          }
-        while_break___7:;
-        };
-      }
-    while_break___0:;
-      if (!do_chdir) {
-        basename_dir = dirpath;
-      }
-      {
-        umask(oldmask);
-        tmp___36 = make_dir((char const *)basename_dir, (char const *)dirpath, (mode_t)mode, (int *)((void *)0));
-      }
-
-      if (owner != 4294967295U) {
-        goto _L___1;
-      } else {
-        if (group != 4294967295U) {
-        _L___1: { tmp___41 = chown((char const *)basename_dir, owner, group); }
-          if (tmp___41) {
-            {
-              tmp___38 = quote((char const *)dirpath);
-              tmp___39 = gettext("cannot change owner and/or group of %s");
-              tmp___40 = __errno_location();
-              error(0, *tmp___40, (char const *)tmp___39, tmp___38);
-              retval = 1;
-            }
-          }
-        }
-      }
-      if (mode & ~((448 | (448 >> 3)) | ((448 >> 3) >> 3))) {
-        {
-          tmp___45 = chmod((char const *)basename_dir, (__mode_t)mode);
-        }
-        if (tmp___45) {
-          {
-            tmp___42 = quote((char const *)dirpath);
-            tmp___43 = gettext("cannot change permissions of %s");
-            tmp___44 = __errno_location();
-            error(0, *tmp___44, (char const *)tmp___43, tmp___42);
-            retval = 1;
-          }
-        }
-      }
-      {
-        while (1) {
-          ;
-
-          goto while_break___10;
-        };
-      }
-    while_break___10:
-      p = leading_dirs;
-      {
-        while (1) {
-          ;
-
-          if (!((unsigned long)p != (unsigned long)((void *)0))) {
-            goto while_break___11;
-          }
-          {
-            *(p->dirname_end) = (char)'\000';
-            tmp___54 = chmod((char const *)dirpath, (__mode_t)parent_mode);
-          }
-          if (tmp___54) {
-            {
-              tmp___51 = quote((char const *)dirpath);
-              tmp___52 = gettext("cannot change permissions of %s");
-              tmp___53 = __errno_location();
-              error(0, *tmp___53, (char const *)tmp___52, tmp___51);
-              retval = 1;
-            }
-          }
-          p = p->next;
-        };
-      }
-    while_break___11:;
-    } else {
-      dirpath___0 = argpath;
-      if (!((stats.st_mode & 61440U) == 16384U)) {
-        {
-          tmp___55 = quote(dirpath___0);
-          tmp___56 = gettext("%s exists but is not a directory");
-          error(0, 0, (char const *)tmp___56, tmp___55);
-        }
-        return (1);
-      }
-      if (!preserve_existing) {
-        if (owner != 4294967295U) {
-          goto _L___2;
-        } else {
-          if (group != 4294967295U) {
-          _L___2: { tmp___60 = chown(dirpath___0, owner, group); }
-            if (tmp___60) {
-              {
-                tmp___57 = quote(dirpath___0);
-                tmp___58 = gettext("cannot change owner and/or group of %s");
-                tmp___59 = __errno_location();
-                error(0, *tmp___59, (char const *)tmp___58, tmp___57);
-                retval = 1;
-              }
-            }
-          }
-        }
-        { tmp___64 = chmod(dirpath___0, (__mode_t)mode); }
-        if (tmp___64) {
-          {
-            tmp___61 = quote(dirpath___0);
-            tmp___62 = gettext("cannot change permissions of %s");
-            tmp___63 = __errno_location();
-            error(0, *tmp___63, (char const *)tmp___62, tmp___61);
-            retval = 1;
-          }
-        }
-      }
-    }
     return (retval);
   }
 }
@@ -2245,88 +2206,12 @@ extern void setgrent(void);
 extern struct group *getgrent(void);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) gettimeofday)(struct timeval *__restrict __tv, __timezone_ptr_t __tz);
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) clock_gettime)(clockid_t __clock_id, struct timespec *__tp);
-static unsigned char const yytranslate[274] = {
-    (unsigned char const)0,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)20, (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)21, (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)19, (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)1,  (unsigned char const)2,  (unsigned char const)3,  (unsigned char const)4,  (unsigned char const)5,  (unsigned char const)6,  (unsigned char const)7, (unsigned char const)8,
-    (unsigned char const)9,  (unsigned char const)10, (unsigned char const)11, (unsigned char const)12, (unsigned char const)13, (unsigned char const)14, (unsigned char const)15, (unsigned char const)16, (unsigned char const)17, (unsigned char const)18};
-static unsigned char const yyr1[56] = {(unsigned char const)0,  (unsigned char const)22, (unsigned char const)23, (unsigned char const)23, (unsigned char const)24, (unsigned char const)24, (unsigned char const)24, (unsigned char const)24, (unsigned char const)24, (unsigned char const)24,
-                                       (unsigned char const)24, (unsigned char const)25, (unsigned char const)25, (unsigned char const)25, (unsigned char const)25, (unsigned char const)25, (unsigned char const)26, (unsigned char const)26, (unsigned char const)27, (unsigned char const)27,
-                                       (unsigned char const)27, (unsigned char const)28, (unsigned char const)28, (unsigned char const)28, (unsigned char const)29, (unsigned char const)29, (unsigned char const)29, (unsigned char const)29, (unsigned char const)29, (unsigned char const)29,
-                                       (unsigned char const)29, (unsigned char const)29, (unsigned char const)29, (unsigned char const)30, (unsigned char const)30, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31,
-                                       (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31,
-                                       (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)32, (unsigned char const)33, (unsigned char const)33};
-static unsigned char const yyr2[56] = {(unsigned char const)0, (unsigned char const)2, (unsigned char const)0, (unsigned char const)2, (unsigned char const)1, (unsigned char const)1, (unsigned char const)1, (unsigned char const)1, (unsigned char const)1, (unsigned char const)1,
-                                       (unsigned char const)1, (unsigned char const)2, (unsigned char const)4, (unsigned char const)4, (unsigned char const)6, (unsigned char const)6, (unsigned char const)1, (unsigned char const)2, (unsigned char const)1, (unsigned char const)1,
-                                       (unsigned char const)2, (unsigned char const)1, (unsigned char const)2, (unsigned char const)2, (unsigned char const)3, (unsigned char const)5, (unsigned char const)3, (unsigned char const)3, (unsigned char const)3, (unsigned char const)2,
-                                       (unsigned char const)4, (unsigned char const)2, (unsigned char const)3, (unsigned char const)2, (unsigned char const)1, (unsigned char const)2, (unsigned char const)2, (unsigned char const)1, (unsigned char const)2, (unsigned char const)2,
-                                       (unsigned char const)1, (unsigned char const)2, (unsigned char const)2, (unsigned char const)1, (unsigned char const)2, (unsigned char const)2, (unsigned char const)1, (unsigned char const)2, (unsigned char const)2, (unsigned char const)1,
-                                       (unsigned char const)2, (unsigned char const)2, (unsigned char const)1, (unsigned char const)1, (unsigned char const)0, (unsigned char const)1};
-static unsigned char const yydefact[66] = {(unsigned char const)2,  (unsigned char const)0,  (unsigned char const)1,  (unsigned char const)21, (unsigned char const)43, (unsigned char const)19, (unsigned char const)46, (unsigned char const)16, (unsigned char const)49, (unsigned char const)0,
-                                           (unsigned char const)40, (unsigned char const)52, (unsigned char const)37, (unsigned char const)18, (unsigned char const)0,  (unsigned char const)53, (unsigned char const)3,  (unsigned char const)4,  (unsigned char const)5,  (unsigned char const)6,
-                                           (unsigned char const)8,  (unsigned char const)7,  (unsigned char const)9,  (unsigned char const)34, (unsigned char const)10, (unsigned char const)22, (unsigned char const)17, (unsigned char const)0,  (unsigned char const)29, (unsigned char const)20,
-                                           (unsigned char const)42, (unsigned char const)45, (unsigned char const)48, (unsigned char const)39, (unsigned char const)51, (unsigned char const)36, (unsigned char const)23, (unsigned char const)41, (unsigned char const)44, (unsigned char const)11,
-                                           (unsigned char const)47, (unsigned char const)31, (unsigned char const)38, (unsigned char const)50, (unsigned char const)35, (unsigned char const)0,  (unsigned char const)0,  (unsigned char const)0,  (unsigned char const)33, (unsigned char const)28,
-                                           (unsigned char const)0,  (unsigned char const)27, (unsigned char const)32, (unsigned char const)26, (unsigned char const)54, (unsigned char const)24, (unsigned char const)30, (unsigned char const)55, (unsigned char const)13, (unsigned char const)0,
-                                           (unsigned char const)12, (unsigned char const)0,  (unsigned char const)54, (unsigned char const)25, (unsigned char const)15, (unsigned char const)14};
-static yysigned_char const yydefgoto[12] = {(yysigned_char const)-1, (yysigned_char const)1,  (yysigned_char const)16, (yysigned_char const)17, (yysigned_char const)18, (yysigned_char const)19,
-                                            (yysigned_char const)20, (yysigned_char const)21, (yysigned_char const)22, (yysigned_char const)23, (yysigned_char const)24, (yysigned_char const)60};
-static yysigned_char const yypact[66] = {(yysigned_char const)-17, (yysigned_char const)0,   (yysigned_char const)-17, (yysigned_char const)1,   (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)19,  (yysigned_char const)-17, (yysigned_char const)-16,
-                                         (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)32,  (yysigned_char const)26,  (yysigned_char const)14,  (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17,
-                                         (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)27,  (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-13, (yysigned_char const)24,  (yysigned_char const)-17,
-                                         (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17,
-                                         (yysigned_char const)-17, (yysigned_char const)25,  (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)29,  (yysigned_char const)30,  (yysigned_char const)31,  (yysigned_char const)-17, (yysigned_char const)-17,
-                                         (yysigned_char const)33,  (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)28,  (yysigned_char const)34,  (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)35,
-                                         (yysigned_char const)-17, (yysigned_char const)36,  (yysigned_char const)-7,  (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17};
-static yysigned_char const yypgoto[12] = {(yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17,
-                                          (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-12};
-static unsigned char const yytable[56] = {(unsigned char const)2,  (unsigned char const)27, (unsigned char const)28, (unsigned char const)57, (unsigned char const)49, (unsigned char const)3,  (unsigned char const)4,  (unsigned char const)5,  (unsigned char const)6,  (unsigned char const)7,
-                                          (unsigned char const)64, (unsigned char const)8,  (unsigned char const)9,  (unsigned char const)10, (unsigned char const)11, (unsigned char const)12, (unsigned char const)13, (unsigned char const)14, (unsigned char const)15, (unsigned char const)36,
-                                          (unsigned char const)37, (unsigned char const)25, (unsigned char const)38, (unsigned char const)26, (unsigned char const)39, (unsigned char const)40, (unsigned char const)41, (unsigned char const)42, (unsigned char const)43, (unsigned char const)44,
-                                          (unsigned char const)48, (unsigned char const)45, (unsigned char const)30, (unsigned char const)46, (unsigned char const)31, (unsigned char const)47, (unsigned char const)29, (unsigned char const)32, (unsigned char const)57, (unsigned char const)33,
-                                          (unsigned char const)34, (unsigned char const)35, (unsigned char const)51, (unsigned char const)52, (unsigned char const)50, (unsigned char const)58, (unsigned char const)53, (unsigned char const)59, (unsigned char const)54, (unsigned char const)55,
-                                          (unsigned char const)65, (unsigned char const)56, (unsigned char const)0,  (unsigned char const)62, (unsigned char const)63, (unsigned char const)61};
-static yysigned_char const yycheck[56] = {(yysigned_char const)0,  (yysigned_char const)17, (yysigned_char const)18, (yysigned_char const)10, (yysigned_char const)17, (yysigned_char const)5,  (yysigned_char const)6,  (yysigned_char const)7,  (yysigned_char const)8,  (yysigned_char const)9,
-                                          (yysigned_char const)17, (yysigned_char const)11, (yysigned_char const)12, (yysigned_char const)13, (yysigned_char const)14, (yysigned_char const)15, (yysigned_char const)16, (yysigned_char const)17, (yysigned_char const)18, (yysigned_char const)5,
-                                          (yysigned_char const)6,  (yysigned_char const)20, (yysigned_char const)8,  (yysigned_char const)4,  (yysigned_char const)10, (yysigned_char const)11, (yysigned_char const)12, (yysigned_char const)13, (yysigned_char const)14, (yysigned_char const)15,
-                                          (yysigned_char const)3,  (yysigned_char const)17, (yysigned_char const)6,  (yysigned_char const)19, (yysigned_char const)8,  (yysigned_char const)21, (yysigned_char const)4,  (yysigned_char const)11, (yysigned_char const)10, (yysigned_char const)13,
-                                          (yysigned_char const)14, (yysigned_char const)15, (yysigned_char const)17, (yysigned_char const)18, (yysigned_char const)20, (yysigned_char const)17, (yysigned_char const)17, (yysigned_char const)19, (yysigned_char const)18, (yysigned_char const)18,
-                                          (yysigned_char const)62, (yysigned_char const)18, (yysigned_char const)-1, (yysigned_char const)18, (yysigned_char const)18, (yysigned_char const)21};
-static unsigned char const yystos[66] = {(unsigned char const)0,  (unsigned char const)23, (unsigned char const)0,  (unsigned char const)5,  (unsigned char const)6,  (unsigned char const)7,  (unsigned char const)8,  (unsigned char const)9,  (unsigned char const)11, (unsigned char const)12,
-                                         (unsigned char const)13, (unsigned char const)14, (unsigned char const)15, (unsigned char const)16, (unsigned char const)17, (unsigned char const)18, (unsigned char const)24, (unsigned char const)25, (unsigned char const)26, (unsigned char const)27,
-                                         (unsigned char const)28, (unsigned char const)29, (unsigned char const)30, (unsigned char const)31, (unsigned char const)32, (unsigned char const)20, (unsigned char const)4,  (unsigned char const)17, (unsigned char const)18, (unsigned char const)4,
-                                         (unsigned char const)6,  (unsigned char const)8,  (unsigned char const)11, (unsigned char const)13, (unsigned char const)14, (unsigned char const)15, (unsigned char const)5,  (unsigned char const)6,  (unsigned char const)8,  (unsigned char const)10,
-                                         (unsigned char const)11, (unsigned char const)12, (unsigned char const)13, (unsigned char const)14, (unsigned char const)15, (unsigned char const)17, (unsigned char const)19, (unsigned char const)21, (unsigned char const)3,  (unsigned char const)17,
-                                         (unsigned char const)20, (unsigned char const)17, (unsigned char const)18, (unsigned char const)17, (unsigned char const)18, (unsigned char const)18, (unsigned char const)18, (unsigned char const)10, (unsigned char const)17, (unsigned char const)19,
-                                         (unsigned char const)33, (unsigned char const)21, (unsigned char const)18, (unsigned char const)18, (unsigned char const)17, (unsigned char const)33};
+
 static table const meridian_table[5] = {{"AM", 265, 0}, {"A.M.", 265, 0}, {"PM", 265, 1}, {"P.M.", 265, 1}, {(char const *)0, 0, 0}};
 static table const dst_table[1] = {{"DST", 259, 0}};
 
 static table const time_units_table[11] = {{"YEAR", 270, 1}, {"MONTH", 268, 1}, {"FORTNIGHT", 261, 14}, {"WEEK", 261, 7}, {"DAY", 261, 1}, {"HOUR", 263, 1}, {"MINUTE", 266, 1}, {"MIN", 266, 1}, {"SECOND", 269, 1}, {"SEC", 269, 1}, {(char const *)0, 0, 0}};
 
-static table const military_table[26] = {{"A", 271, -60}, {"B", 271, -120}, {"C", 271, -180}, {"D", 271, -240}, {"E", 271, -300}, {"F", 271, -360}, {"G", 271, -420}, {"H", 271, -480}, {"I", 271, -540}, {"K", 271, -600}, {"L", 271, -660}, {"M", 271, -720}, {"N", 271, 60},
-                                         {"O", 271, 120}, {"P", 271, 180},  {"Q", 271, 240},  {"R", 271, 300},  {"S", 271, 360},  {"T", 271, 420},  {"U", 271, 480},  {"V", 271, 540},  {"W", 271, 600},  {"X", 271, 660},  {"Y", 271, 720},  {"Z", 271, 0},    {(char const *)0, 0, 0}};
 extern char *getcwd(char *buf, size_t size);
 __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) rpl_getcwd)(char *buf, size_t size);
 extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(2), __leaf__)) fstat)(int __fd, struct stat *__buf);
@@ -2338,7 +2223,14 @@ extern __attribute__((__nothrow__)) void(__attribute__((__leaf__)) free)(void *_
 __attribute__((__nothrow__)) void(__attribute__((__leaf__)) rpl_free)(void *p);
 void(__attribute__((__leaf__)) rpl_free)(void *p) {
 
-  { return; }
+  {
+    if (p) {
+      {
+        free(p);
+      }
+    }
+    return;
+  }
 }
 extern __attribute__((__nothrow__)) FILE *(__attribute__((__leaf__)) fdopen)(int __fd, char const *__modes);
 extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fileno)(FILE *__stream);
@@ -2359,15 +2251,50 @@ void close_stdout(void) {
   int e;
   int tmp___0;
   int tmp___1;
+  size_t tmp___2;
+  int *tmp___3;
   int tmp___4;
+  char const *write_error;
+  char *tmp___5;
+  char *tmp___6;
 
   {
     { tmp___1 = ferror_unlocked(stdout); }
-
+    if (tmp___1) {
+      tmp___0 = 0;
+    } else {
+      tmp___0 = -1;
+    }
     e = tmp___0;
-
+    if (e) {
+      {
+        tmp___2 = __fpending(stdout);
+      }
+      if (tmp___2 == 0UL) {
+        return;
+      }
+    }
     { tmp___4 = fclose(stdout); }
-
+    if (tmp___4 != 0) {
+      {
+        tmp___3 = __errno_location();
+        e = *tmp___3;
+      }
+    }
+    if (0 <= e) {
+      {
+        tmp___5 = gettext("write error");
+        write_error = (char const *)tmp___5;
+      }
+      if (file_name) {
+        {
+          tmp___6 = quotearg_colon(file_name);
+          error((int)exit_failure, e, "%s: %s", tmp___6, write_error);
+        }
+      } else {
+        { error((int)exit_failure, e, "%s", write_error); }
+      }
+    }
     return;
   }
 }
@@ -2375,41 +2302,6 @@ extern struct hostent *gethostbyaddr(void const *__addr, __socklen_t __len, int 
 extern struct hostent *gethostbyname(char const *__name);
 extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) inet_ntoa)(struct in_addr __in);
 extern __attribute__((__nothrow__)) double(__attribute__((__nonnull__(1), __leaf__)) strtod)(char const *__restrict __nptr, char **__restrict __endptr);
-char *base_name(char const *name) {
-  char const *base;
-  char const *p;
-
-  {
-    base = name + 0;
-    p = base;
-    return ((char *)base);
-  }
-}
-size_t base_len(char const *name) {
-  size_t len;
-
-  {
-    { len = strlen(name); }
-    {
-      while (1) {
-        ;
-
-        if (1UL < len) {
-          if (!((int const) * (name + (len - 1UL)) == 47)) {
-            goto while_break;
-          }
-        } else {
-          goto while_break;
-        }
-        goto __Cont;
-      __Cont:
-        len--;
-      };
-    }
-  while_break:;
-    return (len);
-  }
-}
 void (*argmatch_die)(void);
 char const *simple_backup_suffix;
 char const *simple_backup_suffix = "~";
@@ -2442,6 +2334,7 @@ int main(int argc, char **argv) {
   int errors;
   int optc;
   char *tmp;
+  char *tmp___0;
   mode_t umask_value;
   __mode_t tmp___1;
   struct mode_change *change;
@@ -2483,7 +2376,15 @@ int main(int argc, char **argv) {
         if (optc == 109) {
           goto case_109;
         }
-
+        if (optc == 118) {
+          goto case_118;
+        }
+        if (optc == -130) {
+          goto case_neg_130;
+        }
+        if (optc == -131) {
+          goto case_neg_131;
+        }
         goto switch_default;
       case_0:
         goto switch_break;
@@ -2509,6 +2410,13 @@ int main(int argc, char **argv) {
       };
     }
   while_break:;
+    if (optind == argc) {
+      {
+        tmp___0 = gettext("too few arguments");
+        error(0, 0, (char const *)tmp___0);
+        usage(1);
+      }
+    }
     {
       newmode = (mode_t)((448 | (448 >> 3)) | ((448 >> 3) >> 3));
       tmp___1 = umask((__mode_t)0);

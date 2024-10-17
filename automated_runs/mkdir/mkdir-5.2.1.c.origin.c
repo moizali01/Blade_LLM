@@ -1,11 +1,5 @@
 typedef unsigned long uintmax_t;
-enum strtol_error {
-  LONGINT_OK = 0,
-  LONGINT_OVERFLOW = 1,
-  LONGINT_INVALID_SUFFIX_CHAR = 2,
-  LONGINT_INVALID_SUFFIX_CHAR_WITH_OVERFLOW = 3,
-  LONGINT_INVALID = 4
-};
+enum strtol_error { LONGINT_OK = 0, LONGINT_OVERFLOW = 1, LONGINT_INVALID_SUFFIX_CHAR = 2, LONGINT_INVALID_SUFFIX_CHAR_WITH_OVERFLOW = 3, LONGINT_INVALID = 4 };
 typedef enum strtol_error strtol_error;
 typedef long intmax_t;
 typedef unsigned long size_t;
@@ -18,15 +12,7 @@ struct timespec {
   __time_t tv_sec;
   __syscall_slong_t tv_nsec;
 };
-enum quoting_style {
-  literal_quoting_style = 0,
-  shell_quoting_style = 1,
-  shell_always_quoting_style = 2,
-  c_quoting_style = 3,
-  escape_quoting_style = 4,
-  locale_quoting_style = 5,
-  clocale_quoting_style = 6
-};
+enum quoting_style { literal_quoting_style = 0, shell_quoting_style = 1, shell_always_quoting_style = 2, c_quoting_style = 3, escape_quoting_style = 4, locale_quoting_style = 5, clocale_quoting_style = 6 };
 typedef long ptrdiff_t;
 typedef unsigned short __u_short;
 typedef unsigned long __dev_t;
@@ -582,28 +568,15 @@ struct hostent {
   char **h_addr_list;
 };
 enum backup_type { none = 0, simple = 1, numbered_existing = 2, numbered = 3 };
-extern __attribute__((__nothrow__)) unsigned short const **(
-    __attribute__((__leaf__)) __ctype_b_loc)(void)__attribute__((__const__));
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__nonnull__(1), __leaf__)) rpmatch)(char const *response);
+extern __attribute__((__nothrow__)) unsigned short const **(__attribute__((__leaf__)) __ctype_b_loc)(void)__attribute__((__const__));
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) rpmatch)(char const *response);
 extern int getchar_unlocked(void);
-extern __attribute__((__nothrow__))
-uintmax_t(__attribute__((__leaf__)) strtoumax)(char const *__restrict __nptr,
-                                               char **__restrict __endptr,
-                                               int __base);
-extern __attribute__((__nothrow__, __noreturn__)) void(__attribute__((
-    __leaf__)) __assert_fail)(char const *__assertion, char const *__file,
-                              unsigned int __line, char const *__function);
-extern __attribute__((__nothrow__)) char *(
-    __attribute__((__nonnull__(1), __leaf__)) strchr)(char const *__s, int __c)
-    __attribute__((__pure__));
-extern __attribute__((__nothrow__)) int *(
-    __attribute__((__leaf__)) __errno_location)(void)__attribute__((__const__));
-extern __attribute__((__nothrow__)) unsigned long(__attribute__((
-    __nonnull__(1), __leaf__)) strtoul)(char const *__restrict __nptr,
-                                        char **__restrict __endptr, int __base);
-strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
-                      unsigned long *val, char const *valid_suffixes);
+extern __attribute__((__nothrow__)) uintmax_t(__attribute__((__leaf__)) strtoumax)(char const *__restrict __nptr, char **__restrict __endptr, int __base);
+extern __attribute__((__nothrow__, __noreturn__)) void(__attribute__((__leaf__)) __assert_fail)(char const *__assertion, char const *__file, unsigned int __line, char const *__function);
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1), __leaf__)) strchr)(char const *__s, int __c) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) int *(__attribute__((__leaf__)) __errno_location)(void)__attribute__((__const__));
+extern __attribute__((__nothrow__)) unsigned long(__attribute__((__nonnull__(1), __leaf__)) strtoul)(char const *__restrict __nptr, char **__restrict __endptr, int __base);
+strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long *val, char const *valid_suffixes);
 static strtol_error bkm_scale___0(unsigned long *x, int scale_factor) {
 
   {
@@ -615,8 +588,7 @@ static strtol_error bkm_scale___0(unsigned long *x, int scale_factor) {
     return ((strtol_error)0);
   }
 }
-static strtol_error bkm_scale_by_power___0(unsigned long *x, int base,
-                                           int power) {
+static strtol_error bkm_scale_by_power___0(unsigned long *x, int base, int power) {
   strtol_error err;
   strtol_error tmp;
   int tmp___0;
@@ -625,8 +597,7 @@ static strtol_error bkm_scale_by_power___0(unsigned long *x, int base,
     err = (strtol_error)0;
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+        ;
         tmp___0 = power;
         power--;
         if (!tmp___0) {
@@ -636,16 +607,13 @@ static strtol_error bkm_scale_by_power___0(unsigned long *x, int base,
           tmp = bkm_scale___0(x, base);
           err = (strtol_error)((unsigned int)err | (unsigned int)tmp);
         }
-      }
-    while_break___0: /* CIL Label */
-        ;
+      };
     }
   while_break:;
     return (err);
   }
 }
-strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
-                      unsigned long *val, char const *valid_suffixes) {
+strtol_error xstrtoul(char const *s, char **ptr, int strtol_base, unsigned long *val, char const *valid_suffixes) {
   char *t_ptr;
   char **p;
   unsigned long tmp;
@@ -667,19 +635,11 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
     if (0 <= strtol_base) {
       if (!(strtol_base <= 36)) {
         {
-          __assert_fail(
-              "0 <= strtol_base && strtol_base <= 36",
-              "/home/khheo/project/benchmark/coreutils-5.2.1/lib/xstrtol.c",
-              117U, "xstrtoul");
+          __assert_fail("0 <= strtol_base && strtol_base <= 36", "/home/khheo/project/benchmark/coreutils-5.2.1/lib/xstrtol.c", 117U, "xstrtoul");
         }
       }
     } else {
-      {
-        __assert_fail(
-            "0 <= strtol_base && strtol_base <= 36",
-            "/home/khheo/project/benchmark/coreutils-5.2.1/lib/xstrtol.c", 117U,
-            "xstrtoul");
-      }
+      { __assert_fail("0 <= strtol_base && strtol_base <= 36", "/home/khheo/project/benchmark/coreutils-5.2.1/lib/xstrtol.c", 117U, "xstrtoul"); }
     }
     if (ptr) {
       p = ptr;
@@ -689,16 +649,13 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
     q = s;
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+        ;
         { tmp___0 = __ctype_b_loc(); }
         if (!((int const) * (*tmp___0 + (int)((unsigned char)*q)) & 8192)) {
           goto while_break;
         }
         q++;
-      }
-    while_break___0: /* CIL Label */
-        ;
+      };
     }
   while_break:;
     if ((int const) * q == 45) {
@@ -707,8 +664,7 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
     {
       tmp___1 = __errno_location();
       *tmp___1 = 0;
-      tmp = strtoul((char const * /* __restrict  */)s,
-                    (char ** /* __restrict  */)p, strtol_base);
+      tmp = strtoul((char const * /* __restrict  */)s, (char ** /* __restrict  */)p, strtol_base);
     }
     if ((unsigned long)*p == (unsigned long)s) {
       if (valid_suffixes) {
@@ -864,55 +820,30 @@ strtol_error xstrtoul(char const *s, char **ptr, int strtol_base,
     return (err);
   }
 }
-extern __attribute__((__nothrow__)) long(__attribute__((
-    __nonnull__(1), __leaf__)) strtol)(char const *__restrict __nptr,
-                                       char **__restrict __endptr, int __base);
-extern __attribute__((__nothrow__))
-intmax_t(__attribute__((__leaf__)) strtoimax)(char const *__restrict __nptr,
-                                              char **__restrict __endptr,
-                                              int __base);
-extern __attribute__((__nothrow__)) char *(__attribute__((
-    __nonnull__(1), __leaf__)) strndup)(char const *__string, size_t __n)
-    __attribute__((__malloc__));
+extern __attribute__((__nothrow__)) long(__attribute__((__nonnull__(1), __leaf__)) strtol)(char const *__restrict __nptr, char **__restrict __endptr, int __base);
+extern __attribute__((__nothrow__)) intmax_t(__attribute__((__leaf__)) strtoimax)(char const *__restrict __nptr, char **__restrict __endptr, int __base);
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1), __leaf__)) strndup)(char const *__string, size_t __n) __attribute__((__malloc__));
 __attribute__((__noreturn__)) void xalloc_die(void);
-extern __attribute__((__nothrow__))
-size_t(__attribute__((__nonnull__(1), __leaf__)) strlen)(char const *__s)
-    __attribute__((__pure__));
+extern __attribute__((__nothrow__)) size_t(__attribute__((__nonnull__(1), __leaf__)) strlen)(char const *__s) __attribute__((__pure__));
 __attribute__((__nothrow__)) void(__attribute__((__leaf__)) rpl_free)(void *p);
-extern __attribute__((__nothrow__))
-ssize_t(__attribute__((__nonnull__(1, 2), __leaf__)) readlink)(
-    char const *__restrict __path, char *__restrict __buf, size_t __len);
+extern __attribute__((__nothrow__)) ssize_t(__attribute__((__nonnull__(1, 2), __leaf__)) readlink)(char const *__restrict __path, char *__restrict __buf, size_t __len);
 void *xmalloc(size_t n);
-extern int nanosleep(struct timespec const *__requested_time,
-                     struct timespec *__remaining);
-extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) gettext)(
-    char const *__msgid) __attribute__((__format_arg__(1)));
+extern int nanosleep(struct timespec const *__requested_time, struct timespec *__remaining);
+extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) gettext)(char const *__msgid) __attribute__((__format_arg__(1)));
 extern void error(int __status, int __errnum, char const *__format, ...);
 int volatile exit_failure;
 void (*xalloc_fail_func)(void);
 char const xalloc_msg_memory_exhausted[17];
 void *xrealloc(void *p, size_t n);
-extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) malloc)(
-    size_t __size) __attribute__((__malloc__));
-extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) calloc)(
-    size_t __nmemb, size_t __size) __attribute__((__malloc__));
-extern __attribute__((__nothrow__)) void *(__attribute__((
-    __warn_unused_result__, __leaf__)) realloc)(void *__ptr, size_t __size);
-extern
-    __attribute__((__nothrow__,
-                   __noreturn__)) void(__attribute__((__leaf__)) abort)(void);
-extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1, 2),
-                                                          __leaf__)) memcpy)(
-    void *__restrict __dest, void const *__restrict __src, size_t __n);
-extern __attribute__((__nothrow__)) void *(__attribute__((
-    __nonnull__(1), __leaf__)) memset)(void *__s, int __c, size_t __n);
+extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) malloc)(size_t __size) __attribute__((__malloc__));
+extern __attribute__((__nothrow__)) void *(__attribute__((__leaf__)) calloc)(size_t __nmemb, size_t __size) __attribute__((__malloc__));
+extern __attribute__((__nothrow__)) void *(__attribute__((__warn_unused_result__, __leaf__)) realloc)(void *__ptr, size_t __size);
+extern __attribute__((__nothrow__, __noreturn__)) void(__attribute__((__leaf__)) abort)(void);
+extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1, 2), __leaf__)) memcpy)(void *__restrict __dest, void const *__restrict __src, size_t __n);
+extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1), __leaf__)) memset)(void *__s, int __c, size_t __n);
 void (*xalloc_fail_func)(void) = (void (*)(void))0;
-char const xalloc_msg_memory_exhausted[17] = {
-    (char const)'m',   (char const)'e', (char const)'m', (char const)'o',
-    (char const)'r',   (char const)'y', (char const)' ', (char const)'e',
-    (char const)'x',   (char const)'h', (char const)'a', (char const)'u',
-    (char const)'s',   (char const)'t', (char const)'e', (char const)'d',
-    (char const)'\000'};
+char const xalloc_msg_memory_exhausted[17] = {(char const)'m', (char const)'e', (char const)'m', (char const)'o', (char const)'r', (char const)'y', (char const)' ', (char const)'e',   (char const)'x',
+                                              (char const)'h', (char const)'a', (char const)'u', (char const)'s', (char const)'t', (char const)'e', (char const)'d', (char const)'\000'};
 __attribute__((__noreturn__)) void xalloc_die(void);
 void xalloc_die(void) {
   char *tmp;
@@ -996,8 +927,7 @@ void *xrealloc(void *p, size_t n) {
   }
 }
 extern int gethostname();
-__attribute__((__nothrow__)) char *(__attribute__((__leaf__)) rpl_getcwd)(
-    char *buf, size_t size);
+__attribute__((__nothrow__)) char *(__attribute__((__leaf__)) rpl_getcwd)(char *buf, size_t size);
 char *xgetcwd(void);
 char *xgetcwd(void) {
   char *cwd;
@@ -1023,22 +953,15 @@ char *xgetcwd(void) {
   }
 }
 char const *quote(char const *name);
-extern int fprintf(FILE *__restrict __stream, char const *__restrict __format,
-                   ...);
-extern int vfprintf(FILE *__restrict __s, char const *__restrict __format,
-                    __gnuc_va_list __arg);
+extern int fprintf(FILE *__restrict __stream, char const *__restrict __format, ...);
+extern int vfprintf(FILE *__restrict __s, char const *__restrict __format, __gnuc_va_list __arg);
 extern int putc_unlocked(int __c, FILE *__stream);
-extern int fputs_unlocked(char const *__restrict __s,
-                          FILE *__restrict __stream);
+extern int fputs_unlocked(char const *__restrict __s, FILE *__restrict __stream);
 char const *version_etc_copyright;
-void version_etc_va(FILE *stream, char const *command_name, char const *package,
-                    char const *version, va_list authors);
-void version_etc(FILE *stream, char const *command_name, char const *package,
-                 char const *version, ...);
-char const *version_etc_copyright =
-    "Copyright (C) 2004 Free Software Foundation, Inc.";
-void version_etc_va(FILE *stream, char const *command_name, char const *package,
-                    char const *version, va_list authors) {
+void version_etc_va(FILE *stream, char const *command_name, char const *package, char const *version, va_list authors);
+void version_etc(FILE *stream, char const *command_name, char const *package, char const *version, ...);
+char const *version_etc_copyright = "Copyright (C) 2004 Free Software Foundation, Inc.";
+void version_etc_va(FILE *stream, char const *command_name, char const *package, char const *version, va_list authors) {
   unsigned int n_authors;
   va_list tmp_authors;
   char const *tmp___0;
@@ -1053,17 +976,6 @@ void version_etc_va(FILE *stream, char const *command_name, char const *package,
   char *tmp___9;
   char *tmp___10;
   char *tmp___11;
-  char *__cil_tmp20;
-  char *__cil_tmp21;
-  char *__cil_tmp22;
-  char *__cil_tmp23;
-  char *__cil_tmp24;
-  char *__cil_tmp25;
-  char *__cil_tmp26;
-  char *__cil_tmp27;
-  char *__cil_tmp28;
-  char *__cil_tmp29;
-  char *__cil_tmp30;
 
   {
     {
@@ -1072,29 +984,21 @@ void version_etc_va(FILE *stream, char const *command_name, char const *package,
     }
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+        ;
         { tmp___0 = __builtin_va_arg(tmp_authors, char const *); }
         if (!((unsigned long)tmp___0 != (unsigned long)((void *)0))) {
           goto while_break;
         }
         n_authors++;
-      }
-    while_break___0: /* CIL Label */
-        ;
+      };
     }
   while_break:;
     if (command_name) {
       {
-        fprintf((FILE * /* __restrict  */)stream,
-                (char const * /* __restrict  */) "%s (%s) %s\n", command_name,
-                package, version);
+        fprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */) "%s (%s) %s\n", command_name, package, version);
       }
     } else {
-      {
-        fprintf((FILE * /* __restrict  */)stream,
-                (char const * /* __restrict  */) "%s %s\n", package, version);
-      }
+      { fprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */) "%s %s\n", package, version); }
     }
     if (n_authors == 0U) {
       goto case_0;
@@ -1130,83 +1034,68 @@ void version_etc_va(FILE *stream, char const *command_name, char const *package,
   case_0: { abort(); }
   case_1: {
     tmp___1 = gettext("Written by %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream,
-             (char const * /* __restrict  */)((char const *)tmp___1), authors);
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___1), authors);
   }
     goto switch_break;
   case_2: {
     tmp___2 = gettext("Written by %s and %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream,
-             (char const * /* __restrict  */)((char const *)tmp___2), authors);
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___2), authors);
   }
     goto switch_break;
   case_3: {
     tmp___3 = gettext("Written by %s, %s, and %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream,
-             (char const * /* __restrict  */)((char const *)tmp___3), authors);
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___3), authors);
   }
     goto switch_break;
   case_4: {
     tmp___4 = gettext("Written by %s, %s, %s,\nand %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream,
-             (char const * /* __restrict  */)((char const *)tmp___4), authors);
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___4), authors);
   }
     goto switch_break;
   case_5: {
     tmp___5 = gettext("Written by %s, %s, %s,\n%s, and %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream,
-             (char const * /* __restrict  */)((char const *)tmp___5), authors);
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___5), authors);
   }
     goto switch_break;
   case_6: {
     tmp___6 = gettext("Written by %s, %s, %s,\n%s, %s, and %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream,
-             (char const * /* __restrict  */)((char const *)tmp___6), authors);
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___6), authors);
   }
     goto switch_break;
   case_7: {
     tmp___7 = gettext("Written by %s, %s, %s,\n%s, %s, %s, and %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream,
-             (char const * /* __restrict  */)((char const *)tmp___7), authors);
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___7), authors);
   }
     goto switch_break;
   case_8: {
     tmp___8 = gettext("Written by %s, %s, %s,\n%s, %s, %s, %s,\nand %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream,
-             (char const * /* __restrict  */)((char const *)tmp___8), authors);
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___8), authors);
   }
     goto switch_break;
   case_9: {
     tmp___9 = gettext("Written by %s, %s, %s,\n%s, %s, %s, %s,\n%s, and %s.\n");
-    vfprintf((FILE * /* __restrict  */)stream,
-             (char const * /* __restrict  */)((char const *)tmp___9), authors);
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___9), authors);
   }
     goto switch_break;
   switch_default: {
-    tmp___10 = gettext(
-        "Written by %s, %s, %s,\n%s, %s, %s, %s,\n%s, %s, and others.\n");
-    vfprintf((FILE * /* __restrict  */)stream,
-             (char const * /* __restrict  */)((char const *)tmp___10), authors);
+    tmp___10 = gettext("Written by %s, %s, %s,\n%s, %s, %s, %s,\n%s, %s, and others.\n");
+    vfprintf((FILE * /* __restrict  */)stream, (char const * /* __restrict  */)((char const *)tmp___10), authors);
   }
     goto switch_break;
   switch_break: {
     __builtin_va_end(authors);
     putc_unlocked('\n', stream);
-    fputs_unlocked((char const * /* __restrict  */)version_etc_copyright,
-                   (FILE * /* __restrict  */)stream);
+    fputs_unlocked((char const * /* __restrict  */)version_etc_copyright, (FILE * /* __restrict  */)stream);
     putc_unlocked('\n', stream);
-    tmp___11 =
-        gettext("This is free software; see the source for copying conditions. "
-                " There is NO\nwarranty; not even for MERCHANTABILITY or "
-                "FITNESS FOR A PARTICULAR PURPOSE.\n");
-    fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___11),
-                   (FILE * /* __restrict  */)stream);
+    tmp___11 = gettext("This is free software; see the source for copying conditions. "
+                       " There is NO\nwarranty; not even for MERCHANTABILITY or "
+                       "FITNESS FOR A PARTICULAR PURPOSE.\n");
+    fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___11), (FILE * /* __restrict  */)stream);
   }
     return;
   }
 }
-void version_etc(FILE *stream, char const *command_name, char const *package,
-                 char const *version, ...) {
+void version_etc(FILE *stream, char const *command_name, char const *package, char const *version, ...) {
   va_list authors;
 
   {
@@ -1217,50 +1106,31 @@ void version_etc(FILE *stream, char const *command_name, char const *package,
     return;
   }
 }
-extern __attribute__((__nothrow__)) int
-snprintf(char *__restrict __s, size_t __maxlen, char const *__restrict __format,
-         ...);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1), __leaf__)) utimes)(char const *__file,
-                                       struct timeval const *__tvp);
-extern __attribute__((__nothrow__)) int
-sprintf(char *__restrict __s, char const *__restrict __format, ...);
+extern __attribute__((__nothrow__)) int snprintf(char *__restrict __s, size_t __maxlen, char const *__restrict __format, ...);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) utimes)(char const *__file, struct timeval const *__tvp);
+extern __attribute__((__nothrow__)) int sprintf(char *__restrict __s, char const *__restrict __format, ...);
 extern void endpwent(void);
 extern struct passwd *getpwnam(char const *__name);
 extern void endgrent(void);
 extern struct group *getgrgid(__gid_t __gid);
 extern struct group *getgrnam(char const *__name);
-extern __attribute__((__nothrow__)) char *(__attribute__((
-    __nonnull__(1, 2), __leaf__)) strcpy)(char *__restrict __dest,
-                                          char const *__restrict __src);
-extern __attribute__((__nothrow__)) char *(
-    __attribute__((__nonnull__(1), __leaf__)) strdup)(char const *__s)
-    __attribute__((__malloc__));
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1, 2), __leaf__)) strcpy)(char *__restrict __dest, char const *__restrict __src);
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1), __leaf__)) strdup)(char const *__s) __attribute__((__malloc__));
 static char const *E_invalid_user = "invalid user";
 static char const *E_invalid_group = "invalid group";
 static char const *E_bad_spec = "cannot get the login group of a numeric UID";
 static char const *E_cannot_omit_both = "cannot omit both user and group";
-extern size_t fwrite(void const *__restrict __ptr, size_t __size, size_t __n,
-                     FILE *__restrict __s);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1, 2), __leaf__)) strcmp)(char const *__s1, char const *__s2)
-    __attribute__((__pure__));
+extern size_t fwrite(void const *__restrict __ptr, size_t __size, size_t __n, FILE *__restrict __s);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) strcmp)(char const *__s1, char const *__s2) __attribute__((__pure__));
 extern iconv_t iconv_open(char const *__tocode, char const *__fromcode);
-extern size_t iconv(iconv_t __cd, char **__restrict __inbuf,
-                    size_t *__restrict __inbytesleft,
-                    char **__restrict __outbuf,
-                    size_t *__restrict __outbytesleft);
+extern size_t iconv(iconv_t __cd, char **__restrict __inbuf, size_t *__restrict __inbytesleft, char **__restrict __outbuf, size_t *__restrict __outbytesleft);
 static int initialized;
 static int is_utf8;
 static iconv_t utf8_to_local;
-extern __attribute__((__nothrow__)) struct tm *(
-    __attribute__((__leaf__)) gmtime)(time_t const *__timer);
-extern __attribute__((__nothrow__)) struct tm *(
-    __attribute__((__leaf__)) localtime)(time_t const *__timer);
-extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) asctime)(
-    struct tm const *__tp);
-extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) ctime)(
-    time_t const *__timer);
+extern __attribute__((__nothrow__)) struct tm *(__attribute__((__leaf__)) gmtime)(time_t const *__timer);
+extern __attribute__((__nothrow__)) struct tm *(__attribute__((__leaf__)) localtime)(time_t const *__timer);
+extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) asctime)(struct tm const *__tp);
+extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) ctime)(time_t const *__timer);
 char *base_name(char const *name);
 size_t base_len(char const *name);
 int strip_trailing_slashes(char *path);
@@ -1283,143 +1153,63 @@ int strip_trailing_slashes(char *path) {
     return (had_slash);
   }
 }
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) tolower)(
-    int __c);
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) toupper)(
-    int __c);
-extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) strftime)(
-    char *__restrict __s, size_t __maxsize, char const *__restrict __format,
-    struct tm const *__restrict __tp);
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) mbsinit)(
-    mbstate_t const *__ps) __attribute__((__pure__));
-extern __attribute__((__nothrow__))
-size_t(__attribute__((__leaf__)) mbrlen)(char const *__restrict __s, size_t __n,
-                                         mbstate_t *__restrict __ps);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) tolower)(int __c);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) toupper)(int __c);
+extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) strftime)(char *__restrict __s, size_t __maxsize, char const *__restrict __format, struct tm const *__restrict __tp);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) mbsinit)(mbstate_t const *__ps) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) mbrlen)(char const *__restrict __s, size_t __n, mbstate_t *__restrict __ps);
 static mbstate_t const mbstate_zero;
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__leaf__)) __libc_current_sigrtmin)(void);
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__leaf__)) __libc_current_sigrtmax)(void);
-extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2),
-                                                       __leaf__)) strncmp)(
-    char const *__s1, char const *__s2, size_t __n) __attribute__((__pure__));
-static struct numname numname_table[35] = {
-    {1,
-     {(char const)'H', (char const)'U', (char const)'P', (char const)'\000'}},
-    {2,
-     {(char const)'I', (char const)'N', (char const)'T', (char const)'\000'}},
-    {3,
-     {(char const)'Q', (char const)'U', (char const)'I', (char const)'T',
-      (char const)'\000'}},
-    {4,
-     {(char const)'I', (char const)'L', (char const)'L', (char const)'\000'}},
-    {5,
-     {(char const)'T', (char const)'R', (char const)'A', (char const)'P',
-      (char const)'\000'}},
-    {6,
-     {(char const)'A', (char const)'B', (char const)'R', (char const)'T',
-      (char const)'\000'}},
-    {8,
-     {(char const)'F', (char const)'P', (char const)'E', (char const)'\000'}},
-    {9,
-     {(char const)'K', (char const)'I', (char const)'L', (char const)'L',
-      (char const)'\000'}},
-    {7,
-     {(char const)'B', (char const)'U', (char const)'S', (char const)'\000'}},
-    {11,
-     {(char const)'S', (char const)'E', (char const)'G', (char const)'V',
-      (char const)'\000'}},
-    {13,
-     {(char const)'P', (char const)'I', (char const)'P', (char const)'E',
-      (char const)'\000'}},
-    {14,
-     {(char const)'A', (char const)'L', (char const)'R', (char const)'M',
-      (char const)'\000'}},
-    {15,
-     {(char const)'T', (char const)'E', (char const)'R', (char const)'M',
-      (char const)'\000'}},
-    {10,
-     {(char const)'U', (char const)'S', (char const)'R', (char const)'1',
-      (char const)'\000'}},
-    {12,
-     {(char const)'U', (char const)'S', (char const)'R', (char const)'2',
-      (char const)'\000'}},
-    {17,
-     {(char const)'C', (char const)'H', (char const)'L', (char const)'D',
-      (char const)'\000'}},
-    {23,
-     {(char const)'U', (char const)'R', (char const)'G', (char const)'\000'}},
-    {19,
-     {(char const)'S', (char const)'T', (char const)'O', (char const)'P',
-      (char const)'\000'}},
-    {20,
-     {(char const)'T', (char const)'S', (char const)'T', (char const)'P',
-      (char const)'\000'}},
-    {18,
-     {(char const)'C', (char const)'O', (char const)'N', (char const)'T',
-      (char const)'\000'}},
-    {21,
-     {(char const)'T', (char const)'T', (char const)'I', (char const)'N',
-      (char const)'\000'}},
-    {22,
-     {(char const)'T', (char const)'T', (char const)'O', (char const)'U',
-      (char const)'\000'}},
-    {31,
-     {(char const)'S', (char const)'Y', (char const)'S', (char const)'\000'}},
-    {29,
-     {(char const)'P', (char const)'O', (char const)'L', (char const)'L',
-      (char const)'\000'}},
-    {26,
-     {(char const)'V', (char const)'T', (char const)'A', (char const)'L',
-      (char const)'R', (char const)'M', (char const)'\000'}},
-    {27,
-     {(char const)'P', (char const)'R', (char const)'O', (char const)'F',
-      (char const)'\000'}},
-    {24,
-     {(char const)'X', (char const)'C', (char const)'P', (char const)'U',
-      (char const)'\000'}},
-    {25,
-     {(char const)'X', (char const)'F', (char const)'S', (char const)'Z',
-      (char const)'\000'}},
-    {6,
-     {(char const)'I', (char const)'O', (char const)'T', (char const)'\000'}},
-    {17,
-     {(char const)'C', (char const)'L', (char const)'D', (char const)'\000'}},
-    {30,
-     {(char const)'P', (char const)'W', (char const)'R', (char const)'\000'}},
-    {28,
-     {(char const)'W', (char const)'I', (char const)'N', (char const)'C',
-      (char const)'H', (char const)'\000'}},
-    {29, {(char const)'I', (char const)'O', (char const)'\000'}},
-    {16,
-     {(char const)'S', (char const)'T', (char const)'K', (char const)'F',
-      (char const)'L', (char const)'T', (char const)'\000'}},
-    {0,
-     {(char const)'E', (char const)'X', (char const)'I', (char const)'T',
-      (char const)'\000'}}};
-extern size_t fread_unlocked(void *__restrict __ptr, size_t __size, size_t __n,
-                             FILE *__restrict __stream);
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__leaf__)) feof_unlocked)(FILE *__stream);
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__leaf__)) ferror_unlocked)(FILE *__stream);
-static unsigned char const fillbuf[64] = {(unsigned char const)128,
-                                          (unsigned char const)0};
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) settimeofday)(
-    struct timeval const *__tv, struct timezone const *__tz);
-extern
-    __attribute__((__nothrow__)) int(__attribute__((__leaf__)) clock_settime)(
-        clockid_t __clock_id, struct timespec const *__tp);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) __libc_current_sigrtmin)(void);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) __libc_current_sigrtmax)(void);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) strncmp)(char const *__s1, char const *__s2, size_t __n) __attribute__((__pure__));
+static struct numname numname_table[35] = {{1, {(char const)'H', (char const)'U', (char const)'P', (char const)'\000'}},
+                                           {2, {(char const)'I', (char const)'N', (char const)'T', (char const)'\000'}},
+                                           {3, {(char const)'Q', (char const)'U', (char const)'I', (char const)'T', (char const)'\000'}},
+                                           {4, {(char const)'I', (char const)'L', (char const)'L', (char const)'\000'}},
+                                           {5, {(char const)'T', (char const)'R', (char const)'A', (char const)'P', (char const)'\000'}},
+                                           {6, {(char const)'A', (char const)'B', (char const)'R', (char const)'T', (char const)'\000'}},
+                                           {8, {(char const)'F', (char const)'P', (char const)'E', (char const)'\000'}},
+                                           {9, {(char const)'K', (char const)'I', (char const)'L', (char const)'L', (char const)'\000'}},
+                                           {7, {(char const)'B', (char const)'U', (char const)'S', (char const)'\000'}},
+                                           {11, {(char const)'S', (char const)'E', (char const)'G', (char const)'V', (char const)'\000'}},
+                                           {13, {(char const)'P', (char const)'I', (char const)'P', (char const)'E', (char const)'\000'}},
+                                           {14, {(char const)'A', (char const)'L', (char const)'R', (char const)'M', (char const)'\000'}},
+                                           {15, {(char const)'T', (char const)'E', (char const)'R', (char const)'M', (char const)'\000'}},
+                                           {10, {(char const)'U', (char const)'S', (char const)'R', (char const)'1', (char const)'\000'}},
+                                           {12, {(char const)'U', (char const)'S', (char const)'R', (char const)'2', (char const)'\000'}},
+                                           {17, {(char const)'C', (char const)'H', (char const)'L', (char const)'D', (char const)'\000'}},
+                                           {23, {(char const)'U', (char const)'R', (char const)'G', (char const)'\000'}},
+                                           {19, {(char const)'S', (char const)'T', (char const)'O', (char const)'P', (char const)'\000'}},
+                                           {20, {(char const)'T', (char const)'S', (char const)'T', (char const)'P', (char const)'\000'}},
+                                           {18, {(char const)'C', (char const)'O', (char const)'N', (char const)'T', (char const)'\000'}},
+                                           {21, {(char const)'T', (char const)'T', (char const)'I', (char const)'N', (char const)'\000'}},
+                                           {22, {(char const)'T', (char const)'T', (char const)'O', (char const)'U', (char const)'\000'}},
+                                           {31, {(char const)'S', (char const)'Y', (char const)'S', (char const)'\000'}},
+                                           {29, {(char const)'P', (char const)'O', (char const)'L', (char const)'L', (char const)'\000'}},
+                                           {26, {(char const)'V', (char const)'T', (char const)'A', (char const)'L', (char const)'R', (char const)'M', (char const)'\000'}},
+                                           {27, {(char const)'P', (char const)'R', (char const)'O', (char const)'F', (char const)'\000'}},
+                                           {24, {(char const)'X', (char const)'C', (char const)'P', (char const)'U', (char const)'\000'}},
+                                           {25, {(char const)'X', (char const)'F', (char const)'S', (char const)'Z', (char const)'\000'}},
+                                           {6, {(char const)'I', (char const)'O', (char const)'T', (char const)'\000'}},
+                                           {17, {(char const)'C', (char const)'L', (char const)'D', (char const)'\000'}},
+                                           {30, {(char const)'P', (char const)'W', (char const)'R', (char const)'\000'}},
+                                           {28, {(char const)'W', (char const)'I', (char const)'N', (char const)'C', (char const)'H', (char const)'\000'}},
+                                           {29, {(char const)'I', (char const)'O', (char const)'\000'}},
+                                           {16, {(char const)'S', (char const)'T', (char const)'K', (char const)'F', (char const)'L', (char const)'T', (char const)'\000'}},
+                                           {0, {(char const)'E', (char const)'X', (char const)'I', (char const)'T', (char const)'\000'}}};
+extern size_t fread_unlocked(void *__restrict __ptr, size_t __size, size_t __n, FILE *__restrict __stream);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) feof_unlocked)(FILE *__stream);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) ferror_unlocked)(FILE *__stream);
+static unsigned char const fillbuf[64] = {(unsigned char const)128, (unsigned char const)0};
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) settimeofday)(struct timeval const *__tv, struct timezone const *__tz);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) clock_settime)(clockid_t __clock_id, struct timespec const *__tp);
 extern DIR *(__attribute__((__nonnull__(1))) opendir)(char const *__name);
 extern int(__attribute__((__nonnull__(1))) closedir)(DIR *__dirp);
 extern struct dirent *(__attribute__((__nonnull__(1))) readdir)(DIR *__dirp);
 extern int close(int __fd);
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__nonnull__(1), __leaf__)) chdir)(char const *__path);
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fchdir)(
-    int __fd);
-extern int(__attribute__((__nonnull__(1))) open)(char const *__file,
-                                                 int __oflag, ...);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) chdir)(char const *__path);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fchdir)(int __fd);
+extern int(__attribute__((__nonnull__(1))) open)(char const *__file, int __oflag, ...);
 int save_cwd(struct saved_cwd *cwd);
 int restore_cwd(struct saved_cwd const *cwd);
 void free_cwd(struct saved_cwd *cwd);
@@ -1480,12 +1270,8 @@ void free_cwd(struct saved_cwd *cwd) {
     return;
   }
 }
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1, 2), __leaf__)) stat)(char const *__restrict __file,
-                                        struct stat *__restrict __buf);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1, 2), __leaf__)) memcmp)(void const *__s1, void const *__s2,
-                                          size_t __n) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) stat)(char const *__restrict __file, struct stat *__restrict __buf);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) memcmp)(void const *__s1, void const *__s2, size_t __n) __attribute__((__pure__));
 int same_name(char const *source, char const *dest);
 char *dir_name(char const *path);
 int same_name(char const *source, char const *dest) {
@@ -1511,8 +1297,6 @@ int same_name(char const *source, char const *dest) {
   int *tmp___7;
   int tmp___8;
   int tmp___9;
-  void *__cil_tmp25;
-  void *__cil_tmp26;
 
   {
     {
@@ -1527,8 +1311,7 @@ int same_name(char const *source, char const *dest) {
     }
     if (source_baselen == dest_baselen) {
       {
-        tmp___3 = memcmp((void const *)source_basename,
-                         (void const *)dest_basename, dest_baselen);
+        tmp___3 = memcmp((void const *)source_basename, (void const *)dest_basename, dest_baselen);
       }
       if (tmp___3 == 0) {
         tmp___4 = 1;
@@ -1545,9 +1328,7 @@ int same_name(char const *source, char const *dest) {
       {
         source_dirname = dir_name(source);
         dest_dirname = dir_name(dest);
-        tmp___6 =
-            stat((char const * /* __restrict  */)((char const *)source_dirname),
-                 (struct stat * /* __restrict  */)(&source_dir_stats));
+        tmp___6 = stat((char const * /* __restrict  */)((char const *)source_dirname), (struct stat * /* __restrict  */)(&source_dir_stats));
       }
       if (tmp___6) {
         {
@@ -1555,11 +1336,7 @@ int same_name(char const *source, char const *dest) {
           error(1, *tmp___5, "%s", source_dirname);
         }
       }
-      {
-        tmp___8 =
-            stat((char const * /* __restrict  */)((char const *)dest_dirname),
-                 (struct stat * /* __restrict  */)(&dest_dir_stats));
-      }
+      { tmp___8 = stat((char const * /* __restrict  */)((char const *)dest_dirname), (struct stat * /* __restrict  */)(&dest_dir_stats)); }
       if (tmp___8) {
         {
           tmp___7 = __errno_location();
@@ -1586,12 +1363,8 @@ int same_name(char const *source, char const *dest) {
 }
 extern ssize_t write(int __fd, void const *__buf, size_t __n);
 extern ssize_t read(int __fd, void *__buf, size_t __nbytes);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1, 2), __leaf__)) lstat)(char const *__restrict __file,
-                                         struct stat *__restrict __buf);
-extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1, 2),
-                                                          __leaf__)) strncpy)(
-    char *__restrict __dest, char const *__restrict __src, size_t __n);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) lstat)(char const *__restrict __file, struct stat *__restrict __buf);
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1, 2), __leaf__)) strncpy)(char *__restrict __dest, char const *__restrict __src, size_t __n);
 extern void setutxent(void);
 extern void endutxent(void);
 extern struct utmpx *getutxent(void);
@@ -1602,32 +1375,16 @@ static char isdelim[256];
 char const *const quoting_style_args[8];
 enum quoting_style const quoting_style_vals[7];
 int set_char_quoting(struct quoting_options *o, char c, int i);
-size_t quotearg_buffer(char *buffer, size_t buffersize, char const *arg,
-                       size_t argsize, struct quoting_options const *o);
+size_t quotearg_buffer(char *buffer, size_t buffersize, char const *arg, size_t argsize, struct quoting_options const *o);
 char *quotearg_n_style(int n, enum quoting_style s, char const *arg);
 char *quotearg_char(char const *arg, char ch);
 char *quotearg_colon(char const *arg);
-extern __attribute__((__nothrow__))
-size_t(__attribute__((__leaf__)) __ctype_get_mb_cur_max)(void);
-extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) mbrtowc)(
-    wchar_t *__restrict __pwc, char const *__restrict __s, size_t __n,
-    mbstate_t *__restrict __p);
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) iswprint)(
-    wint_t __wc);
-char const *const quoting_style_args[8] = {
-    (char const * /* const  */) "literal",
-    (char const * /* const  */) "shell",
-    (char const * /* const  */) "shell-always",
-    (char const * /* const  */) "c",
-    (char const * /* const  */) "escape",
-    (char const * /* const  */) "locale",
-    (char const * /* const  */) "clocale",
-    (char const * /* const  */)((char const *)0)};
-enum quoting_style const quoting_style_vals[7] = {
-    (enum quoting_style const)0, (enum quoting_style const)1,
-    (enum quoting_style const)2, (enum quoting_style const)3,
-    (enum quoting_style const)4, (enum quoting_style const)5,
-    (enum quoting_style const)6};
+extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) __ctype_get_mb_cur_max)(void);
+extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) mbrtowc)(wchar_t *__restrict __pwc, char const *__restrict __s, size_t __n, mbstate_t *__restrict __p);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) iswprint)(wint_t __wc);
+char const *const quoting_style_args[8] = {(char const * /* const  */) "literal", (char const * /* const  */) "shell",  (char const * /* const  */) "shell-always", (char const * /* const  */) "c",
+                                           (char const * /* const  */) "escape",  (char const * /* const  */) "locale", (char const * /* const  */) "clocale",      (char const * /* const  */)((char const *)0)};
+enum quoting_style const quoting_style_vals[7] = {(enum quoting_style const)0, (enum quoting_style const)1, (enum quoting_style const)2, (enum quoting_style const)3, (enum quoting_style const)4, (enum quoting_style const)5, (enum quoting_style const)6};
 static struct quoting_options default_quoting_options;
 int set_char_quoting(struct quoting_options *o, char c, int i) {
   unsigned char uc;
@@ -1653,7 +1410,6 @@ int set_char_quoting(struct quoting_options *o, char c, int i) {
 static char const *gettext_quote(char const *msgid, enum quoting_style s) {
   char const *translation;
   char *tmp;
-  char *__cil_tmp5;
 
   {
     {
@@ -1668,10 +1424,7 @@ static char const *gettext_quote(char const *msgid, enum quoting_style s) {
     return (translation);
   }
 }
-static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
-                                       char const *arg, size_t argsize,
-                                       enum quoting_style quoting_style,
-                                       struct quoting_options const *o) {
+static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize, char const *arg, size_t argsize, enum quoting_style quoting_style, struct quoting_options const *o) {
   size_t i;
   size_t len;
   char const *quote_string;
@@ -1698,11 +1451,6 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
   size_t ilim;
   int tmp___7;
   size_t tmp___8;
-  void *__cil_tmp33;
-  char *__cil_tmp34;
-  char *__cil_tmp35;
-  char *__cil_tmp36;
-  char *__cil_tmp37;
 
   {
     {
@@ -1731,17 +1479,14 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
     goto switch_default;
   case_3: {
     while (1) {
-    while_continue: /* CIL Label */
-        ;
+      ;
 
       if (len < buffersize) {
         *(buffer + len) = (char)'\"';
       }
       len++;
       goto while_break;
-    }
-  while_break___25: /* CIL Label */
-      ;
+    };
   }
   while_break:
     backslash_escapes = 1;
@@ -1760,31 +1505,25 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
   }
     {
       while (1) {
-      while_continue___0: /* CIL Label */
-          ;
+        ;
 
         if (!*quote_string) {
           goto while_break___0;
         }
         {
           while (1) {
-          while_continue___1: /* CIL Label */
-              ;
+            ;
 
             if (len < buffersize) {
               *(buffer + len) = (char)*quote_string;
             }
             len++;
             goto while_break___1;
-          }
-        while_break___27: /* CIL Label */
-            ;
+          };
         }
       while_break___1:
         quote_string++;
-      }
-    while_break___26: /* CIL Label */
-        ;
+      };
     }
   while_break___0: {
     backslash_escapes = 1;
@@ -1794,17 +1533,14 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
     goto switch_break;
   case_2: {
     while (1) {
-    while_continue___2: /* CIL Label */
-        ;
+      ;
 
       if (len < buffersize) {
         *(buffer + len) = (char)'\'';
       }
       len++;
       goto while_break___2;
-    }
-  while_break___28: /* CIL Label */
-      ;
+    };
   }
   while_break___2:
     quote_string = "\'";
@@ -1816,8 +1552,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
     i = (size_t)0;
     {
       while (1) {
-      while_continue___3: /* CIL Label */
-          ;
+        ;
 
         if (argsize == 0xffffffffffffffffUL) {
           tmp___7 = (int const) * (arg + i) == 0;
@@ -1831,23 +1566,19 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
           if (quote_string_len) {
             if (i + quote_string_len <= argsize) {
               {
-                tmp___2 = memcmp((void const *)(arg + i),
-                                 (void const *)quote_string, quote_string_len);
+                tmp___2 = memcmp((void const *)(arg + i), (void const *)quote_string, quote_string_len);
               }
               if (tmp___2 == 0) {
                 {
                   while (1) {
-                  while_continue___4: /* CIL Label */
-                      ;
+                    ;
 
                     if (len < buffersize) {
                       *(buffer + len) = (char)'\\';
                     }
                     len++;
                     goto while_break___4;
-                  }
-                while_break___30: /* CIL Label */
-                    ;
+                  };
                 }
               while_break___4:;
               }
@@ -2166,47 +1897,38 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
         if (backslash_escapes) {
           {
             while (1) {
-            while_continue___5: /* CIL Label */
-                ;
+              ;
 
               if (len < buffersize) {
                 *(buffer + len) = (char)'\\';
               }
               len++;
               goto while_break___5;
-            }
-          while_break___31: /* CIL Label */
-              ;
+            };
           }
         while_break___5:;
           {
             while (1) {
-            while_continue___6: /* CIL Label */
-                ;
+              ;
 
               if (len < buffersize) {
                 *(buffer + len) = (char)'0';
               }
               len++;
               goto while_break___6;
-            }
-          while_break___32: /* CIL Label */
-              ;
+            };
           }
         while_break___6:;
           {
             while (1) {
-            while_continue___7: /* CIL Label */
-                ;
+              ;
 
               if (len < buffersize) {
                 *(buffer + len) = (char)'0';
               }
               len++;
               goto while_break___7;
-            }
-          while_break___33: /* CIL Label */
-              ;
+            };
           }
         while_break___7:
           c = (unsigned char)'0';
@@ -2258,47 +1980,38 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
             i += 2UL;
             {
               while (1) {
-              while_continue___8: /* CIL Label */
-                  ;
+                ;
 
                 if (len < buffersize) {
                   *(buffer + len) = (char)'?';
                 }
                 len++;
                 goto while_break___8;
-              }
-            while_break___34: /* CIL Label */
-                ;
+              };
             }
           while_break___8:;
             {
               while (1) {
-              while_continue___9: /* CIL Label */
-                  ;
+                ;
 
                 if (len < buffersize) {
                   *(buffer + len) = (char)'\\';
                 }
                 len++;
                 goto while_break___9;
-              }
-            while_break___35: /* CIL Label */
-                ;
+              };
             }
           while_break___9:;
             {
               while (1) {
-              while_continue___10: /* CIL Label */
-                  ;
+                ;
 
                 if (len < buffersize) {
                   *(buffer + len) = (char)'?';
                 }
                 len++;
                 goto while_break___10;
-              }
-            while_break___36: /* CIL Label */
-                ;
+              };
             }
           while_break___10:;
             goto switch_break___2;
@@ -2365,47 +2078,38 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
         goto use_shell_always_quoting_style;
       case_2___0: {
         while (1) {
-        while_continue___11: /* CIL Label */
-            ;
+          ;
 
           if (len < buffersize) {
             *(buffer + len) = (char)'\'';
           }
           len++;
           goto while_break___11;
-        }
-      while_break___37: /* CIL Label */
-          ;
+        };
       }
       while_break___11:;
         {
           while (1) {
-          while_continue___12: /* CIL Label */
-              ;
+            ;
 
             if (len < buffersize) {
               *(buffer + len) = (char)'\\';
             }
             len++;
             goto while_break___12;
-          }
-        while_break___38: /* CIL Label */
-            ;
+          };
         }
       while_break___12:;
         {
           while (1) {
-          while_continue___13: /* CIL Label */
-              ;
+            ;
 
             if (len < buffersize) {
               *(buffer + len) = (char)'\'';
             }
             len++;
             goto while_break___13;
-          }
-        while_break___39: /* CIL Label */
-            ;
+          };
         }
       while_break___13:;
         goto switch_break___3;
@@ -2435,14 +2139,9 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
           }
           {
             while (1) {
-            while_continue___14: /* CIL Label */
-                ;
+              ;
               {
-                tmp___4 =
-                    mbrtowc((wchar_t * /* __restrict  */)(&w),
-                            (char const * /* __restrict  */)(arg + (i + m)),
-                            argsize - (i + m),
-                            (mbstate_t * /* __restrict  */)(&mbstate));
+                tmp___4 = mbrtowc((wchar_t * /* __restrict  */)(&w), (char const * /* __restrict  */)(arg + (i + m)), argsize - (i + m), (mbstate_t * /* __restrict  */)(&mbstate));
                 bytes = tmp___4;
               }
               if (bytes == 0UL) {
@@ -2456,8 +2155,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
                     printable = 0;
                     {
                       while (1) {
-                      while_continue___15: /* CIL Label */
-                          ;
+                        ;
 
                         if (i + m < argsize) {
                           if (!*(arg + (i + m))) {
@@ -2467,9 +2165,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
                           goto while_break___15;
                         }
                         m++;
-                      }
-                    while_break___41: /* CIL Label */
-                        ;
+                      };
                     }
                   while_break___15:;
                     goto while_break___14;
@@ -2486,9 +2182,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
               if (tmp___6) {
                 goto while_break___14;
               }
-            }
-          while_break___40: /* CIL Label */
-              ;
+            };
           }
         while_break___14:;
         }
@@ -2501,54 +2195,44 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
               ilim = i + m;
               {
                 while (1) {
-                while_continue___16: /* CIL Label */
-                    ;
+                  ;
 
                   if (backslash_escapes) {
                     if (!printable) {
                       {
                         while (1) {
-                        while_continue___17: /* CIL Label */
-                            ;
+                          ;
 
                           if (len < buffersize) {
                             *(buffer + len) = (char)'\\';
                           }
                           len++;
                           goto while_break___17;
-                        }
-                      while_break___43: /* CIL Label */
-                          ;
+                        };
                       }
                     while_break___17:;
                       {
                         while (1) {
-                        while_continue___18: /* CIL Label */
-                            ;
+                          ;
 
                           if (len < buffersize) {
                             *(buffer + len) = (char)(48 + ((int)c >> 6));
                           }
                           len++;
                           goto while_break___18;
-                        }
-                      while_break___44: /* CIL Label */
-                          ;
+                        };
                       }
                     while_break___18:;
                       {
                         while (1) {
-                        while_continue___19: /* CIL Label */
-                            ;
+                          ;
 
                           if (len < buffersize) {
                             *(buffer + len) = (char)(48 + (((int)c >> 3) & 7));
                           }
                           len++;
                           goto while_break___19;
-                        }
-                      while_break___45: /* CIL Label */
-                          ;
+                        };
                       }
                     while_break___19:
                       c = (unsigned char)(48 + ((int)c & 7));
@@ -2559,24 +2243,19 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
                   }
                   {
                     while (1) {
-                    while_continue___20: /* CIL Label */
-                        ;
+                      ;
 
                       if (len < buffersize) {
                         *(buffer + len) = (char)c;
                       }
                       len++;
                       goto while_break___20;
-                    }
-                  while_break___46: /* CIL Label */
-                      ;
+                    };
                   }
                 while_break___20:
                   i++;
                   c = (unsigned char)*(arg + i);
-                }
-              while_break___42: /* CIL Label */
-                  ;
+                };
               }
             while_break___16:;
               goto store_c;
@@ -2585,8 +2264,7 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
         }
       switch_break___0:;
         if (backslash_escapes) {
-          if (!(o->quote_these_too[(unsigned long)c / (sizeof(int) * 8UL)] &
-                (1 << (unsigned long)c % (sizeof(int) * 8UL)))) {
+          if (!(o->quote_these_too[(unsigned long)c / (sizeof(int) * 8UL)] & (1 << (unsigned long)c % (sizeof(int) * 8UL)))) {
             goto store_c;
           }
         } else {
@@ -2594,68 +2272,54 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
         }
       store_escape: {
         while (1) {
-        while_continue___21: /* CIL Label */
-            ;
+          ;
 
           if (len < buffersize) {
             *(buffer + len) = (char)'\\';
           }
           len++;
           goto while_break___21;
-        }
-      while_break___47: /* CIL Label */
-          ;
+        };
       }
       while_break___21:;
       store_c: {
         while (1) {
-        while_continue___22: /* CIL Label */
-            ;
+          ;
 
           if (len < buffersize) {
             *(buffer + len) = (char)c;
           }
           len++;
           goto while_break___22;
-        }
-      while_break___48: /* CIL Label */
-          ;
+        };
       }
       while_break___22:
         i++;
-      }
-    while_break___29: /* CIL Label */
-        ;
+      };
     }
   while_break___3:;
     if (quote_string) {
       {
         while (1) {
-        while_continue___23: /* CIL Label */
-            ;
+          ;
 
           if (!*quote_string) {
             goto while_break___23;
           }
           {
             while (1) {
-            while_continue___24: /* CIL Label */
-                ;
+              ;
 
               if (len < buffersize) {
                 *(buffer + len) = (char)*quote_string;
               }
               len++;
               goto while_break___24;
-            }
-          while_break___50: /* CIL Label */
-              ;
+            };
           }
         while_break___24:
           quote_string++;
-        }
-      while_break___49: /* CIL Label */
-          ;
+        };
       }
     while_break___23:;
     }
@@ -2663,15 +2327,11 @@ static size_t quotearg_buffer_restyled(char *buffer, size_t buffersize,
       *(buffer + len) = (char)'\000';
     }
     return (len);
-  use_shell_always_quoting_style: {
-    tmp___8 = quotearg_buffer_restyled(buffer, buffersize, arg, argsize,
-                                       (enum quoting_style)2, o);
-  }
+  use_shell_always_quoting_style: { tmp___8 = quotearg_buffer_restyled(buffer, buffersize, arg, argsize, (enum quoting_style)2, o); }
     return (tmp___8);
   }
 }
-size_t quotearg_buffer(char *buffer, size_t buffersize, char const *arg,
-                       size_t argsize, struct quoting_options const *o) {
+size_t quotearg_buffer(char *buffer, size_t buffersize, char const *arg, size_t argsize, struct quoting_options const *o) {
   struct quoting_options const *p;
   struct quoting_options const *tmp;
   int e;
@@ -2690,8 +2350,7 @@ size_t quotearg_buffer(char *buffer, size_t buffersize, char const *arg,
       p = tmp;
       tmp___0 = __errno_location();
       e = *tmp___0;
-      tmp___1 = quotearg_buffer_restyled(buffer, buffersize, arg, argsize,
-                                         (enum quoting_style)p->style, p);
+      tmp___1 = quotearg_buffer_restyled(buffer, buffersize, arg, argsize, (enum quoting_style)p->style, p);
       r = tmp___1;
       tmp___2 = __errno_location();
       *tmp___2 = e;
@@ -2700,13 +2359,11 @@ size_t quotearg_buffer(char *buffer, size_t buffersize, char const *arg,
   }
 }
 static char slot0[256];
-static char *quotearg_n_options(int n, char const *arg, size_t argsize,
-                                struct quoting_options const *options);
+static char *quotearg_n_options(int n, char const *arg, size_t argsize, struct quoting_options const *options);
 static unsigned int nslots = 1U;
 static struct slotvec slotvec0 = {sizeof(slot0), slot0};
 static struct slotvec *slotvec = &slotvec0;
-static char *quotearg_n_options(int n, char const *arg, size_t argsize,
-                                struct quoting_options const *options) {
+static char *quotearg_n_options(int n, char const *arg, size_t argsize, struct quoting_options const *options) {
   int e;
   int *tmp;
   unsigned int n0;
@@ -2752,11 +2409,9 @@ static char *quotearg_n_options(int n, char const *arg, size_t argsize,
         }
       }
       {
-        tmp___2 =
-            xrealloc((void *)slotvec, (unsigned long)n1 * sizeof(*slotvec));
+        tmp___2 = xrealloc((void *)slotvec, (unsigned long)n1 * sizeof(*slotvec));
         slotvec = (struct slotvec *)tmp___2;
-        memset((void *)(slotvec + nslots), 0,
-               (unsigned long)(n1 - nslots) * sizeof(*slotvec));
+        memset((void *)(slotvec + nslots), 0, (unsigned long)(n1 - nslots) * sizeof(*slotvec));
         nslots = n1;
       }
     }
@@ -2788,10 +2443,8 @@ static char *quotearg_n_options(int n, char const *arg, size_t argsize,
     return (val);
   }
 }
-static struct quoting_options
-quoting_options_from_style(enum quoting_style style) {
+static struct quoting_options quoting_options_from_style(enum quoting_style style) {
   struct quoting_options o;
-  void *__cil_tmp3;
 
   {
     {
@@ -2805,15 +2458,12 @@ char *quotearg_n_style(int n, enum quoting_style s, char const *arg) {
   struct quoting_options o;
   struct quoting_options tmp;
   char *tmp___0;
-  void *__cil_tmp7;
-  void *__cil_tmp8;
 
   {
     {
       tmp = quoting_options_from_style(s);
       o = tmp;
-      tmp___0 = quotearg_n_options(n, arg, (size_t)-1,
-                                   (struct quoting_options const *)(&o));
+      tmp___0 = quotearg_n_options(n, arg, (size_t)-1, (struct quoting_options const *)(&o));
     }
     return (tmp___0);
   }
@@ -2821,14 +2471,12 @@ char *quotearg_n_style(int n, enum quoting_style s, char const *arg) {
 char *quotearg_char(char const *arg, char ch) {
   struct quoting_options options;
   char *tmp;
-  void *__cil_tmp5;
 
   {
     {
       options = default_quoting_options;
       set_char_quoting(&options, ch, 1);
-      tmp = quotearg_n_options(0, arg, (size_t)-1,
-                               (struct quoting_options const *)(&options));
+      tmp = quotearg_n_options(0, arg, (size_t)-1, (struct quoting_options const *)(&options));
     }
     return (tmp);
   }
@@ -2858,32 +2506,18 @@ char const *quote(char const *name) {
     return (tmp);
   }
 }
-extern __attribute__((__nothrow__)) char *(
-    __attribute__((__nonnull__(1), __leaf__)) getenv)(char const *__name);
-extern __attribute__((__nothrow__))
-time_t(__attribute__((__leaf__)) time)(time_t *__timer);
-extern __attribute__((__nothrow__)) long(__attribute__((__leaf__)) sysconf)(
-    int __name);
-extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1, 2),
-                                                          __leaf__)) mempcpy)(
-    void *__restrict __dest, void const *__restrict __src, size_t __n);
-extern __attribute__((__nothrow__)) char *(
-    __attribute__((__nonnull__(1, 2), __leaf__)) strstr)(char const *__haystack,
-                                                         char const *__needle)
-    __attribute__((__pure__));
-extern __attribute__((__nothrow__))
-FILE *(__attribute__((__leaf__)) setmntent)(char const *__file,
-                                            char const *__mode);
-extern __attribute__((__nothrow__)) struct mntent *(
-    __attribute__((__leaf__)) getmntent)(FILE *__stream);
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) endmntent)(
-    FILE *__stream);
-struct mode_change *mode_compile(char const *mode_string___0,
-                                 unsigned int masked_ops);
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1), __leaf__)) getenv)(char const *__name);
+extern __attribute__((__nothrow__)) time_t(__attribute__((__leaf__)) time)(time_t *__timer);
+extern __attribute__((__nothrow__)) long(__attribute__((__leaf__)) sysconf)(int __name);
+extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1, 2), __leaf__)) mempcpy)(void *__restrict __dest, void const *__restrict __src, size_t __n);
+extern __attribute__((__nothrow__)) char *(__attribute__((__nonnull__(1, 2), __leaf__)) strstr)(char const *__haystack, char const *__needle) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) FILE *(__attribute__((__leaf__)) setmntent)(char const *__file, char const *__mode);
+extern __attribute__((__nothrow__)) struct mntent *(__attribute__((__leaf__)) getmntent)(FILE *__stream);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) endmntent)(FILE *__stream);
+struct mode_change *mode_compile(char const *mode_string___0, unsigned int masked_ops);
 mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes);
 void mode_free(struct mode_change *changes);
-extern __attribute__((__nothrow__))
-__mode_t(__attribute__((__leaf__)) umask)(__mode_t __mask);
+extern __attribute__((__nothrow__)) __mode_t(__attribute__((__leaf__)) umask)(__mode_t __mask);
 static struct mode_change *make_node_op_equals(mode_t new_mode) {
   struct mode_change *p;
   void *tmp;
@@ -2904,9 +2538,7 @@ static struct mode_change *make_node_op_equals(mode_t new_mode) {
     return (p);
   }
 }
-static void mode_append_entry(struct mode_change **head,
-                              struct mode_change **tail,
-                              struct mode_change *e) {
+static void mode_append_entry(struct mode_change **head, struct mode_change **tail, struct mode_change *e) {
   struct mode_change *tmp;
 
   {
@@ -2921,8 +2553,7 @@ static void mode_append_entry(struct mode_change **head,
     return;
   }
 }
-struct mode_change *mode_compile(char const *mode_string___0,
-                                 unsigned int masked_ops) {
+struct mode_change *mode_compile(char const *mode_string___0, unsigned int masked_ops) {
   struct mode_change *head;
   struct mode_change *tail;
   unsigned long octal_value;
@@ -2953,13 +2584,11 @@ struct mode_change *mode_compile(char const *mode_string___0,
   int tmp___14;
   int tmp___15;
   int tmp___16;
-  char *__cil_tmp33;
 
   {
     {
       head = (struct mode_change *)((void *)0);
-      tmp___11 =
-          xstrtoul(mode_string___0, (char **)((void *)0), 8, &octal_value, "");
+      tmp___11 = xstrtoul(mode_string___0, (char **)((void *)0), 8, &octal_value, "");
     }
     if ((unsigned int)tmp___11 == 0U) {
       if (octal_value != (octal_value & 4095UL)) {
@@ -3049,15 +2678,7 @@ struct mode_change *mode_compile(char const *mode_string___0,
         } else {
           tmp___10 = 0;
         }
-        mode =
-            (mode_t)(((((((((((tmp | tmp___0) | tmp___1) | tmp___2) | tmp___3) |
-                           tmp___4) |
-                          tmp___5) |
-                         tmp___6) |
-                        tmp___7) |
-                       tmp___8) |
-                      tmp___9) |
-                     tmp___10);
+        mode = (mode_t)(((((((((((tmp | tmp___0) | tmp___1) | tmp___2) | tmp___3) | tmp___4) | tmp___5) | tmp___6) | tmp___7) | tmp___8) | tmp___9) | tmp___10);
       }
       { p = make_node_op_equals(mode); }
       if ((unsigned long)p == (unsigned long)((void *)0)) {
@@ -3073,8 +2694,7 @@ struct mode_change *mode_compile(char const *mode_string___0,
     }
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+        ;
         affected_bits = (mode_t)0;
         ops_to_mask = 0U;
         affected_bits = (mode_t)0;
@@ -3082,8 +2702,7 @@ struct mode_change *mode_compile(char const *mode_string___0,
         mode_string___0++;
         {
           while (1) {
-          while_continue___0: /* CIL Label */
-              ;
+            ;
 
             if ((int const) * mode_string___0 == 117) {
               goto case_117;
@@ -3108,16 +2727,13 @@ struct mode_change *mode_compile(char const *mode_string___0,
             affected_bits |= (unsigned int)(512 | ((448 >> 3) >> 3));
             goto switch_break;
           case_97:
-            affected_bits |=
-                (unsigned int)((4032 | (448 >> 3)) | ((448 >> 3) >> 3));
+            affected_bits |= (unsigned int)((4032 | (448 >> 3)) | ((448 >> 3) >> 3));
             goto switch_break;
           switch_default:
             goto no_more_affected;
           switch_break:
             mode_string___0++;
-          }
-        while_break___3: /* CIL Label */
-            ;
+          };
         }
 
       no_more_affected:
@@ -3130,8 +2746,7 @@ struct mode_change *mode_compile(char const *mode_string___0,
         }
         {
           while (1) {
-          while_continue___1: /* CIL Label */
-              ;
+            ;
 
             if (!((int const) * mode_string___0 == 61)) {
               if (!((int const) * mode_string___0 == 43)) {
@@ -3192,8 +2807,7 @@ struct mode_change *mode_compile(char const *mode_string___0,
             }
             {
               while (1) {
-              while_continue___2: /* CIL Label */
-                  ;
+                ;
 
                 if ((int const) * mode_string___0 == 114) {
                   goto case_114;
@@ -3224,21 +2838,15 @@ struct mode_change *mode_compile(char const *mode_string___0,
                 }
                 goto switch_default___0;
               case_114:
-                change->value |=
-                    (unsigned int)((256 | (256 >> 3)) | ((256 >> 3) >> 3)) &
-                    affected_masked;
+                change->value |= (unsigned int)((256 | (256 >> 3)) | ((256 >> 3) >> 3)) & affected_masked;
                 goto switch_break___0;
               case_119:
-                change->value |=
-                    (unsigned int)((128 | (128 >> 3)) | ((128 >> 3) >> 3)) &
-                    affected_masked;
+                change->value |= (unsigned int)((128 | (128 >> 3)) | ((128 >> 3) >> 3)) & affected_masked;
                 goto switch_break___0;
               case_88:
                 change->flags = (char)((int)change->flags | 1);
               case_120:
-                change->value |=
-                    (unsigned int)((64 | (64 >> 3)) | ((64 >> 3) >> 3)) &
-                    affected_masked;
+                change->value |= (unsigned int)((64 | (64 >> 3)) | ((64 >> 3) >> 3)) & affected_masked;
                 goto switch_break___0;
               case_115:
                 change->value |= 3072U & affected_masked;
@@ -3271,23 +2879,17 @@ struct mode_change *mode_compile(char const *mode_string___0,
                 goto no_more_values;
               switch_break___0:
                 mode_string___0++;
-              }
-            while_break___5: /* CIL Label */
-                ;
+              };
             }
 
           no_more_values:;
-          }
-        while_break___4: /* CIL Label */
-            ;
+          };
         }
       while_break___1:;
         if (!((int const) * mode_string___0 == 44)) {
           goto while_break;
         }
-      }
-    while_break___2: /* CIL Label */
-        ;
+      };
     }
   while_break:;
     if ((int const) * mode_string___0 == 0) {
@@ -3314,8 +2916,7 @@ mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
     newmode = oldmode & (unsigned int)((4032 | (448 >> 3)) | ((448 >> 3) >> 3));
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+        ;
 
         if (!changes) {
           goto while_break;
@@ -3381,8 +2982,7 @@ mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
           value = (mode_t)changes->value;
           if ((int const)changes->flags & 1) {
             if (!((oldmode & 61440U) == 16384U)) {
-              if ((newmode &
-                   (unsigned int)((64 | (64 >> 3)) | ((64 >> 3) >> 3))) == 0U) {
+              if ((newmode & (unsigned int)((64 | (64 >> 3)) | ((64 >> 3) >> 3))) == 0U) {
                 value &= (unsigned int)(~((64 | (64 >> 3)) | ((64 >> 3) >> 3)));
               }
             }
@@ -3409,9 +3009,7 @@ mode_t mode_adjust(mode_t oldmode, struct mode_change const *changes) {
         goto switch_break;
       switch_break:
         changes = (struct mode_change const *)changes->next;
-      }
-    while_break___0: /* CIL Label */
-        ;
+      };
     }
   while_break:;
     return (newmode);
@@ -3423,8 +3021,7 @@ void mode_free(struct mode_change *changes) {
   {
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+        ;
 
         if (!changes) {
           goto while_break;
@@ -3434,53 +3031,27 @@ void mode_free(struct mode_change *changes) {
           rpl_free((void *)changes);
           changes = next;
         }
-      }
-    while_break___0: /* CIL Label */
-        ;
+      };
     }
   while_break:;
     return;
   }
 }
-static unsigned short const __mon_yday[2][13] = {
-    {(unsigned short const)0, (unsigned short const)31,
-     (unsigned short const)59, (unsigned short const)90,
-     (unsigned short const)120, (unsigned short const)151,
-     (unsigned short const)181, (unsigned short const)212,
-     (unsigned short const)243, (unsigned short const)273,
-     (unsigned short const)304, (unsigned short const)334,
-     (unsigned short const)365},
-    {(unsigned short const)0, (unsigned short const)31,
-     (unsigned short const)60, (unsigned short const)91,
-     (unsigned short const)121, (unsigned short const)152,
-     (unsigned short const)182, (unsigned short const)213,
-     (unsigned short const)244, (unsigned short const)274,
-     (unsigned short const)305, (unsigned short const)335,
-     (unsigned short const)366}};
+static unsigned short const __mon_yday[2][13] = {{(unsigned short const)0, (unsigned short const)31, (unsigned short const)59, (unsigned short const)90, (unsigned short const)120, (unsigned short const)151, (unsigned short const)181, (unsigned short const)212, (unsigned short const)243,
+                                                  (unsigned short const)273, (unsigned short const)304, (unsigned short const)334, (unsigned short const)365},
+                                                 {(unsigned short const)0, (unsigned short const)31, (unsigned short const)60, (unsigned short const)91, (unsigned short const)121, (unsigned short const)152, (unsigned short const)182, (unsigned short const)213, (unsigned short const)244,
+                                                  (unsigned short const)274, (unsigned short const)305, (unsigned short const)335, (unsigned short const)366}};
 static time_t localtime_offset;
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1, 2), __leaf__)) strcoll)(char const *__s1, char const *__s2)
-    __attribute__((__pure__));
-static unsigned char const fillbuf___0[64] = {(unsigned char const)128,
-                                              (unsigned char const)0};
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) wcwidth)(
-    wchar_t __c);
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) iswcntrl)(
-    wint_t __wc);
-int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
-              gid_t group, int preserve_existing,
-              char const *verbose_fmt_string);
-int make_dir(char const *dir, char const *dirpath, mode_t mode,
-             int *created_dir_p);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1), __leaf__)) chmod)(char const *__file, __mode_t __mode);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1), __leaf__)) mkdir)(char const *__path, __mode_t __mode);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1), __leaf__)) chown)(char const *__file, __uid_t __owner,
-                                      __gid_t __group);
-int make_dir(char const *dir, char const *dirpath, mode_t mode,
-             int *created_dir_p) {
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) strcoll)(char const *__s1, char const *__s2) __attribute__((__pure__));
+static unsigned char const fillbuf___0[64] = {(unsigned char const)128, (unsigned char const)0};
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) wcwidth)(wchar_t __c);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) iswcntrl)(wint_t __wc);
+int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t group, int preserve_existing, char const *verbose_fmt_string);
+int make_dir(char const *dir, char const *dirpath, mode_t mode, int *created_dir_p);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) chmod)(char const *__file, __mode_t __mode);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) mkdir)(char const *__path, __mode_t __mode);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) chown)(char const *__file, __uid_t __owner, __gid_t __group);
+int make_dir(char const *dir, char const *dirpath, mode_t mode, int *created_dir_p) {
   int fail;
   int created_dir;
   int tmp;
@@ -3492,9 +3063,6 @@ int make_dir(char const *dir, char const *dirpath, mode_t mode,
   char const *tmp___3;
   char *tmp___4;
   int tmp___5;
-  void *__cil_tmp16;
-  char *__cil_tmp17;
-  char *__cil_tmp18;
 
   {
     {
@@ -3506,8 +3074,7 @@ int make_dir(char const *dir, char const *dirpath, mode_t mode,
       {
         tmp___0 = __errno_location();
         saved_errno = *tmp___0;
-        tmp___5 = stat((char const * /* __restrict  */)dir,
-                       (struct stat * /* __restrict  */)(&stats));
+        tmp___5 = stat((char const * /* __restrict  */)dir, (struct stat * /* __restrict  */)(&stats));
       }
       if (tmp___5) {
         {
@@ -3533,9 +3100,7 @@ int make_dir(char const *dir, char const *dirpath, mode_t mode,
     return (fail);
   }
 }
-int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
-              gid_t group, int preserve_existing,
-              char const *verbose_fmt_string) {
+int make_path(char const *argpath, int mode, int parent_mode, uid_t owner, gid_t group, int preserve_existing, char const *verbose_fmt_string) {
   struct stat stats;
   int retval;
   char *slash;
@@ -3624,26 +3189,11 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
   int *tmp___63;
   int tmp___64;
   int tmp___65;
-  void *__cil_tmp96;
-  char *__cil_tmp97;
-  char *__cil_tmp98;
-  char *__cil_tmp99;
-  char *__cil_tmp100;
-  char *__cil_tmp101;
-  char *__cil_tmp102;
-  char *__cil_tmp103;
-  char *__cil_tmp104;
-  char *__cil_tmp105;
-  char *__cil_tmp106;
-  char *__cil_tmp107;
-  char *__cil_tmp108;
-  char *__cil_tmp109;
 
   {
     {
       retval = 0;
-      tmp___65 = stat((char const * /* __restrict  */)argpath,
-                      (struct stat * /* __restrict  */)(&stats));
+      tmp___65 = stat((char const * /* __restrict  */)argpath, (struct stat * /* __restrict  */)(&stats));
     }
     if (tmp___65) {
       {
@@ -3653,8 +3203,7 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
         tmp___0 = strlen(argpath);
         tmp___1 = __builtin_alloca(tmp___0 + 1UL);
         dirpath = (char *)tmp___1;
-        strcpy((char * /* __restrict  */)dirpath,
-               (char const * /* __restrict  */)argpath);
+        strcpy((char * /* __restrict  */)dirpath, (char const * /* __restrict  */)argpath);
         strip_trailing_slashes(dirpath);
       }
       if ((parent_mode & 192) != 192) {
@@ -3699,22 +3248,18 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
       slash = dirpath;
       {
         while (1) {
-        while_continue: /* CIL Label */
-            ;
+          ;
 
           if (!((int)*slash == 47)) {
             goto while_break;
           }
           slash++;
-        }
-      while_break___12: /* CIL Label */
-          ;
+        };
       }
     while_break:;
       {
         while (1) {
-        while_continue___0: /* CIL Label */
-            ;
+          ;
           {
             basename_dir = slash;
             slash = strchr((char const *)slash, '/');
@@ -3727,19 +3272,16 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
           }
           {
             *slash = (char)'\000';
-            fail = make_dir((char const *)basename_dir, (char const *)dirpath,
-                            (mode_t)tmp_mode, &newly_created_dir);
+            fail = make_dir((char const *)basename_dir, (char const *)dirpath, (mode_t)tmp_mode, &newly_created_dir);
           }
           if (fail) {
             {
               while (1) {
-              while_continue___1: /* CIL Label */
-                  ;
+                ;
                 { umask(oldmask); }
                 {
                   while (1) {
-                  while_continue___2: /* CIL Label */
-                      ;
+                    ;
 
                     if (do_chdir) {
                       {
@@ -3749,8 +3291,7 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
                         {
                           tmp___5 = __errno_location();
                           _saved_errno = *tmp___5;
-                          tmp___6 = gettext(
-                              "failed to return to initial working directory");
+                          tmp___6 = gettext("failed to return to initial working directory");
                           tmp___7 = __errno_location();
                           error(0, *tmp___7, (char const *)tmp___6);
                           free_cwd(&cwd);
@@ -3762,15 +3303,11 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
                       { free_cwd(&cwd); }
                     }
                     goto while_break___2;
-                  }
-                while_break___15: /* CIL Label */
-                    ;
+                  };
                 }
               while_break___2:;
                 goto while_break___1;
-              }
-            while_break___14: /* CIL Label */
-                ;
+              };
             }
           while_break___1:;
             return (1);
@@ -3786,31 +3323,25 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
               goto _L___0;
             } else {
               if (group != 4294967295U) {
-              _L___0: {
-                tmp___19 = chown((char const *)basename_dir, owner, group);
-              }
+              _L___0: { tmp___19 = chown((char const *)basename_dir, owner, group); }
                 if (tmp___19) {
                   {
                     tmp___11 = quote((char const *)dirpath);
-                    tmp___12 =
-                        gettext("cannot change owner and/or group of %s");
+                    tmp___12 = gettext("cannot change owner and/or group of %s");
                     tmp___13 = __errno_location();
                     error(0, *tmp___13, (char const *)tmp___12, tmp___11);
                   }
                   {
                     while (1) {
-                    while_continue___3: /* CIL Label */
-                        ;
+                      ;
                       { umask(oldmask); }
                       {
                         while (1) {
-                        while_continue___4: /* CIL Label */
-                            ;
+                          ;
 
                           if (do_chdir) {
                             {
-                              tmp___18 =
-                                  restore_cwd((struct saved_cwd const *)(&cwd));
+                              tmp___18 = restore_cwd((struct saved_cwd const *)(&cwd));
                             }
                             if (tmp___18 != 0) {
                               {
@@ -3829,15 +3360,11 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
                             { free_cwd(&cwd); }
                           }
                           goto while_break___4;
-                        }
-                      while_break___17: /* CIL Label */
-                          ;
+                        };
                       }
                     while_break___4:;
                       goto while_break___3;
-                    }
-                  while_break___16: /* CIL Label */
-                      ;
+                    };
                   }
                 while_break___3:;
                   return (1);
@@ -3867,18 +3394,15 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
               }
               {
                 while (1) {
-                while_continue___5: /* CIL Label */
-                    ;
+                  ;
                   { umask(oldmask); }
                   {
                     while (1) {
-                    while_continue___6: /* CIL Label */
-                        ;
+                      ;
 
                       if (do_chdir) {
                         {
-                          tmp___28 =
-                              restore_cwd((struct saved_cwd const *)(&cwd));
+                          tmp___28 = restore_cwd((struct saved_cwd const *)(&cwd));
                         }
                         if (tmp___28 != 0) {
                           {
@@ -3897,15 +3421,11 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
                         { free_cwd(&cwd); }
                       }
                       goto while_break___6;
-                    }
-                  while_break___19: /* CIL Label */
-                      ;
+                    };
                   }
                 while_break___6:;
                   goto while_break___5;
-                }
-              while_break___18: /* CIL Label */
-                  ;
+                };
               }
             while_break___5:;
               return (1);
@@ -3916,21 +3436,16 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
           *tmp___30 = (char)'/';
           {
             while (1) {
-            while_continue___7: /* CIL Label */
-                ;
+              ;
 
               if (!((int)*slash == 47)) {
                 goto while_break___7;
               }
               slash++;
-            }
-          while_break___20: /* CIL Label */
-              ;
+            };
           }
         while_break___7:;
-        }
-      while_break___13: /* CIL Label */
-          ;
+        };
       }
     while_break___0:;
       if (!do_chdir) {
@@ -3938,19 +3453,16 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
       }
       {
         umask(oldmask);
-        tmp___36 = make_dir((char const *)basename_dir, (char const *)dirpath,
-                            (mode_t)mode, (int *)((void *)0));
+        tmp___36 = make_dir((char const *)basename_dir, (char const *)dirpath, (mode_t)mode, (int *)((void *)0));
       }
       if (tmp___36) {
         {
           while (1) {
-          while_continue___8: /* CIL Label */
-              ;
+            ;
             { umask(oldmask); }
             {
               while (1) {
-              while_continue___9: /* CIL Label */
-                  ;
+                ;
 
                 if (do_chdir) {
                   {
@@ -3960,8 +3472,7 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
                     {
                       tmp___31 = __errno_location();
                       _saved_errno___2 = *tmp___31;
-                      tmp___32 = gettext(
-                          "failed to return to initial working directory");
+                      tmp___32 = gettext("failed to return to initial working directory");
                       tmp___33 = __errno_location();
                       error(0, *tmp___33, (char const *)tmp___32);
                       free_cwd(&cwd);
@@ -3973,15 +3484,11 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
                   { free_cwd(&cwd); }
                 }
                 goto while_break___9;
-              }
-            while_break___22: /* CIL Label */
-                ;
+              };
             }
           while_break___9:;
             goto while_break___8;
-          }
-        while_break___21: /* CIL Label */
-            ;
+          };
         }
       while_break___8:;
         return (1);
@@ -4024,8 +3531,7 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
       }
       {
         while (1) {
-        while_continue___10: /* CIL Label */
-            ;
+          ;
 
           if (do_chdir) {
             {
@@ -4035,8 +3541,7 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
               {
                 tmp___46 = __errno_location();
                 _saved_errno___3 = *tmp___46;
-                tmp___47 =
-                    gettext("failed to return to initial working directory");
+                tmp___47 = gettext("failed to return to initial working directory");
                 tmp___48 = __errno_location();
                 error(0, *tmp___48, (char const *)tmp___47);
                 free_cwd(&cwd);
@@ -4048,16 +3553,13 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
             { free_cwd(&cwd); }
           }
           goto while_break___10;
-        }
-      while_break___23: /* CIL Label */
-          ;
+        };
       }
     while_break___10:
       p = leading_dirs;
       {
         while (1) {
-        while_continue___11: /* CIL Label */
-            ;
+          ;
 
           if (!((unsigned long)p != (unsigned long)((void *)0))) {
             goto while_break___11;
@@ -4076,9 +3578,7 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
             }
           }
           p = p->next;
-        }
-      while_break___24: /* CIL Label */
-          ;
+        };
       }
     while_break___11:;
     } else {
@@ -4124,389 +3624,131 @@ int make_path(char const *argpath, int mode, int parent_mode, uid_t owner,
   }
 }
 extern struct _IO_FILE *stdout;
-extern __attribute__((__nothrow__, __noreturn__)) void(
-    __attribute__((__leaf__)) exit)(int __status);
+extern __attribute__((__nothrow__, __noreturn__)) void(__attribute__((__leaf__)) exit)(int __status);
 extern int optind;
 extern int opterr;
-extern int getopt_long(int ___argc, char *const *___argv,
-                       char const *__shortopts, struct option const *__longopts,
-                       int *__longind);
-static struct option const long_options[3] = {
-    {"help", 0, (int *)0, 'h'},
-    {"version", 0, (int *)0, 'v'},
-    {(char const *)0, 0, (int *)0, 0}};
+extern int getopt_long(int ___argc, char *const *___argv, char const *__shortopts, struct option const *__longopts, int *__longind);
+static struct option const long_options[3] = {{"help", 0, (int *)0, 'h'}, {"version", 0, (int *)0, 'v'}, {(char const *)0, 0, (int *)0, 0}};
 extern int fclose(FILE *__stream);
-extern FILE *fopen(char const *__restrict __filename,
-                   char const *__restrict __modes);
-extern int fscanf(FILE *__restrict __stream, char const *__restrict __format,
-                  ...);
+extern FILE *fopen(char const *__restrict __filename, char const *__restrict __modes);
+extern int fscanf(FILE *__restrict __stream, char const *__restrict __format, ...);
 extern int ungetc(int __c, FILE *__stream);
-extern __attribute__((__nothrow__)) char *(
-    __attribute__((__leaf__)) nl_langinfo)(nl_item __item);
+extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) nl_langinfo)(nl_item __item);
 static char const *volatile charset_aliases;
 extern struct passwd *getpwuid(__uid_t __uid);
 static struct userid *user_alist;
 static struct userid *nouser_alist;
 static struct userid *group_alist;
 static struct userid *nogroup_alist;
-extern __attribute__((__nothrow__)) struct lconv *(
-    __attribute__((__leaf__)) localeconv)(void);
-extern __attribute__((__nothrow__)) void *(__attribute__((
-    __nonnull__(1, 2), __leaf__)) memmove)(void *__dest, void const *__src,
-                                           size_t __n);
-static char const power_letter[9] = {
-    (char const)0,   (char const)'K', (char const)'M',
-    (char const)'G', (char const)'T', (char const)'P',
-    (char const)'E', (char const)'Z', (char const)'Y'};
-static char const *const block_size_args[3] = {
-    (char const * /* const  */) "human-readable",
-    (char const * /* const  */) "si",
-    (char const * /* const  */)((char const *)0)};
+extern __attribute__((__nothrow__)) struct lconv *(__attribute__((__leaf__)) localeconv)(void);
+extern __attribute__((__nothrow__)) void *(__attribute__((__nonnull__(1, 2), __leaf__)) memmove)(void *__dest, void const *__src, size_t __n);
+static char const power_letter[9] = {(char const)0, (char const)'K', (char const)'M', (char const)'G', (char const)'T', (char const)'P', (char const)'E', (char const)'Z', (char const)'Y'};
+static char const *const block_size_args[3] = {(char const * /* const  */) "human-readable", (char const * /* const  */) "si", (char const * /* const  */)((char const *)0)};
 static int const block_size_opts[2] = {(int const)112, (int const)80};
-static struct hash_tuning const default_tuning = {
-    (float)0.0, (float)1.0, (float)0.8, (float)1.414, (_Bool)0};
-extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) setlocale)(
-    int __category, char const *__locale);
+static struct hash_tuning const default_tuning = {(float)0.0, (float)1.0, (float)0.8, (float)1.414, (_Bool)0};
+extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) setlocale)(int __category, char const *__locale);
 extern void setgrent(void);
 extern struct group *getgrent(void);
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(1), __leaf__)) gettimeofday)(struct timeval *__restrict __tv,
-                                             __timezone_ptr_t __tz);
-extern
-    __attribute__((__nothrow__)) int(__attribute__((__leaf__)) clock_gettime)(
-        clockid_t __clock_id, struct timespec *__tp);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) gettimeofday)(struct timeval *__restrict __tv, __timezone_ptr_t __tz);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) clock_gettime)(clockid_t __clock_id, struct timespec *__tp);
 static unsigned char const yytranslate[274] = {
-    (unsigned char const)0,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)20,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)21,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)19, (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,
-    (unsigned char const)2,  (unsigned char const)1,  (unsigned char const)2,
-    (unsigned char const)3,  (unsigned char const)4,  (unsigned char const)5,
-    (unsigned char const)6,  (unsigned char const)7,  (unsigned char const)8,
-    (unsigned char const)9,  (unsigned char const)10, (unsigned char const)11,
-    (unsigned char const)12, (unsigned char const)13, (unsigned char const)14,
-    (unsigned char const)15, (unsigned char const)16, (unsigned char const)17,
-    (unsigned char const)18};
-static unsigned char const yyr1[56] = {
-    (unsigned char const)0,  (unsigned char const)22, (unsigned char const)23,
-    (unsigned char const)23, (unsigned char const)24, (unsigned char const)24,
-    (unsigned char const)24, (unsigned char const)24, (unsigned char const)24,
-    (unsigned char const)24, (unsigned char const)24, (unsigned char const)25,
-    (unsigned char const)25, (unsigned char const)25, (unsigned char const)25,
-    (unsigned char const)25, (unsigned char const)26, (unsigned char const)26,
-    (unsigned char const)27, (unsigned char const)27, (unsigned char const)27,
-    (unsigned char const)28, (unsigned char const)28, (unsigned char const)28,
-    (unsigned char const)29, (unsigned char const)29, (unsigned char const)29,
-    (unsigned char const)29, (unsigned char const)29, (unsigned char const)29,
-    (unsigned char const)29, (unsigned char const)29, (unsigned char const)29,
-    (unsigned char const)30, (unsigned char const)30, (unsigned char const)31,
-    (unsigned char const)31, (unsigned char const)31, (unsigned char const)31,
-    (unsigned char const)31, (unsigned char const)31, (unsigned char const)31,
-    (unsigned char const)31, (unsigned char const)31, (unsigned char const)31,
-    (unsigned char const)31, (unsigned char const)31, (unsigned char const)31,
-    (unsigned char const)31, (unsigned char const)31, (unsigned char const)31,
-    (unsigned char const)31, (unsigned char const)31, (unsigned char const)32,
-    (unsigned char const)33, (unsigned char const)33};
-static unsigned char const yyr2[56] = {
-    (unsigned char const)0, (unsigned char const)2, (unsigned char const)0,
-    (unsigned char const)2, (unsigned char const)1, (unsigned char const)1,
-    (unsigned char const)1, (unsigned char const)1, (unsigned char const)1,
-    (unsigned char const)1, (unsigned char const)1, (unsigned char const)2,
-    (unsigned char const)4, (unsigned char const)4, (unsigned char const)6,
-    (unsigned char const)6, (unsigned char const)1, (unsigned char const)2,
-    (unsigned char const)1, (unsigned char const)1, (unsigned char const)2,
-    (unsigned char const)1, (unsigned char const)2, (unsigned char const)2,
-    (unsigned char const)3, (unsigned char const)5, (unsigned char const)3,
-    (unsigned char const)3, (unsigned char const)3, (unsigned char const)2,
-    (unsigned char const)4, (unsigned char const)2, (unsigned char const)3,
-    (unsigned char const)2, (unsigned char const)1, (unsigned char const)2,
-    (unsigned char const)2, (unsigned char const)1, (unsigned char const)2,
-    (unsigned char const)2, (unsigned char const)1, (unsigned char const)2,
-    (unsigned char const)2, (unsigned char const)1, (unsigned char const)2,
-    (unsigned char const)2, (unsigned char const)1, (unsigned char const)2,
-    (unsigned char const)2, (unsigned char const)1, (unsigned char const)2,
-    (unsigned char const)2, (unsigned char const)1, (unsigned char const)1,
-    (unsigned char const)0, (unsigned char const)1};
-static unsigned char const yydefact[66] = {
-    (unsigned char const)2,  (unsigned char const)0,  (unsigned char const)1,
-    (unsigned char const)21, (unsigned char const)43, (unsigned char const)19,
-    (unsigned char const)46, (unsigned char const)16, (unsigned char const)49,
-    (unsigned char const)0,  (unsigned char const)40, (unsigned char const)52,
-    (unsigned char const)37, (unsigned char const)18, (unsigned char const)0,
-    (unsigned char const)53, (unsigned char const)3,  (unsigned char const)4,
-    (unsigned char const)5,  (unsigned char const)6,  (unsigned char const)8,
-    (unsigned char const)7,  (unsigned char const)9,  (unsigned char const)34,
-    (unsigned char const)10, (unsigned char const)22, (unsigned char const)17,
-    (unsigned char const)0,  (unsigned char const)29, (unsigned char const)20,
-    (unsigned char const)42, (unsigned char const)45, (unsigned char const)48,
-    (unsigned char const)39, (unsigned char const)51, (unsigned char const)36,
-    (unsigned char const)23, (unsigned char const)41, (unsigned char const)44,
-    (unsigned char const)11, (unsigned char const)47, (unsigned char const)31,
-    (unsigned char const)38, (unsigned char const)50, (unsigned char const)35,
-    (unsigned char const)0,  (unsigned char const)0,  (unsigned char const)0,
-    (unsigned char const)33, (unsigned char const)28, (unsigned char const)0,
-    (unsigned char const)27, (unsigned char const)32, (unsigned char const)26,
-    (unsigned char const)54, (unsigned char const)24, (unsigned char const)30,
-    (unsigned char const)55, (unsigned char const)13, (unsigned char const)0,
-    (unsigned char const)12, (unsigned char const)0,  (unsigned char const)54,
-    (unsigned char const)25, (unsigned char const)15, (unsigned char const)14};
-static yysigned_char const yydefgoto[12] = {
-    (yysigned_char const)-1, (yysigned_char const)1,  (yysigned_char const)16,
-    (yysigned_char const)17, (yysigned_char const)18, (yysigned_char const)19,
-    (yysigned_char const)20, (yysigned_char const)21, (yysigned_char const)22,
-    (yysigned_char const)23, (yysigned_char const)24, (yysigned_char const)60};
-static yysigned_char const yypact[66] = {
-    (yysigned_char const)-17, (yysigned_char const)0,
-    (yysigned_char const)-17, (yysigned_char const)1,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)19,
-    (yysigned_char const)-17, (yysigned_char const)-16,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)32,
-    (yysigned_char const)26,  (yysigned_char const)14,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)27,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-13,
-    (yysigned_char const)24,  (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)25,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)29,
-    (yysigned_char const)30,  (yysigned_char const)31,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)33,  (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)28,  (yysigned_char const)34,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)35,
-    (yysigned_char const)-17, (yysigned_char const)36,
-    (yysigned_char const)-7,  (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-17};
-static yysigned_char const yypgoto[12] = {
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-17,
-    (yysigned_char const)-17, (yysigned_char const)-12};
-static unsigned char const yytable[56] = {
-    (unsigned char const)2,  (unsigned char const)27, (unsigned char const)28,
-    (unsigned char const)57, (unsigned char const)49, (unsigned char const)3,
-    (unsigned char const)4,  (unsigned char const)5,  (unsigned char const)6,
-    (unsigned char const)7,  (unsigned char const)64, (unsigned char const)8,
-    (unsigned char const)9,  (unsigned char const)10, (unsigned char const)11,
-    (unsigned char const)12, (unsigned char const)13, (unsigned char const)14,
-    (unsigned char const)15, (unsigned char const)36, (unsigned char const)37,
-    (unsigned char const)25, (unsigned char const)38, (unsigned char const)26,
-    (unsigned char const)39, (unsigned char const)40, (unsigned char const)41,
-    (unsigned char const)42, (unsigned char const)43, (unsigned char const)44,
-    (unsigned char const)48, (unsigned char const)45, (unsigned char const)30,
-    (unsigned char const)46, (unsigned char const)31, (unsigned char const)47,
-    (unsigned char const)29, (unsigned char const)32, (unsigned char const)57,
-    (unsigned char const)33, (unsigned char const)34, (unsigned char const)35,
-    (unsigned char const)51, (unsigned char const)52, (unsigned char const)50,
-    (unsigned char const)58, (unsigned char const)53, (unsigned char const)59,
-    (unsigned char const)54, (unsigned char const)55, (unsigned char const)65,
-    (unsigned char const)56, (unsigned char const)0,  (unsigned char const)62,
-    (unsigned char const)63, (unsigned char const)61};
-static yysigned_char const yycheck[56] = {
-    (yysigned_char const)0,  (yysigned_char const)17, (yysigned_char const)18,
-    (yysigned_char const)10, (yysigned_char const)17, (yysigned_char const)5,
-    (yysigned_char const)6,  (yysigned_char const)7,  (yysigned_char const)8,
-    (yysigned_char const)9,  (yysigned_char const)17, (yysigned_char const)11,
-    (yysigned_char const)12, (yysigned_char const)13, (yysigned_char const)14,
-    (yysigned_char const)15, (yysigned_char const)16, (yysigned_char const)17,
-    (yysigned_char const)18, (yysigned_char const)5,  (yysigned_char const)6,
-    (yysigned_char const)20, (yysigned_char const)8,  (yysigned_char const)4,
-    (yysigned_char const)10, (yysigned_char const)11, (yysigned_char const)12,
-    (yysigned_char const)13, (yysigned_char const)14, (yysigned_char const)15,
-    (yysigned_char const)3,  (yysigned_char const)17, (yysigned_char const)6,
-    (yysigned_char const)19, (yysigned_char const)8,  (yysigned_char const)21,
-    (yysigned_char const)4,  (yysigned_char const)11, (yysigned_char const)10,
-    (yysigned_char const)13, (yysigned_char const)14, (yysigned_char const)15,
-    (yysigned_char const)17, (yysigned_char const)18, (yysigned_char const)20,
-    (yysigned_char const)17, (yysigned_char const)17, (yysigned_char const)19,
-    (yysigned_char const)18, (yysigned_char const)18, (yysigned_char const)62,
-    (yysigned_char const)18, (yysigned_char const)-1, (yysigned_char const)18,
-    (yysigned_char const)18, (yysigned_char const)21};
-static unsigned char const yystos[66] = {
-    (unsigned char const)0,  (unsigned char const)23, (unsigned char const)0,
-    (unsigned char const)5,  (unsigned char const)6,  (unsigned char const)7,
-    (unsigned char const)8,  (unsigned char const)9,  (unsigned char const)11,
-    (unsigned char const)12, (unsigned char const)13, (unsigned char const)14,
-    (unsigned char const)15, (unsigned char const)16, (unsigned char const)17,
-    (unsigned char const)18, (unsigned char const)24, (unsigned char const)25,
-    (unsigned char const)26, (unsigned char const)27, (unsigned char const)28,
-    (unsigned char const)29, (unsigned char const)30, (unsigned char const)31,
-    (unsigned char const)32, (unsigned char const)20, (unsigned char const)4,
-    (unsigned char const)17, (unsigned char const)18, (unsigned char const)4,
-    (unsigned char const)6,  (unsigned char const)8,  (unsigned char const)11,
-    (unsigned char const)13, (unsigned char const)14, (unsigned char const)15,
-    (unsigned char const)5,  (unsigned char const)6,  (unsigned char const)8,
-    (unsigned char const)10, (unsigned char const)11, (unsigned char const)12,
-    (unsigned char const)13, (unsigned char const)14, (unsigned char const)15,
-    (unsigned char const)17, (unsigned char const)19, (unsigned char const)21,
-    (unsigned char const)3,  (unsigned char const)17, (unsigned char const)20,
-    (unsigned char const)17, (unsigned char const)18, (unsigned char const)17,
-    (unsigned char const)18, (unsigned char const)18, (unsigned char const)18,
-    (unsigned char const)10, (unsigned char const)17, (unsigned char const)19,
-    (unsigned char const)33, (unsigned char const)21, (unsigned char const)18,
-    (unsigned char const)18, (unsigned char const)17, (unsigned char const)33};
-static table const meridian_table[5] = {{"AM", 265, 0},
-                                        {"A.M.", 265, 0},
-                                        {"PM", 265, 1},
-                                        {"P.M.", 265, 1},
-                                        {(char const *)0, 0, 0}};
+    (unsigned char const)0,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)20, (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)21, (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)19, (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2, (unsigned char const)2,
+    (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)2,  (unsigned char const)1,  (unsigned char const)2,  (unsigned char const)3,  (unsigned char const)4,  (unsigned char const)5,  (unsigned char const)6,  (unsigned char const)7, (unsigned char const)8,
+    (unsigned char const)9,  (unsigned char const)10, (unsigned char const)11, (unsigned char const)12, (unsigned char const)13, (unsigned char const)14, (unsigned char const)15, (unsigned char const)16, (unsigned char const)17, (unsigned char const)18};
+static unsigned char const yyr1[56] = {(unsigned char const)0,  (unsigned char const)22, (unsigned char const)23, (unsigned char const)23, (unsigned char const)24, (unsigned char const)24, (unsigned char const)24, (unsigned char const)24, (unsigned char const)24, (unsigned char const)24,
+                                       (unsigned char const)24, (unsigned char const)25, (unsigned char const)25, (unsigned char const)25, (unsigned char const)25, (unsigned char const)25, (unsigned char const)26, (unsigned char const)26, (unsigned char const)27, (unsigned char const)27,
+                                       (unsigned char const)27, (unsigned char const)28, (unsigned char const)28, (unsigned char const)28, (unsigned char const)29, (unsigned char const)29, (unsigned char const)29, (unsigned char const)29, (unsigned char const)29, (unsigned char const)29,
+                                       (unsigned char const)29, (unsigned char const)29, (unsigned char const)29, (unsigned char const)30, (unsigned char const)30, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31,
+                                       (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)31,
+                                       (unsigned char const)31, (unsigned char const)31, (unsigned char const)31, (unsigned char const)32, (unsigned char const)33, (unsigned char const)33};
+static unsigned char const yyr2[56] = {(unsigned char const)0, (unsigned char const)2, (unsigned char const)0, (unsigned char const)2, (unsigned char const)1, (unsigned char const)1, (unsigned char const)1, (unsigned char const)1, (unsigned char const)1, (unsigned char const)1,
+                                       (unsigned char const)1, (unsigned char const)2, (unsigned char const)4, (unsigned char const)4, (unsigned char const)6, (unsigned char const)6, (unsigned char const)1, (unsigned char const)2, (unsigned char const)1, (unsigned char const)1,
+                                       (unsigned char const)2, (unsigned char const)1, (unsigned char const)2, (unsigned char const)2, (unsigned char const)3, (unsigned char const)5, (unsigned char const)3, (unsigned char const)3, (unsigned char const)3, (unsigned char const)2,
+                                       (unsigned char const)4, (unsigned char const)2, (unsigned char const)3, (unsigned char const)2, (unsigned char const)1, (unsigned char const)2, (unsigned char const)2, (unsigned char const)1, (unsigned char const)2, (unsigned char const)2,
+                                       (unsigned char const)1, (unsigned char const)2, (unsigned char const)2, (unsigned char const)1, (unsigned char const)2, (unsigned char const)2, (unsigned char const)1, (unsigned char const)2, (unsigned char const)2, (unsigned char const)1,
+                                       (unsigned char const)2, (unsigned char const)2, (unsigned char const)1, (unsigned char const)1, (unsigned char const)0, (unsigned char const)1};
+static unsigned char const yydefact[66] = {(unsigned char const)2,  (unsigned char const)0,  (unsigned char const)1,  (unsigned char const)21, (unsigned char const)43, (unsigned char const)19, (unsigned char const)46, (unsigned char const)16, (unsigned char const)49, (unsigned char const)0,
+                                           (unsigned char const)40, (unsigned char const)52, (unsigned char const)37, (unsigned char const)18, (unsigned char const)0,  (unsigned char const)53, (unsigned char const)3,  (unsigned char const)4,  (unsigned char const)5,  (unsigned char const)6,
+                                           (unsigned char const)8,  (unsigned char const)7,  (unsigned char const)9,  (unsigned char const)34, (unsigned char const)10, (unsigned char const)22, (unsigned char const)17, (unsigned char const)0,  (unsigned char const)29, (unsigned char const)20,
+                                           (unsigned char const)42, (unsigned char const)45, (unsigned char const)48, (unsigned char const)39, (unsigned char const)51, (unsigned char const)36, (unsigned char const)23, (unsigned char const)41, (unsigned char const)44, (unsigned char const)11,
+                                           (unsigned char const)47, (unsigned char const)31, (unsigned char const)38, (unsigned char const)50, (unsigned char const)35, (unsigned char const)0,  (unsigned char const)0,  (unsigned char const)0,  (unsigned char const)33, (unsigned char const)28,
+                                           (unsigned char const)0,  (unsigned char const)27, (unsigned char const)32, (unsigned char const)26, (unsigned char const)54, (unsigned char const)24, (unsigned char const)30, (unsigned char const)55, (unsigned char const)13, (unsigned char const)0,
+                                           (unsigned char const)12, (unsigned char const)0,  (unsigned char const)54, (unsigned char const)25, (unsigned char const)15, (unsigned char const)14};
+static yysigned_char const yydefgoto[12] = {(yysigned_char const)-1, (yysigned_char const)1,  (yysigned_char const)16, (yysigned_char const)17, (yysigned_char const)18, (yysigned_char const)19,
+                                            (yysigned_char const)20, (yysigned_char const)21, (yysigned_char const)22, (yysigned_char const)23, (yysigned_char const)24, (yysigned_char const)60};
+static yysigned_char const yypact[66] = {(yysigned_char const)-17, (yysigned_char const)0,   (yysigned_char const)-17, (yysigned_char const)1,   (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)19,  (yysigned_char const)-17, (yysigned_char const)-16,
+                                         (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)32,  (yysigned_char const)26,  (yysigned_char const)14,  (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17,
+                                         (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)27,  (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-13, (yysigned_char const)24,  (yysigned_char const)-17,
+                                         (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17,
+                                         (yysigned_char const)-17, (yysigned_char const)25,  (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)29,  (yysigned_char const)30,  (yysigned_char const)31,  (yysigned_char const)-17, (yysigned_char const)-17,
+                                         (yysigned_char const)33,  (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)28,  (yysigned_char const)34,  (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)35,
+                                         (yysigned_char const)-17, (yysigned_char const)36,  (yysigned_char const)-7,  (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17};
+static yysigned_char const yypgoto[12] = {(yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17,
+                                          (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-17, (yysigned_char const)-12};
+static unsigned char const yytable[56] = {(unsigned char const)2,  (unsigned char const)27, (unsigned char const)28, (unsigned char const)57, (unsigned char const)49, (unsigned char const)3,  (unsigned char const)4,  (unsigned char const)5,  (unsigned char const)6,  (unsigned char const)7,
+                                          (unsigned char const)64, (unsigned char const)8,  (unsigned char const)9,  (unsigned char const)10, (unsigned char const)11, (unsigned char const)12, (unsigned char const)13, (unsigned char const)14, (unsigned char const)15, (unsigned char const)36,
+                                          (unsigned char const)37, (unsigned char const)25, (unsigned char const)38, (unsigned char const)26, (unsigned char const)39, (unsigned char const)40, (unsigned char const)41, (unsigned char const)42, (unsigned char const)43, (unsigned char const)44,
+                                          (unsigned char const)48, (unsigned char const)45, (unsigned char const)30, (unsigned char const)46, (unsigned char const)31, (unsigned char const)47, (unsigned char const)29, (unsigned char const)32, (unsigned char const)57, (unsigned char const)33,
+                                          (unsigned char const)34, (unsigned char const)35, (unsigned char const)51, (unsigned char const)52, (unsigned char const)50, (unsigned char const)58, (unsigned char const)53, (unsigned char const)59, (unsigned char const)54, (unsigned char const)55,
+                                          (unsigned char const)65, (unsigned char const)56, (unsigned char const)0,  (unsigned char const)62, (unsigned char const)63, (unsigned char const)61};
+static yysigned_char const yycheck[56] = {(yysigned_char const)0,  (yysigned_char const)17, (yysigned_char const)18, (yysigned_char const)10, (yysigned_char const)17, (yysigned_char const)5,  (yysigned_char const)6,  (yysigned_char const)7,  (yysigned_char const)8,  (yysigned_char const)9,
+                                          (yysigned_char const)17, (yysigned_char const)11, (yysigned_char const)12, (yysigned_char const)13, (yysigned_char const)14, (yysigned_char const)15, (yysigned_char const)16, (yysigned_char const)17, (yysigned_char const)18, (yysigned_char const)5,
+                                          (yysigned_char const)6,  (yysigned_char const)20, (yysigned_char const)8,  (yysigned_char const)4,  (yysigned_char const)10, (yysigned_char const)11, (yysigned_char const)12, (yysigned_char const)13, (yysigned_char const)14, (yysigned_char const)15,
+                                          (yysigned_char const)3,  (yysigned_char const)17, (yysigned_char const)6,  (yysigned_char const)19, (yysigned_char const)8,  (yysigned_char const)21, (yysigned_char const)4,  (yysigned_char const)11, (yysigned_char const)10, (yysigned_char const)13,
+                                          (yysigned_char const)14, (yysigned_char const)15, (yysigned_char const)17, (yysigned_char const)18, (yysigned_char const)20, (yysigned_char const)17, (yysigned_char const)17, (yysigned_char const)19, (yysigned_char const)18, (yysigned_char const)18,
+                                          (yysigned_char const)62, (yysigned_char const)18, (yysigned_char const)-1, (yysigned_char const)18, (yysigned_char const)18, (yysigned_char const)21};
+static unsigned char const yystos[66] = {(unsigned char const)0,  (unsigned char const)23, (unsigned char const)0,  (unsigned char const)5,  (unsigned char const)6,  (unsigned char const)7,  (unsigned char const)8,  (unsigned char const)9,  (unsigned char const)11, (unsigned char const)12,
+                                         (unsigned char const)13, (unsigned char const)14, (unsigned char const)15, (unsigned char const)16, (unsigned char const)17, (unsigned char const)18, (unsigned char const)24, (unsigned char const)25, (unsigned char const)26, (unsigned char const)27,
+                                         (unsigned char const)28, (unsigned char const)29, (unsigned char const)30, (unsigned char const)31, (unsigned char const)32, (unsigned char const)20, (unsigned char const)4,  (unsigned char const)17, (unsigned char const)18, (unsigned char const)4,
+                                         (unsigned char const)6,  (unsigned char const)8,  (unsigned char const)11, (unsigned char const)13, (unsigned char const)14, (unsigned char const)15, (unsigned char const)5,  (unsigned char const)6,  (unsigned char const)8,  (unsigned char const)10,
+                                         (unsigned char const)11, (unsigned char const)12, (unsigned char const)13, (unsigned char const)14, (unsigned char const)15, (unsigned char const)17, (unsigned char const)19, (unsigned char const)21, (unsigned char const)3,  (unsigned char const)17,
+                                         (unsigned char const)20, (unsigned char const)17, (unsigned char const)18, (unsigned char const)17, (unsigned char const)18, (unsigned char const)18, (unsigned char const)18, (unsigned char const)10, (unsigned char const)17, (unsigned char const)19,
+                                         (unsigned char const)33, (unsigned char const)21, (unsigned char const)18, (unsigned char const)18, (unsigned char const)17, (unsigned char const)33};
+static table const meridian_table[5] = {{"AM", 265, 0}, {"A.M.", 265, 0}, {"PM", 265, 1}, {"P.M.", 265, 1}, {(char const *)0, 0, 0}};
 static table const dst_table[1] = {{"DST", 259, 0}};
-static table const month_and_day_table[25] = {
-    {"JANUARY", 267, 1},    {"FEBRUARY", 267, 2}, {"MARCH", 267, 3},
-    {"APRIL", 267, 4},      {"MAY", 267, 5},      {"JUNE", 267, 6},
-    {"JULY", 267, 7},       {"AUGUST", 267, 8},   {"SEPTEMBER", 267, 9},
-    {"SEPT", 267, 9},       {"OCTOBER", 267, 10}, {"NOVEMBER", 267, 11},
-    {"DECEMBER", 267, 12},  {"SUNDAY", 260, 0},   {"MONDAY", 260, 1},
-    {"TUESDAY", 260, 2},    {"TUES", 260, 2},     {"WEDNESDAY", 260, 3},
-    {"WEDNES", 260, 3},     {"THURSDAY", 260, 4}, {"THUR", 260, 4},
-    {"THURS", 260, 4},      {"FRIDAY", 260, 5},   {"SATURDAY", 260, 6},
-    {(char const *)0, 0, 0}};
-static table const time_units_table[11] = {
-    {"YEAR", 270, 1},   {"MONTH", 268, 1},      {"FORTNIGHT", 261, 14},
-    {"WEEK", 261, 7},   {"DAY", 261, 1},        {"HOUR", 263, 1},
-    {"MINUTE", 266, 1}, {"MIN", 266, 1},        {"SECOND", 269, 1},
-    {"SEC", 269, 1},    {(char const *)0, 0, 0}};
-static table const relative_time_table[20] = {
-    {"TOMORROW", 261, 1}, {"YESTERDAY", 261, -1}, {"TODAY", 261, 0},
-    {"NOW", 261, 0},      {"LAST", 273, -1},      {"THIS", 273, 0},
-    {"NEXT", 273, 1},     {"FIRST", 273, 1},      {"THIRD", 273, 3},
-    {"FOURTH", 273, 4},   {"FIFTH", 273, 5},      {"SIXTH", 273, 6},
-    {"SEVENTH", 273, 7},  {"EIGHTH", 273, 8},     {"NINTH", 273, 9},
-    {"TENTH", 273, 10},   {"ELEVENTH", 273, 11},  {"TWELFTH", 273, 12},
-    {"AGO", 258, 1},      {(char const *)0, 0, 0}};
-static table const time_zone_table[51] = {
-    {"GMT", 271, 0},     {"UT", 271, 0},     {"UTC", 271, 0},
-    {"WET", 271, 0},     {"WEST", 262, 0},   {"BST", 262, 0},
-    {"ART", 271, -180},  {"BRT", 271, -180}, {"BRST", 262, -180},
-    {"NST", 271, -210},  {"NDT", 262, -210}, {"AST", 271, -240},
-    {"ADT", 262, -240},  {"CLT", 271, -240}, {"CLST", 262, -240},
-    {"EST", 271, -300},  {"EDT", 262, -300}, {"CST", 271, -360},
-    {"CDT", 262, -360},  {"MST", 271, -420}, {"MDT", 262, -420},
-    {"PST", 271, -480},  {"PDT", 262, -480}, {"AKST", 271, -540},
-    {"AKDT", 262, -540}, {"HST", 271, -600}, {"HAST", 271, -600},
-    {"HADT", 262, -600}, {"SST", 271, -720}, {"WAT", 271, 60},
-    {"CET", 271, 60},    {"CEST", 262, 60},  {"MET", 271, 60},
-    {"MEZ", 271, 60},    {"MEST", 262, 60},  {"MESZ", 262, 60},
-    {"EET", 271, 120},   {"EEST", 262, 120}, {"CAT", 271, 120},
-    {"SAST", 271, 120},  {"EAT", 271, 180},  {"MSK", 271, 180},
-    {"MSD", 262, 180},   {"IST", 271, 330},  {"SGT", 271, 480},
-    {"KST", 271, 540},   {"JST", 271, 540},  {"GST", 271, 600},
-    {"NZST", 271, 720},  {"NZDT", 262, 720}, {(char const *)0, 0, 0}};
-static table const military_table[26] = {
-    {"A", 271, -60},  {"B", 271, -120},       {"C", 271, -180},
-    {"D", 271, -240}, {"E", 271, -300},       {"F", 271, -360},
-    {"G", 271, -420}, {"H", 271, -480},       {"I", 271, -540},
-    {"K", 271, -600}, {"L", 271, -660},       {"M", 271, -720},
-    {"N", 271, 60},   {"O", 271, 120},        {"P", 271, 180},
-    {"Q", 271, 240},  {"R", 271, 300},        {"S", 271, 360},
-    {"T", 271, 420},  {"U", 271, 480},        {"V", 271, 540},
-    {"W", 271, 600},  {"X", 271, 660},        {"Y", 271, 720},
-    {"Z", 271, 0},    {(char const *)0, 0, 0}};
+static table const month_and_day_table[25] = {{"JANUARY", 267, 1}, {"FEBRUARY", 267, 2}, {"MARCH", 267, 3},     {"APRIL", 267, 4},     {"MAY", 267, 5},    {"JUNE", 267, 6},     {"JULY", 267, 7},       {"AUGUST", 267, 8}, {"SEPTEMBER", 267, 9},
+                                              {"SEPT", 267, 9},    {"OCTOBER", 267, 10}, {"NOVEMBER", 267, 11}, {"DECEMBER", 267, 12}, {"SUNDAY", 260, 0}, {"MONDAY", 260, 1},   {"TUESDAY", 260, 2},    {"TUES", 260, 2},   {"WEDNESDAY", 260, 3},
+                                              {"WEDNES", 260, 3},  {"THURSDAY", 260, 4}, {"THUR", 260, 4},      {"THURS", 260, 4},     {"FRIDAY", 260, 5}, {"SATURDAY", 260, 6}, {(char const *)0, 0, 0}};
+static table const time_units_table[11] = {{"YEAR", 270, 1}, {"MONTH", 268, 1}, {"FORTNIGHT", 261, 14}, {"WEEK", 261, 7}, {"DAY", 261, 1}, {"HOUR", 263, 1}, {"MINUTE", 266, 1}, {"MIN", 266, 1}, {"SECOND", 269, 1}, {"SEC", 269, 1}, {(char const *)0, 0, 0}};
+static table const relative_time_table[20] = {{"TOMORROW", 261, 1}, {"YESTERDAY", 261, -1}, {"TODAY", 261, 0},   {"NOW", 261, 0},    {"LAST", 273, -1}, {"THIS", 273, 0},   {"NEXT", 273, 1},      {"FIRST", 273, 1},    {"THIRD", 273, 3}, {"FOURTH", 273, 4},
+                                              {"FIFTH", 273, 5},    {"SIXTH", 273, 6},      {"SEVENTH", 273, 7}, {"EIGHTH", 273, 8}, {"NINTH", 273, 9}, {"TENTH", 273, 10}, {"ELEVENTH", 273, 11}, {"TWELFTH", 273, 12}, {"AGO", 258, 1},   {(char const *)0, 0, 0}};
+static table const time_zone_table[51] = {{"GMT", 271, 0},    {"UT", 271, 0},      {"UTC", 271, 0},     {"WET", 271, 0},     {"WEST", 262, 0},    {"BST", 262, 0},     {"ART", 271, -180},     {"BRT", 271, -180}, {"BRST", 262, -180}, {"NST", 271, -210}, {"NDT", 262, -210},
+                                          {"AST", 271, -240}, {"ADT", 262, -240},  {"CLT", 271, -240},  {"CLST", 262, -240}, {"EST", 271, -300},  {"EDT", 262, -300},  {"CST", 271, -360},     {"CDT", 262, -360}, {"MST", 271, -420},  {"MDT", 262, -420}, {"PST", 271, -480},
+                                          {"PDT", 262, -480}, {"AKST", 271, -540}, {"AKDT", 262, -540}, {"HST", 271, -600},  {"HAST", 271, -600}, {"HADT", 262, -600}, {"SST", 271, -720},     {"WAT", 271, 60},   {"CET", 271, 60},    {"CEST", 262, 60},  {"MET", 271, 60},
+                                          {"MEZ", 271, 60},   {"MEST", 262, 60},   {"MESZ", 262, 60},   {"EET", 271, 120},   {"EEST", 262, 120},  {"CAT", 271, 120},   {"SAST", 271, 120},     {"EAT", 271, 180},  {"MSK", 271, 180},   {"MSD", 262, 180},  {"IST", 271, 330},
+                                          {"SGT", 271, 480},  {"KST", 271, 540},   {"JST", 271, 540},   {"GST", 271, 600},   {"NZST", 271, 720},  {"NZDT", 262, 720},  {(char const *)0, 0, 0}};
+static table const military_table[26] = {{"A", 271, -60}, {"B", 271, -120}, {"C", 271, -180}, {"D", 271, -240}, {"E", 271, -300}, {"F", 271, -360}, {"G", 271, -420}, {"H", 271, -480}, {"I", 271, -540}, {"K", 271, -600}, {"L", 271, -660}, {"M", 271, -720}, {"N", 271, 60},
+                                         {"O", 271, 120}, {"P", 271, 180},  {"Q", 271, 240},  {"R", 271, 300},  {"S", 271, 360},  {"T", 271, 420},  {"U", 271, 480},  {"V", 271, 540},  {"W", 271, 600},  {"X", 271, 660},  {"Y", 271, 720},  {"Z", 271, 0},    {(char const *)0, 0, 0}};
 extern char *getcwd(char *buf, size_t size);
-__attribute__((__nothrow__)) char *(__attribute__((__leaf__)) rpl_getcwd)(
-    char *buf, size_t size);
+__attribute__((__nothrow__)) char *(__attribute__((__leaf__)) rpl_getcwd)(char *buf, size_t size);
 char *(__attribute__((__leaf__)) rpl_getcwd)(char *buf, size_t size) {
   char *cwd;
   char *tmp;
   size_t tmp___0;
   int tmp___1;
   int *tmp___2;
-  char *__cil_tmp8;
 
   {
     {
@@ -4533,19 +3775,12 @@ char *(__attribute__((__leaf__)) rpl_getcwd)(char *buf, size_t size) {
     return ((char *)((void *)0));
   }
 }
-extern __attribute__((__nothrow__)) int(__attribute__((
-    __nonnull__(2), __leaf__)) fstat)(int __fd, struct stat *__buf);
-extern void(__attribute__((__nonnull__(1, 4))) qsort)(
-    void *__base, size_t __nmemb, size_t __size,
-    int (*__compar)(void const *, void const *));
-extern char *(__attribute__((__nonnull__(1))) strrchr)(char const *__s, int __c)
-    __attribute__((__pure__));
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(2), __leaf__)) fstat)(int __fd, struct stat *__buf);
+extern void(__attribute__((__nonnull__(1, 4))) qsort)(void *__base, size_t __nmemb, size_t __size, int (*__compar)(void const *, void const *));
+extern char *(__attribute__((__nonnull__(1))) strrchr)(char const *__s, int __c) __attribute__((__pure__));
 extern int(__attribute__((__nonnull__(1))) dirfd)(DIR *__dirp);
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__nonnull__(1, 2), __leaf__)) statfs)(char const *__file,
-                                                         struct statfs *__buf);
-extern __attribute__((__nothrow__)) void(__attribute__((__leaf__)) free)(
-    void *__ptr);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) statfs)(char const *__file, struct statfs *__buf);
+extern __attribute__((__nothrow__)) void(__attribute__((__leaf__)) free)(void *__ptr);
 __attribute__((__nothrow__)) void(__attribute__((__leaf__)) rpl_free)(void *p);
 void(__attribute__((__leaf__)) rpl_free)(void *p) {
 
@@ -4558,19 +3793,12 @@ void(__attribute__((__leaf__)) rpl_free)(void *p) {
     return;
   }
 }
-extern __attribute__((__nothrow__))
-FILE *(__attribute__((__leaf__)) fdopen)(int __fd, char const *__modes);
-extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fileno)(
-    FILE *__stream);
+extern __attribute__((__nothrow__)) FILE *(__attribute__((__leaf__)) fdopen)(int __fd, char const *__modes);
+extern __attribute__((__nothrow__)) int(__attribute__((__leaf__)) fileno)(FILE *__stream);
 int volatile exit_failure = (int volatile)1;
 extern struct _IO_FILE *stdin;
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__nonnull__(1, 2), __leaf__)) strcasecmp)(char const *__s1,
-                                                             char const *__s2)
-    __attribute__((__pure__));
-extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2),
-                                                       __leaf__)) strncasecmp)(
-    char const *__s1, char const *__s2, size_t __n) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) strcasecmp)(char const *__s1, char const *__s2) __attribute__((__pure__));
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1, 2), __leaf__)) strncasecmp)(char const *__s1, char const *__s2, size_t __n) __attribute__((__pure__));
 extern int fnmatch(char const *__pattern, char const *__name, int __flags);
 extern int fcntl(int __fd, int __cmd, ...);
 size_t dir_len(char const *path);
@@ -4587,8 +3815,7 @@ size_t dir_len(char const *path) {
     }
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+        ;
 
         if (!(prefix_length < length)) {
           goto while_break;
@@ -4597,13 +3824,10 @@ size_t dir_len(char const *path) {
           return (length);
         }
         length--;
-      }
-    while_break___0: /* CIL Label */
-        ;
+      };
     }
   while_break:;
-    return (prefix_length +
-            (size_t)((int const) * (path + prefix_length) == 47));
+    return (prefix_length + (size_t)((int const) * (path + prefix_length) == 47));
   }
 }
 char *dir_name(char const *path) {
@@ -4621,8 +3845,7 @@ char *dir_name(char const *path) {
       append_dot = length == 0UL;
       tmp___0 = xmalloc((length + (size_t)append_dot) + 1UL);
       newpath = (char *)tmp___0;
-      memcpy((void * /* __restrict  */)((void *)newpath),
-             (void const * /* __restrict  */)((void const *)path), length);
+      memcpy((void * /* __restrict  */)((void *)newpath), (void const * /* __restrict  */)((void const *)path), length);
     }
     if (append_dot) {
       tmp___1 = length;
@@ -4636,126 +3859,39 @@ char *dir_name(char const *path) {
 char const diacrit_base[256];
 char const diacrit_diac[256];
 char const diacrit_base[256] = {
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)'A', (char const)'B', (char const)'C',
-    (char const)'D', (char const)'E', (char const)'F', (char const)'G',
-    (char const)'H', (char const)'I', (char const)'J', (char const)'K',
-    (char const)'L', (char const)'M', (char const)'N', (char const)'O',
-    (char const)'P', (char const)'Q', (char const)'R', (char const)'S',
-    (char const)'T', (char const)'U', (char const)'V', (char const)'W',
-    (char const)'X', (char const)'Y', (char const)'Z', (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)'a', (char const)'b', (char const)'c',
-    (char const)'d', (char const)'e', (char const)'f', (char const)'g',
-    (char const)'h', (char const)'i', (char const)'j', (char const)'k',
-    (char const)'l', (char const)'m', (char const)'n', (char const)'o',
-    (char const)'p', (char const)'q', (char const)'r', (char const)'s',
-    (char const)'t', (char const)'u', (char const)'v', (char const)'w',
-    (char const)'x', (char const)'y', (char const)'z', (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)0,   (char const)0,   (char const)0,   (char const)0,
-    (char const)'A', (char const)'A', (char const)'A', (char const)'A',
-    (char const)'A', (char const)'A', (char const)'A', (char const)'C',
-    (char const)'E', (char const)'E', (char const)'E', (char const)'E',
-    (char const)'I', (char const)'I', (char const)'I', (char const)'I',
-    (char const)0,   (char const)'N', (char const)'O', (char const)'O',
-    (char const)'O', (char const)'O', (char const)'O', (char const)0,
-    (char const)'O', (char const)'U', (char const)'U', (char const)'U',
-    (char const)'U', (char const)'Y', (char const)0,   (char const)0,
-    (char const)'a', (char const)'a', (char const)'a', (char const)'a',
-    (char const)'a', (char const)'a', (char const)'a', (char const)'c',
-    (char const)'e', (char const)'e', (char const)'e', (char const)'e',
-    (char const)'i', (char const)'i', (char const)'i', (char const)'i',
-    (char const)0,   (char const)'n', (char const)'o', (char const)'o',
-    (char const)'o', (char const)'o', (char const)'o', (char const)0,
-    (char const)'o', (char const)'u', (char const)'u', (char const)'u',
-    (char const)'u', (char const)'y', (char const)0,   (char const)'y'};
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)'A', (char const)'B', (char const)'C', (char const)'D', (char const)'E', (char const)'F', (char const)'G', (char const)'H', (char const)'I', (char const)'J', (char const)'K', (char const)'L', (char const)'M', (char const)'N', (char const)'O',
+    (char const)'P', (char const)'Q', (char const)'R', (char const)'S', (char const)'T', (char const)'U', (char const)'V', (char const)'W', (char const)'X', (char const)'Y', (char const)'Z', (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)'a', (char const)'b', (char const)'c', (char const)'d', (char const)'e', (char const)'f', (char const)'g', (char const)'h', (char const)'i', (char const)'j', (char const)'k', (char const)'l', (char const)'m', (char const)'n', (char const)'o',
+    (char const)'p', (char const)'q', (char const)'r', (char const)'s', (char const)'t', (char const)'u', (char const)'v', (char const)'w', (char const)'x', (char const)'y', (char const)'z', (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,   (char const)0,
+    (char const)'A', (char const)'A', (char const)'A', (char const)'A', (char const)'A', (char const)'A', (char const)'A', (char const)'C', (char const)'E', (char const)'E', (char const)'E', (char const)'E', (char const)'I', (char const)'I', (char const)'I', (char const)'I',
+    (char const)0,   (char const)'N', (char const)'O', (char const)'O', (char const)'O', (char const)'O', (char const)'O', (char const)0,   (char const)'O', (char const)'U', (char const)'U', (char const)'U', (char const)'U', (char const)'Y', (char const)0,   (char const)0,
+    (char const)'a', (char const)'a', (char const)'a', (char const)'a', (char const)'a', (char const)'a', (char const)'a', (char const)'c', (char const)'e', (char const)'e', (char const)'e', (char const)'e', (char const)'i', (char const)'i', (char const)'i', (char const)'i',
+    (char const)0,   (char const)'n', (char const)'o', (char const)'o', (char const)'o', (char const)'o', (char const)'o', (char const)0,   (char const)'o', (char const)'u', (char const)'u', (char const)'u', (char const)'u', (char const)'y', (char const)0,   (char const)'y'};
 char const diacrit_diac[256] = {
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)4,
-    (char const)0, (char const)3, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)6, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
-    (char const)0, (char const)0, (char const)3, (char const)2, (char const)4,
-    (char const)6, (char const)5, (char const)8, (char const)1, (char const)7,
-    (char const)3, (char const)2, (char const)4, (char const)5, (char const)3,
-    (char const)2, (char const)4, (char const)5, (char const)0, (char const)6,
-    (char const)3, (char const)2, (char const)4, (char const)6, (char const)5,
-    (char const)0, (char const)9, (char const)3, (char const)2, (char const)4,
-    (char const)5, (char const)2, (char const)0, (char const)0, (char const)3,
-    (char const)2, (char const)4, (char const)6, (char const)5, (char const)8,
-    (char const)1, (char const)7, (char const)3, (char const)2, (char const)4,
-    (char const)5, (char const)3, (char const)2, (char const)4, (char const)5,
-    (char const)0, (char const)6, (char const)3, (char const)2, (char const)4,
-    (char const)6, (char const)5, (char const)0, (char const)9, (char const)3,
-    (char const)2, (char const)4, (char const)5, (char const)2, (char const)0,
-    (char const)0};
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)4,
+    (char const)0, (char const)3, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)6, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0, (char const)0,
+    (char const)0, (char const)0, (char const)3, (char const)2, (char const)4, (char const)6, (char const)5, (char const)8, (char const)1, (char const)7, (char const)3, (char const)2, (char const)4, (char const)5, (char const)3, (char const)2, (char const)4, (char const)5, (char const)0,
+    (char const)6, (char const)3, (char const)2, (char const)4, (char const)6, (char const)5, (char const)0, (char const)9, (char const)3, (char const)2, (char const)4, (char const)5, (char const)2, (char const)0, (char const)0, (char const)3, (char const)2, (char const)4, (char const)6,
+    (char const)5, (char const)8, (char const)1, (char const)7, (char const)3, (char const)2, (char const)4, (char const)5, (char const)3, (char const)2, (char const)4, (char const)5, (char const)0, (char const)6, (char const)3, (char const)2, (char const)4, (char const)6, (char const)5,
+    (char const)0, (char const)9, (char const)3, (char const)2, (char const)4, (char const)5, (char const)2, (char const)0, (char const)0};
 void close_stdout(void);
-extern __attribute__((__nothrow__))
-size_t(__attribute__((__leaf__)) __fpending)(FILE *__fp);
+extern __attribute__((__nothrow__)) size_t(__attribute__((__leaf__)) __fpending)(FILE *__fp);
 static char const *file_name;
 void close_stdout(void) {
   int e;
@@ -4767,7 +3903,6 @@ void close_stdout(void) {
   char const *write_error;
   char *tmp___5;
   char *tmp___6;
-  char *__cil_tmp10;
 
   {
     { tmp___1 = ferror_unlocked(stdout); }
@@ -4809,14 +3944,10 @@ void close_stdout(void) {
     return;
   }
 }
-extern struct hostent *gethostbyaddr(void const *__addr, __socklen_t __len,
-                                     int __type);
+extern struct hostent *gethostbyaddr(void const *__addr, __socklen_t __len, int __type);
 extern struct hostent *gethostbyname(char const *__name);
-extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) inet_ntoa)(
-    struct in_addr __in);
-extern __attribute__((__nothrow__)) double(__attribute__((
-    __nonnull__(1), __leaf__)) strtod)(char const *__restrict __nptr,
-                                       char **__restrict __endptr);
+extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) inet_ntoa)(struct in_addr __in);
+extern __attribute__((__nothrow__)) double(__attribute__((__nonnull__(1), __leaf__)) strtod)(char const *__restrict __nptr, char **__restrict __endptr);
 char *base_name(char const *name) {
   char const *base;
   char const *p;
@@ -4826,8 +3957,7 @@ char *base_name(char const *name) {
     p = base;
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+        ;
 
         if (!*p) {
           goto while_break;
@@ -4835,15 +3965,12 @@ char *base_name(char const *name) {
         if ((int const) * p == 47) {
           {
             while (1) {
-            while_continue___0: /* CIL Label */
-                ;
+              ;
               p++;
               if (!((int const) * p == 47)) {
                 goto while_break___0;
               }
-            }
-          while_break___2: /* CIL Label */
-              ;
+            };
           }
         while_break___0:;
           if (!*p) {
@@ -4855,9 +3982,7 @@ char *base_name(char const *name) {
           base = p;
         }
         p++;
-      }
-    while_break___1: /* CIL Label */
-        ;
+      };
     }
   while_break:;
     return ((char *)base);
@@ -4870,8 +3995,7 @@ size_t base_len(char const *name) {
     { len = strlen(name); }
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
+        ;
 
         if (1UL < len) {
           if (!((int const) * (name + (len - 1UL)) == 47)) {
@@ -4883,9 +4007,7 @@ size_t base_len(char const *name) {
         goto __Cont;
       __Cont:
         len--;
-      }
-    while_break___0: /* CIL Label */
-        ;
+      };
     }
   while_break:;
     return (len);
@@ -4894,42 +4016,20 @@ size_t base_len(char const *name) {
 void (*argmatch_die)(void);
 char const *simple_backup_suffix;
 char const *simple_backup_suffix = "~";
-static char const *const backup_args[9] = {
-    (char const * /* const  */) "none",
-    (char const * /* const  */) "off",
-    (char const * /* const  */) "simple",
-    (char const * /* const  */) "never",
-    (char const * /* const  */) "existing",
-    (char const * /* const  */) "nil",
-    (char const * /* const  */) "numbered",
-    (char const * /* const  */) "t",
-    (char const * /* const  */)((char const *)0)};
-static enum backup_type const backup_types[8] = {
-    (enum backup_type const)0, (enum backup_type const)0,
-    (enum backup_type const)1, (enum backup_type const)1,
-    (enum backup_type const)2, (enum backup_type const)2,
-    (enum backup_type const)3, (enum backup_type const)3};
+static char const *const backup_args[9] = {(char const * /* const  */) "none", (char const * /* const  */) "off",      (char const * /* const  */) "simple", (char const * /* const  */) "never",         (char const * /* const  */) "existing",
+                                           (char const * /* const  */) "nil",  (char const * /* const  */) "numbered", (char const * /* const  */) "t",      (char const * /* const  */)((char const *)0)};
+static enum backup_type const backup_types[8] = {(enum backup_type const)0, (enum backup_type const)0, (enum backup_type const)1, (enum backup_type const)1, (enum backup_type const)2, (enum backup_type const)2, (enum backup_type const)3, (enum backup_type const)3};
 extern struct _IO_FILE *stderr;
 void usage(int status);
-extern __attribute__((__nothrow__)) long(__attribute__((
-    __nonnull__(1), __leaf__)) pathconf)(char const *__path, int __name);
+extern __attribute__((__nothrow__)) long(__attribute__((__nonnull__(1), __leaf__)) pathconf)(char const *__path, int __name);
 extern int printf(char const *__restrict __format, ...);
 extern char *optarg;
-extern __attribute__((__nothrow__)) int(
-    __attribute__((__nonnull__(1), __leaf__)) atexit)(void (*__func)(void));
-extern __attribute__((__nothrow__)) char *(
-    __attribute__((__leaf__)) textdomain)(char const *__domainname);
-extern __attribute__((__nothrow__)) char *(__attribute__((
-    __leaf__)) bindtextdomain)(char const *__domainname, char const *__dirname);
+extern __attribute__((__nothrow__)) int(__attribute__((__nonnull__(1), __leaf__)) atexit)(void (*__func)(void));
+extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) textdomain)(char const *__domainname);
+extern __attribute__((__nothrow__)) char *(__attribute__((__leaf__)) bindtextdomain)(char const *__domainname, char const *__dirname);
 char *program_name;
 static int create_parents;
-static struct option const longopts[6] = {
-    {"mode", 1, (int *)((void *)0), 'm'},
-    {"parents", 0, (int *)((void *)0), 'p'},
-    {"verbose", 0, (int *)((void *)0), 'v'},
-    {"help", 0, (int *)0, -130},
-    {"version", 0, (int *)0, -131},
-    {(char const *)((void *)0), 0, (int *)((void *)0), 0}};
+static struct option const longopts[6] = {{"mode", 1, (int *)((void *)0), 'm'}, {"parents", 0, (int *)((void *)0), 'p'}, {"verbose", 0, (int *)((void *)0), 'v'}, {"help", 0, (int *)0, -130}, {"version", 0, (int *)0, -131}, {(char const *)((void *)0), 0, (int *)((void *)0), 0}};
 void usage(int status) {
   char *tmp;
   char *tmp___0;
@@ -4939,53 +4039,33 @@ void usage(int status) {
   char *tmp___4;
   char *tmp___5;
   char *tmp___6;
-  char *__cil_tmp10;
-  char *__cil_tmp11;
-  char *__cil_tmp12;
-  char *__cil_tmp13;
-  char *__cil_tmp14;
-  char *__cil_tmp15;
-  char *__cil_tmp16;
-  char *__cil_tmp17;
 
   {
     if (status != 0) {
       {
         tmp = gettext("Try `%s --help\' for more information.\n");
-        fprintf((FILE * /* __restrict  */)stderr,
-                (char const * /* __restrict  */)((char const *)tmp),
-                program_name);
+        fprintf((FILE * /* __restrict  */)stderr, (char const * /* __restrict  */)((char const *)tmp), program_name);
       }
     } else {
       {
         tmp___0 = gettext("Usage: %s [OPTION] DIRECTORY...\n");
-        printf((char const * /* __restrict  */)((char const *)tmp___0),
-               program_name);
-        tmp___1 = gettext(
-            "Create the DIRECTORY(ies), if they do not already exist.\n\n");
-        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___1),
-                       (FILE * /* __restrict  */)stdout);
+        printf((char const * /* __restrict  */)((char const *)tmp___0), program_name);
+        tmp___1 = gettext("Create the DIRECTORY(ies), if they do not already exist.\n\n");
+        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___1), (FILE * /* __restrict  */)stdout);
         tmp___2 = gettext("Mandatory arguments to long options are mandatory "
                           "for short options too.\n");
-        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___2),
-                       (FILE * /* __restrict  */)stdout);
-        tmp___3 = gettext(
-            "  -m, --mode=MODE   set permission mode (as in chmod), not "
-            "rwxrwxrwx - umask\n  -p, --parents     no error if existing, make "
-            "parent directories as needed\n  -v, --verbose     print a message "
-            "for each created directory\n");
-        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___3),
-                       (FILE * /* __restrict  */)stdout);
+        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___2), (FILE * /* __restrict  */)stdout);
+        tmp___3 = gettext("  -m, --mode=MODE   set permission mode (as in chmod), not "
+                          "rwxrwxrwx - umask\n  -p, --parents     no error if existing, make "
+                          "parent directories as needed\n  -v, --verbose     print a message "
+                          "for each created directory\n");
+        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___3), (FILE * /* __restrict  */)stdout);
         tmp___4 = gettext("      --help     display this help and exit\n");
-        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___4),
-                       (FILE * /* __restrict  */)stdout);
-        tmp___5 =
-            gettext("      --version  output version information and exit\n");
-        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___5),
-                       (FILE * /* __restrict  */)stdout);
+        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___4), (FILE * /* __restrict  */)stdout);
+        tmp___5 = gettext("      --version  output version information and exit\n");
+        fputs_unlocked((char const * /* __restrict  */)((char const *)tmp___5), (FILE * /* __restrict  */)stdout);
         tmp___6 = gettext("\nReport bugs to <%s>.\n");
-        printf((char const * /* __restrict  */)((char const *)tmp___6),
-               "bug-coreutils@gnu.org");
+        printf((char const * /* __restrict  */)((char const *)tmp___6), "bug-coreutils@gnu.org");
       }
     }
     { exit(status); }
@@ -5017,15 +4097,6 @@ int main(int argc, char **argv) {
   char const *tmp___9;
   char *tmp___10;
   int *tmp___11;
-  char *__cil_tmp28;
-  char *__cil_tmp29;
-  char *__cil_tmp30;
-  char *__cil_tmp31;
-  char *__cil_tmp32;
-  char *__cil_tmp33;
-  char *__cil_tmp34;
-  char *__cil_tmp35;
-  char *__cil_tmp36;
 
   {
     {
@@ -5041,12 +4112,8 @@ int main(int argc, char **argv) {
     }
     {
       while (1) {
-      while_continue: /* CIL Label */
-          ;
-        {
-          optc = getopt_long(argc, (char *const *)argv, "pm:v", longopts,
-                             (int *)((void *)0));
-        }
+        ;
+        { optc = getopt_long(argc, (char *const *)argv, "pm:v", longopts, (int *)((void *)0)); }
         if (!(optc != -1)) {
           goto while_break;
         }
@@ -5085,16 +4152,13 @@ int main(int argc, char **argv) {
       case_neg_130: { usage(0); }
         goto switch_break;
       case_neg_131: {
-        version_etc(stdout, "mkdir", "coreutils", "5.2.1", "David MacKenzie",
-                    (char *)((void *)0));
+        version_etc(stdout, "mkdir", "coreutils", "5.2.1", "David MacKenzie", (char *)((void *)0));
         exit(0);
       }
         goto switch_break;
       switch_default: { usage(1); }
       switch_break:;
-      }
-    while_break___1: /* CIL Label */
-        ;
+      };
     }
   while_break:;
     if (optind == argc) {
@@ -5135,8 +4199,7 @@ int main(int argc, char **argv) {
     }
     {
       while (1) {
-      while_continue___0: /* CIL Label */
-          ;
+        ;
 
         if (!(optind < argc)) {
           goto while_break___0;
@@ -5145,8 +4208,7 @@ int main(int argc, char **argv) {
         if (create_parents) {
           {
             dir = *(argv + optind);
-            fail = make_path((char const *)dir, (int)newmode, (int)parent_mode,
-                             (uid_t)-1, (gid_t)-1, 1, verbose_fmt_string);
+            fail = make_path((char const *)dir, (int)newmode, (int)parent_mode, (uid_t)-1, (gid_t)-1, 1, verbose_fmt_string);
           }
         } else {
           {
@@ -5184,8 +4246,7 @@ int main(int argc, char **argv) {
                 if (fail) {
                   {
                     tmp___9 = quote(dir___0);
-                    tmp___10 =
-                        gettext("cannot set permissions of directory %s");
+                    tmp___10 = gettext("cannot set permissions of directory %s");
                     tmp___11 = __errno_location();
                     error(0, *tmp___11, (char const *)tmp___10, tmp___9);
                   }
@@ -5198,9 +4259,7 @@ int main(int argc, char **argv) {
           errors = 1;
         }
         optind++;
-      }
-    while_break___2: /* CIL Label */
-        ;
+      };
     }
   while_break___0: { exit(errors); }
   }
