@@ -22,6 +22,8 @@ cp chown_train.sh ../../src/target-program/chown_train.sh
 cp original.txt ../../src/original.txt
 cp coverage.txt ../../LLM_Util/coverage.txt
 cp req_list.txt ../../LLM_Util/req_list.txt
+cp check_relevance_prompt.txt ../../LLM_Util/check_relevance_prompt.txt
+cp chown-8.2.c.origin.c ../../LLM_Util/original.c
 # clear
 
 # copy prompts to LLM_UTIL

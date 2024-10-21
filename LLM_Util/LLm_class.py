@@ -28,7 +28,7 @@ from tree_sitter_languages import get_language, get_parser
 from llama_index.core.text_splitter import CodeSplitter
 from dotenv import load_dotenv
 from LLM_Util.chunker import get_code_chunks
-from LLM_Util.exist_coverage import update_code_with_coverage, coverage_for_lines
+from LLM_Util.exist_coverage import update_code_with_coverage, coverage_for_lines, get_immediate_context
 import subprocess
 from LLM_Util.function_ctx import get_function_list, get_function_context
 
@@ -248,7 +248,7 @@ class QAClass:
                 elif len(function_lines) > 1000:                   
                     # contains fifty text +- 300 lines from coverage.txt
                     fifty_text_with_cov = get_immediate_context(cand_linenum, 300, 300)
-                    fifty_text_without_cov = get_immediate_context(cand_linenum, 300, 300, src_file)
+                    fifty_text_without_cov = get_immediate_context(cand_linenum, 300, 300, "../LLM_Util/original.c")
 
                     formatted_context_1 = "Snippet.0: \n\n" + fifty_text_without_cov + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
                     formatted_context_2 = "Snippet.0: \n\n" + fifty_text_with_cov + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)

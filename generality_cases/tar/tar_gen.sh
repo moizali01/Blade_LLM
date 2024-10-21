@@ -2,7 +2,7 @@
 
 PROGRAM_NAME=tar
 DIR=${PWD}
-C_FILE=${DIR}/tar-cov.c
+C_FILE=${DIR}/tar-multiagent.c
 REDUCED_BINARY=${DIR}/${PROGRAM_NAME}.rbin
 ORG_BINARY=${DIR}/${PROGRAM_NAME}.bin
 ORG_FILE=${DIR}/tar-org.c

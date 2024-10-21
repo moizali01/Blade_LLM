@@ -1,15 +1,21 @@
 [H[2J[3Jsimple
+nested
 special
 permissions
-total:  3
+special chars
+total:  5
 simple
+nested
 special
 permissions
-total:  6
+special chars
+total:  10
 simple
+nested
 special
 permissions
-total:  9
+special chars
+total:  15
 Robustness Test Passed
 Robustness Test Passed
 Robustness Test Passed
@@ -18,5 +24,5 @@ Robustness Test Passed
 Robustness Test Passed
 Robustness Test Passed
 Robustness Test Passed
-Functionality: 12 / 20
+Functionality: 20 / 20
 Security & Robustness: 10 / 10

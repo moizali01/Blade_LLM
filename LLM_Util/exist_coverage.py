@@ -86,7 +86,7 @@ def get_immediate_context(code_path, pretext, posttext, coverage_path = '../LLM_
 
 def coverage_for_lines(first_line, last_line, coverage_path = '../LLM_Util/coverage.txt'):
     # coverage_path = '../LLM_Util/coverage.txt'
-    print(f"The coverage path is {coverage_path}")
+    # print(f"The coverage path is {coverage_path}")
     coverage_lines = ""
     code_lines = ""
     with open(coverage_path, 'r') as coverage_file:

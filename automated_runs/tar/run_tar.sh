@@ -20,8 +20,11 @@ cp coverage.txt ../../LLM_Util/coverage.txt
 
 # copy prompts to LLM_UTIL
 cd $DIR
-cp prompt_in_coverage.txt ../../LLM_Util/prompt_in_coverage.txt
-cp prompt_not_in_coverage.txt ../../LLM_Util/prompt_not_in_coverage.txt
+# cp prompt_in_coverage.txt ../../LLM_Util/prompt_in_coverage.txt
+# cp prompt_not_in_coverage.txt ../../LLM_Util/prompt_not_in_coverage.txt
+cp req_list.txt ../../LLM_Util/req_list.txt
+cp check_relevance_prompt.txt ../../LLM_Util/check_relevance_prompt.txt
+cp tar-util.c ../../LLM_Util/original.c
 # clear
 
 # clear cands
