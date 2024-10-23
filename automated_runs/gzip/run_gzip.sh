@@ -16,6 +16,7 @@ cp gzip-org.c ../../src/target-program/gzip-org.c
 cp gzip_train.sh ../../src/target-program/gzip_train.sh
 cp original.txt ../../src/original.txt
 cp coverage.txt ../../LLM_Util/coverage.txt
+cp original.txt ../../LLM_Util/original.c
 # clear
 
 # copy prompts to LLM_UTIL

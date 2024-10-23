@@ -3,7 +3,7 @@
 PROGRAM_NAME=bzip2-8.16
 DIR=$(pwd)
 ORIGINAL_FILE=$DIR/bzip2-org.c
-REDUCED_FILE=$DIR/bzip2-org.c
+REDUCED_FILE=$DIR/bzip2-util.c
 ORIGINAL_BINARY=$DIR/original_binary
 REDUCED_BINARY=$DIR/reduced_binary
 CC=clang
