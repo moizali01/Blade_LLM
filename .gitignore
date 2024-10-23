@@ -32,6 +32,8 @@ __pycache__/
 # Ignore temporary files
 
 LLM_Util/check_relevance_prompt.txt
+LLM_Util/confirm_relevance_prompt.txt
+LLM_Util/security_prompt.txt
 LLM_Util/prompt*
 LLM_Util/sec_list.txt
 LLM_Util/coverage.txt

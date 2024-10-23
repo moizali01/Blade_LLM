@@ -240,18 +240,18 @@ class QAClass:
                 function_lines = function_cov
                 if function_lines:
                     function_lines = function_lines.splitlines()
-                formatted_context_2 = "Function in which the code snippet was called:\n\n" + function_cov + "\n\n" 
+                formatted_context_2 = "Function in which the code snippet was called:\n\n" + cleaned_code + function_cov + "\n\n" 
                 formatted_context_1 = function
                 if len(function_lines) < 10:
                     formatted_context_2 = "Function in which the code snippet was called:\n\n" + function_cov + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
                     formatted_context_1 = function + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
-                elif len(function_lines) > 1000:                   
-                    # contains fifty text +- 300 lines from coverage.txt
-                    fifty_text_with_cov = get_immediate_context(cand_linenum, 300, 300)
-                    fifty_text_without_cov = get_immediate_context(cand_linenum, 300, 300, "../LLM_Util/original.c")
+                # elif len(function_lines) > 1000:                   
+                #     # contains fifty text +- 300 lines from coverage.txt
+                #     fifty_text_with_cov = get_immediate_context(cand_linenum, 300, 300)
+                #     fifty_text_without_cov = get_immediate_context(cand_linenum, 300, 300, "../LLM_Util/original.c")
 
-                    formatted_context_1 = "Snippet.0: \n\n" + fifty_text_without_cov + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
-                    formatted_context_2 = "Snippet.0: \n\n" + fifty_text_with_cov + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
+                #     formatted_context_1 = "Snippet.0: \n\n" + fifty_text_without_cov + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
+                #     formatted_context_2 = "Snippet.0: \n\n" + fifty_text_with_cov + "\n\n" + self.outer_instance.combine_docs(retrieved_docs)
                 # if len(query.splitlines()) > 10:
                 #     formatted_context_2 = self.outer_instance.combine_docs(retrieved_docs)
                 # else:

@@ -1,11 +1,20 @@
-**Required Functionality**:
+**Required Functionality:**
 
-Functionality: The tar utility is used only with the -cf flag to archive all types of files, directories, and nested structures, preserving data integrity within the archive.
-Purpose:  This task requires the functionality to create archives using the -cf flag, allowing the inclusion of files, folders, and directories (including nested directories) with varying extensions.
+1. bzip2 is used only without any flag to compress all kind of files with varying extensions.
+2. Retain the data integrity after compression and make sure the compression occurs successfully. 
+3. For compression Burrows-Wheeler transform is used to reorder data, and Huffman coding is used to efficiently represent the reordered data.
 
-**Unrequired Functionality (to be removed):**
+**Unrequired Functionality:**
 
-1. **Decompression:** Any decompression functionality such as the -xf option can be safely removed.
-2. **Appending and Updating:** Remove `-A`, `-r`, `-u` for appending files to an archive.
-3. Any Verbose Functionality.
-4. Anything other than compression.
+1. **-d, --decompress**:  Forces decompression, which is not needed as we want to compress files.
+2. **-h, --help**:  Displays help information, which is not needed for our use case.
+3. **-L, --license**:  Displays software version and license, which is not relevant to compression functionality.
+4. **-V, --version**:  Displays software version and license, which is not relevant to compression functionality.
+5. **-s, --small**:  Uses less memory, which is not a priority for our use case.
+6. **-1 .. -9, --fast, --best**:  Sets block size, which is not relevant to our use case as we want to compress all files without specific block size requirements.
+7. **-t, --test**:  Tests compressed file integrity, which is not needed as we want to ensure successful compression.
+8. **-q, --quiet**:  Suppresses noncritical error messages, which is not needed as we want to be aware of any issues during compression.
+9. **-v, --verbose**:  Provides verbose output, which is not needed as we only want to ensure successful compression. 
+10. **-c, --stdout**:  Outputs to standard output, which is not needed as we want to compress files to their respective compressed versions. 
+11. **-k, --keep**:  Keeps input files, which is not needed as we are not concerned with deleting input files.
+12. **-f, --force**:  Overwrites existing output files, which is not needed as we are not concerned with overwriting existing files.

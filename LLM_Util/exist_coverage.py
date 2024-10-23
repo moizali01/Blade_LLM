@@ -75,7 +75,7 @@ def update_code_with_coverage(formatted_time):
     # # Step 4: Remove just the line numbers at the start and empty lines
     updated_code = ''.join(code_lines)
     # # Remove only the line number and the following pipe (|) character
-    cleaned_code = "\n".join([re.sub(r'^\d+\|', '', line) for line in updated_code.splitlines() if line.strip() != ""])
+    cleaned_code = "\n".join([line for line in updated_code.splitlines() if line.strip() != ""])
     cleaned_code = "The code is given in the following format:\nLine Number| Execution Count (no number indicates non executable lines)| Code line\n" + cleaned_code
     return cleaned_code
 
@@ -102,7 +102,7 @@ def coverage_for_lines(first_line, last_line, coverage_path = '../LLM_Util/cover
      # # Step 4: Remove just the line numbers at the start and empty lines
     updated_code = ''.join(code_lines)
     # Remove only the line number and the following pipe (|) character
-    cleaned_code = "\n".join([re.sub(r'^\d+\|', '', line) for line in updated_code.splitlines() if line.strip() != ""])
+    cleaned_code = "\n".join([line for line in updated_code.splitlines() if line.strip() != ""])
     return cleaned_code
         
     
