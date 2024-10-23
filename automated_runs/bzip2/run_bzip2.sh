@@ -22,6 +22,10 @@ cp coverage.txt ../../LLM_Util/coverage.txt
 cd $DIR
 cp prompt_in_coverage.txt ../../LLM_Util/prompt_in_coverage.txt
 cp prompt_not_in_coverage.txt ../../LLM_Util/prompt_not_in_coverage.txt
+cp check_relevance_prompt.txt ../../LLM_Util/check_relevance_prompt.txt
+cp confirm_relevance_prompt.txt ../../LLM_Util/confirm_relevance_prompt.txt
+cp functionality_prompt.txt ../../LLM_Util/functionality_prompt.txt
+cp security_prompt.txt ../../LLM_Util/security_prompt.txt
 cp req_list.txt ../../LLM_Util/req_list.txt
 cp sec_list.txt ../../LLM_Util/sec_list.txt
 # clear

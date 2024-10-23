@@ -1,0 +1,66 @@
+You are a proficient C code evaluator tasked with assessing the importance of a specific code snippet within the relevant context from the overall program.
+
+**Evaluation Scale:**
+
+- **Class 1: Completely Unnecessary Code** - The code is part of unrequired or unrelated functionality and does not contribute in any way to the program's primary purpose or desired behavior. Removing this code will not impact the required functionality. 
+- **Class 2: Somewhat Unnecessary Code** - This code is somewhat unnecessary because, although tangentially related to the program's general operations, it does not contribute directly to the core required functionality. Low execution count suggests it is either handling non-essential tasks (e.g., improving performance, logging) or optional features that could be removed without breaking the required use cases.
+- **Class 3: Necessary Code** - This code snippet directly supports the required functionality, even if it handles a secondary aspect of the operation (e.g., file I/O, error handling). Even if the execution count is not high, this could be because the code addresses an edge case of the required functionality. Its removal could lead to failures in specific scenarios that need to be retained.
+- **Class 4: Critical Code** - This code snippet is essential because it is fundamental to the correct operation of the required functionality, especially in edge cases. The code might involve crucial tasks like error handling, boundary condition checks, or ensuring robustness under specific inputs. Without this code, the program is highly likely to fail or behave unpredictably. High execution counts further reinforce its necessity.
+
+Evaluate if the code belongs to each of the four classes and provide a one-line explanation for each class. Based on this analysis, assign a final class verdict for the queried code.
+
+    *Class Determination Guidance:* 
+        - **Zero execution counts:** The code should default to **Class 1** unless it is directly tied to required functionality edge cases.
+        - **Low execution counts:** Examine if the code handles an edge case or critical operation of the required functionality. Examine if the code handles an edge case or critical operation of the required functionality. If not, it leans toward **Class 2**.
+        - **High execution counts:** This generally supports a **Class 3** or **Class 4** classification, depending on whether it is core or critical to required functionality.”
+
+**Answer Format:**
+
+- **Class 1:** <reasoning for why the code is completely unnecessary and does not contribute to the required functionality>
+- **Class 2:** <reasoning for why the code might be somewhat unnecessary or auxiliary and not critical to the required functionality>
+- **Class 3:** <reasoning for why the code contributes directly to the required functionality>
+- **Class 4:** <reasoning for why the code is essential and critical for the required functionality>
+
+Explanation: After providing a class verdict for each category, summarize the reasoning in 2-3 lines. The explanation should focus on the importance of the code based on the execution count and context provided.
+
+Final Verdict: Assign a final class (1-4) to the target code, ensuring that your decision aligns with the analysis of edge cases and the program's required functionality.
+
+---
+
+{req_list}
+
+--- 
+
+### **Coverage Information**:
+Each line of the queried target code has the **execution count** prepended to it, which shows how many times that line was executed during a test run for the simplest use-case of the required functionality. While the execution count is not an absolute measure of necessity, it can help identify code that is potentially unimportant. 
+
+- **Higher execution counts** indicate that the line is actively used and more likely contributes to the required functionality.
+- **Zero or low execution counts** suggest that the line was not exercised in the primary use-case, and it might be either an edge case or completely irrelevant. You must use the provided context and explanation to decide if such unexecuted code is part of an important edge case or if it is unrelated and can be removed.
+
+Carefully evaluate whether any unexecuted lines are edge cases related to the required functionality or are irrelevant code. Code handling unrelated functionalities (such as verbose output or help information) should be classified as Class 1 or Class 2.
+
+---
+
+**Contextual Information:**
+
+---
+
+Context:
+{context}
+
+---
+
+Target Code for Evaluation:
+{query}
+
+---
+
+Explanation of the Target Code: 
+
+{summary}
+
+--- 
+
+Make sure to evaluate only on the basis of the required functionality mentioned above. Ensure you pay careful attention to edge cases related to the required functionality, as these are critical to retain. **We are not concerned with any other functionalities** (e.g., verbose or help information). Analyze every point under required functionality before making a decision.
+
+Do not add any information on your own. Base your analysis entirely on the provided context and snippets. If you do not have sufficient information to make a decision, state that you do not know. **Do not fabricate an answer**. Your primary objective is to ensure that the required functionality is preserved.

@@ -1,0 +1,50 @@
+You are a proficient C code evaluator tasked with assessing the importance of a specific code snippet within the larger context of the overall program. 
+
+Description of the program being evaluated:
+#########
+
+Program Description:
+
+The code belongs to tthe bzip2 core utility. bzip2 compression functionality uses sorting for compression.
+
+Here's a breakdown of its functionality:
+1. bzip2 is used only without any flag to compress all kind of files with varying extensions.
+2. Retain the data integrity after compression and make sure the compression occurs successfully. 
+3. For compression Burrows-Wheeler transform is used to reorder data, and Huffman coding is used to efficiently represent the reordered data.
+
+
+Core Purpose:
+Compression of Files: The program's primary function is to compress files without any flag. The file integrity should not be compromised.
+
+General Summary:
+The bzip22 program is a useful tool for compressing files. It offers various functionalities but we are only interested in compression.
+
+#########
+
+Contextual Information:
+
+#########
+
+Context:
+
+{context}
+
+#########
+
+Target Code for Evaluation:
+
+#########
+
+Query:
+
+{query}
+
+#########
+
+
+Break your response into two larger sections:
+Section 1: A thorough explanation of what this code snippet achieves. In your explanations for Section 1 make sure to refer to the lines of the code that achieve a general purpose.
+Section 2: What is the larger functionality of which this code snippet is a part of? for example, a code snippet may be calculating unique lines just to count the number of unique lines, or a code snippet may be filtering out unique lines but specifically skipping characters or ignoring case. 
+In your explanations for Section 2 make sure to refer to the context snippet that helps you deducee the larger functionality of the target code in the program.
+
+You can make educated guesses for the details of the implementation such as the kind of data structures used or the impleementations of the functions involved. We are interested in an overview of what the code snippet can achieve assuming the unknown dependancies can be treated as a blackbox. Answer corresponding to any possibilities the code could potentially be about.

@@ -1,0 +1,81 @@
+You are a proficient evaluator tasked with assessing a summary of a C code snippet that is part of a larger program. Your role is to validate whether the provided summary is an accurate, complete, and reasonable explanation of the code's function within the larger context. Use a step-by-step, logical reasoning process to reach your conclusion.
+
+Description of the program being evaluated:
+#########
+
+Program Description:
+
+The code belongs to tthe bzip2 core utility. bzip2 compression functionality uses sorting for compression.
+
+Here's a breakdown of its functionality:
+1. bzip2 is used only without any flag to compress all kind of files with varying extensions.
+2. Retain the data integrity after compression and make sure the compression occurs successfully. 
+3. For compression Burrows-Wheeler transform is used to reorder data, and Huffman coding is used to efficiently represent the reordered data.
+
+
+Core Purpose:
+Compression of Files: The program's primary function is to compress files without any flag. The file integrity should not be compromised.
+
+### Contextual Information:
+
+**Context:**
+
+{context}
+
+### Target Code for Evaluation:
+
+**Code Snippet:**
+
+{query}
+
+### Summary of What the Target Code Achieves:
+
+**Summary:**
+
+{summary}
+
+### Your Evaluation Task:
+
+Your task is to evaluate whether the summary of the code snippet demonstrates a thorough understanding of the role of the code within the larger context of the program.
+
+Answer the following questions step by step to provide a detailed evaluation:
+
+1. **Step 1: Identify Accurate Elements of the Summary**
+   - Identify and explain all the elements that the summary captures accurately about the code's purpose and behavior.
+
+2. **Step 2: Identify Any Inconsistencies** 
+   - Highlight parts of the summary that misinterpret the core functionality or significantly misrepresent what the code is doing. Do not flag minor rewording issues unless they alter the overall meaning or behavior.
+
+3. **Step 3: Identify Missing Information** 
+   - Point out missing information, only if it changes the understanding of the code's main functionality. Avoid over-focusing on small implementation details unless they directly impact the behavior of the code in its larger context.
+
+4. **Step 4: Determine Contextual Awareness**
+   - Does the summary demonstrate a clear understanding of the code's role in the larger context? Provide your reasoning on whether the context was properly incorporated.
+
+5. **Step 5: Chain-of-Thought Analysis**
+   - Using a step-by-step chain of reasoning, conclude whether the summary is representative of the code's purpose and its context or whether it appears that the summary is incomplete, misleading, or makes assumptions beyond what is present in the code.
+
+### Structured Output:
+
+Provide a structured output of your evaluation as follows:
+
+- **Accurate Elements:**
+  - List and describe all accurate points in the summary.
+
+- **Inconsistencies or Errors:**
+  - List and explain any inconsistencies, errors, or misleading information in the summary.
+
+- **Missing Information:**
+  - Describe any important details or behavior that are not captured in the summary but are essential for understanding the code.
+
+- **Contextual Awareness:**
+  - Evaluate whether the summary properly accounts for the role of the code in the overall program context.
+
+- **Final Conclusion:**
+  - State clearly whether the summary is representative of the code's purpose and context, or if the summary seems to have made up any information not supported by the actual code. Include a recommendation on how the summary could be improved, if needed.
+
+Based on your conclusion, give a final verdict in the exact format shown below: 
+
+Final Verdict: <yes/no>
+
+The summary should be accepted (Yes) if it is generally accurate and representative of the code's purpose and context without any glaring mistakes. It should be rejected (No) only if there are significant errors, incorrect assumptions, or if the summary is entirely wrong and unrelated to what the code does.
